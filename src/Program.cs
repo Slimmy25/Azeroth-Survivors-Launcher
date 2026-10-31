@@ -43,6 +43,14 @@ namespace AzerothLauncher
         [STAThread]
         static void Main(string[] args)
         {
+            int scalingPreview = Array.IndexOf(args, "--preview-scaling");
+            if (scalingPreview >= 0 && args.Length > scalingPreview + 1)
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                LauncherApp.RenderScalingPreview(args[scalingPreview + 1]);
+                return;
+            }
             int preview = Array.IndexOf(args, "--preview-stats");     // developer tool, see StatsPreview.cs
             if (preview >= 0 && args.Length > preview + 2)
             {
