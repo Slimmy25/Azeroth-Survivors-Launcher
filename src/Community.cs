@@ -365,6 +365,10 @@ namespace AzerothLauncher
         [DllImport("user32.dll")] static extern IntPtr SetParent(IntPtr child, IntPtr parent);
         [DllImport("user32.dll")] static extern int GetWindowLong(IntPtr hWnd, int index);
         [DllImport("user32.dll")] static extern int SetWindowLong(IntPtr hWnd, int index, int value);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+        static extern IntPtr SetWindowLongPointer64(IntPtr hWnd, int index, IntPtr value);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
+        static extern int SetWindowLongPointer32(IntPtr hWnd, int index, int value);
         [DllImport("user32.dll")] static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
         [DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int w, int h, uint flags);
         [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr hWnd, int cmd);
@@ -379,6 +383,14 @@ namespace AzerothLauncher
         const int WS_CHILD = 0x40000000, WS_VISIBLE = 0x10000000, WS_POPUP = unchecked((int)0x80000000), WS_CLIPSIBLINGS = 0x04000000;
         const int WS_CAPTION = 0x00C00000, WS_THICKFRAME = 0x00040000, WS_SYSMENU = 0x00080000;
         const int WS_MINIMIZEBOX = 0x00020000, WS_MAXIMIZEBOX = 0x00010000, WS_EX_APPWINDOW = 0x00040000;
+
+        // GWLP_HWNDPARENT means the owner for a top-level popup. HWNDs are pointer-sized;
+        // the style helpers above intentionally use 32-bit values and must not store one.
+        static void SetNativeVideoOwner(IntPtr window, IntPtr owner)
+        {
+            if (IntPtr.Size == 8) SetWindowLongPointer64(window, -8, owner);
+            else SetWindowLongPointer32(window, -8, owner.ToInt32());
+        }
 
         // the video player's Edge window: a visible Edge window (Chrome's window class, with a title) of an msedge.exe
         // started with the player's own profile. Edge often hands its first process over to another one, so the
@@ -658,13 +670,18 @@ namespace AzerothLauncher
                 style &= ~WS_CHILD;
                 style |= WS_POPUP | WS_VISIBLE;
                 SetWindowLong(edgeWnd, GWL_STYLE, style);
-                SetWindowPos(edgeWnd, new IntPtr(-1), sc.X, sc.Y, sc.Width, sc.Height, 0x0020 | 0x0040);   // topmost, frame changed, shown
+                SetNativeVideoOwner(edgeWnd, Handle);
+                // Fullscreen stays above its launcher owner, but is not globally topmost.
+                // Windows hides owned popups with their minimized owner; Alt+Tab can put
+                // another application over this window without interrupting playback.
+                SetWindowPos(edgeWnd, new IntPtr(-2), sc.X, sc.Y, sc.Width, sc.Height, 0x0020 | 0x0040);
                 SetForegroundWindow(edgeWnd);
                 PlaceVideoClose();
             }
             else
             {
                 SetWindowPos(edgeWnd, new IntPtr(-2), 0, 0, 0, 0, 0x0001 | 0x0002);                     // not topmost
+                SetNativeVideoOwner(edgeWnd, IntPtr.Zero);
                 int style = GetWindowLong(edgeWnd, GWL_STYLE);
                 style &= ~WS_POPUP;
                 style |= WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS;
@@ -761,7 +778,9 @@ namespace AzerothLauncher
             Form top = edgeHost != null && !edgeHost.IsDisposed ? edgeHost.TopLevelControl as Form : null;
             bool on = !videoFull && top != null && edgeVideo != null && edgeHost.Visible && top.Visible && top.WindowState != FormWindowState.Minimized;
             if (!on) { videoClose.Hide(); return; }
-            Point p = edgeHost.PointToScreen(new Point(edgeHost.ClientSize.Width - videoClose.Width - 10, 10));
+            videoClose.SetDisplayScale(Theme.DisplayScale);
+            int inset = Theme.Px(10);
+            Point p = edgeHost.PointToScreen(new Point(Math.Max(0, edgeHost.ClientSize.Width - videoClose.Width - inset), inset));
             videoClose.Location = p;
             if (!videoClose.Visible) videoClose.Show(top);
         }
@@ -803,14 +822,22 @@ namespace AzerothLauncher
 
         public VideoClose()
         {
+            AutoScaleMode = AutoScaleMode.None;
             FormBorderStyle = FormBorderStyle.None;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
-            Size = new Size(34, 34);
+            SetDisplayScale(Theme.DisplayScale);
             BackColor = Color.Black;
             TransparencyKey = Color.Magenta;
             Cursor = Cursors.Hand;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+        }
+
+        public void SetDisplayScale(float density)
+        {
+            int size = Math.Max(20, (int)Math.Round(34 * density));
+            Size = new Size(size, size);
+            Invalidate();
         }
 
         protected override bool ShowWithoutActivation { get { return true; } }
@@ -838,11 +865,13 @@ namespace AzerothLauncher
             Graphics g = e.Graphics;
             g.Clear(Color.Magenta);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;   // no pink fringe on the see-through corners
-            var r = new Rectangle(1, 1, Width - 3, Height - 3);
+            float scale = Width / 34f;
+            int inset = Math.Max(1, (int)Math.Round(scale));
+            var r = new Rectangle(inset, inset, Width - 2 * inset - 1, Height - 2 * inset - 1);
             using (var b = new SolidBrush(hover ? Theme.Hex("#c8442f") : Color.FromArgb(30, 22, 18))) g.FillEllipse(b, r);
-            using (var p = new Pen(Theme.Gold, 2f)) g.DrawEllipse(p, r);
-            int c = Width / 2, d = 6;
-            using (var p = new Pen(Color.White, 2.5f))
+            using (var p = new Pen(Theme.Gold, 2f * scale)) g.DrawEllipse(p, r);
+            int c = Width / 2, d = Math.Max(1, (int)Math.Round(6 * scale));
+            using (var p = new Pen(Color.White, 2.5f * scale))
             {
                 g.DrawLine(p, c - d, c - d, c + d, c + d);
                 g.DrawLine(p, c - d, c + d, c + d, c - d);

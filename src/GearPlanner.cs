@@ -881,45 +881,54 @@ namespace AzerothLauncher
             };
             QueueNativeLayout();
 
-            using (var sf = new StringFormat(StringFormat.GenericTypographic) { LineAlignment = StringAlignment.Near })
-                for (int i = itemOffset; i < list.Count; i++)
-                {
-                    int rowHeight = heights[i];
-                    if (y + rowHeight > r.Bottom - 1) break;
-                    object o = list[i];
-                    var row = new Rectangle(r.X + 2, (int)y, r.Width - 4 - 14, rowHeight);
-                    bool isWorn = o == worn || (o == EmptyRow && worn == null);
-                    bool taken = o != EmptyRow && o == inOther;  // the same ring or trinket twice: no
-                    if (isWorn || hoverRow == rows.Count)
-                        using (var b = new SolidBrush(isWorn ? Color.FromArgb(60, 240, 192, 80) : Theme.Hex("#252331"))) g.FillRectangle(b, row);
-                    var icon = new Rectangle(row.X + 1, row.Y + 1, ic, ic);
-                    if (o == EmptyRow)
+            // A wrapped row may be taller than a compact picker. Keep its visible portion
+            // selectable instead of rejecting the first row and showing an empty list.
+            var itemViewport = new Rectangle(r.X + 2, (int)y, Math.Max(1, r.Width - 4 - 14), Math.Max(0, r.Bottom - 1 - (int)y));
+            var itemClip = g.Save();
+            try
+            {
+                g.SetClip(itemViewport, CombineMode.Intersect);
+                using (var sf = new StringFormat(StringFormat.GenericTypographic) { LineAlignment = StringAlignment.Near })
+                    for (int i = itemOffset; i < list.Count; i++)
                     {
-                        using (var p = new Pen(SlotEdge)) g.DrawRectangle(p, icon);
-                        using (var b = new SolidBrush(Dim)) g.DrawString(Lang.T("Empty"), selectorFont, b, new RectangleF(icon.Right + 3, row.Y + 1, textWidth, row.Height), sf);
-                    }
-                    else
-                    {
-                        Image img = IconOf(o);
-                        if (img != null) Theme.Draw(g, img, icon);
-                        else if (o is GearPiece) Theme.ImageSoon(g, icon, RarityColor(RarityOf(o)));
+                        int rowHeight = heights[i];
+                        if ((int)y >= itemViewport.Bottom || (i > itemOffset && y + rowHeight > itemViewport.Bottom)) break;
+                        object o = list[i];
+                        var row = new Rectangle(r.X + 2, (int)y, r.Width - 4 - 14, rowHeight);
+                        bool isWorn = o == worn || (o == EmptyRow && worn == null);
+                        bool taken = o != EmptyRow && o == inOther;  // the same ring or trinket twice: no
+                        if (isWorn || hoverRow == rows.Count)
+                            using (var b = new SolidBrush(isWorn ? Color.FromArgb(60, 240, 192, 80) : Theme.Hex("#252331"))) g.FillRectangle(b, row);
+                        var icon = new Rectangle(row.X + 1, row.Y + 1, ic, ic);
+                        if (o == EmptyRow)
+                        {
+                            using (var p = new Pen(SlotEdge)) g.DrawRectangle(p, icon);
+                            using (var b = new SolidBrush(Dim)) g.DrawString(Lang.T("Empty"), selectorFont, b, new RectangleF(icon.Right + 3, row.Y + 1, textWidth, row.Height), sf);
+                        }
                         else
                         {
-                            using (var b = new SolidBrush(Color.FromArgb(70, RarityColor(RarityOf(o))))) g.FillRectangle(b, icon);
-                            string ab = chosenSlot.Substring(0, Math.Min(2, chosenSlot.Length));
-                            using (var f2 = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                            using (var b = new SolidBrush(Bright)) g.DrawString(ab, fSmall, b, icon, f2);
+                            Image img = IconOf(o);
+                            if (img != null) Theme.Draw(g, img, icon);
+                            else if (o is GearPiece) Theme.ImageSoon(g, icon, RarityColor(RarityOf(o)));
+                            else
+                            {
+                                using (var b = new SolidBrush(Color.FromArgb(70, RarityColor(RarityOf(o))))) g.FillRectangle(b, icon);
+                                string ab = chosenSlot.Substring(0, Math.Min(2, chosenSlot.Length));
+                                using (var f2 = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                                using (var b = new SolidBrush(Bright)) g.DrawString(ab, fSmall, b, icon, f2);
+                            }
+                            using (var p = new Pen(RarityColor(RarityOf(o)))) g.DrawRectangle(p, icon);
+                            var piece = o as GearPiece;
+                            string name = names[i];
+                            Color c = taken ? Dim : RarityColor(RarityOf(o));
+                            using (var b = new SolidBrush(c)) g.DrawString(name, selectorFont, b, new RectangleF(icon.Right + 3, row.Y + 1, textWidth, row.Height), sf);
                         }
-                        using (var p = new Pen(RarityColor(RarityOf(o)))) g.DrawRectangle(p, icon);
-                        var piece = o as GearPiece;
-                        string name = names[i];
-                        Color c = taken ? Dim : RarityColor(RarityOf(o));
-                        using (var b = new SolidBrush(c)) g.DrawString(name, selectorFont, b, new RectangleF(icon.Right + 3, row.Y + 1, textWidth, row.Height), sf);
+                        if (!taken) rows.Add(new KeyValuePair<Rectangle, object>(Rectangle.Intersect(row, itemViewport), o));
+                        else rows.Add(new KeyValuePair<Rectangle, object>(Rectangle.Empty, o));
+                        y += rowHeight + 1;
                     }
-                    if (!taken) rows.Add(new KeyValuePair<Rectangle, object>(row, o));
-                    else rows.Add(new KeyValuePair<Rectangle, object>(Rectangle.Empty, o));
-                    y += rowHeight + 1;
-                }
+            }
+            finally { g.Restore(itemClip); }
         }
 
         // Tier Bonus: one line per rarity, its name on the left and 4 piece / 8 piece side by side

@@ -179,9 +179,7 @@ namespace AzerothLauncher
                 else if(rebuild && current=="Guide" && gVideo!=null)
                 {
                     // The embedded HTML player keeps its playhead while only its enclosing viewport changes.
-                    foreach(Control frame in panel.Controls)
-                        foreach(Control child in frame.Controls)
-                            if(child is WebBrowser) frame.Bounds=new Rectangle(20,GuideTop,PW-40,Math.Max(40,PH-12-GuideTop));
+                    LayoutGuideVideo();
                 }
                 else if (rebuild && current != null)
                 {
@@ -202,11 +200,13 @@ namespace AzerothLauncher
             finally { Theme.Zoom = Theme.DisplayScale; changingDisplay = false; }
         }
 
-        void ChangeDisplay(Rectangle workArea, int dpi, bool resize)
+        void ChangeDisplay(Rectangle workArea, int dpi, bool resize, Point? suggestedOrigin = null)
         {
             float oldScale = displayLayout.Scale;
+            Rectangle previousBounds = Bounds;
             DisplayLayout next = new DisplayLayout(workArea, dpi, ReadInterfaceScale());
-            bool changed = next.Scale != oldScale || dpi != displayLayout.Dpi || workArea != displayLayout.WorkArea;
+            bool changed = next.Scale != oldScale || dpi != displayLayout.Dpi || workArea != displayLayout.WorkArea ||
+                           (suggestedOrigin.HasValue && suggestedOrigin.Value != previousBounds.Location);
             if (!changed) return;
             changingDisplay = true;
             try
@@ -216,8 +216,10 @@ namespace AzerothLauncher
                 MinimumSize = new Size(Math.Min(U(760), workArea.Width), Math.Min(U(540), workArea.Height));
                 if (WindowState == FormWindowState.Normal)
                 {
-                    Size size = resize ? new Size((int)Math.Round(Width*next.Scale/oldScale), (int)Math.Round(Height*next.Scale/oldScale)) : Size;
-                    Bounds = next.Clamp(new Rectangle(Location, size));
+                    // Setting MinimumSize can resize the native window immediately. Scale the
+                    // captured bounds, not that already-grown size, or a DPI increase scales twice.
+                    Size size = resize ? new Size((int)Math.Round(previousBounds.Width*next.Scale/oldScale), (int)Math.Round(previousBounds.Height*next.Scale/oldScale)) : previousBounds.Size;
+                    Bounds = next.Clamp(new Rectangle(suggestedOrigin ?? previousBounds.Location, size));
                 }
             }
             finally { changingDisplay=false; }
@@ -233,15 +235,23 @@ namespace AzerothLauncher
             if(previousScale==Theme.DisplayScale) LayoutResponsiveDisplay(true);
         }
 
+        internal static Rectangle ParseSuggestedDisplayBounds(IntPtr nativeRect)
+        {
+            // A Win32 RECT contains four coordinates, not X/Y/Width/Height.
+            return Rectangle.FromLTRB(Marshal.ReadInt32(nativeRect), Marshal.ReadInt32(nativeRect, 4),
+                                      Marshal.ReadInt32(nativeRect, 8), Marshal.ReadInt32(nativeRect, 12));
+        }
+
         protected override void WndProc(ref Message message)
         {
             if (message.Msg == 0x02E0 && displayReady && !PreviewMode) // WM_DPICHANGED
             {
                 int dpi = message.WParam.ToInt32() & 0xffff;
-                Rectangle suggested = (Rectangle)Marshal.PtrToStructure(message.LParam, typeof(Rectangle));
-                // RECT uses right/bottom, but only its origin is needed to identify the destination monitor.
-                Rectangle work = Screen.FromPoint(suggested.Location).WorkingArea;
-                ChangeDisplay(work, dpi, true);
+                Rectangle suggested = ParseSuggestedDisplayBounds(message.LParam);
+                // A crossing window may still begin on the old monitor. Select by the
+                // complete suggested rectangle, and keep its origin while applying our density.
+                Rectangle work = Screen.FromRectangle(suggested).WorkingArea;
+                ChangeDisplay(work, dpi, true, suggested.Location);
                 message.Result=IntPtr.Zero;
                 return; // AutoScaleMode.None: never let a second scaler resize native child controls.
             }

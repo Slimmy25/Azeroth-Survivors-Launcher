@@ -46,6 +46,65 @@ namespace AzerothLauncher
         {
             public string Key, Parent;
             public int Level, Top, Height;
+            public Control Marker;
+        }
+
+        // Native Label wrapping and a separately measured height can disagree, especially
+        // for a deep tree row with one long word. Measure and draw the same explicit lines.
+        sealed class GuideContentsLabel : Label
+        {
+            readonly Font layoutFont;
+            bool fitting;
+            const TextFormatFlags TextFlags=TextFormatFlags.NoPadding|TextFormatFlags.NoPrefix|TextFormatFlags.SingleLine;
+            public GuideContentsLabel(Font largestFont) { layoutFont=largestFont; DoubleBuffered=true; }
+            int TextWidth(string value) { return TextRenderer.MeasureText(value,layoutFont,new Size(int.MaxValue,int.MaxValue),TextFlags).Width; }
+            List<string> Lines()
+            {
+                var lines=new List<string>();
+                foreach(string paragraph in (Text??"").Replace("\r","").Split('\n'))
+                {
+                    string line="";
+                    foreach(string token in Regex.Split(paragraph.Trim(),@"\s+"))
+                    {
+                        string word=token;
+                        if(word.Length==0)continue;
+                        if(line.Length>0&&TextWidth(line+" "+word)<=Width) {line+=" "+word;continue;}
+                        if(line.Length>0) {lines.Add(line);line="";}
+                        while(word.Length>0&&TextWidth(word)>Width)
+                        {
+                            int[] elements=System.Globalization.StringInfo.ParseCombiningCharacters(word);
+                            int take=elements.Length>1?elements[1]:word.Length;
+                            for(int i=1;i<=elements.Length;i++)
+                            {
+                                int end=i==elements.Length?word.Length:elements[i];
+                                if(TextWidth(word.Substring(0,end))>Width)break;
+                                take=end;
+                            }
+                            if(char.IsHighSurrogate(word[0])&&take==1&&word.Length>1)take=2;
+                            lines.Add(word.Substring(0,take));word=word.Substring(take);
+                        }
+                        line=word;
+                    }
+                    if(line.Length>0||paragraph.Length==0)lines.Add(line);
+                }
+                return lines;
+            }
+            int LineHeight { get {return TextRenderer.MeasureText("Ag",layoutFont,new Size(int.MaxValue,int.MaxValue),TextFlags).Height+1;} }
+            public int WrappedHeight {get {return Math.Max(15,Lines().Count*LineHeight+1);} }
+            public bool LinesFit {get {foreach(string line in Lines())if(TextWidth(line)>Width)return false;return true;} }
+            void Fit() {if(fitting||layoutFont==null||Width<1)return;fitting=true;try{Height=WrappedHeight;}finally{fitting=false;}}
+            protected override void OnTextChanged(EventArgs e) {base.OnTextChanged(e);Fit();}
+            protected override void OnSizeChanged(EventArgs e) {base.OnSizeChanged(e);Fit();}
+            protected override void OnFontChanged(EventArgs e) {base.OnFontChanged(e);Fit();}
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                int y=0;
+                foreach(string line in Lines())
+                {
+                    TextRenderer.DrawText(e.Graphics,line,Font,new Rectangle(0,y,Width,LineHeight),ForeColor,TextFlags);
+                    y+=LineHeight;
+                }
+            }
         }
 
         sealed class TalentBuildChoice
@@ -1233,27 +1292,67 @@ namespace AzerothLauncher
             panel.Controls.Add(star);
             star.BringToFront();
             guideFavoriteStar = star;
+            if (gVideo != null) LayoutGuideVideo();
         }
 
         // ---- a video streamed inside the section (the same address as the card: nothing is saved on the PC)
+        Bordered guideVideoFrame;
+        WebBrowser guideVideoBrowser;
+        WowButton guideVideoOpen;
+
+        // Resize only the player viewport and its chrome. Recreating WebBrowser here would
+        // reload the document and reset the user's current video/playhead.
+        void LayoutGuideVideo()
+        {
+            if (gVideo == null || guideVideoFrame == null || guideVideoFrame.IsDisposed ||
+                guideVideoBrowser == null || guideVideoBrowser.IsDisposed) return;
+            float sectionZoom = Theme.SectionZoom;
+            int margin = Theme.Px(6), gap = Theme.Px(4);
+            int starSize = Math.Max(24, (int)Math.Round(28 * sectionZoom));
+            int headerHeight = Math.Max(starSize, Theme.Px(24));
+            int right = Math.Max(margin, PW - margin);
+            if (guideFavoriteStar != null && !guideFavoriteStar.IsDisposed)
+            {
+                var star = guideFavoriteStar;
+                star.Bounds = new Rectangle(Math.Max(margin, right - starSize), margin, starSize, starSize);
+                float fontSize = 15 * sectionZoom * 96f / 72f;
+                if (Math.Abs(star.Font.Size - fontSize) > .05f)
+                {
+                    Font previous = star.Font;
+                    star.Font = new Font("Segoe UI Symbol", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+                    previous.Dispose();
+                }
+                right = star.Left - gap;
+            }
+            if (guideVideoOpen != null && !guideVideoOpen.IsDisposed)
+            {
+                int buttonHeight = Theme.Px(24);
+                int buttonWidth = Math.Min(Theme.Px(137), Math.Max(1, right - margin));
+                guideVideoOpen.SetDisplayZoom(sectionZoom);
+                guideVideoOpen.Bounds = new Rectangle(Math.Max(margin, right - buttonWidth),
+                    margin + (headerHeight - buttonHeight) / 2, buttonWidth, buttonHeight);
+            }
+            guideTabsBottom = margin + headerHeight + gap;
+            guideVideoFrame.Bounds = new Rectangle(margin, guideTabsBottom,
+                Math.Max(1, PW - 2 * margin), Math.Max(1, PH - guideTabsBottom - margin));
+        }
+
         void GuideVideoPlayer(GuideVideo v)
         {
             ClearPanel(v.Title.Length > 0 ? v.Title : "Video");
-            int bw = (int)(190 * Theme.Zoom);
             string url = v.Url;
-            WebBrowser web = null;
+            guideVideoOpen = null;
             // FULLSCREEN: the launcher's own button (it does not rely on the page's), the video over the whole screen at
             // the same point. The guide's own videos (hosted with the launcher's releases) have no OPEN IN BROWSER.
             // no FULLSCREEN button of the launcher's own (Slimjim, 2026-10-28): the player's own fullscreen button does it
             if (!VideoView.OwnHosted(url))
-                Put(new WowButton("OPEN IN BROWSER ›", delegate { Util.OpenInShell(url); }, 190, 32, 9), PW - 20 - bw, 8);
-            guideTabsBottom = 8 + (int)(32 * Theme.Zoom) + 8;
-            var frame = new Bordered(Theme.CardEdge, 1);
-            frame.Bounds = new Rectangle(20, GuideTop, PW - 40, PH - 12 - GuideTop);
-            panel.Controls.Add(frame);
-            web = VideoView.Make(v);
-            web.Dock = DockStyle.Fill;
-            frame.Controls.Add(web);
+                guideVideoOpen = Put(new WowButton("OPEN IN BROWSER ›", delegate { Util.OpenInShell(url); }, 190, 32, 9), 0, 0);
+            guideVideoFrame = new Bordered(Theme.CardEdge, 1);
+            panel.Controls.Add(guideVideoFrame);
+            guideVideoBrowser = VideoView.Make(v);
+            guideVideoBrowser.Dock = DockStyle.Fill;
+            guideVideoFrame.Controls.Add(guideVideoBrowser);
+            LayoutGuideVideo();
         }
 
         sealed class TalentBuildImportDialog : WowDialog
@@ -2142,7 +2241,7 @@ namespace AzerothLauncher
             {
                 // Keep the compact tree column against the right boundary, leaving the
                 // remaining width to the article. Entries indent normally within it.
-                int preferredNavWidth = Math.Max(88, (int)(110 * Theme.Zoom));
+                int preferredNavWidth = Math.Max(96, (int)(125 * Theme.Zoom));
                 // The sidebar owns the strip up to the panel's right border. Reserve
                 // enough article width to keep paragraphs readable at narrow sizes.
                 navWidth = Math.Min(preferredNavWidth, Math.Max(92, PW - 190));
@@ -2230,6 +2329,7 @@ namespace AzerothLauncher
         void UpdateClassNavigation(ScrollPanel sp)
         {
             if (sp == null || sp.IsDisposed) return;
+            string previous=classNavCurrent;
             string active = classArticleName ?? "";
             int cutoff = -sp.AutoScrollPosition.Y + 32, best = -1;
             foreach (var pair in classSectionTargets)
@@ -2258,6 +2358,18 @@ namespace AzerothLauncher
                 Font[] styles = pair.Value.Tag as Font[];
                 if (styles != null) pair.Value.Font = styles[current || branchRoot || selected ? 1 : 0];
                 pair.Value.Invalidate();
+            }
+            Label activeLink;
+            if(previous!=active&&classNavLinks.TryGetValue(active,out activeLink))
+            {
+                var tree=activeLink.Parent as GuideContentsPanel;
+                if(tree!=null&&!tree.IsDisposed)
+                {
+                    int offset=-tree.AutoScrollPosition.Y;
+                    if(activeLink.Top<0)tree.ScrollTo(offset+activeLink.Top);
+                    else if(activeLink.Bottom>tree.ClientSize.Height)
+                        tree.ScrollTo(offset+activeLink.Bottom-tree.ClientSize.Height);
+                }
             }
         }
 
@@ -2356,7 +2468,7 @@ namespace AzerothLauncher
                     int labelWidth = Math.Max(1, width - left);
                     int labelHeight = Math.Max(15, TextRenderer.MeasureText(text, bold, new Size(labelWidth, 100), TextFormatFlags.WordBreak | TextFormatFlags.NoPadding).Height + 2);
                     // Keep complete rows; the tree can scroll on short windows without clipping labels.
-                    var link = new Label { Text = text, AutoSize = false, Height = labelHeight, Width = labelWidth,
+                    var link = new GuideContentsLabel(bold) { Text = text, AutoSize = false, Height = labelHeight, Width = labelWidth,
                         Left = left, Top = y, UseMnemonic = false, AutoEllipsis = false,
                         TextAlign = ContentAlignment.TopLeft,
                         BackColor = Color.Transparent, ForeColor = Theme.GoldDim, Cursor = Cursors.Hand,
@@ -2402,6 +2514,7 @@ namespace AzerothLauncher
                         BeginInvoke((MethodInvoker)delegate { if (!IsDisposed) render(); });
                 };
                 nav.Controls.Add(wikiArrow);
+                treeRows.Find(delegate(GuideTreeRow row){return row.Key=="WikiRoot";}).Marker=wikiArrow;
                 if (wikiOpen)
                 {
                     Action toggleClasses = delegate
@@ -2425,6 +2538,7 @@ namespace AzerothLauncher
                         Cursor = Cursors.Hand, TextAlign = ContentAlignment.TopLeft };
                     classArrow.Click += delegate { toggleClasses(); };
                     nav.Controls.Add(classArrow);
+                    treeRows.Find(delegate(GuideTreeRow row){return row.Key=="Classes";}).Marker=classArrow;
                     if (classesOpen) foreach (string cls in BuilderClasses)
                     {
                     string selectedClass = cls;
@@ -2504,6 +2618,19 @@ namespace AzerothLauncher
                         if (transmogStyles != null) transmogLink.Font = transmogStyles[1];
                     }
                 }
+                // Prefix arrows and narrowed root labels are final now. Reflow rows only
+                // after those changes, retaining each intentional gap between groups.
+                int nextTop=8;
+                for(int index=0;index<treeRows.Count;index++)
+                {
+                    GuideTreeRow row=treeRows[index];
+                    int gap=index+1<treeRows.Count?treeRows[index+1].Top-row.Top-row.Height:1;
+                    Label link=classNavLinks[row.Key];
+                    row.Top=nextTop;row.Height=link.Height;link.Top=nextTop;
+                    if(row.Marker!=null){row.Marker.Top=nextTop;row.Marker.Height=link.Height;}
+                    nextTop+=link.Height+gap;
+                }
+                nav.AutoScrollMinSize=new Size(0,nextTop);
                 UpdateClassNavigation(sp);
                 nav.Invalidate();
             };
@@ -3336,11 +3463,11 @@ namespace AzerothLauncher
             {
                 Pause(web);
                 var full = new Form();
+                full.AutoScaleMode = AutoScaleMode.None;
                 full.FormBorderStyle = FormBorderStyle.None;
                 full.StartPosition = FormStartPosition.Manual;
                 full.Bounds = Screen.FromControl(web).Bounds;
                 full.BackColor = Color.Black;
-                full.TopMost = true;
                 full.ShowInTaskbar = false;
                 full.KeyPreview = true;
                 full.Icon = Theme.AppIcon;
@@ -3360,7 +3487,16 @@ namespace AzerothLauncher
                     fweb.Dispose();
                     Resume(web, backAt, backVol);
                 };
-                full.Show();
+                // Keep fullscreen owned by the actual launcher, including when the
+                // WebBrowser lives inside the non-top-level secondary Form. Other
+                // applications can still come forward when the player Alt+Tabs.
+                Form owner = null;
+                for (Control parent = web; parent != null; parent = parent.Parent)
+                {
+                    Form form = parent as Form;
+                    if (form != null && form.TopLevel) { owner = form; break; }
+                }
+                if (owner != null) full.Show(owner); else full.Show();
                 full.Activate();
             }
         }

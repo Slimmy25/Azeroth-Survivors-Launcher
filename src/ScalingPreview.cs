@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AzerothLauncher
@@ -28,6 +29,7 @@ namespace AzerothLauncher
             Action<bool,string> check=delegate(bool condition,string label)
             {
                 checks.Add((condition?"PASS ":"FAIL ")+label);
+                File.WriteAllLines(Path.Combine(output,"checks.txt"),checks.ToArray());
                 if(!condition) throw new InvalidOperationException(label);
             };
             Directory.CreateDirectory(output);
@@ -38,6 +40,9 @@ namespace AzerothLauncher
                 app.Location = new Point(-30000, -30000);
                 app.setupAsked = true;
                 app.Show();
+                // This renderer pumps with DoEvents rather than Application.Run. Install
+                // the UI context explicitly so deferred button actions stay on this thread.
+                System.Threading.SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
                 app.ShowSide();
                 app.changingDisplay=true;
                 app.Cfg.Set("interface_scale",preference.ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -124,6 +129,19 @@ namespace AzerothLauncher
                         app.current="Guide";app.SetGuideView(classes,page);capture("class-"+cls.ToLowerInvariant());
                     }
                     app.current="Guide"; app.SetGuideView(classes,paladin); capture("class-paladin");
+                    foreach(var pair in app.classNavLinks)
+                    {
+                        var label=pair.Value as GuideContentsLabel;
+                        if(label!=null)check(label.LinesFit&&label.Height>=label.WrappedHeight,"sidebar wraps complete text: "+pair.Key);
+                    }
+                    Control codexTarget;
+                    if(app.classSectionTargets.TryGetValue("Codex (Necklaces)",out codexTarget))
+                    {
+                        app.NavigateClassArticleToControl(codexTarget);
+                        Label activeLink=app.classNavLinks["Codex (Necklaces)"];
+                        check(activeLink.Top>=0&&activeLink.Top<activeLink.Parent.ClientSize.Height,"active tree section stays in view");
+                        capture("class-sidebar-codex");
+                    }
                     app.classArticleScroll.ScrollTo(Theme.Px(240));
                     int prior=-app.classArticleScroll.AutoScrollPosition.Y;
                     app.NavigateClassArticleTo(app.classArticleScroll,prior+Theme.Px(100));
@@ -194,6 +212,7 @@ namespace AzerothLauncher
                     check(app.setupCloud==false,"setup cloud remains opt-in at page "+page);
                 }
                 File.WriteAllLines(Path.Combine(output,"checks.txt"),checks.ToArray());
+                File.WriteAllText(Path.Combine(output,"completed.txt"),"Display scaling preview completed successfully.");
                 app.quitting = true;
             }
         }
@@ -218,14 +237,17 @@ namespace AzerothLauncher
             plannerSlots.Clear(); ApplyPlannerJewelry("Warrior",builds[0].Gear);
             check(plannerSlots.Count>=8,"ASBuilder code restores selected gear");
             if(jewel!=null) check(plannerSlots.ContainsKey("Neck"),"neck slot maps to ASBuilder amulet and back");
-            BuildPanel("Guide");
+            gPlanner=true;gBuilder=false;gTalents=null;current="Guide";PlannerClass("Warrior");BuildPanel("Guide");
+            RunScalingGearRows(check);
             ComboBox saved=FindScalingControl<ComboBox>(panel);
             check(saved!=null,"shared save index exists");
             saved.Text="Scaling QA";
             InvokeScalingButton(FindScalingButton(panel,"SAVE"));
             check(SavedTalentBuilds(Config.Load()).Exists(delegate(TalentBuildChoice value){return value.Class=="Warrior"&&value.Name=="Scaling QA";}),"Save action records class-scoped build in isolated memory");
+            var savedChoice=saved.SelectedItem as TalentBuildChoice;
+            check(savedChoice!=null&&savedChoice.Class=="Warrior"&&savedChoice.Gear.Count>=8,"saved profile index retains the selected class gear");
             plannerSlots.Clear();
-            InvokeScalingButton(FindScalingButton(panel,"LOAD"));
+            InvokeScalingButton(FindScalingButton(saved.Parent,"LOAD"));
             check(plannerSlots.Count>=8,"Load action restores saved equipment");
             ShowTheoryCodeOverlay("Warrior",false);
             TextBox input=FindScalingControl<TextBox>(panel);
@@ -243,9 +265,54 @@ namespace AzerothLauncher
             check(displayLayout.Dpi==192&&Math.Abs(Theme.DisplayScale-new DisplayLayout(new Rectangle(-30000,-30000,3840,2120),192,ReadInterfaceScale()).Scale)<.001f,"DPI change rebuilds display density");
             check(plannerSlots.Count>=8,"DPI change preserves equipped gear");
             check(Left<0&&Top<0,"off-screen DPI test stays off-screen");
+            string oldPreference=Cfg.Str("interface_scale");
+            Cfg.Set("interface_scale","1");
+            var wide=new Rectangle(-30000,-30000,3840,2120);
+            changingDisplay=true;MinimumSize=Size.Empty;displayLayout=new DisplayLayout(wide,96,1);
+            Theme.DisplayScale=Theme.Zoom=displayLayout.Scale;Theme.DisplayDpi=96;
+            Bounds=new Rectangle(-29000,-29000,1100,690);changingDisplay=false;
+            Rectangle beforeBounds=Bounds;
+            var targetLayout=new DisplayLayout(wide,192,1);
+            var expectedBounds=targetLayout.Clamp(new Rectangle(beforeBounds.Location,new Size(beforeBounds.Width*2,beforeBounds.Height*2)));
+            ChangeDisplay(wide,192,true,beforeBounds.Location);
+            check(Bounds==expectedBounds,"DPI increase scales captured bounds once before MinimumSize changes");
+            IntPtr nativeRect=System.Runtime.InteropServices.Marshal.AllocHGlobal(16);
+            try
+            {
+                int[][] samples={new[]{-2200,-1200,-200,-100},new[]{1500,100,3700,1480}};
+                foreach(int[] coordinates in samples)
+                {
+                    for(int i=0;i<4;i++)System.Runtime.InteropServices.Marshal.WriteInt32(nativeRect,i*4,coordinates[i]);
+                    check(ParseSuggestedDisplayBounds(nativeRect)==Rectangle.FromLTRB(coordinates[0],coordinates[1],coordinates[2],coordinates[3]),"native DPI RECT retains full bounds including negative origins");
+                }
+            }
+            finally{System.Runtime.InteropServices.Marshal.FreeHGlobal(nativeRect);}
+            Cfg.Set("interface_scale",oldPreference);
             changingDisplay=true; displayLayout=original; Theme.DisplayScale=oldScale; Theme.DisplayDpi=original.Dpi; Theme.Zoom=oldScale;
             MinimumSize=Size.Empty; ClientSize=originalClient; changingDisplay=false;
             LayoutResponsiveDisplay(true);
+            RunScalingVideoLayout(check);
+        }
+
+        void RunScalingVideoLayout(Action<bool,string> check)
+        {
+            // A blank local browser exercises native hosting/retention without contacting
+            // a video provider or starting visible playback during off-screen QA.
+            gPlanner=gBuilder=false;gTalents=null;current="Guide";
+            gVideo=new GuideVideo {Title="Scaling video fixture",Url="about:blank"};
+            ClearPanel("Video");
+            guideVideoFrame=new Bordered(Theme.CardEdge,1);panel.Controls.Add(guideVideoFrame);
+            guideVideoBrowser=new WebBrowser {Dock=DockStyle.Fill};guideVideoFrame.Controls.Add(guideVideoBrowser);
+            guideVideoOpen=Put(new WowButton("OPEN IN BROWSER ›",delegate{},190,32,9),0,0);
+            AddGuideFavoriteStar();LayoutGuideVideo();
+            var browser=guideVideoBrowser;Size previous=ClientSize;
+            changingDisplay=true;ClientSize=new Size(Math.Max(650,previous.Width-200),Math.Max(450,previous.Height-80));changingDisplay=false;
+            LayoutResponsiveDisplay(true);
+            check(browser==guideVideoBrowser&&!browser.IsDisposed,"video resize keeps the same native browser instance");
+            check(panel.ClientRectangle.Contains(guideVideoOpen.Bounds)&&panel.ClientRectangle.Contains(guideFavoriteStar.Bounds),"video controls stay inside resized pane");
+            check(panel.ClientRectangle.Contains(guideVideoFrame.Bounds),"video viewport stays inside resized pane");
+            changingDisplay=true;ClientSize=previous;changingDisplay=false;
+            gVideo=null;BuildPanel("Guide");LayoutResponsiveDisplay(true);
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -286,10 +353,17 @@ namespace AzerothLauncher
             }
             return null;
         }
-        static void InvokeScalingButton(WowButton button)
+        void InvokeScalingButton(WowButton button)
         {
             if(button==null)throw new InvalidOperationException("Missing test action");
-            Action action=(Action)typeof(WowButton).GetField("Pressed",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(button);
+            Point center=new Point(button.Width/2,button.Height/2);
+            if(button.Grayed||!button.Visible||!button.Enabled||button.Parent.GetChildAtPoint(new Point(button.Left+center.X,button.Top+center.Y))!=button)
+                throw new InvalidOperationException("Button is not reachable: "+button.Label);
+            // The native hit rectangle is checked above. Invoke the exact attached action
+            // synchronously here; gear row selection separately exercises real mouse-up hit testing.
+            var eventField=typeof(WowButton).GetField("Pressed",BindingFlags.Instance|BindingFlags.NonPublic);
+            var action=eventField==null?null:eventField.GetValue(button) as Action;
+            if(action==null)throw new InvalidOperationException("Button has no action: "+button.Label);
             action();
         }
 
