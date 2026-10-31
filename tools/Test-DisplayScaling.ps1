@@ -12,7 +12,7 @@ foreach ($display in @(@(1366,728), @(1920,1040), @(2560,1400), @(3840,2080), @(
     foreach ($dpi in @(96,120,144,168,192)) {
         $name = "$($display[0])x$($display[1])-$dpi"
         $destination = Join-Path $Output $name
-        $arguments = "--preview-scaling $destination --display $($display[0]) $($display[1]) $dpi"
+        $arguments = "--preview-scaling `"$destination`" --display $($display[0]) $($display[1]) $dpi"
         $timer = [System.Diagnostics.Stopwatch]::StartNew()
         $process = Start-Process -FilePath $exe -ArgumentList $arguments -WindowStyle Hidden -PassThru
         if (-not $process.WaitForExit(90000)) { $process.Kill(); throw "Preview timed out: $name" }

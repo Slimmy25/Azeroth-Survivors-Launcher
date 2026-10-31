@@ -2736,7 +2736,7 @@ namespace AzerothLauncher
                 var head = custom.Length > 0 ? UI.Text(custom, 11, FontStyle.Bold, Theme.Gold, Theme.Panel, 0, false)
                                              : UI.Text(s == "none" ? "No profile [Recommended]" : "Profile " + s, 11, FontStyle.Bold, Theme.Gold, Theme.Panel, 0);
                 head.Size = VStack.Measure(head);
-                if (head.Width > (int)(160 * Theme.Zoom)) { head.AutoSize = false; head.AutoEllipsis = true; head.Width = (int)(160 * Theme.Zoom); }
+                if (head.Width > (int)(160 * Theme.Zoom)) { head.MaximumSize=new Size((int)(160*Theme.Zoom),0); head.Size=VStack.Measure(head); }
                 py -= head.Height;
                 Put(head, cx, py);
                 if (s != "none")

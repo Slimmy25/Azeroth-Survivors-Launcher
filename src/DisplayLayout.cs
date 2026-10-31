@@ -46,6 +46,12 @@ namespace AzerothLauncher
         [DllImport("shcore.dll")] static extern int SetProcessDpiAwareness(int value);
         [DllImport("user32.dll")] static extern bool SetProcessDPIAware();
         [DllImport("user32.dll")] static extern uint GetDpiForWindow(IntPtr window);
+        [DllImport("user32.dll")] static extern IntPtr GetThreadDpiAwarenessContext();
+        [DllImport("user32.dll")] static extern bool AreDpiAwarenessContextsEqual(IntPtr first,IntPtr second);
+        public static string Awareness
+        {
+            get {try{return AreDpiAwarenessContextsEqual(GetThreadDpiAwarenessContext(),new IntPtr(-4))?"PerMonitorV2":"fallback";}catch(EntryPointNotFoundException){return "legacy fallback";}}
+        }
         public static void Enable()
         {
             try { if (SetProcessDpiAwarenessContext(new IntPtr(-4))) return; } catch (EntryPointNotFoundException) { }
@@ -327,7 +333,7 @@ namespace AzerothLauncher
                 if (!CompactDisplay) WeeklyRecap(graphics);
                 if (dlActive && dlTotal > 0)
                 {
-                    var bar = new Rectangle(U(16), H-U(28), Math.Max(20, W-U(165)), U(10));
+                    var bar = new Rectangle(U(16), FooterTop+U(8), Math.Max(20, W/3-U(32)), U(10));
                     using (var track = new SolidBrush(Theme.Panel)) graphics.FillRectangle(track, bar);
                     using (var fill = new SolidBrush(Theme.GoldDim)) graphics.FillRectangle(fill, bar.X, bar.Y, (int)(bar.Width*Math.Min(1, dlDone/(double)dlTotal)), bar.Height);
                 }
@@ -337,9 +343,9 @@ namespace AzerothLauncher
                     ? Lang.T("Downloading the game") + ": " + Math.Min(100, dlDone * 100 / dlTotal) + "% (" + Util.FmtSize(dlDone) + " / " + Util.FmtSize(dlTotal) + ")"
                     : Lang.T("Downloading the game") + ": " + Util.FmtSize(dlDone);
                 using (var color = new SolidBrush(Theme.Hex("#fff2b0")))
-                using (var format = new StringFormat { Alignment = StringAlignment.Far, Trimming = StringTrimming.EllipsisWord })
+                using (var format = new StringFormat { Alignment = StringAlignment.Far, Trimming = StringTrimming.EllipsisWord, FormatFlags=StringFormatFlags.NoWrap })
                     graphics.DrawString(message, Theme.F(9, FontStyle.Italic), color,
-                        new RectangleF(U(12), FooterTop + U(5), W - U(24), U(25)), format);
+                        new RectangleF(dlActive?W/3+U(16):U(12), FooterTop + U(5), dlActive?W-W/3-U(28):W-U(24), U(25)), format);
             }
             finally { Theme.Zoom = oldZoom; }
         }

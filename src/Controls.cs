@@ -1292,6 +1292,17 @@ namespace AzerothLauncher
             return c;
         }
 
+        public void RescaleSpacing(float ratio)
+        {
+            MinWidth=(int)Math.Round(MinWidth*ratio);
+            foreach(var item in items)
+            {
+                Padding margin=item.M;
+                item.M=new Padding((int)Math.Round(margin.Left*ratio),(int)Math.Round(margin.Top*ratio),(int)Math.Round(margin.Right*ratio),(int)Math.Round(margin.Bottom*ratio));
+                item.NaturalWrap=(int)Math.Round(item.NaturalWrap*ratio);
+            }
+        }
+
         public void ClearItems()
         {
             SuspendLayout();
@@ -1349,7 +1360,8 @@ namespace AzerothLauncher
     // Children left to right, centred on one line.
     public class HRow : Panel
     {
-        readonly int rowGap;
+        int rowGap;
+        public void RescaleSpacing(float ratio) {rowGap=(int)Math.Round(rowGap*ratio);}
         public void WrapAt(int width)
         {
             int x=0,y=0,rowHeight=0,used=0;
@@ -1396,13 +1408,10 @@ namespace AzerothLauncher
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            if (pic == null) { g.Clear(Color.Black); return; }
-            Rectangle r = Rectangle.Intersect(e.ClipRectangle, new Rectangle(0, 0, pic.Width, pic.Height));
-            g.CompositingMode = CompositingMode.SourceCopy;
-            g.InterpolationMode = InterpolationMode.NearestNeighbor;
-            g.PixelOffsetMode = PixelOffsetMode.Half;
-            if (r.Width > 0 && r.Height > 0) g.DrawImage(pic, r, r, GraphicsUnit.Pixel);
+            if(pic==null){e.Graphics.Clear(Color.Black);return;}
+            // This is only the dimmed, inactive backdrop; the dialog itself still draws native-resolution text.
+            e.Graphics.InterpolationMode=InterpolationMode.HighQualityBicubic;
+            e.Graphics.DrawImage(pic,ClientRectangle);
         }
 
         protected override void Dispose(bool disposing)
@@ -1417,6 +1426,46 @@ namespace AzerothLauncher
         protected readonly VStack Body;
         readonly Panel frame;
         public Action BackAction;
+        float dialogDensity=Theme.DisplayScale;
+        readonly List<Font> ownedScaledFonts=new List<Font>();
+
+        void UpdateDialogDensity()
+        {
+            if(Math.Abs(dialogDensity-Theme.DisplayScale)<.001f)return;
+            float ratio=Theme.DisplayScale/dialogDensity;
+            dialogDensity=Theme.DisplayScale;
+            var controls=new List<Control>();
+            Action<Control> collect=null;
+            collect=delegate(Control parent){foreach(Control child in parent.Controls){controls.Add(child);collect(child);}};
+            collect(Body);
+            Body.SuspendLayout();
+            try
+            {
+                Body.RescaleSpacing(ratio);
+                foreach(Control child in controls)
+                {
+                    child.Bounds=new Rectangle((int)Math.Round(child.Left*ratio),(int)Math.Round(child.Top*ratio),Math.Max(1,(int)Math.Round(child.Width*ratio)),Math.Max(1,(int)Math.Round(child.Height*ratio)));
+                    if(child.MaximumSize.Width>0)child.MaximumSize=new Size((int)Math.Round(child.MaximumSize.Width*ratio),0);
+                    WowButton button=child as WowButton;
+                    if(button!=null)button.SetDisplayZoom(Theme.SectionZoom);
+                    else if(child is Label||child is TextBoxBase||child is ComboBox||child is CheckBox)
+                    {
+                        Font old=child.Font;
+                        float pixels=old.Unit==GraphicsUnit.Pixel?old.Size:old.Size*96f/72f;
+                        var font=new Font(old.FontFamily,pixels*ratio,old.Style,GraphicsUnit.Pixel);
+                        ownedScaledFonts.Add(font);child.Font=font;
+                    }
+                    var row=child as HRow;if(row!=null)row.RescaleSpacing(ratio);
+                }
+            }
+            finally{Body.ResumeLayout();}
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if(disposing){foreach(Font font in ownedScaledFonts)font.Dispose();ownedScaledFonts.Clear();}
+        }
 
         public WowDialog(string title)
         {
@@ -1540,7 +1589,8 @@ namespace AzerothLauncher
         static bool HostUsable()
         {
             Form h = ActiveHost();
-            return h != null && !h.IsDisposed && h.Visible && h.WindowState != FormWindowState.Minimized && !h.InvokeRequired;
+            // An inactive/minimized launcher still owns its questions. Never fall back to an unrelated top-level popup.
+            return h != null && !h.IsDisposed && h.ClientSize.Width>0 && !h.InvokeRequired;
         }
 
         public static Form ActiveHost()
@@ -1596,6 +1646,7 @@ namespace AzerothLauncher
             {
                 if (shade == null) return;
                 int w = Math.Max(1, shade.ClientSize.Width - 16), ht = Math.Max(1, shade.ClientSize.Height - 16);
+                UpdateDialogDensity();
                 Body.MaxWidth=Math.Max(30,w-4); Body.Arrange(0);
                 frame.Size = new Size(Math.Min(Body.Width + 4, w), Math.Min(Body.Height + 4, ht));
                 ClientSize = frame.Size;
@@ -1605,7 +1656,7 @@ namespace AzerothLauncher
             CenterInShade();
             Show();
             BringToFront();
-            if(!LauncherApp.PreviewMode) Select();
+            if(!LauncherApp.PreviewMode&&Host!=null&&(Host.ContainsFocus||Form.ActiveForm==Host)) Select();
             return true;
         }
 

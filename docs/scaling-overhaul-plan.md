@@ -1,6 +1,6 @@
 # Display scaling overhaul plan
 
-Status: implementation and local QA are on `feature/display-scaling-overhaul`. Public main/release are unchanged. See `scaling-overhaul-results.md` for measured results and the remaining hardware acceptance gate.
+Status: implementation and local QA are on `feature/display-scaling-overhaul`. Public main/release are unchanged. The implementation and simulated display/DPI acceptance suite are complete; physical mixed-monitor acceptance is still required before merging or release. See `scaling-overhaul-results.md` for measured results and limits.
 
 ## Goal
 
@@ -10,7 +10,7 @@ Readable UI on small laptops, 1080p, 1440p, ultrawide and 4K monitors without re
 
 - src/Launcher.cs creates a fixed-size window with FormBorderStyle.FixedSingle and ClientSize based on W/H.
 - src/Controls.cs uses a fixed Theme.SectionZoom of 0.72 in secondary sections.
-- app.manifest deliberately keeps Windows bitmap scaling because the UI mixes custom GDI+ drawing, native controls and fixed coordinates.
+- Baseline behavior before this overhaul relied on Windows bitmap scaling because the UI mixed custom GDI+ drawing, native controls and fixed coordinates. The current branch instead opts into native per-monitor awareness before creating windows and leaves automatic WinForms rescaling disabled.
 - Gear, talent, guide and popup layouts use several independently calculated pixel rectangles. Some fonts and custom controls capture zoom during construction.
 - Simply enabling DPI awareness or enlarging the window will not resolve these independently computed layouts. The previous graphics branch demonstrated clipping and mismatched font/control sizes.
 

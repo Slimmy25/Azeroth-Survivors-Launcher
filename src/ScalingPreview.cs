@@ -47,7 +47,7 @@ namespace AzerothLauncher
                 app.ClientSize=app.displayLayout.InitialClientSize;
                 app.changingDisplay=false;
                 app.LayoutResponsiveDisplay(true);
-                File.WriteAllText(Path.Combine(output,"metrics.txt"),"Native host DPI="+NativeDisplay.Dpi(app)+"; "+ "Simulated work area: "+width+"x"+height+"; DPI="+dpi+"; scale="+Theme.DisplayScale+"; client="+app.ClientSize);
+                File.WriteAllText(Path.Combine(output,"metrics.txt"),"Native awareness="+NativeDisplay.Awareness+"; host DPI="+NativeDisplay.Dpi(app)+"; "+ "Simulated work area: "+width+"x"+height+"; DPI="+dpi+"; scale="+Theme.DisplayScale+"; client="+app.ClientSize);
 
                 Action<string> capture = delegate(string name)
                 {
@@ -118,6 +118,11 @@ namespace AzerothLauncher
                 if(classes>=0)
                 {
                     int paladin=Data.Guide[classes].Pages.FindIndex(delegate(GuidePage page){return page.Title=="Paladin";});
+                    if(full)foreach(string cls in Items.Classes)
+                    {
+                        int page=Data.Guide[classes].Pages.FindIndex(delegate(GuidePage value){return value.Title==cls;});
+                        app.current="Guide";app.SetGuideView(classes,page);capture("class-"+cls.ToLowerInvariant());
+                    }
                     app.current="Guide"; app.SetGuideView(classes,paladin); capture("class-paladin");
                     app.classArticleScroll.ScrollTo(Theme.Px(240));
                     int prior=-app.classArticleScroll.AutoScrollPosition.Y;
@@ -160,7 +165,18 @@ namespace AzerothLauncher
                     check(dialog.Parent.ClientRectangle.Contains(dialog.Bounds),"message dialog stays inside secondary container");
                     capture("message-dialog");
                     CheckScalingControls(dialog,check);
+                    var heading=FindScalingControl<Label>(dialog);float fontSize=heading.Font.Size;
+                    DisplayLayout before=app.displayLayout;Size beforeClient=app.ClientSize;
+                    app.ChangeDisplay(new Rectangle(-30000,-30000,3840,2120),before.Dpi+48,true);
+                    Application.DoEvents();
+                    check(dialog.Parent.ClientRectangle.Contains(dialog.Bounds),"open dialog remains contained after DPI change");
+                    check(Math.Abs(heading.Font.Size-fontSize*Theme.DisplayScale/before.Scale)<1,"open dialog fonts follow changed density");
+                    capture("message-dialog-dpi-change");
                     dialog.Close();
+                    app.changingDisplay=true;app.displayLayout=before;
+                    Theme.DisplayScale=before.Scale;Theme.DisplayDpi=before.Dpi;Theme.Zoom=before.Scale;
+                    app.MinimumSize=Size.Empty;app.ClientSize=beforeClient;app.changingDisplay=false;
+                    app.LayoutResponsiveDisplay(true);
                 }
                 app.Installing=true;app.dlActive=true; app.LayoutDownloadClosePrompt();
                 app.closeDownloadCard.Visible=true;app.closeDownloadCard.BringToFront();capture("close-download");
