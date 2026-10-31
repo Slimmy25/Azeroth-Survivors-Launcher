@@ -50,8 +50,8 @@ namespace AzerothLauncher
 
         public static readonly Conflict[] Conflicts =
         {
-            // two run-statistics addons that don't need to be on together. Maidenhead's Azeroth Stats always has the right
-            // of way: when both are found on, AZS Stats is the one switched off (Slimjim, 2026-10-28)
+            // Transition rule for older installs: if both the replacement and legacy tracker exist, leave Azeroth Stats
+            // enabled and switch off AZS Stats. The legacy folder and its SavedVariables are preserved.
             new Conflict { Preferred = new[] { "AzerothStats" }, Other = new[] { "AZSStats" },
                            Why = "both record your runs and statistics" },
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "AZSMinorMods" },

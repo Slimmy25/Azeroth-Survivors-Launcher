@@ -1,5 +1,9 @@
 # v3.08 (2026-10-30)
 
+- Redesigned paired talent and gear tools: shared class selection, temporary class drafts, compact saves and import/export overlays, scrollable equipment and class-video links.
+- Replaced the bundled AZS Stats tracker with optional Azeroth Stats integration, preserving legacy files as read-only fallback data.
+
+- About Launcher now prominently credits ASBuilder by Cadoky, Azeroth Stats by Maidenhead, and Keijin's ASDataSync cloud-save foundation, with project links.
 - The Guide button now opens the Wiki introduction. A separate New Player Guide button opens the new-player section.
 - The Wiki introduction can be collapsed for navigation testing. Classes, Items and Transmog appear as peer sections, with class trees opening and closing interactively.
 - Items open directly to the shared rings, trinkets and amulets passage. Transmog's related passages are combined into one Wiki page.

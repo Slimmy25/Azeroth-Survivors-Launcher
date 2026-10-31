@@ -120,6 +120,7 @@ Video by Des (youtube.com/@Dessiq). All credit for the build and the video goes 
 # During a run
 - Your spells and your racial ability cast on their own. Your job is to move, dodge and pick upgrades.
 - 1, 2, 3: pick a card when you level up. R: reroll the cards.
+- X: skip a level-up or cache hand when its Skip button is available. Change this under Key Bindings > Azeroth Survivors > Skip. Outside cards, X still makes your hero sit or stand.
 - Y: open your stored level-ups (when Store Level-Ups is on).
 - Escape: the menu (Back, Options, End Run).
 
@@ -143,6 +144,10 @@ Gamepads are supported. On menus, the D-pad or left stick moves between buttons,
 - Graphics > Level-Up Rays: turn off the spinning rays behind the level-up cards.
 - Controls > Open Caches by Clicking: walking over a cache no longer buys it; right-click it instead.
 - Interface: turn parts of the run's screen on or off: the run clock and next-boss line, the boss and guardian bars, the kills and gold box, your spells and jewelry, the banners in the middle of the screen, the boss loot notice and the damage meter.
+
+# Nameplates and local time
+Options > Combat > Nameplate Layout changes at once, even during a run. Stacking spreads enemy nameplates apart for readability; Overlapping keeps each plate directly above its enemy.
+A clock beneath the minimap shows your device's local time: 12-hour time in English and 24-hour time in other languages. It moves and hides with the minimap and follows HUD Scale. This is separate from the run timer.
 
 # The damage meter
 The meter window has three views: Damage Done (every spell, pet, talent and item, with its share of the run), Healing Done (the health each source gave you, overhealing left out) and Boss Damage (the last boss fight only). Lines in blue are a talent's or amulet's own damage. Its Reset button only clears the window: the run's numbers are kept.
@@ -449,6 +454,9 @@ Each level-up deals you three cards. Pick one with the mouse or with 1, 2 or 3. 
 - Press R (or the Reroll button) for a fresh hand.
 - Every run gives you three free rerolls. After that, rerolls cost gold, and the price rises with each one.
 - Perks from the Rewards tab add more free rerolls, let you banish a card for the rest of the run, or skip a hand for gold.
+
+# Skipping cards
+When the Skip button is available, press X to skip the hand, including cache cards. The button shows the current binding; change it under Key Bindings > Azeroth Survivors > Skip. This key acts on cards only.
 
 # Stored level-ups
 With Options > Controls > Store Level-Ups switched on, a level-up no longer pauses the fight. Your levels wait until you open them with the Level Up! button above your action bar, or with Y. They are offered one after another until none are left. Switching the setting off offers every stored level at once.

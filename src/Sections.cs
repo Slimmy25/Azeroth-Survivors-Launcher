@@ -1264,7 +1264,7 @@ namespace AzerothLauncher
                 ShowWindowFront();
                 return;
             }
-            if (name == "Stats" && !StatsAddonActive())     // the Stats page needs AZS Stats on
+            if (name == "Stats" && !StatsAddonActive())     // the Stats page needs a supported stats addon on
             {
                 SetStatus(StatsNeedAddon);
                 if (current == "Stats") { current = null; ShowSection("Community"); }
@@ -1328,7 +1328,7 @@ namespace AzerothLauncher
             HideLostHelpInline();
             if (name != "Community") communityPlaying = null;   // another section: the Community video is left
             // the talent trees left (another page, class or section): their test build starts empty next time
-            if (name != "Guide" || gTalents == null || gTalents != liveBuildCls) { liveBuild = null; liveBuildCls = null; }
+            if (name != "Guide" || (!gPlanner && (gTalents == null || gTalents != liveBuildCls))) { liveBuild = null; liveBuildCls = null; }
             bool freeze = !PreviewMode && name != "Community";  // Community's player window is another program's
             if (freeze) Freeze(true);
             panel.SuspendLayout();
@@ -1362,7 +1362,7 @@ namespace AzerothLauncher
                 restoreScrollPositions = null;
                 RestoreDisplayedScrollPositions(positions);
             }
-            if (name == "Addons") RefreshGates();             // AZS Stats switched on or off: the Stats buttons follow
+            if (name == "Addons") RefreshGates();             // the stats add-on switched on or off: the Stats buttons follow
         }
 
         // the "Lost?" note demonstrates both breadcrumb navigation and saving a favorite
@@ -1915,7 +1915,7 @@ namespace AzerothLauncher
                 log.Selected = aboutLog;
             }
             else aboutLog = false;
-            var credits = UI.Text("Vibe coded by Slimjim\nCloud save code established by Keijin", 13, FontStyle.Italic,
+            var credits = UI.Text("Made by Slimjim\nASBuilder by Cadoky\nAzeroth Stats by Maidenhead\nCloud-save foundation by Keijin", 13, FontStyle.Italic,
                                   Theme.Credit, Theme.Panel, 0);
             credits.TextAlign = ContentAlignment.TopRight;
             credits.Size = VStack.Measure(credits);
@@ -2903,7 +2903,7 @@ namespace AzerothLauncher
             }
             cb.ForeColor = want ? Theme.Text : Theme.GoldDim;
             UpdateAddonCount();
-            RefreshGates();                                  // the Stats buttons follow AZS Stats
+            RefreshGates();                                  // the Stats buttons follow the enabled stats add-on
             if (!want && conflicted != null && conflicted.Contains(name))
             {
                 BuildPanel("Addons");                        // the conflict is settled: the rows go back in A to Z order
@@ -3424,17 +3424,26 @@ namespace AzerothLauncher
             return string.Equals(a.Trim(), b.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
-        // the play time AZS Stats counts (at the end of LAUNCHER)
+        // Time tracking provided by the selected stats source.
         int OptionsPlayTime(int PW, int y)
         {
             var head = PutText("Play time", 11, FontStyle.Bold, Theme.Gold, 20, y, 0);
+            RunStats data = AddonStats();
+            if (data != null && data.Source == "Azeroth Stats")
+            {
+                string text = data.Total.Runs > 0
+                    ? "Time in recorded runs: " + Duration((long)data.Total.Time) + " across " + Big(data.Total.Runs) + " runs. Azeroth Stats does not count time spent in menus."
+                    : "Azeroth Stats records time spent in runs, not time spent in menus. Finish a run to begin recording it.";
+                var label = PutText(text, 10, FontStyle.Regular, Theme.Text, 20, BottomOf(head) + 2, PW - 40);
+                return BottomOf(label);
+            }
             PlayStats ps = ShownPlayStats();
             long sessions = ps.Sessions;
             string stats = sessions == 0
-                ? (Stats.AddonInstalled(AddonsDir()) ? "No play time counted yet. AZS Stats counts it while the game runs."
-                                                      : "Play time is counted in game by the AZS Stats addon. Install it on the STATS page.")
+                ? (Stats.AddonInstalled(AddonsDir()) ? "No session play time counted yet."
+                                                      : "Install Azeroth Stats to record run and build information.")
                 : "Total: " + Duration(ps.Seconds) + " over " + Util.Plural((int)sessions, "session") + "\n" +
-                  "Counted in game by AZS Stats; cloud saving carries it to your other PCs.";
+                  "Session time retained from the legacy stats file; cloud saving carries addon settings between PCs.";
             var statsLabel = PutText(stats, 10, FontStyle.Regular, Theme.Text, 20, BottomOf(head) + 2, PW - 40);
             return BottomOf(statsLabel);
         }
@@ -3467,7 +3476,7 @@ namespace AzerothLauncher
                 y = Math.Max(BottomOf(b), BottomOf(t)) + 8;
             };
             // Closing the launcher exits it; it stays visible while the game runs and has no tray/minimize-on-play mode.
-            y = OptionCheck("Show the Stats section (your play time and run records)", StatsEnabled(), y,
+            y = OptionCheck("Show the Stats section (run records and available play time)", StatsEnabled(), y,
                             delegate(bool on) { SetStatsEnabled(on); });
             y = OptionCheck("Show play time on the home screen", Cfg.Bool("home_playtime", true), y,
                             delegate(bool on) { Cfg.Set("home_playtime", on); Cfg.Save(); Invalidate(); });

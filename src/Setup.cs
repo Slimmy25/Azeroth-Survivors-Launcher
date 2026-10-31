@@ -1,5 +1,5 @@
 // First-time setup, inside the launcher's section window (no window of its own): a welcome, then six setup slides for
-// language, save import, player type, optional existing-client folders, AZS Stats, addons and (for new installs) game download. Choices stay staged
+// language, save import, player type, optional existing-client folders, Azeroth Stats, addons and (for new installs) game download. Choices stay staged
 // until the final slide. Setup cannot be closed before it is done: cancelling it shows a last page that
 // says what the launcher is for, with START SETUP AGAIN. PLAY stays grayed out until setup is done.
 // While it runs no Community video is shown; when it is done the home screen's Community comes back.
@@ -13,12 +13,12 @@ namespace AzerothLauncher
 {
     public partial class LauncherApp
     {
-        // 0 welcome, 1 language, 2 website save, 3 player type, 4 existing-client folders, 5 AZS Stats, 6 addons, 7 game, 8 cancelled
+        // 0 welcome, 1 language, 2 website save, 3 player type, 4 existing-client folders, 5 Azeroth Stats, 6 addons, 7 game, 8 cancelled
         int setupPage;
         bool setupCloud, setupCloudFolderRequired;
         bool setupExistingClient;
         bool setupGameFolderRequired;
-        bool? setupStats;                                     // the answer to the AZS Stats question
+        bool? setupStats;                                     // the answer to the Azeroth Stats offer
         string setupAddons;                                   // "download" when the player wants addons, else null
         bool setupDownloading;                                // first-time game download is in progress
         bool setupBrowseWhileInstalling;                      // allow Download More during setup-triggered game download
@@ -120,7 +120,7 @@ namespace AzerothLauncher
 
         void SetupRestart() { ShowSetupDialog(); }
 
-        static readonly string[] SetupSteps = { "First Time Setup", "Language", "Your save", "Player type", "Cloud & folders", "AZS Stats", "Addons", "Game" };
+        static readonly string[] SetupSteps = { "First Time Setup", "Language", "Your save", "Player type", "Cloud & folders", "Azeroth Stats", "Addons", "Game" };
 
         void PanelSetup()
         {
@@ -432,12 +432,13 @@ namespace AzerothLauncher
             SetupGo(5);
         }
 
-        // page 5: AZS Stats, asked before the addons (it is one of them)
+        // page 5: Azeroth Stats, asked before the optional addons
         int SetupStats(int x, int y, int w)
         {
             var q = PutText("Do you want to track your stats in and out of the game?", 13, FontStyle.Bold, Theme.Gold, x, y, w - setupHeadW);
-            var p = PutText("AZS Stats records your runs while you play (/azs in game) and fills the launcher's STATS page: records, " +
-                            "abilities, classes, play time, your Nemesis and co-op with friends.", 11, FontStyle.Regular, Theme.Text, x, BottomOf(q) + 4, w);
+            var p = PutText("Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved " +
+                            "run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, " +
+                            "comparisons and configurable in-game HUD remain available there.", 11, FontStyle.Regular, Theme.Text, x, BottomOf(q) + 4, w);
             y = BottomOf(p) + 14;
             var yes = Put(new WowButton("YES, TRACK MY STATS", delegate { setupStats = true; SetupGo(6); }, 250, 42, 12), x, y);
             Put(new WowButton("NO", delegate { setupStats = false; SetupGo(6); }, 140, 42, 12), yes.Right + 12, y);
@@ -723,7 +724,7 @@ namespace AzerothLauncher
                 RefreshPlayLabel();                           // PLAY is no longer grayed out
                 SetStatus("Setup saved.");
                 ApplyCloudVisibility();
-                if (trackStats.HasValue)                      // AZS Stats only when the player wants their stats tracked
+                    if (trackStats.HasValue)                      // install Azeroth Stats only when the player opts in
                 {
                     SetStatsEnabled(trackStats.Value);
                     if (trackStats.Value && ClientPresent()) InstallStatsAddon();

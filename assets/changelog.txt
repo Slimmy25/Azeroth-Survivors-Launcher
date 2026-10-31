@@ -2,6 +2,14 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 Everything above the first === line is ignored.
 ===
+0.131.0
+-------
+Choose how enemy nameplates sit in a crowd, skip a level-up or a cache with a key, and see your own time of day under the minimap.
+
+Options -> Combat has a new Nameplate Layout setting. Stacking (as before) moves nameplates apart so each one can be read; Overlapping keeps every plate right over its enemy. The change shows at once, even mid-run.
+When a hand of cards can be skipped, the X key now does the same as the Skip button, and the button shows its key. Rebind it under Key Bindings -> Azeroth Survivors -> Skip. It only acts on the cards, so X still makes your hero sit or stand everywhere else.
+A small clock under the minimap shows your computer's or phone's local time: 10:42 PM in English, 22:42 in the other languages. It moves and hides with the minimap and follows the HUD Scale setting.
+===
 0.130.1
 -------
 Dwarves and Humans are stronger: Stoneform shields you more and more often, and Humans level up faster.

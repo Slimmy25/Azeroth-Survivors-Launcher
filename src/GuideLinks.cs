@@ -102,7 +102,7 @@ namespace AzerothLauncher
             if (list.Count > max) list.RemoveRange(max, list.Count - max);
             return list;
         }
-        public static Func<Dictionary<string, string>> CapturedTips;   // set by the launcher: the game's tooltips AZS Stats saw
+        public static Func<Dictionary<string, string>> CapturedTips;   // optional game-captured tooltip provider; no stats addon is wired here
         static Dictionary<string, GuideLink> byKey;           // the same links by Norm(name): "shadowbolt" -> Shadow Bolt
 
         public static void Reset() { links = null; }        // read again (new tooltips from the game)
@@ -291,7 +291,7 @@ namespace AzerothLauncher
                 Add(kv.Key, zone ? zonesTopic : racesTopic, -1, kv.Value);
             }
             foreach (string w in TreeWords) links.Remove(w);
-            // the game's own words win: a tooltip AZS Stats saw in game replaces the guide's line about that spell
+            // if a game-captured tooltip provider is supplied, its own words replace the guide's line about that spell
             Dictionary<string, string> seen = null;
             try { if (CapturedTips != null) seen = CapturedTips(); } catch (Exception) { }
             if (seen != null)
@@ -333,7 +333,7 @@ namespace AzerothLauncher
             return null;
         }
 
-        // what the game (or, until AZS Stats has seen it in game, the guide) says a name does; null if nothing
+        // what the game (or, until a captured tooltip is available, the guide) says a name does; null if nothing
         // the link is the page's (or topic's) own title: it goes to that page itself
         public static bool IsPage(GuideLink l)
         {

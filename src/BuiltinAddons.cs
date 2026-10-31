@@ -1,6 +1,7 @@
-// The AZS addons the launcher carries inside itself (besides AZS Stats, Stats.cs): AZS Handbook and AZS Minor Mods.
+// The AZS addons the launcher carries inside itself: AZS Handbook and AZS Minor Mods. Stats are provided by
+// Maidenhead's separately maintained Azeroth Stats addon from Download More.
 // (AZS Transparency was a test and is gone: Retired lists it, and its folder is taken out of AddOns.) Download More lists them as "builtin:<folder>"; INSTALL writes their files from the launcher, and
-// an installed one is brought up to the launcher's version right before the game starts (as AZS Stats is).
+// an installed one is brought up to the launcher's version right before the game starts.
 // Each one gets its own copy of AZSKit.lua, the look all AZS addons share (addons\AZSKit).
 // AZS Handbook also gets AZSHandbookData.lua, made here from the launcher's own guide and talent trees, so the
 // guide in game is always the one in the launcher.
@@ -179,7 +180,7 @@ namespace AzerothLauncher
                 s.Append("},\n");
             }
             s.Append("},\n");
-            // every spell's icon by its name without case, spaces or punctuation (as AZS Stats matches them)
+            // every spell's icon by its name without case, spaces or punctuation
             s.Append("icons = {\n");
             var seen = new HashSet<string>();
             foreach (string raw in Util.ReadResource("AS.spell-icons.txt").Replace("\r\n", "\n").Split('\n'))

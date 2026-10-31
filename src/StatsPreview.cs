@@ -1,5 +1,5 @@
 // A developer tool, not used by players: "--preview-stats <saved folder> <out folder>" renders the STATS page for
-// the AZS Stats file in <saved folder> into PNG pictures (every tab, overall and for the most played class),
+// the Azeroth Stats or legacy saved-variable file in <saved folder> into PNG pictures (every tab, overall and for the most played class),
 // so the layout can be checked without the game. Settings are only changed in memory, nothing is saved.
 using System;
 using System.Drawing;

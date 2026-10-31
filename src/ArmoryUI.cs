@@ -734,7 +734,7 @@ namespace AzerothLauncher
         {
             if (runs.Count < 2)
             {
-                Armory.Text(g, Lang.T("Play a few runs with the newest AZS Stats to see your DPS over time."), Theme.F(10, FontStyle.Italic),
+                Armory.Text(g, Lang.T("Play a few runs with Azeroth Stats to see your DPS over time."), Theme.F(10, FontStyle.Italic),
                             Armory.Dim, r, TextFormatFlags.Left | TextFormatFlags.WordBreak);
                 return;
             }

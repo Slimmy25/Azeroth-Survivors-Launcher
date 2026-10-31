@@ -1,6 +1,6 @@
 // The STATS section, laid out like a WoW armory page: a character header (every class together, or one class),
 // tabs (Overview, Classes, Abilities, Records, History) and rounded cards (ArmoryUI.cs). The launcher's own play
-// time is always there; the run records come from the optional AZS Stats addon (see Stats.cs). Turned off
+// run records come from Maidenhead's optional Azeroth Stats addon (see Stats.cs). Turned off
 // in Options, the section and its buttons disappear.
 using System;
 using System.Collections.Generic;
@@ -44,7 +44,13 @@ namespace AzerothLauncher
             if (kind == "victory") return "Victory";
             if (kind == "defeat") return "Defeat";
             if (kind == "left") return "Left the run";
-            return result.Length > 0 ? char.ToUpperInvariant(result[0]) + result.Substring(1) : "?";
+            if (result.Length > 0) return char.ToUpperInvariant(result[0]) + result.Substring(1);
+            return kind == "ended" ? "Ended" : kind == "interrupted" ? "Interrupted" : kind.Length > 0 ? PrettyStatus(kind) : "Observed run";
+        }
+
+        static string PrettyStatus(string value)
+        {
+            return value.Replace('_', ' ').Replace('-', ' ');
         }
 
         static readonly double[] RunSteps = { 1, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000 };
@@ -54,7 +60,7 @@ namespace AzerothLauncher
         static readonly double[] GoldSteps = { 100, 1000, 5000, 10000, 50000, 100000, 500000, 1000000, 5000000 };
         static readonly double[] HourSteps = { 1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500 };
 
-        static readonly string[] StatTabs = { "Overview", "Classes", "Abilities", "Records", "Nemesis", "Co-op", "History", "Armory" };
+        static readonly string[] StatTabs = { "Overview", "Classes", "Abilities", "Records", "Nemesis", "Co-op", "History", "Armory", "Combat", "Build Journal" };
         string statsClass;                                   // null = every class, else a class key
         int statsTab;
 
@@ -112,8 +118,9 @@ namespace AzerothLauncher
             string addonsDir = AddonsDir();
             string addonPath = Stats.AddonPath(addonsDir);
             bool have = addonPath != null;
+            bool haveReplacement = Stats.ReplacementInstalled(addonsDir);
             bool off = have && addonPath.EndsWith(Addons.DisabledSuffix, StringComparison.OrdinalIgnoreCase);
-            // no buttons here: the launcher keeps AZS Stats up to date, and without it the Stats buttons are disabled
+            // Azeroth Stats is installed from Download More; the launcher reads its local SavedVariables file.
             int pageTop = 8;
 
             RunStats st = null;
@@ -137,6 +144,7 @@ namespace AzerothLauncher
             int w = sp.ClientSize.Width - 10;
             int y = 4;
             PlayStats ps = ShownPlayStats();
+            if (st != null && st.Source == "Azeroth Stats") ps.Seconds = (long)st.Total.Time;
 
             // --- the header
             var hero = new HeroBlock();
@@ -146,15 +154,16 @@ namespace AzerothLauncher
                 hero.Accent = ClassColor(cls.Key);
                 hero.Letters = Armory.Initials(cls.Name);
                 hero.ClassPic = cls.Key;
-                hero.Line = Lang.T("Runs " + Big(cls.Runs) + " · Victories " + Big(cls.Victories) + " · Best level " + Big(cls.BestLevel)) +
+                hero.Line = Lang.T("Runs " + Big(cls.Runs) + " · Victories " + Big(cls.Victories)) +
+                            (cls.CoverageAware && !cls.AvailableMetrics.Contains("level") ? "" : " · " + Lang.T("Best level " + Big(cls.BestLevel))) +
                             "   " + Lang.T("Picked in " + Pct(cls.Runs, st.Total.Runs) + "% of your runs");
                 AddChips(hero, cls, null);
             }
             else
             {
                 hero.Heading = Lang.T("Your Survivor");
-                hero.Line = data ? Lang.T("Runs " + Big(st.Total.Runs) + " · Victories " + Big(st.Total.Victories) + " · Best level " +
-                                          Big(st.Total.BestLevel))
+                hero.Line = data ? Lang.T("Runs " + Big(st.Total.Runs) + " · Victories " + Big(st.Total.Victories)) +
+                                          (st.Total.CoverageAware && !st.Total.AvailableMetrics.Contains("level") ? "" : " · " + Lang.T("Best level " + Big(st.Total.BestLevel)))
                                  : Lang.T("No runs recorded yet.");
                 AddChips(hero, data ? st.Total : null, ps);
             }
@@ -166,24 +175,32 @@ namespace AzerothLauncher
             // --- no run records (yet): play time and how to get more
             if (!data)
             {
-                y = PlayTimeBlocks(sp, w, y, ps);
+                if (st != null && st.Source == "Azeroth Stats")
+                    y = Place(sp, Note("Time tracking", "Azeroth Stats reports time spent in recorded runs. It does not count time spent in game menus.", Armory.Dim), w, y);
+                else y = PlayTimeBlocks(sp, w, y, ps);
                 TextBlock info;
                 if (err != null) info = Note("Your runs", "The stats file could not be read (" + err + ").", Theme.Bad);
-                else if (!have)
+                else if (!haveReplacement)
                 {
-                    info = Note("Track every run", "The AZS Stats addon keeps a record of every run you play: victories, kills, " +
-                                "damage, gold and your personal bests. Install it, finish a run, and your stats appear here.", Armory.Bright);
-                    info.Lines.Add(new object[] { Lang.T("It is optional: without it, this page only shows your play time."), Armory.Dim, 9f, true });
+                    info = Note("Install Azeroth Stats", "It records run totals, recent run details, combat samples and observed build changes. " +
+                                "Finish a run; the launcher reads its saved stats after the game saves them.", Armory.Bright);
+                    info.Lines.Add(new object[] { Lang.T("Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats."), Armory.Dim, 9f, true });
                     info.Button = new WowButton("INSTALL STATS ADDON", InstallStatsAddon, 230, 32, 10);
                 }
-                else if (off) info = Note("Your runs", "The AZS Stats addon is turned off. Turn it on in Addons to keep recording your runs.", Armory.Bright);
-                else info = Note("Your runs", "No runs recorded yet. Finish a run with the AZS Stats addon turned on. The game saves " +
+                else if (off) info = Note("Your runs", "A stats addon is installed but turned off. Turn on Azeroth Stats in Addons to keep recording runs.", Armory.Bright);
+                else info = Note("Your runs", "No runs recorded yet. Finish a run with Azeroth Stats turned on. The game saves " +
                                  "addon data when you leave it, so your stats show up here after you close the game.", Armory.Bright);
                 y = Place(sp, info, w, y);
                 Pad(sp, y);
                 return;
             }
-            if (off) y = Place(sp, Note(null, "The AZS Stats addon is turned off. Turn it on in Addons to keep recording your runs.", Theme.Bad), w, y);
+            if (st.Source == "AZS Stats (legacy)")
+            {
+                var legacy = Note("Older AZS Stats history", "This saved history is read-only and remains in its original file. New records will be written by Azeroth Stats; the two histories are not combined.", Armory.Dim);
+                legacy.Button = new WowButton("INSTALL AZEROTH STATS", InstallStatsAddon, 230, 32, 10);
+                y = Place(sp, legacy, w, y);
+            }
+            if (off) y = Place(sp, Note(null, "The stats addon is turned off. Turn on Azeroth Stats in Addons to keep recording runs.", Theme.Bad), w, y);
 
             // --- the tabs: no row of them, the tab is the last step of the path at the top (Stats › Priest › Records ▾),
             // its list the other tabs
@@ -216,9 +233,9 @@ namespace AzerothLauncher
 
             if (statsTab == 0)                               // Overview
             {
-                y = Place(sp, Totals(b), w, y);
+                y = Place(sp, Totals(b, st.Source == "Azeroth Stats"), w, y);
                 var chart = new DpsChartBlock(runs, 40);       // DPS per run: are you getting better?
-                chart.Title = Lang.T("DPS over time") + (cls != null ? " · " + cls.Name : "");
+                chart.Title = Lang.T(st.Source == "Azeroth Stats" ? "Peak run-average DPS by run" : "DPS over time") + (cls != null ? " · " + cls.Name : "");
                 y = Place(sp, chart, w, y);
                 if (cls == null)
                 {
@@ -248,8 +265,10 @@ namespace AzerothLauncher
                         row.IconColor = ClassColor(key);
                         row.Name = c.Name;
                         row.NameColor = ClassColor(key);
-                        row.Sub = Lang.T("Runs: " + Big(c.Runs) + " · Won: " + Big(c.Victories) + " · Longest: " + Clock(c.BestTime) +
-                                         " · Best level: " + Big(c.BestLevel));
+                        var details = new List<string> { Lang.T("Runs: " + Big(c.Runs)), Lang.T("Won: " + Big(c.Victories)) };
+                        if (!c.CoverageAware || c.BestTime > 0) details.Add(Lang.T("Longest: " + Clock(c.BestTime)));
+                        if (!c.CoverageAware || c.AvailableMetrics.Contains("level")) details.Add(Lang.T("Best level: " + Big(c.BestLevel)));
+                        row.Sub = string.Join(" · ", details.ToArray());
                         row.Value = Pct(c.Runs, st.Total.Runs) + "%";
                         row.ValueSub = Lang.T("Win rate") + " " + Pct(c.Victories, c.Runs) + "%";
                         row.Bar = st.Total.Runs > 0 ? c.Runs / st.Total.Runs : 0;
@@ -280,9 +299,13 @@ namespace AzerothLauncher
             }
             else if (statsTab == 2)                          // Abilities
             {
-                var list = AbilityRows(cls != null ? cls.Abilities : st.Abilities, b.Runs, 30);
-                list.Title = Lang.T("Abilities");
-                y = Place(sp, list, w, y);
+                if (st.Source == "Azeroth Stats") y = AzerothSpellTab(sp, w, y, runs, b.Abilities);
+                else
+                {
+                    var list = AbilityRows(cls != null ? cls.Abilities : st.Abilities, b.Runs, 30);
+                    list.Title = Lang.T("Abilities");
+                    y = Place(sp, list, w, y);
+                }
             }
             else if (statsTab == 3)                          // Records
             {
@@ -298,16 +321,20 @@ namespace AzerothLauncher
                 builds.Title = Lang.T("Best builds");
                 y = Place(sp, builds, w, y);
             }
-            else if (statsTab == 4)                          // Nemesis
-                y = NemesisTab(sp, w, y, st, cls);
-            else if (statsTab == 5)                          // Co-op
-                y = CoopTab(sp, w, y, st);
+            else if (statsTab == 4)                          // Nemesis / observed death evidence
+                y = st.Source == "Azeroth Stats" ? AzerothNemesisTab(sp, w, y, st, cls) : NemesisTab(sp, w, y, st, cls);
+            else if (statsTab == 5)                          // Co-op / observed companions
+                y = st.Source == "Azeroth Stats" ? AzerothCompanionTab(sp, w, y, st) : CoopTab(sp, w, y, st);
             else if (statsTab == 7)                          // Armory
                 y = ArmoryTab(sp, w, y, st, cls);
+            else if (statsTab == 8)                          // combat source observations retained per run
+                y = AzerothCombatTab(sp, w, y, runs);
+            else if (statsTab == 9)                          // sampled ranks, stats and equipment checkpoints
+                y = AzerothJournalTab(sp, w, y, runs);
             else                                             // History
                 y = Place(sp, History(runs), w, y);
 
-            var foot = Note(null, "In game, type /azstats to see your stats.", Armory.Dim);
+            var foot = Note(null, "Azeroth Stats in game: /azstats. Run details are saved by the game when you close it.", Armory.Dim);
             foot.Lines[0][2] = 9f;
             foot.Lines[0][3] = true;
             y = Place(sp, foot, w, y);
@@ -436,7 +463,7 @@ namespace AzerothLauncher
             var list = cls == null ? st.Armory : st.Armory.FindAll(delegate(ArmoryChar a) { return a.ClassKey == cls.Key; });
             if (list.Count == 0)
             {
-                var none = Note(null, "AZS Stats writes down each class's hero (their gear and numbers) while you play. Play a run and they show up here.", Armory.Dim);
+                var none = Note(null, "Azeroth Stats keeps recent equipment snapshots from your runs. Play a run with equipment data to see them here.", Armory.Dim);
                 return Place(sp, none, w, y);
             }
             foreach (var a in list)
@@ -611,14 +638,169 @@ namespace AzerothLauncher
             return y;
         }
 
+        int AzerothSpellTab(ScrollPanel sp, int w, int y, List<StatRun> runs, List<AbilityStat> trends)
+        {
+            var rows = new RowsBlock();
+            rows.Title = Lang.T("Spell rank trends · observed, not exact card picks");
+            rows.Empty = Lang.T("No spell rank trends are stored yet.");
+            foreach (var spell in trends)
+            {
+                var row = new ArmoryRow();
+                row.Name = spell.Name;
+                row.Spell = spell.Name;
+                row.Icon = Armory.Initials(spell.Name);
+                row.IconColor = Theme.GoldDim;
+                row.NameColor = Armory.Bright;
+                row.Sub = Lang.T("Observed in " + Big(spell.Picks) + " runs · rank gains " + Big(spell.Ranks));
+                row.Value = Lang.T("Highest observed rank " + Big(spell.BestRank));
+                rows.Rows.Add(row);
+                if (rows.Rows.Count >= 30) break;
+            }
+            if (rows.Rows.Count > 0) y = Place(sp, rows, w, y);
+
+            var snapshot = new RowsBlock();
+            snapshot.Title = Lang.T("Latest retained spell build");
+            snapshot.Empty = Lang.T("No observed spell snapshot is stored in the retained runs yet.");
+            StatRun source = null;
+            foreach (var run in runs) if (run.ObservedSpells.Count > 0) { source = run; break; }
+            if (source != null)
+                foreach (var spell in source.ObservedSpells)
+                {
+                    var row = new ArmoryRow();
+                    row.Name = spell.Name;
+                    row.Spell = spell.Name;
+                    row.Icon = Armory.Initials(spell.Name);
+                    row.IconColor = Theme.GoldDim;
+                    row.NameColor = Armory.Bright;
+                    row.Sub = Lang.T("Observed in the most recent retained run") + (source.Partial ? " · " + Lang.T("Partial observation") : "");
+                    row.Value = spell.Picks > 0 ? Lang.T("Rank " + Big(spell.Picks)) : "";
+                    snapshot.Rows.Add(row);
+                }
+            if (snapshot.Rows.Count > 0) y = Place(sp, snapshot, w, y);
+            return y;
+        }
+
+        int AzerothNemesisTab(ScrollPanel sp, int w, int y, RunStats st, StatBlock cls)
+        {
+            StatBlock b = cls ?? st.Total;
+            y = Place(sp, Note("Observed deaths", "Azeroth Stats separates confirmed slain-by messages from probable last-attacker evidence. A last hit alone does not prove the killing blow.", Armory.Dim), w, y);
+            var rows = new RowsBlock();
+            rows.Title = Lang.T("Observed death sources") + " · " + Big(b.ObservedDeaths);
+            rows.Empty = Lang.T("No death evidence recorded yet.");
+            foreach (var n in b.Nemesis)
+            {
+                var row = new ArmoryRow();
+                row.Name = n.Name;
+                row.Npc = n.Name;
+                row.Icon = Armory.Initials(n.Name);
+                row.IconColor = Theme.Hex("#ff4040");
+                row.NameColor = Theme.Hex("#ff7060");
+                row.Sub = Lang.T("Confirmed " + Big(n.Confirmed) + " · probable " + Big(n.Probable));
+                row.Value = Big(n.Kills);
+                row.ValueSub = Lang.T("Observed attributions");
+                rows.Rows.Add(row);
+                if (rows.Rows.Count >= 25) break;
+            }
+            return Place(sp, rows, w, y);
+        }
+
+        int AzerothCompanionTab(ScrollPanel sp, int w, int y, RunStats st)
+        {
+            y = Place(sp, Note("Observed companions", "The addon counts names seen alongside you in sampled runs. A win counted while someone was present does not prove that player completed the run with you.", Armory.Dim), w, y);
+            var rows = new RowsBlock();
+            rows.Title = Lang.T("Companions observed in runs");
+            rows.Empty = Lang.T("No companion samples are recorded yet.");
+            foreach (var f in st.Coop.Friends)
+            {
+                var row = new ArmoryRow();
+                row.Name = f.Name + (f.Class.Length > 0 ? " · " + f.Class : "");
+                row.NameColor = f.ClassKey.Length > 0 ? ClassColor(f.ClassKey) : Armory.Bright;
+                row.ClassPic = f.ClassKey;
+                row.Icon = Armory.Initials(f.Name);
+                row.RoundIcon = true;
+                row.IconColor = f.ClassKey.Length > 0 ? ClassColor(f.ClassKey) : Theme.Hex("#5fb0d3");
+                row.Sub = Lang.T(Big(f.Runs) + " observed runs · " + Big(f.Wins) + " local wins while observed");
+                row.Value = Big(f.Runs);
+                row.ValueSub = Lang.T("Runs observed");
+                rows.Rows.Add(row);
+                if (rows.Rows.Count >= 30) break;
+            }
+            return Place(sp, rows, w, y);
+        }
+
+        int AzerothCombatTab(ScrollPanel sp, int w, int y, List<StatRun> runs)
+        {
+            y = Place(sp, Note("Combat samples", "These sources are summed from the addon's retained run details. The addon's own Combat and report pages have more filters and comparisons.", Armory.Dim), w, y);
+            y = Place(sp, AzerothMeterRows("Damage sources · retained runs", runs, 0), w, y);
+            y = Place(sp, AzerothMeterRows("Healing sources · retained runs", runs, 1), w, y);
+            y = Place(sp, AzerothMeterRows("Damage taken · retained runs", runs, 2), w, y);
+            return y;
+        }
+
+        static RowsBlock AzerothMeterRows(string title, List<StatRun> runs, int kind)
+        {
+            var totals = new Dictionary<string, double>(StringComparer.CurrentCultureIgnoreCase);
+            foreach (var run in runs)
+            {
+                var list = kind == 0 ? run.DamageSources : kind == 1 ? run.HealingSources : run.TakenSources;
+                foreach (var item in list)
+                {
+                    double n;
+                    totals.TryGetValue(item.Key, out n);
+                    totals[item.Key] = n + item.Value;
+                }
+            }
+            var ordered = new List<KeyValuePair<string, double>>(totals);
+            ordered.Sort(delegate(KeyValuePair<string, double> a, KeyValuePair<string, double> b) { return b.Value.CompareTo(a.Value); });
+            var rows = new RowsBlock { Title = Lang.T(title), Empty = Lang.T("No source samples are available in retained runs.") };
+            for (int i = 0; i < Math.Min(20, ordered.Count); i++)
+            {
+                var row = new ArmoryRow();
+                row.Name = ordered[i].Key;
+                row.NameColor = Armory.Bright;
+                row.Icon = Armory.Initials(ordered[i].Key);
+                row.IconColor = kind == 1 ? Armory.Green : kind == 2 ? Theme.Bad : Theme.GoldDim;
+                row.Value = Big(ordered[i].Value);
+                row.ValueSub = kind == 1 ? Lang.T("Healing") : kind == 2 ? Lang.T("Damage taken") : Lang.T("Damage dealt");
+                rows.Rows.Add(row);
+            }
+            return rows;
+        }
+
+        int AzerothJournalTab(ScrollPanel sp, int w, int y, List<StatRun> runs)
+        {
+            var rows = new RowsBlock();
+            rows.Title = Lang.T("Observed build and equipment changes");
+            rows.Empty = Lang.T("No build journal entries are stored in the retained runs yet.");
+            foreach (var run in runs)
+            {
+                foreach (var item in run.Observations)
+                {
+                    var row = new ArmoryRow();
+                    row.Name = item.Value;
+                    row.NameColor = Armory.Bright;
+                    row.Icon = item.Key.StartsWith("Spell rank", StringComparison.OrdinalIgnoreCase) ? "S" : "•";
+                    row.IconColor = Theme.GoldDim;
+                    row.Sub = item.Key + " · " + run.Class + (run.Date.Length > 0 ? " · " + run.Date : "") + (run.Partial ? " · " + Lang.T("Partial observation") : "");
+                    rows.Rows.Add(row);
+                    if (rows.Rows.Count >= 200) break;
+                }
+                if (rows.Rows.Count >= 200) break;
+            }
+            y = Place(sp, rows, w, y);
+            y = Place(sp, Note(null, "The journal reports observed rank, equipment and stat checkpoints; it does not identify a chosen card or prove which change caused a stat difference.", Armory.Dim), w, y);
+            return y;
+        }
+
         // the header's chips: kills, bosses, gold, win rate and time (play time on the overall page)
         void AddChips(HeroBlock hero, StatBlock b, PlayStats ps)
         {
             if (b != null)
             {
-                hero.Chips.Add(new[] { "kills", Big(b.Kills), Lang.T("Enemies slain") });
-                hero.Chips.Add(new[] { "bosses", Big(b.Bosses), Lang.T("Bosses") });
-                hero.Chips.Add(new[] { "gold", Big(b.Gold), Lang.T("Gold collected") });
+                bool exactAvailability = b.CoverageAware;
+                if (!exactAvailability || b.AvailableMetrics.Contains("kills")) hero.Chips.Add(new[] { "kills", Big(b.Kills), Lang.T("Enemies slain") });
+                if (!exactAvailability || b.AvailableMetrics.Contains("bosses")) hero.Chips.Add(new[] { "bosses", Big(b.Bosses), Lang.T("Bosses") });
+                if (!exactAvailability || b.AvailableMetrics.Contains("gold")) hero.Chips.Add(new[] { "gold", Big(b.Gold), Lang.T("Gold collected") });
                 hero.Chips.Add(new[] { "win", Pct(b.Victories, b.Runs) + "%", Lang.T("Win rate") });
             }
             if (ps != null && ps.Sessions > 0) hero.Chips.Add(new[] { "time", Duration(ps.Seconds), Lang.T("Time played") });
@@ -627,7 +809,14 @@ namespace AzerothLauncher
 
         int PlayTimeBlocks(ScrollPanel sp, int w, int y, PlayStats ps)
         {
-            if (ps.Sessions == 0) return Place(sp, Note("Play time", "No play time counted yet. AZS Stats counts it while the game runs.", Armory.Dim), w, y);
+            if (ps.Sessions == 0)
+            {
+                RunStats stats = AddonStats();
+                string emptyNote = stats != null && stats.Source == "AZS Stats (legacy)"
+                    ? "No session play time counted yet. Legacy AZS Stats counted time while the game was open."
+                    : "Azeroth Stats records time in runs, not time spent in game menus. Complete a run to record it.";
+                return Place(sp, Note("Play time", emptyNote, Armory.Dim), w, y);
+            }
             var tiles = new TilesBlock();
             tiles.Title = Lang.T("Play time");
             tiles.Items.Add(new[] { Duration(ps.Seconds), Lang.T("Time played") });
@@ -635,26 +824,34 @@ namespace AzerothLauncher
             tiles.Items.Add(new[] { Duration(ps.Longest), Lang.T("Longest session") });
             tiles.Items.Add(new[] { Duration(ps.LastSeconds), Lang.T("Last session") });
             y = Place(sp, tiles, w, y);
-            string note = CloudEnabled() ? "Counted in game by AZS Stats; cloud saving carries it to your other PCs."
-                                         : "Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.";
+            string note = CloudEnabled() ? "Counted by the legacy tracker; cloud saving carries it to your other PCs."
+                                         : "Counted by the legacy tracker. Turn on cloud saving to take it to your other PCs.";
             var n = Note(null, note, Armory.Dim);
             n.Lines[0][2] = 9f;
             n.Lines[0][3] = true;
             return Place(sp, n, w, y);
         }
 
-        static TilesBlock Totals(StatBlock b)
+        static TilesBlock Totals(StatBlock b, bool respectCoverage)
         {
             var t = new TilesBlock();
             t.Title = Lang.T("Your runs");
-            string[][] items = {
-                new[] { Big(b.Runs), "Runs" }, new[] { Big(b.Victories), "Victories" },
-                new[] { Pct(b.Victories, b.Runs) + "%", "Win rate" }, new[] { Duration((long)b.Time), "Time in runs" },
-                new[] { Big(b.Kills), "Enemies slain" }, new[] { Big(b.Elites), "Elites" },
-                new[] { Big(b.Guardians), "Guardians" }, new[] { Big(b.Bosses), "Bosses" },
-                new[] { Big(b.Damage), "Damage dealt" }, new[] { Big(b.Taken), "Damage taken" },
-                new[] { Big(b.Gold), "Gold collected" }, new[] { Big(b.Chests), "Caches opened" } };
-            foreach (var i in items) t.Items.Add(new[] { i[0], Lang.T(i[1]) });
+            var items = new List<KeyValuePair<string, string>>();
+            items.Add(new KeyValuePair<string, string>(Big(b.Runs), "Runs"));
+            items.Add(new KeyValuePair<string, string>(Big(b.Victories), "Victories"));
+            items.Add(new KeyValuePair<string, string>(Pct(b.Victories, b.Runs) + "%", "Win rate"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("duration")) items.Add(new KeyValuePair<string, string>(Duration((long)b.Time), "Time in runs"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("kills")) items.Add(new KeyValuePair<string, string>(Big(b.Kills), "Enemies slain"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("elites")) items.Add(new KeyValuePair<string, string>(Big(b.Elites), "Elites"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("guardians")) items.Add(new KeyValuePair<string, string>(Big(b.Guardians), "Guardians"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("bosses")) items.Add(new KeyValuePair<string, string>(Big(b.Bosses), "Bosses"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("damage")) items.Add(new KeyValuePair<string, string>(Big(b.Damage), "Damage dealt"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("healing")) items.Add(new KeyValuePair<string, string>(Big(b.Healing), "Healing done"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("taken")) items.Add(new KeyValuePair<string, string>(Big(b.Taken), "Damage taken"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("gold")) items.Add(new KeyValuePair<string, string>(Big(b.Gold), "Gold collected"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("chests")) items.Add(new KeyValuePair<string, string>(Big(b.Chests), "Caches opened"));
+            if (!respectCoverage || b.AvailableMetrics.Contains("magnets")) items.Add(new KeyValuePair<string, string>(Big(b.Magnets), "Magnets collected"));
+            foreach (var i in items) t.Items.Add(new[] { i.Key, Lang.T(i.Value) });
             return t;
         }
 
@@ -662,11 +859,14 @@ namespace AzerothLauncher
         {
             var bars = new BarsBlock();
             bars.Title = Lang.T("Milestones");
-            var list = new[] {
-                new object[] { "Runs", st.Total.Runs, RunSteps }, new object[] { "Victories", st.Total.Victories, WinSteps },
-                new object[] { "Enemies slain", st.Total.Kills, KillSteps }, new object[] { "Bosses", st.Total.Bosses, BossSteps },
-                new object[] { "Gold collected", st.Total.Gold, GoldSteps },
-                new object[] { "Hours played", Math.Floor(ps.Seconds / 3600.0), HourSteps } };
+            bool sampled = st.Source == "Azeroth Stats";
+            var list = new List<object[]> {
+                new object[] { "Runs", st.Total.Runs, RunSteps }, new object[] { "Victories", st.Total.Victories, WinSteps } };
+            if (!sampled || st.Total.AvailableMetrics.Contains("kills")) list.Add(new object[] { "Enemies slain", st.Total.Kills, KillSteps });
+            if (!sampled || st.Total.AvailableMetrics.Contains("bosses")) list.Add(new object[] { "Bosses", st.Total.Bosses, BossSteps });
+            if (!sampled || st.Total.AvailableMetrics.Contains("gold")) list.Add(new object[] { "Gold collected", st.Total.Gold, GoldSteps });
+            if (!sampled || st.Total.AvailableMetrics.Contains("duration"))
+                list.Add(new object[] { sampled ? "Hours in runs" : "Hours played", Math.Floor((sampled ? st.Total.Time : ps.Seconds) / 3600.0), HourSteps });
             foreach (var m in list)
             {
                 double value = (double)m[1], next = 0, prev = 0;
@@ -688,7 +888,7 @@ namespace AzerothLauncher
         static RowsBlock AbilityRows(List<AbilityStat> list, double runs, int max)
         {
             var rows = new RowsBlock();
-            rows.Empty = Lang.T("Abilities are recorded for runs played with the newest AZS Stats.");
+            rows.Empty = Lang.T("Abilities are recorded for runs played with the stats addon enabled.");
             // every rank put into a spell, of every run: each spell's share is how much you lean on it
             double allRanks = 0;
             foreach (var x in list) allRanks += x.Ranks;
@@ -797,7 +997,7 @@ namespace AzerothLauncher
                 row.RoundIcon = true;
                 row.IconColor = ClassColor(r.ClassKey.Length > 0 ? r.ClassKey : r.Class);
                 row.Name = Lang.T(ResultName(r.Kind, r.Result)) + " · " + Pair(r.Class, r.Race.Length > 0 ? "(" + r.Race + ")" : "") +
-                           (r.Zone.Length > 0 ? " · " + r.Zone : "");
+                           (r.Zone.Length > 0 ? " · " + r.Zone : "") + (r.HeroicKnown && r.Heroic ? " · Heroic" : "") + (r.Partial ? " · " + Lang.T("Partial") : "");
                 row.NameColor = rc;
                 // the run's spell focus: each spell with its rank and its share of the run's ranks, the biggest first
                 var parts = new List<string>();
@@ -807,14 +1007,28 @@ namespace AzerothLauncher
                 byRank.Sort(delegate(AbilityStat x, AbilityStat y) { return y.Picks.CompareTo(x.Picks); });
                 foreach (var a in byRank)
                     parts.Add(a.Picks > 0 ? a.Name + " " + Big(a.Picks) + " (" + Pct(Math.Max(1, a.Picks), runRanks) + "%)" : a.Name);
-                row.Sub = (r.Date.Length > 0 ? r.Date + "   " : "") +
-                          (parts.Count > 0 ? string.Join(", ", parts.ToArray())
-                                           : Lang.T("Survived " + Clock(r.Time) + " · Level " + Big(r.Level) + " · Kills " + Big(r.Kills) +
-                                                    " · Gold " + Big(r.Gold)));
-                row.Value = Clock(r.Time);
+                var summary = new List<string>();
+                if (r.AzerothStatsSource)
+                {
+                    if (r.ObservedValues.ContainsKey("duration")) summary.Add(Lang.T("Time " + Clock(r.Time)));
+                    if (r.ObservedValues.ContainsKey("level")) summary.Add(Lang.T("Level " + Big(r.Level)));
+                    if (r.ObservedValues.ContainsKey("kills")) summary.Add(Lang.T(Big(r.Kills) + " kills"));
+                    if (r.ObservedValues.ContainsKey("gold")) summary.Add(Lang.T(Big(r.Gold) + " gold"));
+                    if (r.ObservedValues.ContainsKey("healing")) summary.Add(Lang.T(Big(r.Healing) + " healing"));
+                    if (r.ObservedValues.ContainsKey("magnets")) summary.Add(Lang.T(Big(r.Magnets) + " magnets"));
+                    if (parts.Count > 0) summary.Add(string.Join(", ", parts.ToArray()));
+                }
+                else if (parts.Count == 0)
+                    summary.Add(Lang.T("Survived " + Clock(r.Time) + " · Level " + Big(r.Level) + " · Kills " + Big(r.Kills) + " · Gold " + Big(r.Gold)));
+                else summary.Add(string.Join(", ", parts.ToArray()));
+                row.Sub = (r.Date.Length > 0 ? r.Date + "   " : "") + string.Join(" · ", summary.ToArray());
+                row.Value = r.AzerothStatsSource && !r.ObservedValues.ContainsKey("duration") ? "—" : Clock(r.Time);
                 row.ValueColor = rc;
-                row.ValueSub = Lang.T("Level " + Big(r.Level)) + " · " + Lang.T(Big(r.Kills) + " kills") +
-                               (r.Dps > 0 ? " · " + Big(r.Dps) + " DPS" : "");
+                var values = new List<string>();
+                if (!r.AzerothStatsSource || r.ObservedValues.ContainsKey("level")) values.Add(Lang.T("Level " + Big(r.Level)));
+                if (!r.AzerothStatsSource || r.ObservedValues.ContainsKey("kills")) values.Add(Lang.T(Big(r.Kills) + " kills"));
+                if (r.Dps > 0) values.Add(Big(r.Dps) + " DPS");
+                row.ValueSub = string.Join(" · ", values.ToArray());
                 StatRun shared = r;
                 row.Click = delegate { App.RunSummary(shared); };   // its post-game summary, with fun highlights
                 rows.Rows.Add(row);
@@ -870,23 +1084,26 @@ namespace AzerothLauncher
             return string.Join(sep, keep.ToArray());
         }
 
-        // installs (or updates) the AZS Stats built into the launcher
+        // Install the upstream add-on through the same verified Download More path used by other addons.
         void InstallStatsAddon()
         {
             if (AddonsLocked()) return;
-            string dir = AddonsDir();
-            bool had = Stats.AddonInstalled(dir);
-            try
+            AddonEntry entry = null;
+            foreach (var item in Data.Addons)
+                if (item.Folders.Contains("AzerothStats")) { entry = item; break; }
+            if (entry == null)
             {
-                Stats.InstallAddon(dir, SyncSettings().SavedDir);
-                SetStatus(had ? "AZS Stats updated." : "AZS Stats installed. It records your runs from now on.");
+                SetStatus("Azeroth Stats is missing from Download More.");
+                return;
             }
-            catch (Exception e)
+            string name = entry.Name, url = entry.Url;
+            DownloadAddon(name, url, delegate
             {
-                Msg.Show(this, "Could not install AZS Stats:\n\n" + e.Message, "Stats",
-                         MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            if (current == "Stats") BuildPanel("Stats");
+                foreach (string folder in Addons.EnforceConflicts(AddonsDir()))
+                    SyncLog(folder + " addon switched off because Azeroth Stats replaces it.", Level.Info);
+                SetStatsEnabled(true);
+                if (current == "Stats") BuildPanel("Stats");
+            });
         }
     }
 }

@@ -25,9 +25,8 @@ LuckyOdds-by-Cadoky.zip         | github-latest:cadoky/LuckyOdds:LuckyOdds
 Damage-Meter-by-Kexo.zip        | github-latest:kex0/AZSSpellMeter
 # Maidenhead's two: their current versions are pre-releases, which "github-latest" skips, so the exact zips are named
 Azeroth-FieldKit-by-Maidenhead.zip | https://github.com/Maidenquinn/azeroth-fieldkit/releases/download/v0.2.1-review.3/AzerothFieldKit-0.2.1-review.3.zip
-Azeroth-Stats-by-Maidenhead.zip | https://github.com/Maidenquinn/AzerothStats/releases/download/v1.6.0-beta.2/AzerothStats-1.6.0-beta.2.zip
+Azeroth-Stats-by-Maidenhead.zip | https://github.com/Maidenquinn/AzerothStats/releases/download/v1.7.0-beta.1/AzerothStats-1.7.0-beta.1.zip
 AzerothCursor-by-Maidenhead.zip | github-latest:Maidenquinn/AzerothCursor:AzerothCursor-
-AZS-Stats-by-Slimjim.zip        | local:AZSStats
 CursorReticle-by-Muffla.zip | github-latest:Muffla/CursorReticle:CursorReticle
 LocalClock-by-JamieeLee.zip | github-latest:JamieeLee/LocalClock-Addon:LocalClock-
 MinimapButtonBag-by-Tunhadil-LaYt.zip | local:MBB

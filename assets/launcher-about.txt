@@ -1,17 +1,22 @@
 ﻿# What it is
 A free helper for Azeroth Survivors, the game made by Aethus. Slimjim made it for the community. Everything in it is optional.
 
+# Project partners and foundations
+- ASBuilder by Cadoky: the talent and gear build-sharing project behind our compatible import/export work. https://github.com/cadoky/ASBuilder
+- Azeroth Stats by Maidenhead: the in-game run and build tracker used for the launcher's statistics. https://github.com/Maidenquinn/AzerothStats
+- ASDataSync by Keijin: the original cloud-save sync framework this launcher builds on, used with his blessing. https://github.com/KeijinDE/ASDataSync
+
 # What it does
 - First-time setup lets browser players import a save, existing players locate their game, and new players install the game. Existing players skip the game download; new players start it at the final setup step.
 - Plays the game: PLAY starts the game after checking for a launcher update. Closing the launcher exits it; it does not stay in the system tray.
 - Optional cloud save: off by default for a new install; existing saved preferences are kept. When enabled, syncs the game's save folder and addon settings to your chosen cloud folder, with recovery backups. The game controls where it writes live saves; changing the launcher's save-folder field only changes the folder used for import and sync.
 - Addons: switch addons on and off, install approved ones with one click from Download More, keep them up to date and uninstall them. Advanced settings add profiles that keep their own game settings.
-- Its own addons: AZS Stats (records every run), AZS Handbook (this Guide inside the game) and AZS Minor Mods (small changes you switch on and off).
+- Its own addons: AZS Handbook (this Guide inside the game) and AZS Minor Mods (small changes you switch on and off). Maidenhead's Azeroth Stats is an optional third-party addon; the launcher can read its saved run history.
 - Guide: separate New Player and Gameplay sections, class guides with linked spells, talents, gear and Codex entries, plus an Archive kept for reference and excluded from search.
   Item hovers show their Wowhead Classic 3D model when a match is available.
 - Theorycrafting: the Talent Tree Builder and the Gear Planner. Named talent builds are shared across classes and open in their saved class.
   Item hovers in the Gear Planner show available Wowhead Classic 3D models.
-- Stats: your play time and every run's numbers, records, Nemesis and co-op.
+- Stats: run totals, available records, class summaries, saved history, observed combat/build details, Nemesis evidence and co-op samples from Azeroth Stats. It records time in runs, not time spent in game menus.
 - Community: players' videos on the home screen, the game's patch notes and the Discord.
 - Options: the game's folders, graphics and gameplay settings, the launcher's own settings, and portable save import/export from Options > Folders, in 26 languages.
 

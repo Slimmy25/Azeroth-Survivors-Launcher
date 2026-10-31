@@ -37,6 +37,16 @@ namespace AzerothLauncher
         static List<TalentTree> trees;
         static Dictionary<string, string> abilities;           // ability key -> name, as the game names them
 
+        // Stable key bridge used when an external gear code refers to a class spell by key.
+        public static string AbilityKey(string abilityName)
+        {
+            Load();
+            if (string.IsNullOrWhiteSpace(abilityName)) return null;
+            foreach (var ability in abilities)
+                if (string.Equals(ability.Value, abilityName.Trim(), StringComparison.OrdinalIgnoreCase)) return ability.Key;
+            return null;
+        }
+
         static void Load()
         {
             if (trees != null) return;
@@ -331,19 +341,20 @@ namespace AzerothLauncher
                 using (var b = new SolidBrush(Build.SpentIn(tree) > 0 ? Theme.Hex("#7ee05a") : Theme.GoldDim))
                     g.DrawString(pts, pf, b, Width - 10 - ps.Width, 6);
             }
-            int cell = Cell, ic = Theme.CrispIcon(Math.Min(42, cell - 6)), x0 = 8 + (Width - 16 - cell * Cols) / 2, y0 = 30;
+            int cell = Math.Max(16, (Height - 38) / Rows), cellX = Math.Max(16, (Width - 16) / Cols);
+            int ic = Theme.CrispIcon(Math.Min(42, Math.Min(cell, cellX) - 6)), x0 = 8, y0 = 30;
             cells.Clear();
             // the line that joins the milestones, as in the game's window
             var ms = tree.Talents.FindAll(delegate(Talent t) { return t.Milestone; });
             ms.Sort(delegate(Talent a, Talent b) { return a.Row.CompareTo(b.Row); });
             using (var p = new Pen(Color.FromArgb(120, Theme.GoldDim), 2))
                 for (int i = 1; i < ms.Count; i++)
-                    g.DrawLine(p, x0 + ms[i - 1].Col * cell + cell / 2, y0 + ms[i - 1].Row * cell + cell / 2,
-                               x0 + ms[i].Col * cell + cell / 2, y0 + ms[i].Row * cell + cell / 2);
+                    g.DrawLine(p, x0 + ms[i - 1].Col * cellX + cellX / 2, y0 + ms[i - 1].Row * cell + cell / 2,
+                               x0 + ms[i].Col * cellX + cellX / 2, y0 + ms[i].Row * cell + cell / 2);
             Font rf = Theme.F(7.5f, FontStyle.Bold);
             foreach (var t in tree.Talents)
             {
-                var r = new Rectangle(x0 + t.Col * cell + (cell - ic) / 2, y0 + t.Row * cell + (cell - ic) / 2 - 3, ic, ic);
+                var r = new Rectangle(x0 + t.Col * cellX + (cellX - ic) / 2, y0 + t.Row * cell + (cell - ic) / 2 - 3, ic, ic);
                 cells.Add(new KeyValuePair<Rectangle, Talent>(r, t));
                 Image img = SpellIcons.Icon(t.Icon, this);
                 if (img != null) Theme.Draw(g, img, r);

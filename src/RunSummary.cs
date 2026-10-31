@@ -14,9 +14,13 @@ namespace AzerothLauncher
         public void RunSummary(StatRun r)
         {
             var l = new List<string>();
-            string result = r.Kind == "victory" ? Lang.T("Victory") : r.Kind == "defeat" ? Lang.T("Defeat") : Lang.T("Left early");
+            string result = r.Kind == "victory" ? Lang.T("Victory") : r.Kind == "defeat" ? Lang.T("Defeat") :
+                            r.Kind == "left" ? Lang.T("Left early") : r.Kind == "interrupted" ? Lang.T("Interrupted") :
+                            r.Kind == "ended" ? Lang.T("Ended") : r.Kind.Length > 0 ? r.Kind : Lang.T("Observed run");
             l.Add(result + " · " + r.Class + (r.Race.Length > 0 ? " (" + r.Race + ")" : "") + (r.Zone.Length > 0 ? " · " + r.Zone : ""));
             if (r.Date.Length > 0) l.Add(r.Date + (r.Party.Length > 0 ? "  ·  " + Lang.T("with") + " " + r.Party : ""));
+            if (r.Status.Length > 0) l.Add(Lang.T("Observed status") + ": " + r.Status + (r.Phase.Length > 0 ? " · " + r.Phase : "") + (r.Partial ? " · " + Lang.T("Partial observation") : ""));
+            if (r.HeroicKnown) l.Add(r.Heroic ? Lang.T("Heroic") : Lang.T("Normal"));
             if (r.Affixes.Length > 0)                         // the run's Heroic affixes (game names, "sanguine,explosive")
             {
                 var ax = new List<string>();
@@ -28,15 +32,49 @@ namespace AzerothLauncher
                 if (ax.Count > 0) l.Add(Lang.T("Heroic affixes") + ": " + string.Join(", ", ax.ToArray()));
             }
             l.Add("");
-            l.Add(Lang.F("Survived {0} · level {1} · {2} kills · {3} DPS", RsClk(r.Time), RsN(r.Level), RsN(r.Kills), RsN(r.Dps)));
+            if (!r.AzerothStatsSource)
+                l.Add(Lang.F("Survived {0} · level {1} · {2} kills · {3} DPS", RsClk(r.Time), RsN(r.Level), RsN(r.Kills), RsN(r.Dps)));
+            else
+            {
+                var observed = new List<string>();
+                if (r.ObservedValues.ContainsKey("duration")) observed.Add(Lang.T("Time " + RsClk(r.Time)));
+                if (r.ObservedValues.ContainsKey("level")) observed.Add(Lang.T("Level " + RsN(r.Level)));
+                if (r.ObservedValues.ContainsKey("kills")) observed.Add(Lang.T(RsN(r.Kills) + " kills"));
+                if (r.Dps > 0) observed.Add(Lang.T(RsN(r.Dps) + " peak run-average DPS"));
+                if (observed.Count > 0) l.Add(string.Join(" · ", observed.ToArray()));
+            }
             var bits = new List<string>();
-            if (r.Bosses > 0) bits.Add(Lang.F("{0} bosses", RsN(r.Bosses)));
-            if (r.Elites > 0) bits.Add(Lang.F("{0} elites", RsN(r.Elites)));
-            if (r.Guardians > 0) bits.Add(Lang.F("{0} guardians", RsN(r.Guardians)));
-            if (r.Gold > 0) bits.Add(Lang.F("{0} gold", RsN(r.Gold)));
-            if (r.Chests > 0) bits.Add(Lang.F("{0} caches", RsN(r.Chests)));
+            if (r.Bosses > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("bosses"))) bits.Add(Lang.F("{0} bosses", RsN(r.Bosses)));
+            if (r.Elites > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("elites"))) bits.Add(Lang.F("{0} elites", RsN(r.Elites)));
+            if (r.Guardians > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("guardians"))) bits.Add(Lang.F("{0} guardians", RsN(r.Guardians)));
+            if (r.Gold > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("gold"))) bits.Add(Lang.F("{0} gold", RsN(r.Gold)));
+            if (r.Chests > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("chests"))) bits.Add(Lang.F("{0} caches", RsN(r.Chests)));
+            if (r.Magnets > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("magnets"))) bits.Add(Lang.F("{0} magnets", RsN(r.Magnets)));
             if (bits.Count > 0) l.Add(string.Join(" · ", bits.ToArray()));
-            if (r.Damage > 0) l.Add(Lang.F("{0} damage dealt", RsN(r.Damage)) + (r.Taken > 0 ? " · " + Lang.F("{0} taken", RsN(r.Taken)) : ""));
+            if (r.Damage > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("damage")))
+                l.Add(Lang.F("{0} damage dealt", RsN(r.Damage)) + (r.Taken > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("taken")) ? " · " + Lang.F("{0} taken", RsN(r.Taken)) : ""));
+            if (r.Healing > 0 || (r.AzerothStatsSource && r.ObservedValues.ContainsKey("healing"))) l.Add(Lang.F("{0} healing done", RsN(r.Healing)));
+            AddSources(l, "Damage sources", r.DamageSources);
+            AddSources(l, "Healing sources", r.HealingSources);
+            AddSources(l, "Damage taken sources", r.TakenSources);
+            if (r.Observations.Count > 0)
+            {
+                l.Add("");
+                l.Add(Lang.T("Observed build journal"));
+                for (int i = 0; i < Math.Min(12, r.Observations.Count); i++)
+                    l.Add("  • " + r.Observations[i].Key + ": " + r.Observations[i].Value);
+                if (r.Observations.Count > 12) l.Add(Lang.T("More entries are available on the Build Journal tab."));
+            }
+            if (r.PartySnapshot.Count > 0)
+            {
+                l.Add("");
+                l.Add(Lang.T("Observed party sample"));
+                foreach (var member in r.PartySnapshot)
+                    l.Add("  • " + member.Name + (member.Class.Length > 0 ? " · " + member.Class : "") +
+                          (member.Damage > 0 ? " · " + RsN(member.Damage) + " damage" : "") +
+                          (member.Dps > 0 ? " · " + RsN(member.Dps) + " DPS" : "") +
+                          (member.First.Length > 0 ? " · top: " + member.First : ""));
+            }
 
             // the fun part
             var fun = new List<string>();
@@ -88,6 +126,15 @@ namespace AzerothLauncher
                 foreach (string f in fun) l.Add("  • " + f);
             }
             Info(Lang.T("Run summary"), string.Join("\n", l.ToArray()));
+        }
+
+        static void AddSources(List<string> lines, string label, List<KeyValuePair<string, double>> sources)
+        {
+            if (sources == null || sources.Count == 0) return;
+            lines.Add("");
+            lines.Add(Lang.T(label));
+            for (int i = 0; i < Math.Min(5, sources.Count); i++)
+                lines.Add("  • " + sources[i].Key + " · " + RsN(sources[i].Value));
         }
     }
 }

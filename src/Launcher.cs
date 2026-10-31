@@ -483,17 +483,16 @@ namespace AzerothLauncher
             return clientPresentSeen;
         }
 
-        // ---- "This week": a card in the empty lower left of the home screen (AZS Stats' runs of the last 7 days)
+        // ---- "This week": a card in the empty lower left of the home screen (recent recorded runs)
         RunStats recapStats;
         DateTime recapAt;
 
         void WeeklyRecap(Graphics g)
         {
-            // under the Launcher buttons: "This week" (AZS Stats' runs of the last 7 days) and the play time AZS Stats
-            // counts in game, together in one small card
+            // Under the Launcher buttons: recent run activity and the available kind of play-time data.
             var lines = new List<string[]>();                // { heading, text }
             RunStats st = null;
-            // AZS Stats' file is looked at most every 3 seconds (a repaint happens often: hovering, the news, a button)
+            // The addon's file is read at most every 3 seconds (repaints happen often).
             if ((DateTime.UtcNow - recapAt).TotalSeconds > 3)
             {
                 try { recapStats = StatsEnabled() ? AddonStats() : null; } catch (Exception) { recapStats = null; }
@@ -502,7 +501,9 @@ namespace AzerothLauncher
             st = recapStats;
             if (st != null && st.History.Count > 0) lines.Add(new[] { Lang.T("This week"), WeekText(st) });
             PlayStats ps = st != null ? st.Play : new PlayStats();
-            if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
+            if (st != null && st.Source == "Azeroth Stats" && st.Total.Time > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
+                lines.Add(new[] { Lang.T("Time in runs"), Duration((long)st.Total.Time) + " · " + Lang.T(Big(st.Total.Runs) + " runs recorded") });
+            else if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
                 lines.Add(new[] { Lang.T("Time played"), Duration(ps.Seconds) + "  ·  " + Lang.T("Last session") + " " + Duration(ps.LastSeconds) });
             if (lines.Count == 0) return;
             var box = new RectangleF(694, 546, 394, 30);
@@ -742,9 +743,9 @@ namespace AzerothLauncher
         const string CloudNeedsGame = "Cloud Save needs the game. Press INSTALL to download it first.";
         const string AddonsNeedGame = "Addons need the game. Press INSTALL to download it first.";
 
-        public const string StatsNeedAddon = "Disabled when AZS Stats is not active";
+        public const string StatsNeedAddon = "Disabled when Azeroth Stats or saved stats are unavailable";
 
-        // AZS Stats installed and switched on: the Stats page has something to show
+            // Azeroth Stats is preferred; a legacy AZS Stats installation remains readable during transition.
         public bool StatsAddonActive()
         {
             try
@@ -1249,20 +1250,23 @@ namespace AzerothLauncher
             Bg(delegate { Session(exe, eng, cloudOnButNoFolder); });
         }
 
-        // A copy of your AZS Stats records before every game start, the last 10 kept, in the launcher's
-        // backups\AZS Stats folder: if the game ever loses the file, an older copy is there to put back.
+        // Keep a small local recovery copy of both new and legacy stats files before launching the game.
         static void BackupStats(string savedDir)
         {
             try
             {
-                string src = Path.Combine(savedDir ?? "", Stats.FileName);
-                if (!File.Exists(src) || new FileInfo(src).Length < 200) return;
-                string dir = Path.Combine(Util.DataDir, "backups", "AZS Stats");
+                string dir = Path.Combine(Util.DataDir, "backups", "Stats");
                 Directory.CreateDirectory(dir);
-                File.Copy(src, Path.Combine(dir, "AZSStats " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".lua"), true);
-                var files = new List<string>(Directory.GetFiles(dir, "AZSStats *.lua"));
-                files.Sort(StringComparer.Ordinal);
-                for (int i = 0; i < files.Count - 10; i++) { try { File.Delete(files[i]); } catch (Exception) { } }
+                string stamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+                foreach (var file in new[] { new[] { Stats.FileName, "AzerothStats" }, new[] { "AZSStats.lua", "AZSStats-legacy" } })
+                {
+                    string src = Path.Combine(savedDir ?? "", file[0]);
+                    if (!File.Exists(src) || new FileInfo(src).Length < 100) continue;
+                    File.Copy(src, Path.Combine(dir, file[1] + " " + stamp + ".lua"), true);
+                    var files = new List<string>(Directory.GetFiles(dir, file[1] + " *.lua"));
+                    files.Sort(StringComparer.Ordinal);
+                    for (int i = 0; i < files.Count - 10; i++) { try { File.Delete(files[i]); } catch (Exception) { } }
+                }
             }
             catch (Exception) { }
         }
@@ -1301,19 +1305,9 @@ namespace AzerothLauncher
                     InstallAddonsForSettings();              // the addons whose settings came from the cloud
                 }
                 else if (cloudOnButNoFolder) problems.Add("No sync folder set - launched without cloud sync.");
-                // the AZS Stats addon this launcher carries goes in right before the game starts: after the cloud
-                // download, which could otherwise bring back an older copy from another PC
-                try
-                {
-                    SyncSettings ss = SyncSettings();
-                    BackupStats(ss.SavedDir);
-                    if (Stats.AddonInstalled(ss.AddonsDir) && Stats.AddonOutdated(ss.AddonsDir))
-                    {
-                        Stats.InstallAddon(ss.AddonsDir, ss.SavedDir);
-                        SyncLog("AZS Stats addon updated to the launcher's version.", Level.Info);
-                    }
-                }
-                catch (Exception e) { SyncLog("  AZS Stats addon not updated: " + e.Message, Level.Warn); }
+                BackupStats(SyncSettings().SavedDir);
+                // Azeroth Stats is installed and updated through Download More; the launcher does not overwrite
+                // its files at game start. Legacy AZS Stats SavedVariables are read-only and are never removed.
                 // the other AZS addons the launcher carries (AZS Handbook, AZS Minor Mods): the installed ones brought up
                 // to the launcher's version too, and the retired ones (AZS Transparency) taken out
                 try
@@ -1449,8 +1443,7 @@ namespace AzerothLauncher
         }
 
         // ------------------------------------------------------------------ play time
-        // Counted in game by the AZS Stats addon (the time the game runs) and read from its saved file, which
-        // cloud saving carries between PCs with the other addon settings. The launcher no longer counts it.
+        // Duration of an entire player session when a legacy stats file supplies it. The new add-on records run time.
         public static string Duration(long seconds)
         {
             long h = seconds / 3600, m = seconds % 3600 / 60;
@@ -1460,7 +1453,7 @@ namespace AzerothLauncher
         RunStats statsCache;
         string statsCacheKey = "";
 
-        // the addon's stats, read again only when its file changed; null without the addon's file
+        // Add-on stats, read again only when the saved-variable file changed.
         public RunStats AddonStats()
         {
             try
@@ -1849,7 +1842,7 @@ namespace AzerothLauncher
             else
             {
                 SetStatus("Install complete - press PLAY.");
-                if (Cfg.Bool("stats_pending", false))        // setup said yes to AZS Stats before the game was here
+                if (Cfg.Bool("stats_pending", false))        // setup opted into Azeroth Stats before the game was here
                 {
                     Cfg.Remove("stats_pending");
                     Cfg.Save();

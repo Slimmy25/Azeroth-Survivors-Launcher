@@ -19,11 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check the AZS Stats Lua for syntax errors (Lua 5.1, like the 1.12 client)
-        run: |
-          sudo apt-get install -y -q lua5.1 > /dev/null
-          for f in addons/AZSStats/*.lua; do sed '1s/^\xEF\xBB\xBF//' "$f" > /tmp/check.lua && luac5.1 -p /tmp/check.lua && echo "ok $f"; done
-
       - name: Download the addons and put them on the "addons" release
         env:
           GH_TOKEN: ${{ github.token }}
