@@ -79,6 +79,8 @@ namespace AzerothLauncher
             setupAddons = null;
             setupPage = 0;
             setupOpen = true;
+            SetStatus("First Time Setup");
+            RefreshPlayLabel();
             current = "Setup";
             SetSetupNavigationEnabled(false);
             ApplyLanguage(setupLanguage, false);
@@ -128,7 +130,9 @@ namespace AzerothLauncher
             setupFooterNext = null;
             setupFooterNextLabel = "NEXT ›";
             // Keep the restart control fixed at the bottom while each slide's content can scroll.
-            int setupFooter = 52;
+            bool stackedFooter = PW < Theme.Px(650);
+            int footerButtonH = Theme.Px(32), footerGap = Theme.Px(8), footerMargin = Theme.Px(16);
+            int setupFooter = (stackedFooter ? footerButtonH * 2 : footerButtonH) + footerGap * 3;
             var sp = MakeScroll(panel, new Rectangle(8, 4, PW - 16, PH - 12 - setupFooter), Theme.Panel, Theme.Panel);
             setupHeadW = 0;
             if (setupPage > 0 && setupPage <= 7)
@@ -162,11 +166,12 @@ namespace AzerothLauncher
             }
             finally { putInto = null; }
             var cancel = new WowButton("CANCEL SETUP", SetupCancel, 142, 34, 9);
-            cancel.Location = new Point(16, PH - 44);
+            int footerWidth = (PW - footerMargin * 2 - footerGap * (stackedFooter ? 1 : 2)) / (stackedFooter ? 2 : 3);
+            cancel.Bounds = new Rectangle(footerMargin, PH - setupFooter + footerGap, footerWidth, footerButtonH);
             panel.Controls.Add(cancel);
             cancel.BringToFront();
             var restart = new WowButton("START OVER", SetupRestart, 142, 34, 9);
-            restart.Location = new Point(cancel.Right + 8, PH - 44);
+            restart.Bounds = new Rectangle(cancel.Right + footerGap, cancel.Top, footerWidth, footerButtonH);
             panel.Controls.Add(restart);
             restart.BringToFront();
             if (setupPage == 0 || setupPage == 1)
@@ -181,7 +186,8 @@ namespace AzerothLauncher
             if (setupFooterNext != null)
             {
                 var next = new WowButton(setupFooterNextLabel, delegate { setupFooterNext(); }, 190, 38, 11);
-                next.Location = new Point(PW - 16 - next.Width, PH - 48);
+                next.Bounds = stackedFooter ? new Rectangle(footerMargin, PH - footerButtonH - footerGap, PW - footerMargin * 2, footerButtonH)
+                    : new Rectangle(restart.Right + footerGap, cancel.Top, footerWidth, footerButtonH);
                 panel.Controls.Add(next);
                 next.BringToFront();
             }
@@ -608,6 +614,8 @@ namespace AzerothLauncher
             setupAddons = null;
             Cfg.Set("setup_done", false);
             setupOpen = true;
+            SetStatus("First Time Setup");
+            RefreshPlayLabel();
             current = "Setup";
             foreach (var b in nav.Values) b.Active = false;
             RefreshStrip();

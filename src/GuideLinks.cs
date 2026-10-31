@@ -818,7 +818,9 @@ namespace AzerothLauncher
         string model;                                         // a real item's name: its model picture under the text
         bool modelLayout;
         Image picture, shownPicture;                          // a picture under the text (ShowPicture)
-        const int W = 300, ModelH = 230;
+        static int W { get { return Theme.Px(300); } }
+        static int ModelH { get { return Theme.Px(230); } }
+        Font titleFont, bodyFont;
 
         GuideHover()
         {
@@ -972,7 +974,7 @@ namespace AzerothLauncher
 
         static void ShowCore(Control owner, string title, string body, Image icon, string model, bool applyGear, Point? screenAnchor)
         {
-            if (!CanShow(owner)) { Hide(owner); return; }
+            if (!CanShow(owner) && !LauncherApp.PreviewMode) { Hide(owner); return; }
             if (box == null || box.IsDisposed) box = new GuideHover();
             HookHost(owner);
             Form host = RootHost(owner);
@@ -997,7 +999,7 @@ namespace AzerothLauncher
             if (applyGear) body = GearEffect.Apply(title, body); // only content hovers get the planner's live totals
             if (model != null || IsItemTitle(title)) body = ShortItemExplanation(body);
             box.body = body;
-            Font tf = Theme.F(10.5f, FontStyle.Bold), bf = Theme.F(9.5f);
+            Font tf = box.titleFont=Theme.F(10.5f, FontStyle.Bold), bf = box.bodyFont=Theme.F(9.5f);
             int th = title.Length == 0 ? 0 : TextRenderer.MeasureText(title, tf, new Size(W - 20 - (icon != null ? 40 : 0), 0), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height;
             if (icon != null) th = Math.Max(th, 36);
             int bh;
@@ -1077,7 +1079,7 @@ namespace AzerothLauncher
             Graphics g = e.Graphics;
             g.Clear(BackColor);
             using (var p = new Pen(Theme.Hex("#c49a48"), 1)) g.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
-            Font tf = Theme.F(10.5f, FontStyle.Bold), bf = Theme.F(9.5f);
+            Font tf = titleFont ?? Theme.F(10.5f, FontStyle.Bold), bf = bodyFont ?? Theme.F(9.5f);
             int ix = icon != null ? 40 : 0;
             int th = title.Length == 0 ? 0 : TextRenderer.MeasureText(title, tf, new Size(W - 20 - ix, 0), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height;
             if (icon != null)

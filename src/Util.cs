@@ -272,9 +272,12 @@ namespace AzerothLauncher
 
         public Dictionary<string, object> Data;
 
+        static Config previewConfig;
+
         public static Config Load()
         {
             var c = new Config();
+            if (LauncherApp.PreviewMode) { if(previewConfig==null) previewConfig=new Config { Data=new Dictionary<string,object>() }; return previewConfig; }
             try
             {
                 c.Data = Json.AsDict(Json.Parse(File.ReadAllText(FilePath, Encoding.UTF8)));
@@ -293,7 +296,7 @@ namespace AzerothLauncher
 
         public void Save()
         {
-            if (Frozen) return;
+            if (Frozen || LauncherApp.PreviewMode) return;
             try
             {
                 Directory.CreateDirectory(AppDir);
@@ -474,6 +477,12 @@ namespace AzerothLauncher
             lock (dataLock)
             {
                 if (dataDir != null) return;
+                if(LauncherApp.PreviewMode || Program.DisplayPreviewBuild)
+                {
+                    dataDir=Path.Combine(LauncherDir,Program.DisplayPreviewBuild?"Display Preview Data":"preview-runtime-data");
+                    newFolder=!Directory.Exists(dataDir); dataBesideExe=true;
+                    return; // QA never migrates or shares public settings, sync state, logs or backups.
+                }
                 string beside = Path.Combine(LauncherDir, DataFolderName);
                 newFolder = !Directory.Exists(beside) && !File.Exists(Path.Combine(LauncherDir, GameExe));
                 if (!InCloudDrive(LauncherDir) && Writable(beside))

@@ -1,6 +1,6 @@
 # Display scaling overhaul plan
 
-Status: proposed after publishing commit 2f7ef9b. No scaling implementation is included in this plan.
+Status: implementation and local QA are on `feature/display-scaling-overhaul`. Public main/release are unchanged. See `scaling-overhaul-results.md` for measured results and the remaining hardware acceptance gate.
 
 ## Goal
 

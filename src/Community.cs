@@ -208,7 +208,8 @@ namespace AzerothLauncher
                 Put(cb, bx, 8);
                 bx = cb.Right + 14;
             }
-            int top = 8 + (int)(32 * Theme.Zoom) + 8;          // (no line about whose video it is: the ticked box says it)
+            int top = 8 + (int)(32 * Theme.Zoom) + 8;
+            if (bx > PW - 20 - (int)(200 * Theme.Zoom)) top += (int)(32*Theme.Zoom)+8;          // (no line about whose video it is: the ticked box says it)
             if (v == null)
             {
                 PutText("No community videos yet.", 11, FontStyle.Italic, Theme.GoldDim, 24, top + 8, 0);
@@ -236,7 +237,7 @@ namespace AzerothLauncher
             pic.BringToFront();
             if (MoreVideos().Count > 1)
                 Put(new WowButton("MORE VIDEOS ›", delegate { communityMore = true; moreOrder = null; BuildPanel("Community"); }, 200, 30, 9),
-                    PW - 20 - (int)(200 * Theme.Zoom), 8);
+                    PW - 20 - (int)(200 * Theme.Zoom), bx > PW - 20 - (int)(200*Theme.Zoom) ? 8+(int)(32*Theme.Zoom)+4 : 8);
         }
 
         // MORE VIDEOS: the big streamers' videos first, always at the top in their own order, then all the
@@ -298,7 +299,7 @@ namespace AzerothLauncher
             foreach (var mv in list) FetchTitle(mv);
             int top = 8;
             var sp = MakeScroll(panel, new Rectangle(20, top, PW - 40, PH - 12 - top), Theme.Panel, Theme.Bronze);
-            const int cols = 3, gap = 12;
+            int gap=Theme.Px(12), cols=Math.Max(1,Math.Min(3,sp.ClientSize.Width/Theme.Px(210)));
             int cw = (sp.ClientSize.Width - 20 - gap * (cols - 1)) / cols, ph = cw * 9 / 16;
             int y = 6, rowH = 0;
             for (int i = 0; i < list.Count; i++)

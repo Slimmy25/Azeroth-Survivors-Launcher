@@ -292,10 +292,10 @@ namespace AzerothLauncher
                 app.Show();                                      // the preview starts as a visible launcher window
             app.Invalidate(true);
             Application.DoEvents();
-            using (var home = new Bitmap(W, H))
+            using (var home = new Bitmap(app.W, app.H))
             {
                 using (var g = Graphics.FromImage(home))
-                    app.OnPaint(new PaintEventArgs(g, new Rectangle(0, 0, W, H)));
+                    app.OnPaint(new PaintEventArgs(g, new Rectangle(0, 0, app.W, app.H)));
                 for (int i = app.Controls.Count - 1; i >= 0; i--)
                 {
                     Control c = app.Controls[i];

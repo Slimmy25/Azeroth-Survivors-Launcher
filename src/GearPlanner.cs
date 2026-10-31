@@ -68,25 +68,27 @@ namespace AzerothLauncher
             }, 144, 26, 8);
             importCode.Location = new Point(170, top);
             if (SHOW_TEMPORARY_BUILD_MENUS) panel.Controls.Add(importCode);
-            // the sheet fits the box: its slots are sized to the room there is, so nothing scrolls
-            int sheetTop = top + (SHOW_TEMPORARY_BUILD_MENUS ? 32 : 0);
-            int h = PH - inset - sheetTop;
-            var sheet = new GearSheet(plannerClass, plannerSlots, GearIcons(), h);
-            sheet.Bounds = new Rectangle(inset, sheetTop, w, h);
-            panel.Controls.Add(sheet);
-            var stats = AddTheoryStats(plannerClass);
-            var insideStats = new GearSheet(plannerClass, plannerSlots, GearIcons());
-            insideStats.StatsOnly = true;
+            // Keep equipment readable. On a short screen the character sheet scrolls independently
+            // of its item picker, class selector and saved-build controls.
             int mainWidth = w - TheoryStatsWidth - 6;
-            insideStats.Bounds = new Rectangle(inset + 55, sheetTop + 12 + Theme.F(13, FontStyle.Bold).Height, Math.Max(90, mainWidth - 110), 29 + 6 * (Theme.F(7.5f).Height + 2));
-            panel.Controls.Add(insideStats);
-            insideStats.BringToFront();
-            sheet.StatsChanged = delegate { insideStats.Invalidate(); };
+            int header = Theme.Px(36);
+            var viewport = MakeThinScroll(panel, new Rectangle(inset,header+inset,mainWidth,Math.Max(40,PH-header-inset*2)),
+                Theme.Panel,Theme.GoldDim,Theme.GoldDim,Theme.Gold);
+            int h=Math.Max(viewport.ClientSize.Height-2,Theme.Px(350));
+            var sheet = new GearSheet(plannerClass, plannerSlots, GearIcons(), h) { MainOnly=true };
+            sheet.Bounds=new Rectangle(0,0,Math.Max(50,viewport.ClientSize.Width-2),h);
+            viewport.Controls.Add(sheet);
+            var selector = new GearSheet(plannerClass,plannerSlots,GearIcons()) {SelectorOnly=true};
+            selector.Bounds=new Rectangle(PW-4-TheoryStatsWidth,4,TheoryStatsWidth,PH-8);
+            sheet.StatsChanged=delegate { selector.Invalidate(); };
+            selector.StatsChanged=delegate { sheet.Invalidate(); };
+            panel.Controls.Add(selector);
+            AddTheoryStats(plannerClass);
             AddTheoryClassSelector(plannerClass);
         }
 
         int TheoryStatsHeight { get { return GearSheet.BuildControlsHeight; } }
-        int TheoryStatsWidth { get { return Math.Max(110, (PW - 8) * 22 / 100); } }
+        int TheoryStatsWidth { get { return Math.Min((PW - 8) / 3, Math.Max(Theme.Px(155), (PW - 8) * 22 / 100)); } }
 
         Control AddTheoryStats(string cls)
         {
@@ -94,7 +96,7 @@ namespace AzerothLauncher
             box.BackColor = Theme.Card;
             box.Bounds = new Rectangle(PW - 4 - TheoryStatsWidth, PH - 4 - TheoryStatsHeight, TheoryStatsWidth, TheoryStatsHeight);
             var saved = new ComboBox { DropDownStyle = ComboBoxStyle.DropDown, Font = Theme.F(8),
-                BackColor = Theme.Card, ForeColor = Theme.Text, Bounds = new Rectangle(5, 5, box.Width - 10, 22),
+                BackColor = Theme.Card, ForeColor = Theme.Text, Bounds = new Rectangle(Theme.Px(5), Theme.Px(5), box.Width - Theme.Px(10), Theme.Px(22)),
                 AccessibleName = "Saved builds: choose a save or type a name" };
             Action refresh = delegate
             {
@@ -103,8 +105,8 @@ namespace AzerothLauncher
             };
             refresh();
             box.Controls.Add(saved);
-            int gap = 4, bw = (box.Width - 10 - gap) / 2;
-            int y = box.Height - 53;
+            int gap = Theme.Px(4), bw = (box.Width - Theme.Px(10) - gap) / 2;
+            int y = box.Height - Theme.Px(53);
             var save = new WowButton("SAVE", delegate
             {
                 var selected = saved.SelectedItem as TalentBuildChoice;
@@ -128,7 +130,7 @@ namespace AzerothLauncher
                 refresh();
                 foreach (TalentBuildChoice choice in saved.Items) if (choice.Class == cls && choice.Name == name) { saved.SelectedItem = choice; break; }
             }, bw, 22, 7.5f);
-            save.Location = new Point(5, y); box.Controls.Add(save);
+            save.Bounds = new Rectangle(Theme.Px(5), y, bw, Theme.Px(22)); box.Controls.Add(save);
             var load = new WowButton("LOAD", delegate
             {
                 var choice = saved.SelectedItem as TalentBuildChoice;
@@ -138,11 +140,11 @@ namespace AzerothLauncher
                 if (gBuilder) gTalents = choice.Class;
                 BuildPanel("Guide");
             }, bw, 22, 7.5f);
-            load.Location = new Point(5 + bw + gap, y); box.Controls.Add(load);
+            load.Bounds = new Rectangle(Theme.Px(5) + bw + gap, y, bw, Theme.Px(22)); box.Controls.Add(load);
             var export = new WowButton("EXPORT", delegate { ShowTheoryCodeOverlay(cls, true); }, bw, 22, 7.5f);
-            export.Location = new Point(5, y + 26); box.Controls.Add(export);
+            export.Bounds = new Rectangle(Theme.Px(5), y + Theme.Px(26), bw, Theme.Px(22)); box.Controls.Add(export);
             var import = new WowButton("IMPORT", delegate { ShowTheoryCodeOverlay(cls, false); }, bw, 22, 7.5f);
-            import.Location = new Point(5 + bw + gap, y + 26); box.Controls.Add(import);
+            import.Bounds = new Rectangle(Theme.Px(5) + bw + gap, y + Theme.Px(26), bw, Theme.Px(22)); box.Controls.Add(import);
             panel.Controls.Add(box); box.BringToFront();
             return box;
         }
@@ -150,7 +152,7 @@ namespace AzerothLauncher
         void ShowTheoryCodeOverlay(string cls, bool exporting)
         {
             var overlay = new Bordered(Theme.GoldDim, 1) { BackColor = Theme.Card,
-                Bounds = new Rectangle(8, 8, PW - 16, PH - 16) };
+                Bounds = new Rectangle(8, 8, PW - 16, PH - 16), Tag="theory-code-overlay" };
             var title = UI.Text(exporting ? "EXPORT BUILD" : "IMPORT BUILD", 11, FontStyle.Bold, Theme.Gold, Theme.Card, overlay.Width - 24);
             title.Location = new Point(12, 10); overlay.Controls.Add(title);
             var errorLabel = UI.Text("", 8, FontStyle.Regular, Theme.Gold, Theme.Card, overlay.Width - 24);
@@ -188,7 +190,28 @@ namespace AzerothLauncher
                 BuildPanel("Guide");
             }, buttonWidth, 28, 9);
             action.Location = new Point(overlay.Width - 12 - buttonWidth, overlay.Height - 40); overlay.Controls.Add(action);
-            panel.Controls.Add(overlay); overlay.BringToFront(); input.Focus();
+            Action reflow=delegate
+            {
+                float previous=Theme.Zoom; Theme.Zoom=Theme.SectionZoom;
+                try
+                {
+                    int pad=Theme.Px(10), footer=Theme.Px(28), gap=Theme.Px(6);
+                    title.Font=Theme.F(11,FontStyle.Bold);
+                    title.Bounds=new Rectangle(pad,pad,overlay.Width-pad*2,title.Font.Height+gap);
+                    errorLabel.Font=Theme.F(8); errorLabel.Bounds=new Rectangle(pad,title.Bottom+gap,overlay.Width-pad*2,errorLabel.Font.Height*2);
+                    input.Font=Theme.F(9);
+                    int buttonY=overlay.Height-pad-footer;
+                    input.Bounds=new Rectangle(pad,errorLabel.Bottom+gap,overlay.Width-pad*2,Math.Max(20,buttonY-gap-errorLabel.Bottom-gap));
+                    int bw=Math.Min(Theme.Px(125),(overlay.Width-pad*2-gap)/2);
+                    close.SetDisplayZoom(Theme.SectionZoom); action.SetDisplayZoom(Theme.SectionZoom);
+                    close.Bounds=new Rectangle(pad,buttonY,bw,footer);
+                    action.Bounds=new Rectangle(overlay.Width-pad-bw,buttonY,bw,footer);
+                }
+                finally { Theme.Zoom=previous; }
+            };
+            overlay.SizeChanged+=delegate { reflow(); };
+            reflow();
+            panel.Controls.Add(overlay); overlay.BringToFront(); if(!PreviewMode) input.Focus();
             if (exporting) input.SelectAll();
         }
 
@@ -211,9 +234,10 @@ namespace AzerothLauncher
         {
             int mainWidth = PW - 8 - TheoryStatsWidth - 6;
             var menu = ThemeMenus.Create(true);
-            var picker = new WowButton(Lang.T(cls) + "  ▾", null, Math.Min(145, mainWidth / 2), 25, 9);
+            var picker = new WowButton(Lang.T(cls) + "  ▾", null, 145, 25, 9);
             picker.AccessibleName = Lang.T("Build class");
-            picker.Location = new Point(4 + (mainWidth - picker.Width) / 2, 7);
+            picker.Size = new Size(Math.Min(Theme.Px(145), mainWidth / 2), Theme.Px(27));
+            picker.Location = new Point(4 + (mainWidth - picker.Width) / 2, Theme.Px(5));
             foreach (string item in Items.Classes)
             {
                 string selected = item;
@@ -230,7 +254,7 @@ namespace AzerothLauncher
                 menu.Items.Add(option);
             }
             picker.Pressed += delegate { if (menu.Visible) menu.Close(); else menu.Show(picker, new Point(0, picker.Height)); };
-            var owner = panel.FindForm();
+            var owner = this;
             EventHandler dismiss = delegate { if (!menu.IsDisposed) menu.Close(); };
             if (owner != null) owner.Deactivate += dismiss;
             picker.Disposed += delegate
@@ -277,8 +301,8 @@ namespace AzerothLauncher
                 if (GearSheet.Stars.TryGetValue(slot.Key, out stars)) result["$star:" + slot.Key] = stars.ToString();
                 Jewel jewel = slot.Value as Jewel;
                 if (jewel != null && (slot.Key.StartsWith("Finger", StringComparison.OrdinalIgnoreCase) ||
-                    slot.Key.StartsWith("Trinket", StringComparison.OrdinalIgnoreCase) || slot.Key == "Amulet"))
-                    result[slot.Key] = jewel.Key;
+                    slot.Key.StartsWith("Trinket", StringComparison.OrdinalIgnoreCase) || (slot.Key == "Amulet" || slot.Key == "Neck")))
+                    result[slot.Key == "Neck" ? "Amulet" : slot.Key] = jewel.Key;
             }
             return result;
         }
@@ -311,7 +335,7 @@ namespace AzerothLauncher
                 if ((pair.Key.StartsWith("Finger", StringComparison.OrdinalIgnoreCase) && jewel.Kind == "Ring") ||
                     (pair.Key.StartsWith("Trinket", StringComparison.OrdinalIgnoreCase) && jewel.Kind == "Trinket") ||
                     (pair.Key == "Amulet" && (jewel.Kind == "Amulet" || jewel.IsCodex)))
-                    plannerSlots[pair.Key] = jewel;
+                    plannerSlots[pair.Key == "Amulet" ? "Neck" : pair.Key] = jewel;
             }
         }
 
@@ -335,7 +359,8 @@ namespace AzerothLauncher
 
     public class GearSheet : Control, IWheel
     {
-        public const int BuildControlsHeight = 86;
+        public static int BuildControlsHeight { get { return Theme.Px(86); } }
+        public int SelectorWidth { get { return Math.Min(Width / 3, Math.Max(Theme.Px(155), Width * 22 / 100)); } }
         readonly RichTextBox bonusView = new RichTextBox {
             ReadOnly = true, BorderStyle = BorderStyle.None, WordWrap = true,
             ScrollBars = RichTextBoxScrollBars.Vertical, DetectUrls = false,
@@ -345,9 +370,31 @@ namespace AzerothLauncher
         readonly VScrollBar itemScroll = new VScrollBar();
         int itemOffset;
         string scrollSlot;
+        Action pendingBonusLayout, pendingItemLayout;
+        bool nativeLayoutQueued;
+
+        void QueueNativeLayout()
+        {
+            if(nativeLayoutQueued||IsDisposed||!IsHandleCreated)return;
+            nativeLayoutQueued=true;
+            BeginInvoke((MethodInvoker)delegate
+            {
+                nativeLayoutQueued=false;
+                if(IsDisposed)return;
+                Action bonus=pendingBonusLayout, items=pendingItemLayout;
+                pendingBonusLayout=pendingItemLayout=null;
+                if(bonus!=null)bonus();
+                if(items!=null)items();
+            });
+        }
+        void HideItemScrollAfterPaint()
+        {
+            pendingItemLayout=delegate {itemScroll.Visible=false;}; QueueNativeLayout();
+        }
 
         public void Wheel(int delta)
         {
+            if(MainOnly) { var scroll=Parent as IWheel; if(scroll!=null) scroll.Wheel(delta); return; }
             if (StatsOnly || tierMode || !itemScroll.Visible) return;
             int limit = Math.Max(0, itemScroll.Maximum - itemScroll.LargeChange + 1);
             itemScroll.Value = Math.Max(0, Math.Min(limit, itemScroll.Value - Math.Sign(delta) * 2));
@@ -434,9 +481,9 @@ namespace AzerothLauncher
         public GearSheet(string cls, Dictionary<string, object> slots, Dictionary<string, string> gearIcons, int height)
             : this(cls, slots, gearIcons)
         {
-            int fixedH = 40 + (int)(fTitle.Height + fSmall.Height) + 14;
+            int fixedH = Theme.Px(40);
             int row = Math.Max(8, (height - fixedH) / 9);    // reserve the shared stats footer before sizing the slots
-            slotSize = Math.Max(6, Math.Min((int)(44 * Theme.Zoom), row - 2));
+            slotSize = Math.Max(Theme.Px(26), Math.Min(Theme.Px(32), row - 2));
             slotGap = Math.Max(2, row - slotSize);
         }
 
@@ -587,11 +634,11 @@ namespace AzerothLauncher
             }
             boxes.Clear();
             // The character sheet owns roughly 78% of the canvas; the compact selector uses the rest.
-            int pickW = Math.Max(110, Width * 22 / 100);
-            var sheet = new Rectangle(0, 0, Width - pickW - 6, Height - 1);
+            int pickW = MainOnly ? 0 : SelectorWidth;
+            var sheet = new Rectangle(0, 0, Width - pickW - (MainOnly?1:6), Height - 1);
             var pick = new Rectangle(sheet.Right + 6, 0, pickW - 1, Math.Max(40, Height - 1 - BuildControlsHeight - 6));
             Frame(g, sheet);
-            Frame(g, pick);
+            if(!MainOnly) Frame(g, pick);
             int health, unknown;
             var t = Totals(out health, out unknown);
 
@@ -599,12 +646,12 @@ namespace AzerothLauncher
             string title = Lang.T(cls);
             SizeF ts = g.MeasureString(title, fTitle);
             // The shared class dropdown owns this title position.
-            int top = sheet.Y + 16 + (int)ts.Height;
+            int top = sheet.Y + Theme.Px(MainOnly?5:38);
 
             // the slots: two columns and the weapons under them
             int s = slotSize, gap = slotGap;
             int tierW = Math.Max(6, s / 5) + 3;                // room for a piece's column of 5 small stars on its inner side
-            int lx = sheet.X + 12, rx = sheet.Right - 8 - tierW - s;
+            int lx = sheet.X + Theme.Px(12), rx = sheet.Right - Theme.Px(8) - tierW - s;
             int by = Math.Max(top + s, sheet.Bottom - s - 10);
             // Spread both columns evenly down to the row above the weapons, instead of
             // leaving the spare height below tightly packed slots.
@@ -629,14 +676,17 @@ namespace AzerothLauncher
 
             // under the totals, in the middle of the sheet (where the explanation was): every set worn, its 4-piece and
             // 8-piece bonuses (bright when reached), so two sets of four show and count both, and an 8-piece shows its 4-piece too
-            int setsTop = 12 + fTitle.Height + 29 + 6 * (Theme.F(7.5f).Height + 2) + 6;
+            int statHeight = Theme.Px(29) + 6 * (Theme.F(7.5f).Height + Theme.Px(2));
+            var statBounds = new Rectangle(mid.X, top, Math.Max(30, mid.Width), statHeight);
+            DrawStatColumns(g, statBounds);
+            int setsTop = statBounds.Bottom + Theme.Px(6);
             DrawSets(g, new Rectangle(mid.X, setsTop, mid.Width, by - 8 - setsTop));   // above the weapons
 
             // the selector: what the chosen slot can hold, each with its picture
-            Selector(g, pick);
+            if(!MainOnly) Selector(g, pick);
         }
 
-        public bool StatsOnly, SelectorOnly;
+        public bool StatsOnly, SelectorOnly, MainOnly;
         public Action StatsChanged;
 
         void DrawStatColumns(Graphics g, Rectangle mid)
@@ -655,18 +705,18 @@ namespace AzerothLauncher
                 new[] { "Speed", Val(t, "speed", "%") }, new[] { "Regen", Val(t, "regen", "") }, new[] { "Pickup", Val(t, "pickup", "%") }
             };
             Font font = Theme.F(7.5f, FontStyle.Bold);
-            int gap = 6, half = (Width - 1 - gap) / 2;
+            int gap = Theme.Px(6), half = (mid.Width - 1 - gap) / 2;
             for (int column = 0; column < 2; column++)
             {
-                var box = new Rectangle(column * (half + gap), 0, column == 0 ? half : Width - 1 - (half + gap), Height - 1);
+                var box = new Rectangle(mid.X + column * (half + gap), mid.Y, column == 0 ? half : mid.Width - 1 - (half + gap), mid.Height - 1);
                 using (var edge = new Pen(SlotEdge)) g.DrawRectangle(edge, box);
-                var heading = new Rectangle(box.X + 3, 3, box.Width - 6, 18);
+                var heading = new Rectangle(box.X + Theme.Px(3), box.Y + Theme.Px(3), box.Width - Theme.Px(6), Theme.Px(18));
                 TextRenderer.DrawText(g, Lang.T(column == 0 ? "Main Stats" : "Secondary Stats"), font, heading, Gold,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
-                int y = 25, lh = font.Height + 2;
+                int y = box.Y + Theme.Px(25), lh = font.Height + Theme.Px(2);
                 foreach (var row in column == 0 ? main : misc)
                 {
-                    var line = new Rectangle(box.X + 5, y, box.Width - 10, lh);
+                    var line = new Rectangle(box.X + Theme.Px(5), y, box.Width - Theme.Px(10), lh);
                     TextRenderer.DrawText(g, Lang.T(row[0]), font, line, Gold, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
                     TextRenderer.DrawText(g, row[1], font, line, Bright, TextFormatFlags.Right | TextFormatFlags.NoPrefix);
                     y += lh;
@@ -691,10 +741,18 @@ namespace AzerothLauncher
                 lines.Add("");
             }
             string text = string.Join("\n", lines.ToArray());
-            bonusView.Visible = r.Height > 12 && text.Length > 0;
-            if (!bonusView.Visible) return;
-            bonusView.Bounds = new Rectangle(r.X, r.Y, Math.Max(30, r.Width), r.Height);
-            if (bonusView.Text != text) bonusView.Text = text;
+            // Native RichEdit creation/layout cannot run in a GDI paint callback. Commit it next UI turn.
+            pendingBonusLayout=delegate
+            {
+                bool visible=r.Height>12&&text.Length>0;
+                if(visible)
+                {
+                    bonusView.Bounds=new Rectangle(r.X,r.Y,Math.Max(30,r.Width),r.Height);
+                    if(bonusView.Text!=text)bonusView.Text=text;
+                }
+                bonusView.Visible=visible;
+            };
+            QueueNativeLayout();
         }
 
         // a line wrapped word by word, the spells and talents in it in gold (as the Guide links them); its height
@@ -761,7 +819,10 @@ namespace AzerothLauncher
             tierBoxes.Clear();
             float lh = Math.Max(fText.GetHeight(g) + 6, 20);
             // where the header was: Single Item / Tier Bonus
-            int bh = (int)lh + 4, half = (r.Width - 24 - 22) / 2;
+            int starSpace=Math.Max(24,(int)(28*Theme.SectionZoom))+8;
+            int half=Math.Max(24,(r.Width-24-starSpace)/2), bh=(int)lh+4;
+            foreach(string label in new[]{Lang.T("Single Item"),Lang.T("Tier Bonus")})
+                bh=Math.Max(bh,TextRenderer.MeasureText(label,fBold,new Size(Math.Max(12,half-4),1000),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix).Height+6);
             using (var sfc = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 for (int i = 0; i < 2; i++)
                 {
@@ -773,7 +834,7 @@ namespace AzerothLauncher
                     modeBoxes.Add(new KeyValuePair<Rectangle, bool>(box, tier));
                 }
             float y = r.Y + 8 + bh + 3;
-            if (tierMode) { itemScroll.Visible = false; TierRows(g, r, y, lh); return; }
+            if (tierMode) { HideItemScrollAfterPaint(); TierRows(g, r, y, lh); return; }
             int ic = (int)(lh - 4);                          // the picture: as tall as the line
             object worn;
             slots.TryGetValue(chosenSlot, out worn);
@@ -781,7 +842,7 @@ namespace AzerothLauncher
             object inOther = null;
             if (other != null) slots.TryGetValue(other, out inOther);
             var list = Choices(chosenSlot);
-            if (list.Count == 0) { itemScroll.Visible = false; return; }
+            if (list.Count == 0) { HideItemScrollAfterPaint(); return; }
             Font selectorFont = Theme.F(8.25f);
             ic = Math.Max(12, selectorFont.Height);
             int textWidth = Math.Max(20, r.Width - 4 - 14 - ic - 6);
@@ -800,17 +861,25 @@ namespace AzerothLauncher
             while (maxOffset > 0 && tailHeight + 1 + heights[maxOffset - 1] <= room)
                 tailHeight += 1 + heights[--maxOffset];
             int visibleRows = Math.Max(1, list.Count - maxOffset);
-            if (scrollSlot != chosenSlot) { itemOffset = 0; scrollSlot = chosenSlot; itemScroll.Value = 0; }
+            if (scrollSlot != chosenSlot) { itemOffset = 0; scrollSlot = chosenSlot; }
             itemOffset = Math.Min(itemOffset, maxOffset);
             bool scrollable = maxOffset > 0;
-            itemScroll.Visible = scrollable;
-            if (scrollable)
+            Rectangle scrollBounds=new Rectangle(r.Right-15,(int)y,12,Math.Max(1,r.Bottom-1-(int)y));
+            string layoutSlot=chosenSlot;
+            pendingItemLayout=delegate
             {
-                itemScroll.Bounds = new Rectangle(r.Right - 15, (int)y, 12, Math.Max(1, r.Bottom - 1 - (int)y));
-                itemScroll.Maximum = Math.Max(0, list.Count - 1);
-                itemScroll.LargeChange = visibleRows;
-                itemScroll.Value = itemOffset;
-            }
+                if(layoutSlot!=chosenSlot)return;
+                if(scrollable)
+                {
+                    int target=Math.Max(0,Math.Min(itemOffset,maxOffset));
+                    itemScroll.Bounds=scrollBounds;
+                    itemScroll.Maximum=Math.Max(0,list.Count-1);
+                    itemScroll.LargeChange=visibleRows;
+                    itemScroll.Value=target;
+                }
+                itemScroll.Visible=scrollable;
+            };
+            QueueNativeLayout();
 
             using (var sf = new StringFormat(StringFormat.GenericTypographic) { LineAlignment = StringAlignment.Near })
                 for (int i = itemOffset; i < list.Count; i++)
@@ -992,7 +1061,9 @@ namespace AzerothLauncher
                 if (!unused)
                     using (var f = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                     using (var b = new SolidBrush(Color.FromArgb(110, 156, 138, 100)))
-                        g.DrawString(Lang.T(slot), fSmall, b, r, f);
+                        g.DrawString(Lang.T(slot.StartsWith("Finger") ? "R" + slot.Substring(slot.Length - 1) :
+                            slot.StartsWith("Trinket") ? "T" + slot.Substring(slot.Length - 1) :
+                            slot == "Main Hand" ? "MH" : slot == "Off Hand" ? "OH" : slot == "Shoulder" ? "Shldr" : slot == "Hands" ? "Hnds" : slot == "Chest" ? "Chst" : slot), Theme.FFit(7, FontStyle.Regular), b, r, f);
             }
             if (slot == chosenSlot && !unused)                // the slot the selector shows
                 using (var p = new Pen(Gold, 2f)) g.DrawRectangle(p, Rectangle.Inflate(r, 2, 2));

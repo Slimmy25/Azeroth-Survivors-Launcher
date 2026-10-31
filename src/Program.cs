@@ -29,11 +29,17 @@ namespace AzerothLauncher
         public const bool LocalDevelopmentBuild = true;
 #endif
 
-        // Only one launcher may run at a time. A named mutex decides who is first; a named event lets a second
-        // start ask the first one to come forward. Nothing listens on the network.
-        const string MutexName = "Local\\AzerothSurvivorsLauncher";
-        const string EventName = "Local\\AzerothSurvivorsLauncherShow";
+#if AZS_DISPLAY_PREVIEW
+        public const bool DisplayPreviewBuild=true;
+        const string MutexName="Local\\AzerothSurvivorsDisplayPreview";
+        const string EventName="Local\\AzerothSurvivorsDisplayPreviewShow";
+#else
+        public const bool DisplayPreviewBuild=false;
+        const string MutexName="Local\\AzerothSurvivorsLauncher";
+        const string EventName="Local\\AzerothSurvivorsLauncherShow";
+#endif
 
+        // Preview and public launcher use separate instance identities. Nothing listens on the network.
         [DllImport("user32.dll")]
         static extern bool AllowSetForegroundWindow(int processId);
 
@@ -43,12 +49,21 @@ namespace AzerothLauncher
         [STAThread]
         static void Main(string[] args)
         {
+            NativeDisplay.Enable();
             int scalingPreview = Array.IndexOf(args, "--preview-scaling");
             if (scalingPreview >= 0 && args.Length > scalingPreview + 1)
             {
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                Application.ThreadException += delegate(object sender,ThreadExceptionEventArgs failure)
+                {
+                    System.IO.Directory.CreateDirectory(args[scalingPreview+1]);
+                    System.IO.File.WriteAllText(System.IO.Path.Combine(args[scalingPreview+1],"native-error.txt"),failure.Exception.ToString());
+                    Environment.Exit(1);
+                };
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                LauncherApp.RenderScalingPreview(args[scalingPreview + 1]);
+                try { LauncherApp.RenderScalingPreview(args); }
+                catch(Exception error) { System.IO.Directory.CreateDirectory(args[scalingPreview+1]); System.IO.File.WriteAllText(System.IO.Path.Combine(args[scalingPreview+1],"error.txt"),error.ToString()); Environment.Exit(1); }
                 return;
             }
             int preview = Array.IndexOf(args, "--preview-stats");     // developer tool, see StatsPreview.cs
@@ -97,7 +112,7 @@ namespace AzerothLauncher
                     return;
                 }
                 SelfUpdate.CleanUp();                        // the previous exe after a launcher update
-                try { SetCurrentProcessExplicitAppUserModelID("Aethus.AzerothSurvivors.Launcher"); }   // own taskbar identity
+                try { SetCurrentProcessExplicitAppUserModelID(DisplayPreviewBuild ? "Aethus.AzerothSurvivors.DisplayPreview" : "Aethus.AzerothSurvivors.Launcher"); }   // own taskbar identity
                 catch (Exception) { }
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

@@ -44,7 +44,8 @@ namespace AzerothLauncher
         public const string DiscordUrl = "https://discord.gg/azerothsurvivors";
         public const string SupportUrl = "https://buymeacoffee.com/aethusx";      // the game's developer's own page
 
-        const int W = 1100, H = 690;                         // retro launcher window: sections open on the left, News on the right
+        int W { get { return ClientSize.Width; } }
+        int H { get { return ClientSize.Height; } } // actual available client pixels; DisplayLayout controls density and columns
 
         public Config Cfg;
         public bool GameRunningFlag, Installing, SyncBusy, Updating, UpdateChecking;   // Updating: the launcher's own update
@@ -94,16 +95,17 @@ namespace AzerothLauncher
             WowDialog.Host = this;                           // questions and messages open inside the launcher
             Theme.PickFont();
             Cfg = Config.Load();
+            InitializeDisplay();
             // Create the first-run marker beside this exe before Shown can start the automatic updater. It remains
             // pending until setup succeeds, including across an automatic updater restart.
             if (!PreviewMode) try { Util.EnsureSetupPendingMarker(); } catch (Exception) { }
             if (!PreviewMode && Util.SetupPendingForThisInstall) status = "First Time Setup";
 
-            Text = "Azeroth Survivors Launcher";
+            Text = "Azeroth Survivors Launcher" + (Program.DisplayPreviewBuild ? " - Display Preview" : "");
             Icon = Theme.AppIcon;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            ClientSize = new Size(W, H);
+            ClientSize = displayLayout.InitialClientSize;
             BackColor = Theme.BgBottom;
             DoubleBuffered = true;
             StartPosition = FormStartPosition.CenterScreen;
@@ -142,6 +144,7 @@ namespace AzerothLauncher
             LayoutNav();
 
             BuildSide();
+            EnableResponsiveDisplay();
             RefreshPlayLabel();
 
             FormClosing += OnClosingWindow;
@@ -183,7 +186,7 @@ namespace AzerothLauncher
             Shown += delegate
             {
                 if (!PreviewMode && !Program.LocalDevelopmentBuild) After(300, StartupUpdateCheck);
-                if (!PreviewMode) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
+                if (!PreviewMode && !Program.DisplayPreviewBuild) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
                 After(500, MaybeFirstRun);
                 After(700, delegate { if ((current == null || current == "Home") && !setupOpen) ShowHomeCommunity(); });   // home: Community
             };
@@ -299,180 +302,14 @@ namespace AzerothLauncher
         // the launcher art (layout after the WoW Retro Launcher); the newest patch notes in the News panel
         // what never changes on the home screen (the picture, the title, its byline, the headings, the game version) is
         // drawn once into a picture of its own; a repaint copies the part it needs and draws only what moves on top
-        Bitmap homeLayer;
-        string homeLayerKey;
-        readonly Dictionary<string, SizeF> newsMeasured = new Dictionary<string, SizeF>();
-
-        // the whole window is drawn by OnPaint from the picture above: no fill first (it only makes the window flicker)
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-            if (homeLayer == null || e.ClipRectangle.Right > W || e.ClipRectangle.Bottom > H) base.OnPaintBackground(e);
-        }
-
-        Bitmap HomeLayer()
-        {
-            string key = Lang.Code + "|" + Theme.FontName + "|" + W + "x" + H;
-            if (homeLayer != null && homeLayerKey == key) return homeLayer;
-            if (homeLayer != null) homeLayer.Dispose();
-            homeLayer = new Bitmap(W, H, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            homeLayer.SetResolution(96, 96);
-            homeLayerKey = key;
-            using (Graphics g = Graphics.FromImage(homeLayer))
-            {
-                Image bg = Retro.Get("background");
-                if (bg != null) Theme.Draw(g, bg, new Rectangle(0, 0, W, H));
-                else g.Clear(Theme.BgBottom);
-                Theme.Smooth(g);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-                // title: "Azeroth Survivors" in big gold letters over the section area, the emblem to its right
-                using (var path = new GraphicsPath())
-                using (var sf = new StringFormat())
-                {
-                    path.AddString("Azeroth Survivors", Theme.TitleFamily(), (int)FontStyle.Bold, 58f, new PointF(0, 0), sf);   // the decorative title font
-                    RectangleF b = path.GetBounds();
-                    Image em = Theme.Logo;
-                    int emW = em != null ? 128 : 0, emH = em != null ? em.Height * 128 / em.Width : 0;
-                    float total = b.Width + (em != null ? 16 + emW : 0);
-                    float x0 = 8 + (670 - total) / 2, y0 = 70 + (120 - b.Height) / 2;
-                    using (var m = new Matrix())
-                    {
-                        m.Translate(x0 - b.X, y0 - b.Y);
-                        path.Transform(m);
-                    }
-                    using (var sh = new GraphicsPath())
-                    {
-                        sh.AddPath(path, false);
-                        using (var m = new Matrix()) { m.Translate(3, 4); sh.Transform(m); }
-                        using (var sb = new SolidBrush(Color.FromArgb(200, 0, 0, 0))) g.FillPath(sb, sh);
-                    }
-                    RectangleF pb = path.GetBounds();
-                    using (var lg = new LinearGradientBrush(pb, Theme.Hex("#fff1b8"), Theme.Hex("#c9821a"), LinearGradientMode.Vertical))
-                        g.FillPath(lg, path);
-                    using (var pen = new Pen(Theme.Hex("#4a2a08"), 2f)) g.DrawPath(pen, path);
-                    if (em != null) g.DrawImage(em, pb.Right + 16, 70 + (120 - emH) / 2, emW, emH);
-                    // under the title: who made the game
-                    string by = Lang.T("A Game Made By Aethus");
-                    Font byf = Theme.F(13, FontStyle.Italic);
-                    float bw = g.MeasureString(by, byf).Width, bx = pb.Left + (pb.Width - bw) / 2, byy = pb.Bottom + 12;
-                    using (var bsh = new SolidBrush(Color.Black)) g.DrawString(by, byf, bsh, bx + 1, byy + 1);
-                    using (var bb = new SolidBrush(Theme.Hex("#e8d9a8"))) g.DrawString(by, byf, bb, bx, byy);
-                }
-                using (var gold = new SolidBrush(Retro.Gold))
-                using (var shadow = new SolidBrush(Color.Black))
-                {
-                    Font hf = Theme.F(11);
-                    g.DrawString(Lang.T("News"), hf, shadow, 757, 205);    // centered after the heart and Discord icons
-                    g.DrawString(Lang.T("News"), hf, gold, 756, 204);
-                    g.DrawString(Lang.T("Launcher"), hf, shadow, 698, 447);
-                    g.DrawString(Lang.T("Launcher"), hf, gold, 697, 446);
-                }
-                string version = Data.GameVersion;
-                using (var vb = new SolidBrush(Theme.Hex("#b8a27a")))            // bottom-left corner
-                    g.DrawString(Lang.T("Game version") + (version.Length > 0 ? ": " + version : ""), Theme.F(9.5f), vb, 12, 670);   // a little bigger
-            }
-            return homeLayer;
-        }
+        // The display renderer covers the client area; avoid an intermediate background fill/flicker.
+        protected override void OnPaintBackground(PaintEventArgs e) { }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            Rectangle clip = Rectangle.Intersect(e.ClipRectangle, new Rectangle(0, 0, W, H));
-            if (clip.Width > 0 && clip.Height > 0)
-            {
-                g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                g.PixelOffsetMode = PixelOffsetMode.Half;
-                g.CompositingMode = CompositingMode.SourceCopy;
-                g.DrawImage(HomeLayer(), clip, clip, GraphicsUnit.Pixel);
-                g.CompositingMode = CompositingMode.SourceOver;
-            }
-            Theme.Smooth(g);
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-            // News: the newest patch note
-            var posts = Data.Changelog;
-            if (posts.Count > 0)
-            {
-                string[] lines = posts[0].Trim('\n').Split('\n');
-                using (var title = new SolidBrush(Retro.Gold))
-                using (var body = new SolidBrush(Theme.Hex("#e8dcc0")))
-                using (var shadow = new SolidBrush(Color.Black))
-                {
-                    Font tf = Theme.F(11, FontStyle.Bold), bf = Theme.F(9);
-                    // the whole post, scrolled by newsScroll inside NewsArea (mouse wheel, or drag the slim bar)
-                    Region oldClip = g.Clip;
-                    g.SetClip(NewsArea);
-                    float y = NewsArea.Y - newsScroll;
-                    g.DrawString(Lang.T("Patch") + " " + lines[0].Trim(), tf, shadow, 698, y + 1);
-                    g.DrawString(Lang.T("Patch") + " " + lines[0].Trim(), tf, title, 697, y);
-                    y += 22;
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        string l = lines[i].Trim();
-                        if (l.Length == 0 || l.Trim('-', '=', '_', '\u2014', '\u2013').Length == 0) continue;   // blank or a rule
-                        if (l.StartsWith("- ") || l.StartsWith("* ")) l = "\u2022 " + l.Substring(2);
-                        SizeF sz;                            // measured once per line and font
-                        string mk = l + "\u0001" + bf.Size + bf.Name;
-                        if (!newsMeasured.TryGetValue(mk, out sz)) { sz = g.MeasureString(l, bf, NewsTextW); newsMeasured[mk] = sz; }
-                        if (y + sz.Height > NewsArea.Y && y < NewsArea.Bottom)
-                        {
-                            var box = new RectangleF(700, y, NewsTextW, sz.Height + 2);
-                            g.DrawString(l, bf, shadow, new RectangleF(box.X + 1, box.Y + 1, box.Width, box.Height));
-                            g.DrawString(l, bf, body, box);
-                        }
-                        y += sz.Height + 1;
-                    }
-                    newsHeight = (int)(y + newsScroll - NewsArea.Y) + 4;
-                    g.Clip = oldClip;
-                    Rectangle thumb = NewsThumb();
-                    if (!thumb.IsEmpty)
-                    {
-                        using (var tb = new SolidBrush(Color.FromArgb(120, Theme.CardEdge))) g.FillRectangle(tb, NewsBar.X + 2, NewsBar.Y, 2, NewsBar.Height);
-                        using (var tb = new SolidBrush(newsDrag || newsBarHover ? Theme.Gold : Theme.GoldDim)) g.FillRectangle(tb, thumb);
-                    }
-                }
-            }
-            WeeklyRecap(g);
-            // bottom bar: the status above PLAY says everything
-            using (var gb = new SolidBrush(Retro.Gold))
-            using (var sf = new StringFormat())
-            {
-                // bottom bar, right: status above PLAY, time played below it, the game version in the corner
-                sf.Alignment = StringAlignment.Center;
-                var rc = new RectangleF(800, 0, 292, 16);
-                using (var sb = new SolidBrush(Theme.Hex("#fff2b0")))
-                {
-                    // centred over PLAY; a long status that would run off the window ends at the right edge instead
-                    string st = Lang.T(status == "Ready." && !ClientPresentPaint()
-                        ? (RequireLauncherInstall ? "Game client not found. Press INSTALL to download it first."
-                                                  : "Game client not found. Press INSTALL, or set the game folder in Options.")
-                        : status);
-                    Font stf = Theme.F(9, FontStyle.Italic);
-                    float cxp = playBtn.Left + playBtn.Width / 2f;
-                    if (dlActive)                            // the game download: its bar takes the status line's place
-                    {
-                        int pct = dlTotal > 0 ? (int)Math.Min(100, dlDone * 100 / dlTotal) : -1;
-                        st = Lang.T(pct >= 0 ? "Downloading the game: " + pct + "%  (" + Util.FmtSize(dlDone) + " of " + Util.FmtSize(dlTotal) + ")"
-                                             : "Downloading the game: " + Util.FmtSize(dlDone));
-                        Font df = Theme.F(8, FontStyle.Italic);
-                        float dw = g.MeasureString(st, df).Width;
-                        const int bw = 250, bh = 8;
-                        float bx = Math.Min(cxp - bw / 2f, W - 10 - bw);
-                        float by = playBtn.Top - 12;
-                        g.DrawString(st, df, sb, Math.Min(cxp - dw / 2, W - 10 - dw), by - 15);
-                        using (var back = new SolidBrush(Theme.Hex("#1a1410"))) g.FillRectangle(back, bx, by, bw, bh);
-                        if (pct > 0)
-                            using (var fill = new LinearGradientBrush(new RectangleF(bx, by, bw, bh), Theme.Hex("#f4d27a"), Theme.Hex("#a8761e"), 90f))
-                                g.FillRectangle(fill, bx, by, bw * pct / 100f, bh);
-                        using (var edge = new Pen(Theme.Hex("#c49a48"))) g.DrawRectangle(edge, bx, by, bw, bh);
-                    }
-                    else
-                    {
-                        float sw = g.MeasureString(st, stf).Width;
-                        float sx = Math.Min(cxp - sw / 2, W - 10 - sw);
-                        g.DrawString(st, stf, sb, sx, playBtn.Top - 26);
-                    }
-                }
-            }
+            DrawResponsiveLauncher(e.Graphics);
         }
+
 
         // the paint asks often; the disk is asked at most every 2 seconds
         bool clientPresentSeen;
@@ -506,7 +343,7 @@ namespace AzerothLauncher
             else if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
                 lines.Add(new[] { Lang.T("Time played"), Duration(ps.Seconds) + "  ·  " + Lang.T("Last session") + " " + Duration(ps.LastSeconds) });
             if (lines.Count == 0) return;
-            var box = new RectangleF(694, 546, 394, 30);
+            var box = new RectangleF(ResponsiveNewsRect.Left, FooterTop - U(26), ResponsiveNewsRect.Width, U(23));
             using (var path = Armory.Round(box, 5))
             {
                 using (var b = new SolidBrush(Color.FromArgb(190, 14, 13, 20))) g.FillPath(b, path);
@@ -592,9 +429,9 @@ namespace AzerothLauncher
         }
 
         // ---- the News panel scrolls when the patch note is longer than its space
-        static readonly Rectangle NewsArea = new Rectangle(694, 236, 386, 442 - 236);
-        static readonly Rectangle NewsBar = new Rectangle(1080, 238, 6, 442 - 240);
-        const int NewsTextW = 372;
+        Rectangle NewsArea { get { return ResponsiveNewsRect; } }
+        Rectangle NewsBar { get { return new Rectangle(NewsArea.Right + U(3), NewsArea.Top, U(6), NewsArea.Height); } }
+        int NewsTextW { get { return Math.Max(40, NewsArea.Width - U(10)); } }
         int newsScroll, newsHeight;
         bool newsDrag, newsBarHover;
         int newsDragOffset;
@@ -668,7 +505,7 @@ namespace AzerothLauncher
         {
             status = msg ?? "";
             if (status == "Ready." && Util.SetupPendingForThisInstall) status = "First Time Setup";
-            Invalidate(new Rectangle(0, 578, W, H - 578));
+            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
         }
 
         // every message goes to the one status line above PLAY (there is no note in the bottom left any more)
@@ -687,19 +524,63 @@ namespace AzerothLauncher
         }
 
         // stack the section buttons
+        WowButton compactNavigation;
         void LayoutNav()
         {
-            int k = 0;                                       // three per row under "Launcher"
+            if (CompactDisplay)
+            {
+                foreach (var button in nav.Values) button.Visible = false;
+                if (compactNavigation == null)
+                {
+                    compactNavigation = new WowButton("MENU ▾", delegate
+                    {
+                        var menu = ThemeMenus.Create(true);
+                        foreach (string section in navNames)
+                        {
+                            if (!NavShown(section)) continue;
+                            string destination = section;
+                            var entry = new ToolStripMenuItem(Lang.T(section));
+                            entry.Enabled = nav.ContainsKey(section) && !nav[section].Grayed;
+                            entry.Click += delegate
+                            {
+                                if (destination == "Theorycrafting") GuideGroupPage(2);
+                                else if (destination == "New Player Guide") GuideGroupPage(0);
+                                else OpenMain(destination);
+                            };
+                            menu.Items.Add(entry);
+                        }
+                        menu.Items.Add(new ToolStripSeparator());
+                        var discord=new ToolStripMenuItem(Lang.T("Join the community!"),null,delegate {Util.OpenInShell(DiscordUrl);});
+                        var support=new ToolStripMenuItem(Lang.T("Support the Dev"),null,delegate {Util.OpenInShell(SupportUrl);});
+                        discord.Enabled=support.Enabled=!setupOpen; menu.Items.Add(discord);menu.Items.Add(support);
+                        menu.Closed += delegate { Ui(delegate { menu.Dispose(); }); };
+                        menu.Show(compactNavigation, new Point(0, compactNavigation.Height));
+                    }, 120, 28, 9);
+                    Controls.Add(compactNavigation);
+                }
+                compactNavigation.SetDisplayZoom(Theme.DisplayScale);
+                compactNavigation.Bounds = new Rectangle(W - U(132), U(8), U(120), U(30));
+                compactNavigation.Visible = true; compactNavigation.BringToFront();
+                if (strip != null) LayoutStrip();
+                return;
+            }
+            if (compactNavigation != null) compactNavigation.Visible = false;
+            int left = CompactDisplay ? U(6) : ResponsiveNewsRect.Left;
+            int width = CompactDisplay ? W - U(12) : W - left - U(10);
+            int top = FooterTop - NavHeight + U(20), gap = U(5);
+            int buttonWidth = Math.Max(U(65), (width - gap * 2) / 3);
+            int k = 0;
             foreach (string name in navNames)
             {
-                if (name == "Changelog") continue;           // its place is on the News line
+                if (name == "Changelog") continue;
                 if (!NavShown(name)) { nav[name].Visible = false; continue; }
-                nav[name].Visible = true;
-                nav[name].Location = new Point(693 + (k % 3) * 134, 480 + (k / 3) * 34);
+                var button = nav[name]; button.Visible = true; button.SetDisplayZoom(Theme.DisplayScale);
+                button.Bounds = new Rectangle(left + (k % 3) * (buttonWidth + gap), top + (k / 3) * U(31), buttonWidth, U(27));
                 k++;
             }
             if (strip != null) LayoutStrip();
         }
+
 
         public void RefreshPlayLabel()
         {
@@ -716,7 +597,7 @@ namespace AzerothLauncher
             // Play stays illuminated and acts as the current slide's NEXT action during setup.
             playBtn.GrayedTip = "";
             playBtn.Grayed = false;
-            Invalidate(new Rectangle(0, 578, W, H - 578));
+            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
             RefreshGates();
         }
 
@@ -1512,7 +1393,7 @@ namespace AzerothLauncher
                 LayoutDownloadClosePrompt();
                 closeDownloadCard.Invalidate();
             }
-            Invalidate(new Rectangle(0, 578, W, H - 578));
+            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
         }
 
         ManualResetEvent installCancel;
@@ -1883,6 +1764,7 @@ namespace AzerothLauncher
         // At start-up it stays quiet unless there is something to offer; the button always answers.
         void CheckLauncherUpdate(bool manual)
         {
+            if(Program.DisplayPreviewBuild) { if(manual)SetStatus("Display Preview uses local builds; public updates stay separate."); return; }
             if (Updating) return;
             if (UpdateChecking) return;
             UpdateChecking = true;

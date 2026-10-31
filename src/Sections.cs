@@ -98,7 +98,7 @@ namespace AzerothLauncher
         public bool CloseEnabled { get { return closeEnabled; } set { if (closeEnabled != value) { closeEnabled = value; Invalidate(); } } }
         string note = "";                                    // a short line at the right end of the bar (Community: while a video plays)
         public string Note { get { return note; } set { note = value ?? ""; Invalidate(); } }
-        int NoteW { get { return note.Length == 0 ? 0 : 12 + TextRenderer.MeasureText(note, Theme.F(9, FontStyle.Bold)).Width; } }
+        int NoteW { get { return note.Length == 0 ? 0 : Theme.Px(12) + TextRenderer.MeasureText(note, Theme.F(9, FontStyle.Bold)).Width; } }
         public Action<Point> Moved;
         Point? dragOffset;
         List<KeyValuePair<string, Action>> crumbs = new List<KeyValuePair<string, Action>>();
@@ -160,6 +160,8 @@ namespace AzerothLauncher
             GuideHover.Hide(this);
         }
 
+        internal void HideTransientUi() { HoverHostDeactivated(this, EventArgs.Empty); }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -212,13 +214,13 @@ namespace AzerothLauncher
             Invalidate();
         }
 
-        Rectangle CloseBox { get { return closable ? new Rectangle(Width - 27, 9, 18, 18) : Rectangle.Empty; } }
+        Rectangle CloseBox { get { return closable ? new Rectangle(Width - Theme.Px(27),Theme.Px(9),Theme.Px(18),Theme.Px(18)) : Rectangle.Empty; } }
         // "Lost?" beside the X: for anyone not sure how to get around (its width follows the word in the language)
-        int HelpW { get { return 26 + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
-        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? 32 : 9) - HelpW, 9, HelpW, 18) : Rectangle.Empty; } }
+        int HelpW { get { return Theme.Px(26) + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
+        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? Theme.Px(32) : Theme.Px(9)) - HelpW, Theme.Px(9), HelpW, Theme.Px(18)) : Rectangle.Empty; } }
         public Point HelpScreenAnchor { get { Rectangle box = HelpBox; return box.IsEmpty ? PointToScreen(Point.Empty) : PointToScreen(new Point(box.Left + box.Width / 2, box.Bottom)); } }
         public Rectangle HelpScreenBounds { get { Rectangle box = HelpBox; return box.IsEmpty ? Rectangle.Empty : RectangleToScreen(box); } }
-        Rectangle BackBox { get { return BackClicked != null ? new Rectangle(44, 8, 30, 20) : Rectangle.Empty; } }
+        Rectangle BackBox { get { return BackClicked != null ? new Rectangle(Theme.Px(44),Theme.Px(8),Theme.Px(30),Theme.Px(20)) : Rectangle.Empty; } }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -226,8 +228,8 @@ namespace AzerothLauncher
             g.Clear(BackColor);
             int w = Math.Max(Width, 200);
             Image bar = Retro.Get("long");                  // the launcher's blue stone, framed in gold
-            if (bar != null) Theme.Draw(g, bar, new Rectangle(22, 7, w - 26, 22));
-            using (var p = new Pen(Theme.Hex("#c49a48"), 2)) g.DrawRectangle(p, 22, 7, w - 26, 21);
+            if (bar != null) Theme.Draw(g, bar, new Rectangle(Theme.Px(22),Theme.Px(7), w - Theme.Px(26),Theme.Px(22)));
+            using (var p = new Pen(Theme.Hex("#c49a48"), 2)) g.DrawRectangle(p, Theme.Px(22), Theme.Px(7), w - Theme.Px(26), Theme.Px(21));
             Theme.Smooth(g);
             hot.Clear();
             arrows.Clear();
@@ -235,17 +237,17 @@ namespace AzerothLauncher
             stepRects.Clear();
             crumbRects.Clear();
             crumbTextRects.Clear();
-            int x = 50;
+            int x = Theme.Px(50);
             Rectangle bb = BackBox;
             if (!bb.IsEmpty)
             {
                 using (var b = new SolidBrush(hover == -2 ? Theme.Hex("#3a2c18") : Theme.Hex("#1c160e"))) g.FillRectangle(b, bb);
                 using (var p = new Pen(Theme.Hex("#d6a640"), 1.5f)) g.DrawRectangle(p, bb);
                 using (var b = new SolidBrush(Theme.Hex("#fff0b0")))
-                    g.FillPolygon(b, new[] { new PointF(bb.X + 11, bb.Y + 10), new PointF(bb.X + 19, bb.Y + 4), new PointF(bb.X + 19, bb.Y + 16) });
+                    g.FillPolygon(b, new[] { new PointF(bb.X + Theme.Px(11), bb.Y + Theme.Px(10)), new PointF(bb.X + Theme.Px(19), bb.Y + Theme.Px(4)), new PointF(bb.X + Theme.Px(19), bb.Y + Theme.Px(16)) });
                 x = bb.Right + 8;
             }
-            int right = (closable ? Width - 32 : Width - 8) - (HelpClicked != null && helpShown ? HelpW + 5 : 0) - NoteW;
+            int right = (closable ? Width - Theme.Px(32) : Width - Theme.Px(8)) - (HelpClicked != null && helpShown ? HelpW + Theme.Px(5) : 0) - NoteW;
             if (note.Length > 0)
                 TextRenderer.DrawText(g, note, Theme.F(9, FontStyle.Bold), new Rectangle(right, 0, NoteW, Height), Theme.Hex("#e0a040"),
                                       TextFormatFlags.Right | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
@@ -257,7 +259,7 @@ namespace AzerothLauncher
                 sf.Trimming = StringTrimming.EllipsisCharacter;
                 // from the end: the steps that fit; the first ones go when the trail is too long
                 var widths = new List<float>();
-                float arrowW = 14;
+                float arrowW = Theme.Px(14);
                 for (int i = 0; i < crumbs.Count; i++)
                     widths.Add(g.MeasureString(Lang.T(crumbs[i].Key), i == crumbs.Count - 1 ? f : fs).Width + (menus.ContainsKey(i) ? arrowW : 0));
                 float sep = g.MeasureString(" › ", fs).Width;
@@ -271,7 +273,7 @@ namespace AzerothLauncher
                     string t = Lang.T(crumbs[i].Key);
                     float tw = Math.Min(widths[i], right - x);
                     bool menu = menus.ContainsKey(i);
-                    var r = new RectangleF(x, 7, Math.Max(1, tw - (menu ? arrowW : 0)), 22);
+                    var r = new RectangleF(x,Theme.Px(7), Math.Max(1, tw - (menu ? arrowW : 0)), Theme.Px(22));
                     crumbRects.Add(new KeyValuePair<Rectangle, int>(Rectangle.Round(r), i));
                     Color c = !last && hover == i ? Color.White : Theme.Hex("#e6cf8c");
                     using (var b = new SolidBrush(c)) g.DrawString(t, last ? f : fs, b, r, sf);
@@ -301,7 +303,7 @@ namespace AzerothLauncher
                         var ar = new Rectangle((int)r.Right + 1, 11, (int)arrowW - 2, 14);
                         if (hoverArrow == i) using (var b = new SolidBrush(Theme.Hex("#3a2c18"))) g.FillRectangle(b, ar);
                         using (var b = new SolidBrush(hoverArrow == i ? Color.White : Theme.Hex("#d9c48a")))
-                            g.FillPolygon(b, new[] { new PointF(ar.X + 2, ar.Y + 5), new PointF(ar.Right - 2, ar.Y + 5), new PointF(ar.X + ar.Width / 2f, ar.Y + 10) });
+                            g.FillPolygon(b, new[] { new PointF(ar.X + Theme.Px(2), ar.Y + Theme.Px(5)), new PointF(ar.Right - Theme.Px(2), ar.Y + Theme.Px(5)), new PointF(ar.X + ar.Width / 2f, ar.Y + Theme.Px(10)) });
                         arrows.Add(new KeyValuePair<Rectangle, int>(ar, i));
                         if (last || crumbs[i].Value == null) menuText.Add(new KeyValuePair<Rectangle, int>(Rectangle.Round(r), i));
                         stepRects.Add(new KeyValuePair<Rectangle, int>(Rectangle.Union(Rectangle.Round(r), ar), i));
@@ -315,20 +317,20 @@ namespace AzerothLauncher
                     x += (int)tw;
                     if (!last)
                     {
-                        using (var b = new SolidBrush(Theme.Hex("#a08850"))) g.DrawString(" › ", fs, b, new RectangleF(x, 7, sep + 2, 22), sf);
+                        using (var b = new SolidBrush(Theme.Hex("#a08850"))) g.DrawString(" › ", fs, b, new RectangleF(x,Theme.Px(7), sep + Theme.Px(2),Theme.Px(22)), sf);
                         x += (int)sep;
                     }
                     if (x >= right) break;
                 }
             }
-            if (Theme.Portrait != null) Theme.Draw(g, Theme.Portrait, new Rectangle(2, 1, 36, 36));
+            if (Theme.Portrait != null) Theme.Draw(g, Theme.Portrait, new Rectangle(Theme.Px(2), 1,Theme.Px(36),Theme.Px(36)));
             Rectangle hb = HelpBox;
             if (!hb.IsEmpty)
             {
                 using (var b = new SolidBrush(Theme.Hex("#1c1a26"))) g.FillRectangle(b, hb);
                 using (var p = new Pen(Theme.Hex("#d6a640"), 2)) g.DrawRectangle(p, hb);
                 using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                using (var b = new SolidBrush(Theme.Hex("#f0c050"))) g.DrawString(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold), b, new RectangleF(hb.X, hb.Y + 1, hb.Width, hb.Height), sf);
+                using (var b = new SolidBrush(Theme.Hex("#f0c050"))) g.DrawString(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold), b, new RectangleF(hb.X, hb.Y + Theme.Px(1), hb.Width, hb.Height), sf);
             }
             Rectangle xb = CloseBox;
             if (xb.IsEmpty) return;
@@ -773,6 +775,7 @@ namespace AzerothLauncher
         {
             Color bronzeD = Theme.Hex("#2a2620"), dark = Theme.Hex("#0e0d14");   // night stone, like the launcher
             side = new Form();
+            side.AutoScaleMode=AutoScaleMode.None;
             WowDialog.SecondaryHost = side;
             side.FormBorderStyle = FormBorderStyle.None;
             side.ShowInTaskbar = false;                      // the sections open inside the launcher, on its left side
@@ -881,16 +884,19 @@ namespace AzerothLauncher
                     }
                     if (favoriteIcon != null)
                     {
-                        float scale = Math.Min(18f / favoriteIcon.Width, 18f / favoriteIcon.Height);
+                        float extent=Math.Max(10,favoriteBtns[slot].Width-Theme.Px(8));
+                        float scale = Math.Min(extent / favoriteIcon.Width, extent / favoriteIcon.Height);
                         var iconRect = new RectangleF(x - favoriteIcon.Width * scale / 2f, y - favoriteIcon.Height * scale / 2f,
                             favoriteIcon.Width * scale, favoriteIcon.Height * scale);
                         g.DrawImage(favoriteIcon, iconRect);
                         using (var p = new Pen(c, 1.2f)) g.DrawRectangle(p, Rectangle.Round(iconRect));
                         return;
                     }
-                    var ring = new RectangleF(x - 9, y - 9, 18, 18);
+                    float diameter=Math.Max(10,favoriteBtns[slot].Width-Theme.Px(8));
+                    var ring = new RectangleF(x-diameter/2,y-diameter/2,diameter,diameter);
                     using (var p = new Pen(c, 1.4f)) g.DrawEllipse(p, ring);
-                    Theme.CenterText(g, (slot + 1).ToString(), Theme.F(9, FontStyle.Bold), c, ring, null);
+                    using(var numberFont=new Font(Theme.F(9).FontFamily,Math.Max(6,diameter*(slot>=9?.55f:.75f)),FontStyle.Bold,GraphicsUnit.Pixel))
+                        Theme.CenterText(g, (slot + 1).ToString(), numberFont, c, ring, null);
                 };
                 var b = new IconButton(paint, delegate { OpenGuideFavorite(slot); });
                 b.AccessibleName = Lang.T("Quick Access " + (i + 1));
@@ -956,7 +962,7 @@ namespace AzerothLauncher
             panel.Dock = DockStyle.Fill;
             panel.BackColor = Theme.Panel;
             chat.Controls.Add(panel);
-            lostHelpCard = new Panel();
+            lostHelpCard = new ScrollPanel();
             lostHelpCard.BackColor = Theme.Hex("#120f18");
             lostHelpCard.Visible = false;
             lostHelpCard.Paint += PaintLostHelpInline;
@@ -964,7 +970,7 @@ namespace AzerothLauncher
             lostHelpCard.MouseLeave += delegate { DeferHideLostHelpInline(); };
             chat.Controls.Add(lostHelpCard);
             lostHelpCard.BringToFront();
-            closeDownloadCard = new Panel();
+            closeDownloadCard = new ScrollPanel();
             closeDownloadCard.Dock = DockStyle.Fill;
             closeDownloadCard.BackColor = Theme.Hex("#0e0d14");
             closeDownloadCard.Visible = false;
@@ -989,15 +995,16 @@ namespace AzerothLauncher
 
         void LayoutStrip()
         {
-            int y = 0;
+            int count = 0;
+            for (int i = 0; i < guideFavorites.Length; i++) if (guideFavorites[i] != null) count++;
+            int gap = Theme.Px(3), y = 0;
+            int size = Math.Min(Math.Max(16, strip.Width - 6), Math.Max(16, (strip.ClientSize.Height - Math.Max(0, count - 1) * gap) / Math.Max(1, count)));
             for (int i = 0; i < favoriteBtns.Length; i++)
             {
-                var b = favoriteBtns[i];
-                bool bound = guideFavorites[i] != null;
-                b.Visible = bound;
-                if (!bound) continue;
-                b.Location = new Point(3, y);
-                y += 26 + 5;
+                var button = favoriteBtns[i]; button.Visible = guideFavorites[i] != null;
+                if (!button.Visible) continue;
+                button.Bounds = new Rectangle((strip.Width - size) / 2, y, size, size);
+                y += size + gap;
             }
         }
 
@@ -1087,7 +1094,7 @@ namespace AzerothLauncher
 
         // the section area: its top level with the top of the word "News", its bottom level with the Launcher buttons
         // (a little taller than the News column: from under the game's name down to the bottom bar, for more room)
-        static readonly Rectangle SideRect = new Rectangle(6, 198, 674, 574 - 198);
+        Rectangle SideRect { get { return ResponsiveSideRect; } }
         Panel lostHelpCard;
         Timer lostHelpTimer;
 
@@ -1095,8 +1102,8 @@ namespace AzerothLauncher
         {
             if (lostHelpCard == null || side == null || !side.Visible) return;
             if (lostHelpTimer != null) lostHelpTimer.Stop();
-            int width = Math.Min(360, lostHelpCard.Parent.ClientSize.Width - 12);
-            int height = Math.Min(320, lostHelpCard.Parent.ClientSize.Height - 12);
+            int width = Math.Min(Theme.Px(360), lostHelpCard.Parent.ClientSize.Width - 12);
+            int height = Math.Min(Theme.Px(320), lostHelpCard.Parent.ClientSize.Height - 12);
             lostHelpCard.Size = new Size(Math.Max(220, width), Math.Max(220, height));
             Point cursor = lostHelpCard.Parent.PointToClient(Cursor.Position);
             int left = Math.Max(0, Math.Min(lostHelpCard.Parent.ClientSize.Width - lostHelpCard.Width, cursor.X));
@@ -1139,12 +1146,15 @@ namespace AzerothLauncher
             Graphics g = e.Graphics;
             g.Clear(Theme.Hex("#120f18"));
             using (var p = new Pen(Theme.Hex("#c49a48"), 2)) g.DrawRectangle(p, 1, 1, lostHelpCard.Width - 3, lostHelpCard.Height - 3);
-            int y = 10, width = lostHelpCard.Width - 24;
-            TextRenderer.DrawText(g, Lang.T("Lost?"), Theme.F(11, FontStyle.Bold), new Rectangle(12, y, width, 20), Theme.Gold,
+            var scroll=lostHelpCard as ScrollPanel;
+            if(scroll!=null) g.TranslateTransform(0,scroll.AutoScrollPosition.Y);
+            int y = Theme.Px(10), width = lostHelpCard.ClientSize.Width - Theme.Px(24);
+            TextRenderer.DrawText(g, Lang.T("Lost?"), Theme.F(11, FontStyle.Bold), new Rectangle(12, y, width, Theme.Px(20)), Theme.Gold,
                                   TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
-            y += 26;
+            y += Theme.Px(26);
             DrawLostHelpSection(g, "Click a breadcrumb to go back. Hover ▼ to choose another page.", PathExamplePart(true), ref y, width);
             DrawLostHelpSection(g, "On a guide page, click the star to save your reading position. Click a favorite to open it, drag to move it, or right-click to remove it.", PathExamplePart(false), ref y, width);
+            if(scroll!=null) scroll.AutoScrollMinSize=new Size(0,y+Theme.Px(8));
         }
 
         void DrawLostHelpSection(Graphics g, string text, Image picture, ref int y, int width)
@@ -1155,7 +1165,7 @@ namespace AzerothLauncher
                                   TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
             y += textHeight + 5;
             if (picture == null) return;
-            float scale = Math.Min(240f / picture.Width, 160f / picture.Height);
+            float scale = Math.Min(Theme.Px(240) / (float)picture.Width, Theme.Px(160) / (float)picture.Height);
             scale = Math.Min(scale, (float)(width - 12) / picture.Width);
             int w = Math.Max(1, (int)(picture.Width * scale)), h = Math.Max(1, (int)(picture.Height * scale));
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -1203,37 +1213,50 @@ namespace AzerothLauncher
             if (closeDownloadCard != null) closeDownloadCard.Visible = false;
         }
 
+        Rectangle closeTitleBounds, closeMessageBounds;
+        Font closeTitleFont, closeMessageFont;
+        bool arrangingDownloadClose;
+        string DownloadCloseTitle { get {return Lang.T(dlActive?"The game is downloading":"The game is being installed");} }
+        string DownloadCloseMessage { get {return Lang.T(dlActive
+            ? "Would you like to cancel the download and close the launcher, or leave it open until the download finishes?"
+            : "The download is complete and the game files are being installed. Choose whether to close after installation finishes or leave the launcher open.");} }
         void LayoutDownloadClosePrompt()
         {
-            if (closeDownloadCard == null) return;
-            int y = Math.Max(125, closeDownloadCard.ClientSize.Height / 2 + 35);
-            int gap = 10;
-            cancelDownloadCloseButton.Visible = true;
-            cancelDownloadCloseButton.Label = dlActive ? "CANCEL DOWNLOAD & CLOSE" : "CLOSE WHEN FINISHED";
-            keepDownloadButton.Label = "STAY & FINISH";
-            int total = cancelDownloadCloseButton.Width + keepDownloadButton.Width + gap;
-            int x = Math.Max(12, (closeDownloadCard.ClientSize.Width - total) / 2);
-            cancelDownloadCloseButton.Location = new Point(x, y);
-            keepDownloadButton.Location = new Point(x + cancelDownloadCloseButton.Width + gap, y);
+            if(closeDownloadCard==null||arrangingDownloadClose)return;
+            arrangingDownloadClose=true;
+            float previous=Theme.Zoom; Theme.Zoom=Theme.SectionZoom;
+            try
+            {
+                int pad=Theme.Px(18),gap=Theme.Px(10),width=Math.Max(60,closeDownloadCard.ClientSize.Width-pad*2);
+                closeTitleFont=Theme.F(15,FontStyle.Bold); closeMessageFont=Theme.F(10);
+                int titleHeight=TextRenderer.MeasureText(DownloadCloseTitle,closeTitleFont,new Size(width,1000),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix).Height;
+                int bodyHeight=TextRenderer.MeasureText(DownloadCloseMessage,closeMessageFont,new Size(width,2000),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix).Height;
+                closeTitleBounds=new Rectangle(pad,pad,width,titleHeight);
+                closeMessageBounds=new Rectangle(pad,closeTitleBounds.Bottom+gap,width,bodyHeight);
+                cancelDownloadCloseButton.Label=dlActive?"CANCEL DOWNLOAD & CLOSE":"CLOSE WHEN FINISHED";
+                keepDownloadButton.Label="STAY & FINISH";
+                int firstWidth=(int)(210*Theme.Zoom), secondWidth=(int)(180*Theme.Zoom), height=Theme.Px(30);
+                bool stacked=firstWidth+secondWidth+gap>width;
+                int total=stacked?Math.Min(width,Math.Max(firstWidth,secondWidth)):firstWidth+secondWidth+gap;
+                int x=pad+(width-total)/2,y=closeMessageBounds.Bottom+Theme.Px(18);
+                cancelDownloadCloseButton.SetDisplayZoom(Theme.Zoom);keepDownloadButton.SetDisplayZoom(Theme.Zoom);
+                cancelDownloadCloseButton.Bounds=new Rectangle(x,y,stacked?total:firstWidth,height);
+                keepDownloadButton.Bounds=new Rectangle(stacked?x:x+firstWidth+gap,stacked?y+height+gap:y,stacked?total:secondWidth,height);
+                var scroll=closeDownloadCard as ScrollPanel;
+                if(scroll!=null)scroll.AutoScrollMinSize=new Size(0,keepDownloadButton.Bottom+pad);
+            }
+            finally {Theme.Zoom=previous;arrangingDownloadClose=false;}
         }
 
-        void PaintDownloadClosePrompt(object sender, PaintEventArgs e)
+        void PaintDownloadClosePrompt(object sender,PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            g.Clear(Theme.Hex("#0e0d14"));
-            using (var p = new Pen(Theme.Hex("#c49a48"), 2))
-                g.DrawRectangle(p, 1, 1, closeDownloadCard.Width - 3, closeDownloadCard.Height - 3);
-            int width = Math.Max(100, closeDownloadCard.ClientSize.Width - 48);
-            bool downloading = dlActive;
-            string title = downloading ? "The game is downloading" : "The game is being installed";
-            string message = downloading
-                ? "Would you like to cancel the download and close the launcher, or leave it open until the download finishes?"
-                : "The download is complete and the game files are being installed. Choose whether to close after installation finishes or leave the launcher open.";
-            TextRenderer.DrawText(g, Lang.T(title), Theme.F(15, FontStyle.Bold),
-                new Rectangle(24, 42, width, 30), Theme.Gold, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
-            TextRenderer.DrawText(g, message, Theme.F(10, FontStyle.Regular),
-                new Rectangle(30, 85, width - 12, 60), Theme.Text,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
+            Graphics g=e.Graphics;g.Clear(Theme.Hex("#0e0d14"));
+            using(var pen=new Pen(Theme.Hex("#c49a48"),2))g.DrawRectangle(pen,1,1,closeDownloadCard.Width-3,closeDownloadCard.Height-3);
+            var scroll=closeDownloadCard as ScrollPanel;
+            if(scroll!=null)g.TranslateTransform(0,scroll.AutoScrollPosition.Y);
+            if(closeTitleFont==null)return;
+            TextRenderer.DrawText(g,DownloadCloseTitle,closeTitleFont,closeTitleBounds,Theme.Gold,TextFormatFlags.HorizontalCenter|TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
+            TextRenderer.DrawText(g,DownloadCloseMessage,closeMessageFont,closeMessageBounds,Theme.Text,TextFormatFlags.HorizontalCenter|TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
         }
 
         // closing a section goes back to the home screen, which shows Community; Community itself cannot be closed
@@ -1321,8 +1344,38 @@ namespace AzerothLauncher
             }
         }
 
+        int panelGeneration;
+        bool buildingPanel;
+        string pendingPanel;
+        bool panelRebuildQueued;
         void BuildPanel(string name)
         {
+            if(buildingPanel)
+            {
+                pendingPanel=name;
+                return;
+            }
+            buildingPanel=true;
+            try { BuildPanelCore(name); }
+            finally
+            {
+                buildingPanel=false;
+                if(pendingPanel!=null&&!panelRebuildQueued&&IsHandleCreated&&!IsDisposed)
+                {
+                    panelRebuildQueued=true;
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        panelRebuildQueued=false;
+                        string target=pendingPanel; pendingPanel=null;
+                        if(target!=null&&!IsDisposed) BuildPanel(target);
+                    });
+                }
+            }
+        }
+
+        void BuildPanelCore(string name)
+        {
+            panelGeneration++;
             CaptureDisplayedScrollPositions();
             GuideHover.Hide();
             HideLostHelpInline();
@@ -1352,7 +1405,8 @@ namespace AzerothLauncher
             }
             finally
             {
-                Theme.Zoom = 1f;
+                Theme.Zoom = Theme.DisplayScale;
+                panelDensity=Theme.DisplayScale;
                 panel.ResumeLayout();
                 if (freeze) Freeze(false);
             }
@@ -1391,7 +1445,11 @@ namespace AzerothLauncher
             string language = Lang.Code ?? "en";
             Bitmap cached;
             if (pathExamples.TryGetValue(language, out cached)) return cached;
+            float previousZoom=Theme.Zoom, previousDensity=Theme.DisplayScale;
+            Theme.Zoom=.72f; Theme.DisplayScale=1f;
             var bmp = new Bitmap(300, 235);
+            try
+            {
             using (var g = Graphics.FromImage(bmp))
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -1470,6 +1528,8 @@ namespace AzerothLauncher
             }
             pathExamples[language] = bmp;
             return bmp;
+            }
+            finally { Theme.Zoom=previousZoom; Theme.DisplayScale=previousDensity; }
         }
 
         static Image PathExamplePart(bool path)
@@ -1508,7 +1568,9 @@ namespace AzerothLauncher
             {
                 Control c = panel.Controls[0];
                 panel.Controls.RemoveAt(0);
-                c.Dispose();
+                string snapshot=PreviewMode?ScalingControlSnapshot(c,0):"";
+                try { c.Dispose(); }
+                catch(Exception error) { throw new InvalidOperationException("Disposing "+c.GetType().FullName+" while opening "+title+"\n"+snapshot,error); }
             }
             SetSideTitle(title);
             // the back arrow and the trail live in the title bar: "Addons › Download More"
@@ -1701,13 +1763,14 @@ namespace AzerothLauncher
         ScrollPanel MakeThinScroll(Control parent, Rectangle r, Color bg, Color border, Color thumb, Color thumbHot)
         {
             var frame = new Bordered(border, 1);
-            frame.Padding = new Padding(1, 1, 10, 1);        // a gutter on the right for the slim bar
+            int gutterWidth=Theme.Px(10);
+            frame.Padding = new Padding(1, 1, gutterWidth, 1);        // a gutter on the right for the slim bar
             frame.Bounds = r;
             parent.Controls.Add(frame);
             frame.BringToFront();
             var gutter = new Panel();
             gutter.BackColor = bg;
-            gutter.Bounds = new Rectangle(r.Width - 10, 1, 9, r.Height - 2);
+            gutter.Bounds = new Rectangle(r.Width - gutterWidth, 1, gutterWidth-1, r.Height - 2);
             frame.Controls.Add(gutter);
             var sp = new ScrollPanel();
             sp.HideBars = true;
@@ -1715,7 +1778,7 @@ namespace AzerothLauncher
             sp.Dock = DockStyle.Fill;
             frame.Controls.Add(sp);
             var bar = new ThinScrollBar(sp, Theme.Mix(bg, border, 0.3), thumb, thumbHot);
-            bar.Bounds = new Rectangle(1, 3, 6, r.Height - 2 - 6);
+            bar.Bounds = new Rectangle(1, 3, Math.Max(4,gutterWidth-4), r.Height - 2 - 6);
             gutter.Controls.Add(bar);
             return sp;
         }
@@ -2348,7 +2411,7 @@ namespace AzerothLauncher
 
         void AddonCards(ScrollPanel sp, List<AddonEntry> items, int w, int y, Color listbg)
         {
-            const int gap = 6, cols = 4;
+            int gap = Theme.Px(6), cols = Math.Max(1, Math.Min(4, w / Theme.Px(155)));
             int cw = (w - gap * (cols - 1)) / cols, textW = cw - 2 - 14;
             int bw = (int)((cw - 2 - 16) / Theme.Zoom);       // the block's button runs along its bottom
             var heights = new List<int>();
@@ -2582,7 +2645,7 @@ namespace AzerothLauncher
             if (!Directory.Exists(dir))
             {
                 PutText("No AddOns folder found.\nSet the game config folder in Options\n(the benilla-config folder).", 12,
-                        FontStyle.Regular, Theme.Text, 20, top, 0);
+                        FontStyle.Regular, Theme.Text, 20, top, PW-40);
                 return;
             }
             List<KeyValuePair<string, bool>> addons;
@@ -2601,11 +2664,17 @@ namespace AzerothLauncher
             // Advanced settings are a replacement for the basic right-hand submenu, not an extra layer over it.
             // Keeping both sets of controls visible made the profile stack run into DOWNLOAD MORE / REFRESH /
             // TOGGLE ALL on shorter windows. The left addon list stays visible in either mode.
-            int cx = PW - 20 - (int)(190 * Theme.Zoom);
+            int cx = PW - 20 - (int)(190 * Theme.Zoom) - Theme.Px(12);
             bool advanced = Cfg.Bool("addons_advanced", false);
             if (askUninstallName != null || askUninstallFolder != null) AddonsUninstallAsk(cx, top);
             else if (rollbackOpen) AddonsRollbackPanel(cx, top);
             else {
+            int columnX=cx, columnTop=top, columnBottom=bottom;
+            var actions=MakeThinScroll(panel,new Rectangle(cx,top,PW-cx-12,bottom-top),Theme.Panel,Theme.Bronze,Theme.GoldDim,Theme.Gold);
+            Control previousPut=putInto; putInto=actions;
+            cx=1; top=4; bottom=Math.Max(actions.ClientSize.Height,Theme.Px(advanced?300:170));
+            try
+            {
             var profiles = Cfg.Section("addon_profiles");
             int py = bottom;
             string active = ActiveAddonProfile();
@@ -2620,7 +2689,7 @@ namespace AzerothLauncher
                 addonCount = UI.Text("", 10, FontStyle.Italic, Theme.GoldDim, Theme.Panel, 0);
                 addonCount.AutoSize = false;
                 addonCount.TextAlign = ContentAlignment.TopCenter;
-                addonCount.Bounds = new Rectangle(cx, BottomOf(toggle) + 2, toggle.Width, 20);
+                addonCount.Bounds = new Rectangle(cx, BottomOf(toggle) + 2, toggle.Width, Math.Max(20,addonCount.Font.Height+2));
                 Put(addonCount, cx, BottomOf(toggle) + 2);
             }
             // The basic view has one bottom button; the advanced view replaces it with profile controls and rollback.
@@ -2677,6 +2746,7 @@ namespace AzerothLauncher
                     rt.SetToolTip(head, Lang.T("Click to give this profile a name of your own."));
                     head.Disposed += delegate { rt.Dispose(); };
                     Label hl = head;
+                    float profileZoom=Theme.Zoom;
                     head.Click += delegate
                     {
                         var box = new TextBox();
@@ -2686,7 +2756,7 @@ namespace AzerothLauncher
                         box.BackColor = Theme.Ink;
                         box.ForeColor = Theme.Gold;
                         box.BorderStyle = BorderStyle.FixedSingle;
-                        box.Bounds = new Rectangle(hl.Left, hl.Top - 2, (int)(160 * Theme.Zoom), hl.Height + 4);
+                        box.Bounds = new Rectangle(hl.Left, hl.Top - 2, (int)(160 * profileZoom), hl.Height + 4);
                         hl.Parent.Controls.Add(box);
                         box.BringToFront();
                         box.Focus();
@@ -2726,6 +2796,8 @@ namespace AzerothLauncher
                 q.Disposed += delegate { tt.Dispose(); };
                 py -= 3;
             }
+            }
+            finally { putInto=previousPut; cx=columnX; top=columnTop; bottom=columnBottom; }
             }
             // --- left: scrollable list with one switch per addon ---
             Color listbg = Theme.Ink;
@@ -3480,6 +3552,27 @@ namespace AzerothLauncher
                             delegate(bool on) { SetStatsEnabled(on); });
             y = OptionCheck("Show play time on the home screen", Cfg.Bool("home_playtime", true), y,
                             delegate(bool on) { Cfg.Set("home_playtime", on); Cfg.Save(); Invalidate(); });
+            y += Theme.Px(6);
+            var scaleTitle = PutText("Interface size", 10, FontStyle.Bold, Theme.Gold, 20, y, PW-40);
+            y=BottomOf(scaleTitle)+Theme.Px(4);
+            var scaleNote=PutText(displayLayout.RequestedScale>displayLayout.Scale+.01f
+                ? "Size is limited to fit this display. Choose a smaller size for more room."
+                : "Auto follows your monitor. Choose a size to adjust it without changing Windows settings.",9,
+                FontStyle.Italic,Theme.GoldDim,20,y,PW-40);
+            y=BottomOf(scaleNote)+Theme.Px(6);
+            int scaleX=20, scaleHeight=Theme.Px(27), scaleGap=Theme.Px(5);
+            foreach(float choice in new[]{0f,.8f,.9f,1f,1.1f,1.25f,1.5f,1.6f})
+            {
+                float selectedScale=choice;
+                int buttonWidth=Theme.Px(choice==0?60:48);
+                if(scaleX+buttonWidth>PW-20) { scaleX=20; y+=scaleHeight+scaleGap; }
+                var sizeButton=new WowButton(choice==0?"AUTO":(choice*100).ToString("0")+"%",delegate{SetInterfaceScale(selectedScale);},60,27,8);
+                sizeButton.Bounds=new Rectangle(scaleX,y,buttonWidth,scaleHeight);
+                sizeButton.Selected=Math.Abs(ReadInterfaceScale()-choice)<.001f;
+                Put(sizeButton,scaleX,y);
+                scaleX+=buttonWidth+scaleGap;
+            }
+            y+=scaleHeight+Theme.Px(10);
             // Launcher is the end of the path (Options › Launcher): everything it holds is on this page, nothing opens a
             // step of its own. The language is picked from a list under its button; About is written out at the bottom.
             string langName = Lang.Code;

@@ -28,3 +28,16 @@
 - Use themed text hyperlinks, spell/talent/Codex icons and in-article anchors instead of repeated large navigation buttons. Preserve cross-links between spells and talents and the universal Back action's previous scroll position in every class article. The tree stays visible and highlights the passage section currently in view.
 - Wheel over the contents tree jumps one in-article section per complete notch (120 delta units); partial deltas accumulate for touchpads. Wheel down advances, wheel up returns, and endpoints do not wrap. This scrolls the passage and updates its highlight much faster than normal passage scrolling. External resources require clicking, so wheel browsing cannot unexpectedly leave the article. Do not add a visible scrollbar to the tree.
 - Use the existing `WheelRouter` and `IWheel` interface for wheel handling over both tree labels and empty tree space; do not install an additional global mouse hook. Retain the fonts measured when building the sidebar when changing its active state, because `Theme.Zoom` resets after page construction.
+
+
+## Display scaling contract
+
+- `DisplayLayout` is the single source of monitor working area, DPI and effective UI density. Geometry passed to native controls is physical client pixels. Convert logical fixed dimensions with `Theme.Px`; do not multiply already measured or parent-relative dimensions again.
+- Call `NativeDisplay.Enable` before creating any window. The launcher and nested Forms use `AutoScaleMode.None`. `WM_DPICHANGED` and the responsive layout coordinator own rebuilding; do not add a competing manifest/config autoscaler or stretch a screenshot of the whole UI.
+- Theme fonts use `GraphicsUnit.Pixel`. When a subsystem deliberately paints in its own logical coordinate space (Armory), scope both `Theme.Zoom` and `Theme.DisplayScale`, restore them in `finally`, and convert pixel font sizes explicitly. Do not use screen-dependent `SizeInPoints` to rescale a pixel font.
+- Capture sidebar fonts and indentation when creating a view. Later click/paint callbacks run after the section's Theme.Zoom scope has ended. Never recalculate them from the ambient root zoom.
+- Short windows use a compact Menu, readable independent content scrolling and anchored build actions. All ten favorites must remain reachable. Do not shrink the passage merely to preserve a fixed desktop arrangement.
+- Resize must retain draft gear, talent points, unsubmitted import text and scroll state. Resize existing video hosts rather than destroying/restarting their players. Menus/tooltips dismiss on root deactivation and stay within launcher ownership.
+- Never access `Control.Handle` from its early `WM_NCCALCSIZE`; use `Message.HWnd` to avoid recursive handle creation. Rebuilds requested during another panel build are deferred/coalesced.
+- Build the isolated package with `CI=1 DISPLAY_PREVIEW=1`. It has separate settings and mutex identity and no public self-update/addon auto-update. Do not merge or publish it without the user's explicit instruction.
+- `tools/Test-DisplayScaling.ps1` renders simulated resolution/DPI cases off-screen and exercises retained state and converter/save actions. These are actual native controls on the host DPI with simulated layout contexts, not proof of physical mixed-monitor testing. Keep that distinction in reports.

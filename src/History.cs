@@ -33,6 +33,7 @@ namespace AzerothLauncher
         bool restoringView;
         ViewState displayedView;
         int[] restoreScrollPositions;
+        float panelDensity=1f;
 
         void CaptureDisplayedScrollPositions()
         {
@@ -40,7 +41,7 @@ namespace AzerothLauncher
             var panels = new List<ScrollPanel>();
             CollectScrollPanels(panel, panels);
             var positions = new int[panels.Count];
-            for (int i = 0; i < panels.Count; i++) positions[i] = Math.Max(0, -panels[i].AutoScrollPosition.Y);
+            for (int i = 0; i < panels.Count; i++) positions[i] = Math.Max(0, (int)Math.Round(-panels[i].AutoScrollPosition.Y / panelDensity));
             displayedView.ScrollPositions = positions;
             if (history.Count > 0 && object.ReferenceEquals(history[history.Count - 1], displayedView))
                 history[history.Count - 1].ScrollPositions = positions;
@@ -60,12 +61,13 @@ namespace AzerothLauncher
         void RestoreDisplayedScrollPositions(int[] positions)
         {
             if (positions == null) return;
+            int expectedGeneration=panelGeneration;
             Action restore = delegate
             {
-                if (IsDisposed || panel == null || panel.IsDisposed) return;
+                if (IsDisposed || panel == null || panel.IsDisposed || panelGeneration!=expectedGeneration) return;
                 var panels = new List<ScrollPanel>();
                 CollectScrollPanels(panel, panels);
-                for (int i = 0; i < panels.Count && i < positions.Length; i++) panels[i].ScrollTo(positions[i]);
+                for (int i = 0; i < panels.Count && i < positions.Length; i++) panels[i].ScrollTo((int)Math.Round(positions[i]*Theme.DisplayScale));
             };
             if (IsHandleCreated) BeginInvoke(restore);
             else restore();

@@ -100,9 +100,12 @@ namespace AzerothLauncher
 
         // the sections are drawn a little smaller than the launcher itself: fonts made while Zoom < 1 shrink with it
         public static float Zoom = 1f;
-        public const float SectionZoom = 0.72f;
+        public static float DisplayScale = 1f;
+        public static int DisplayDpi = 96;
+        public static int Px(float value) { return Math.Max(1, (int)Math.Round(value * DisplayScale)); }
+        public static float SectionZoom { get { return 0.72f * DisplayScale; } }
 
-        public static Font F(float size, FontStyle style) { return Make(size, style, Zoom < 1f ? 8.25f : 8.75f); }
+        public static Font F(float size, FontStyle style) { return Make(size, style, Zoom / DisplayScale < 1f ? 8.25f : 8.75f); }
 
         // a label that must fit its box (a button, a small card): may go a little smaller than the usual floor
         public static Font FFit(float size, FontStyle style) { return Make(size, style, 6.5f); }
@@ -110,7 +113,7 @@ namespace AzerothLauncher
         static Font Make(float size, FontStyle style, float floor)
         {
             // never smaller than the floor: readable everywhere (the compact sections allow a little less)
-            size = Math.Max(floor, (float)Math.Round(size * Zoom * 4) / 4f);
+            size = Math.Max(floor * DisplayScale, (float)Math.Round(size * Zoom * 4) / 4f) * 96f / 72f;
             string key = size + "|" + (int)style;
             Font f;
             if (!fonts.TryGetValue(key, out f))
@@ -122,11 +125,11 @@ namespace AzerothLauncher
                         FontStyle st = style;
                         if (!bundled.IsStyleAvailable(st)) st = style & (FontStyle.Bold | FontStyle.Italic);
                         if (!bundled.IsStyleAvailable(st)) st = FontStyle.Regular;
-                        f = new Font(bundled, size, st | (style & (FontStyle.Underline | FontStyle.Strikeout)), GraphicsUnit.Point);
+                        f = new Font(bundled, size, st | (style & (FontStyle.Underline | FontStyle.Strikeout)), GraphicsUnit.Pixel);
                     }
-                    else f = new Font(FontName, size, style, GraphicsUnit.Point);
+                    else f = new Font(FontName, size, style, GraphicsUnit.Pixel);
                 }
-                catch (Exception) { f = new Font(FontFamily.GenericSerif, size, style, GraphicsUnit.Point); }
+                catch (Exception) { f = new Font(FontFamily.GenericSerif, size, style, GraphicsUnit.Pixel); }
                 fonts[key] = f;
             }
             return f;
@@ -313,6 +316,29 @@ namespace AzerothLauncher
             menu.Font = Theme.F(9.5f);
             menu.ShowImageMargin = false;
             menu.ShowCheckMargin = showCheckMargin;
+            // A dropdown belongs to the launcher even when its SourceControl is in a nested section Form.
+            Form host=LauncherApp.App;
+            EventHandler dismiss=delegate { if(!menu.IsDisposed) menu.Close(); };
+            Action detach=delegate
+            {
+                if(host==null)return;
+                host.Deactivate-=dismiss; host.Resize-=dismiss; host.Move-=dismiss; host.VisibleChanged-=dismiss;
+            };
+            menu.Opening+=delegate
+            {
+                detach();
+                if(host!=null) { host.Deactivate+=dismiss; host.Resize+=dismiss; host.Move+=dismiss; host.VisibleChanged+=dismiss; }
+            };
+            menu.Opened+=delegate
+            {
+                if(host==null||host.IsDisposed)return;
+                Rectangle area=host.RectangleToScreen(host.ClientRectangle);
+                menu.MaximumSize=new Size(Math.Max(40,area.Width-12),Math.Max(40,area.Height-12));
+                menu.Location=new Point(Math.Max(area.Left+6,Math.Min(menu.Left,area.Right-menu.Width-6)),
+                    Math.Max(area.Top+6,Math.Min(menu.Top,area.Bottom-menu.Height-6)));
+            };
+            menu.Closed+=delegate { detach(); };
+            menu.Disposed+=delegate { detach(); };
             return menu;
         }
     }
@@ -325,7 +351,7 @@ namespace AzerothLauncher
         bool hover, down, keyDown, active, selected, grayed;
         public IconPainter Icon;
         public Image[] Skin;
-        readonly float zoom;                                  // launcher art {normal, hover, down, grayed}
+        float zoom;                                  // launcher art {normal, hover, down, grayed}
         public event Action Pressed;
         public string GrayedTip;                              // shown on hover, only while the button is grayed out
         public string Tip;                                    // themed hover help while the button is available
@@ -345,6 +371,8 @@ namespace AzerothLauncher
             Cursor = Cursors.Hand;
             if (command != null) Pressed += command;
         }
+
+        public void SetDisplayZoom(float value) { zoom = value; Invalidate(); }
 
         public string Label { get { return text; } set { text = value; AccessibleName = Lang.T(value); Invalidate(); } }
         public float FontSize { get { return size; } set { size = value; Invalidate(); } }
@@ -1095,8 +1123,9 @@ namespace AzerothLauncher
             if (HideBars && m.Msg == 0x83)                    // WM_NCCALCSIZE
             {
                 const int GWL_STYLE = -16, WS_VSCROLL = 0x00200000, WS_HSCROLL = 0x00100000;
-                int style = GetWindowLong(Handle, GWL_STYLE);
-                if ((style & (WS_VSCROLL | WS_HSCROLL)) != 0) SetWindowLong(Handle, GWL_STYLE, style & ~(WS_VSCROLL | WS_HSCROLL));
+                // WM_NCCALCSIZE can run before Control.Handle is assigned. Use the message HWND to avoid recursively creating it.
+                int style = GetWindowLong(m.HWnd, GWL_STYLE);
+                if ((style & (WS_VSCROLL | WS_HSCROLL)) != 0) SetWindowLong(m.HWnd, GWL_STYLE, style & ~(WS_VSCROLL | WS_HSCROLL));
             }
             base.WndProc(ref m);
         }
@@ -1128,7 +1157,7 @@ namespace AzerothLauncher
                 Overscroll(d);
                 return;
             }
-            AutoScrollPosition = new Point(0, Math.Max(0, Math.Min(max, pos + d * 40)));
+            AutoScrollPosition = new Point(0, Math.Max(0, Math.Min(max, pos + d * Theme.Px(40))));
             Moved();
         }
 
@@ -1242,9 +1271,9 @@ namespace AzerothLauncher
     // Lays its children out top to bottom (like Tk's pack): each keeps its own size, placed left, centred or right.
     public class VStack : Panel
     {
-        class Item { public Control C; public Align A; public Padding M; }
+        class Item { public Control C; public Align A; public Padding M; public int NaturalWrap; }
         readonly List<Item> items = new List<Item>();
-        public int MinWidth;
+        public int MinWidth, MaxWidth;
 
         public VStack()
         {
@@ -1257,6 +1286,7 @@ namespace AzerothLauncher
             it.C = c;
             it.A = a;
             it.M = new Padding(left, top, right, bottom);
+            it.NaturalWrap=c.MaximumSize.Width;
             items.Add(it);
             Controls.Add(c);
             return c;
@@ -1294,10 +1324,18 @@ namespace AzerothLauncher
             int w = Math.Max(MinWidth, width);
             foreach (var it in items)
                 if (it.A != Align.Fill) w = Math.Max(w, Measure(it.C).Width + it.M.Horizontal);
+            if(MaxWidth>0)w=Math.Min(w,MaxWidth);
             int y = 0;
             foreach (var it in items)
             {
+                int available=Math.Max(20,w-it.M.Horizontal);
+                Label label=it.C as Label;
+                if(label!=null&&label.AutoSize&&MaxWidth>0)
+                    label.MaximumSize=new Size(it.A==Align.Fill?available:it.NaturalWrap>0?Math.Min(it.NaturalWrap,available):available,0);
+                HRow row=it.C as HRow;
+                if(row!=null&&MaxWidth>0) row.WrapAt(available);
                 Size s = Measure(it.C);
+                if(MaxWidth>0)s.Width=Math.Min(s.Width,available);
                 if (it.A == Align.Fill) s.Width = w - it.M.Horizontal;
                 int x = it.A == Align.Center ? it.M.Left + (w - it.M.Horizontal - s.Width) / 2
                       : it.A == Align.Right ? w - it.M.Right - s.Width : it.M.Left;
@@ -1311,8 +1349,21 @@ namespace AzerothLauncher
     // Children left to right, centred on one line.
     public class HRow : Panel
     {
+        readonly int rowGap;
+        public void WrapAt(int width)
+        {
+            int x=0,y=0,rowHeight=0,used=0;
+            foreach(Control child in Controls)
+            {
+                if(x>0&&x+child.Width>width) {y+=rowHeight+rowGap;x=0;rowHeight=0;}
+                child.Location=new Point(x,y);rowHeight=Math.Max(rowHeight,child.Height);
+                used=Math.Max(used,x+child.Width);x+=child.Width+rowGap;
+            }
+            Size=new Size(Math.Min(width,used),y+rowHeight);
+        }
         public HRow(int gap, params Control[] children)
         {
+            rowGap=gap;
             BackColor = Theme.Panel;
             int x = 0, h = 0;
             foreach (Control c in children) h = Math.Max(h, VStack.Measure(c).Height);
@@ -1370,6 +1421,7 @@ namespace AzerothLauncher
         public WowDialog(string title)
         {
             Text = Lang.T(title);
+            AutoScaleMode=AutoScaleMode.None;
             Icon = Theme.AppIcon;
             BackColor = Theme.BgBottom;
             DoubleBuffered = true;
@@ -1399,6 +1451,8 @@ namespace AzerothLauncher
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern bool RedrawWindow(IntPtr h, IntPtr rect, IntPtr rgn, uint flags);
         bool pageFrozen;
+        float previousPageZoom;
+        bool pageZoomScope;
 
         // a new page is put together out of sight and shown at once (not drawn piece by piece as it is built)
         void FreezePage(bool on)
@@ -1415,6 +1469,8 @@ namespace AzerothLauncher
 
         protected void Begin()
         {
+            if(!pageZoomScope) { previousPageZoom=Theme.Zoom; pageZoomScope=true; }
+            Theme.Zoom=Theme.SectionZoom;
             FreezePage(true);
             Body.ClearItems();
             Body.Add(UI.BackArrow(delegate { if (BackAction != null) BackAction(); }), Align.Left, 20, 12, 0, 0);
@@ -1428,6 +1484,7 @@ namespace AzerothLauncher
             ClientSize = new Size(frame.Width + 2 * margin, frame.Height + 2 * margin);
             if (pageFrozen) FreezePage(false);
             else frame.Invalidate();
+            if(pageZoomScope) { Theme.Zoom=previousPageZoom; pageZoomScope=false; }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -1461,7 +1518,7 @@ namespace AzerothLauncher
 
         protected Label Para(string text, float size, FontStyle style, Color fg, int pad, int top, int bottom, int wrap)
         {
-            return Body.Add(UI.Text(text, size, style, fg, Theme.Panel, wrap), Align.Left, pad, top, pad, bottom);
+            return Body.Add(UI.Text(text, size, style, fg, Theme.Panel, wrap), Align.Fill, pad, top, pad, bottom);
         }
 
         protected static WowButton B(string text, Action a, int w, int h, float size)
@@ -1503,6 +1560,7 @@ namespace AzerothLauncher
             bool copied = false;
             try
             {
+                if(LauncherApp.PreviewMode) throw new InvalidOperationException("Off-screen preview uses its own rendered client.");
                 using (var g = Graphics.FromImage(bmp))
                     g.CopyFromScreen(h.PointToScreen(Point.Empty), Point.Empty, bmp.Size);
                 copied = true;
@@ -1512,6 +1570,7 @@ namespace AzerothLauncher
             using (var g = Graphics.FromImage(bmp))
             using (var dim = new SolidBrush(Color.FromArgb(175, 0, 0, 0))) g.FillRectangle(dim, 0, 0, bmp.Width, bmp.Height);
             shade = new ShadePanel(bmp);
+            shade.Size=h.ClientSize; // set before clamping the dialog; a new Panel otherwise starts at 200x100
             shade.Dock = DockStyle.Fill;
             TopMost = false;
             ShowInTaskbar = false;
@@ -1525,7 +1584,9 @@ namespace AzerothLauncher
             // beyond the section. Preserve the section controls beneath the shade.
             int maxW = Math.Max(1, shade.ClientSize.Width - 16);
             int maxH = Math.Max(1, shade.ClientSize.Height - 16);
-            frame.Size = new Size(Math.Min(frame.Width, maxW), Math.Min(frame.Height, maxH));
+            Body.MaxWidth=Math.Max(30,maxW-4);
+            Body.Arrange(0);
+            frame.Size = new Size(Math.Min(Body.Width+4, maxW), Math.Min(Body.Height+4, maxH));
             ClientSize = frame.Size;
             shade.Controls.Add(this);
             h.Controls.Add(shade);
@@ -1535,6 +1596,7 @@ namespace AzerothLauncher
             {
                 if (shade == null) return;
                 int w = Math.Max(1, shade.ClientSize.Width - 16), ht = Math.Max(1, shade.ClientSize.Height - 16);
+                Body.MaxWidth=Math.Max(30,w-4); Body.Arrange(0);
                 frame.Size = new Size(Math.Min(Body.Width + 4, w), Math.Min(Body.Height + 4, ht));
                 ClientSize = frame.Size;
                 CenterInShade();
@@ -1543,7 +1605,7 @@ namespace AzerothLauncher
             CenterInShade();
             Show();
             BringToFront();
-            Select();
+            if(!LauncherApp.PreviewMode) Select();
             return true;
         }
 

@@ -23,12 +23,13 @@ namespace AzerothLauncher
         const bool SHOW_TEMPORARY_BUILD_MENUS = false;
         // WheelRouter walks up from the hovered child label to IWheel. The contents
         // tree consumes the wheel here, independently of focus and the passage's pixels.
-        sealed class GuideContentsPanel : Panel, IWheel
+        sealed class GuideContentsPanel : ScrollPanel, IWheel
         {
             public Action<int> SectionStep;
             int wheelRemainder;
-            public void Wheel(int delta)
+            public new void Wheel(int delta)
             {
+                if(SectionStep==null || (ModifierKeys&Keys.Shift)!=0) {base.Wheel(delta);return;}
                 if (delta == 0) return;
                 if (Math.Sign(delta) != Math.Sign(wheelRemainder)) wheelRemainder = 0;
                 wheelRemainder += delta;
@@ -392,11 +393,11 @@ namespace AzerothLauncher
         void RestoreGuideFavoriteLocation(GuideFavoriteRoute favorite)
         {
             if (favorite == null || guideArticleScroll == null || guideArticleScroll.IsDisposed) return;
-            int destination = favorite.ScrollY;
+            int destination = (int)Math.Round(favorite.ScrollY*Theme.DisplayScale);
             Control anchor;
             if (favorite.Anchor.Length > 0 && classSectionTargets.TryGetValue(favorite.Anchor, out anchor) &&
                 anchor != null && !anchor.IsDisposed)
-                destination = ClassArticleControlTop(anchor) + favorite.AnchorOffset;
+                destination = ClassArticleControlTop(anchor) + (int)Math.Round(favorite.AnchorOffset*Theme.DisplayScale);
             guideArticleScroll.ScrollTo(Math.Max(0, destination));
             if (classArticleScroll == guideArticleScroll) UpdateClassNavigation(classArticleScroll);
         }
@@ -1174,7 +1175,7 @@ namespace AzerothLauncher
                     GuideClassKey(Data.Guide[gTopic].Title, Data.Guide[gTopic].Pages[gPage].Title), "");
             if (guideQuery.Trim().Length > 0) return null;        // search result cards keep their own exact routes
             int scrollY = guideArticleScroll == null || guideArticleScroll.IsDisposed ? 0 : Math.Max(0, -guideArticleScroll.AutoScrollPosition.Y);
-            if (guideWikiIndex) return new GuideFavoriteRoute("wiki", "", "", "", "", "", scrollY, 0);
+            if (guideWikiIndex) return new GuideFavoriteRoute("wiki", "", "", "", "", "", (int)Math.Round(scrollY/Theme.DisplayScale), 0);
             if (gTopic >= 0 && gTopic < Data.Guide.Count)
             {
                 GuideTopic topic = Data.Guide[gTopic];
@@ -1193,10 +1194,10 @@ namespace AzerothLauncher
                     }
                 }
                 return new GuideFavoriteRoute("guide", topic.Title, page, GuideClassKey(topic.Title, page), "",
-                    anchor, scrollY, anchorOffset);
+                    anchor, (int)Math.Round(scrollY/Theme.DisplayScale), (int)Math.Round(anchorOffset/Theme.DisplayScale));
             }
-            if (guideGroupPage >= 0) return new GuideFavoriteRoute("group", GroupName(guideGroupPage), "", "", "", "", scrollY, 0);
-            return new GuideFavoriteRoute("section", "Guide", "", "", "", "", scrollY, 0);
+            if (guideGroupPage >= 0) return new GuideFavoriteRoute("group", GroupName(guideGroupPage), "", "", "", "", (int)Math.Round(scrollY/Theme.DisplayScale), 0);
+            return new GuideFavoriteRoute("section", "Guide", "", "", "", "", (int)Math.Round(scrollY/Theme.DisplayScale), 0);
         }
 
         void AddGuideFavoriteStar()
@@ -1213,7 +1214,7 @@ namespace AzerothLauncher
                 ? guideHeaderControl.Top + (guideHeaderControl.Height - starSize) / 2 : GuideTop + 2;
             if (gBuilder || gPlanner) { x = PW - starSize + 2; y = 0; }
             var star = new Label { Text = "★", AutoSize = false, Bounds = new Rectangle(x, y, starSize, starSize),
-                Font = new Font("Segoe UI Symbol", 15 * Theme.Zoom, FontStyle.Regular, GraphicsUnit.Point),
+                Font = new Font("Segoe UI Symbol", 15 * Theme.Zoom * 96f / 72f, FontStyle.Regular, GraphicsUnit.Pixel),
                 ForeColor = Theme.Gold, BackColor = Color.Transparent, TextAlign = ContentAlignment.MiddleCenter,
                 Cursor = Cursors.Hand, AccessibleRole = AccessibleRole.PushButton,
                 AccessibleName = Lang.T("Save this guide location to Quick Access") };
@@ -1313,10 +1314,10 @@ namespace AzerothLauncher
             var build = liveBuild;
             var sharedStats = AddTheoryStats(cls);
             AddTheoryGuideLinks(cls);
-            var sp = MakeThinScroll(panel, new Rectangle(4, 4, PW - 8 - TheoryStatsWidth - 6, PH - 8), GuideCardBg, Theme.Bronze,
+            var sp = MakeThinScroll(panel, new Rectangle(4, Theme.Px(36) + 4, PW - 8 - TheoryStatsWidth - 6, Math.Max(50, PH - Theme.Px(36) - 8)), GuideCardBg, Theme.Bronze,
                                     Theme.GoldDim, Theme.Gold);
             Color bg = sp.BackColor;
-            int full = sp.ClientSize.Width - 8, x = 4, y = 34;
+            int full = sp.ClientSize.Width - 8, x = 4, y = 4;
             // Keep the tree editor at roughly 60% and its build controls at 40%, like the Gear Planner.
             int boxW = Math.Max(220, full * 2 / 5);
             boxW = Math.Min(boxW, Math.Max(220, full - 360));
@@ -1324,7 +1325,7 @@ namespace AzerothLauncher
             var left = UI.Text("", 11, FontStyle.Bold, Theme.Gold, bg, w - 140, false);
             left.Bounds = new Rectangle(x, y + 6, w - 200, Theme.F(11, FontStyle.Bold).Height + 4);   // (no Gear Planner button: the path leads there)
             sp.Controls.Add(left);
-            var reset = new WowButton("RESET", delegate { build.Reset(); }, 120, 30, 9);
+            var reset = new WowButton("RESET", delegate { build.Reset(); }, 100, 26, 9);
             reset.Location = new Point(x + w - reset.Width, y);
             sp.Controls.Add(reset);
             // Hover-only help uses the same gold-bevel question mark and popup as the global help.
@@ -1362,7 +1363,7 @@ namespace AzerothLauncher
             // so the last button sits close to the bottom edge like the Gear Planner's controls.
             int actionW = Math.Min(boxW - 32, Math.Max(150, (int)(boxW * 0.62)));
             int actionX = (tools.ClientSize.Width - actionW) / 2;
-            int actionH = 28;
+            int actionH = Theme.Px(28);
             int actionY = saved.Bottom + 10;
             const int actionCount = 5;
             int actionGap = Math.Max(4, (tools.ClientSize.Height - actionY - actionH * actionCount) / actionCount);
@@ -1583,12 +1584,13 @@ namespace AzerothLauncher
             layoutActions();
             if (SHOW_TEMPORARY_BUILD_MENUS) sp.Controls.Add(tools);
             if (SHOW_TEMPORARY_BUILD_MENUS) refreshSaved();
+            else tools.Dispose();
             y += Math.Max(reset.Height, left.Height) + 6;
             var trees = Talents.Of(cls);
             var views = new List<TalentTreeView>();
             // the three trees fit the box: their cells as big as its width and height allow, the trees centred
-            int gap = 8, tw3 = (w - gap * (trees.Count - 1)) / Math.Max(1, trees.Count), th = 0;
-            int roomH = sp.ClientSize.Height - y - 8;
+            int gap = Theme.Px(6), tw3 = (w - gap * (trees.Count - 1)) / Math.Max(1, trees.Count), th = 0;
+            int roomH = Math.Max(sp.ClientSize.Height - y - 8, Theme.Px(38 + 7 * 26));
             int cellFit = Math.Max(22, Math.Min(Math.Max(30, (tw3 - 16) / 4), (roomH - 38) / 7));   // as TalentTreeView works it out
             int realW = Math.Min(tw3, cellFit * 4 + 16);
             int x0 = x;                                     // the trees start at the left (they were centred)
@@ -2115,7 +2117,7 @@ namespace AzerothLauncher
         void GuideArticle(List<GuideTopic> topics, GuideTopic topic)
         {
             classArticleScroll = null;
-            classArticleBackPositions.Clear();
+            if(!changingDisplay) classArticleBackPositions.Clear();
             classTalentTargets.Clear();
             classSpellTargets.Clear();
             classSectionTargets.Clear();
@@ -2198,7 +2200,7 @@ namespace AzerothLauncher
         void NavigateClassArticleTo(ScrollPanel sp, int y)
         {
             if (sp == null || sp.IsDisposed) return;
-            classArticleBackPositions.Push(Math.Max(0, -sp.AutoScrollPosition.Y));
+            classArticleBackPositions.Push(Math.Max(0,(int)Math.Round(-sp.AutoScrollPosition.Y/Theme.DisplayScale)));
             sp.ScrollTo(Math.Max(0, y));
         }
 
@@ -2221,7 +2223,7 @@ namespace AzerothLauncher
             if (current != "Guide" || gTalents != null || classArticleScroll == null ||
                 classArticleScroll.IsDisposed || classArticleBackPositions.Count == 0) return false;
             int y = classArticleBackPositions.Pop();
-            classArticleScroll.ScrollTo(y);
+            classArticleScroll.ScrollTo((int)Math.Round(y*Theme.DisplayScale));
             return true;
         }
 
@@ -2278,30 +2280,33 @@ namespace AzerothLauncher
 
         void BuildClassContentsSidebar(ScrollPanel sp, int top, int width, List<GuideTopic> topics, string className)
         {
+            float navigationZoom=Theme.Zoom;
+            Font sidebarRegular=Theme.F(7f,FontStyle.Regular), sidebarBold=Theme.F(7f,FontStyle.Bold);
+
             // sp belongs to the scroll frame, not panel: its Right is in frame coordinates.
             // Anchor to panel directly so the tree ends exactly before the favorites strip.
-            var nav = new GuideContentsPanel { Bounds = new Rectangle(PW - width, top, width, sp.Parent.Height), BackColor = Color.Transparent };
+            var nav = new GuideContentsPanel { Bounds = new Rectangle(PW - width, top, width, sp.Parent.Height), BackColor = panel.BackColor, HideBars=true };
             // One complete wheel notch jumps one in-article section; resource links
             // (builder/build guides) still require a click, so scrolling cannot leave the page.
-            nav.SectionStep = delegate(int direction) { StepClassSection(sp, direction); };
+            if(className!=null) nav.SectionStep = delegate(int direction) { StepClassSection(sp, direction); };
             var treeRows = new List<GuideTreeRow>();
             nav.Paint += delegate(object sender, PaintEventArgs e)
             {
                 // Subtle bronze elbows expose parent/child relationships without adding boxes.
-                using (var pen = new Pen(Color.FromArgb(155, 144, 112, 58), Math.Max(1f, Theme.Zoom)))
+                using (var pen = new Pen(Color.FromArgb(155, 144, 112, 58), Math.Max(1f, navigationZoom)))
                 {
                     foreach (GuideTreeRow parent in treeRows)
                     {
                         var children = treeRows.FindAll(delegate(GuideTreeRow row) { return row.Parent == parent.Key; });
                         if (children.Count == 0) continue;
-                        int indent = Math.Max(8, (int)(9 * Theme.Zoom));
-                        int branchX = (parent.Level + 1) * indent - Math.Max(3, (int)(3 * Theme.Zoom));
-                        int firstCenter = children[0].Top + Math.Min(children[0].Height - 1, 8);
-                        int lastCenter = children[children.Count - 1].Top + Math.Min(children[children.Count - 1].Height - 1, 8);
+                        int indent = Math.Max(8, (int)(9 * navigationZoom));
+                        int branchX = (parent.Level + 1) * indent - Math.Max(3, (int)(3 * navigationZoom));
+                        int firstCenter = children[0].Top + Math.Min(children[0].Height - 1, 8) + nav.AutoScrollPosition.Y;
+                        int lastCenter = children[children.Count - 1].Top + Math.Min(children[children.Count - 1].Height - 1, 8) + nav.AutoScrollPosition.Y;
                         if (lastCenter > firstCenter) e.Graphics.DrawLine(pen, branchX, firstCenter, branchX, lastCenter);
                         foreach (GuideTreeRow child in children)
                         {
-                            int center = child.Top + Math.Min(child.Height - 1, 8);
+                            int center = child.Top + Math.Min(child.Height - 1, 8) + nav.AutoScrollPosition.Y;
                             Label rowControl;
                             int rowLeft = classNavLinks.TryGetValue(child.Key, out rowControl) ? rowControl.Left : child.Level * indent;
                             int endX = Math.Max(branchX, rowLeft - 1);
@@ -2328,8 +2333,9 @@ namespace AzerothLauncher
                 classNavLinks.Clear();
                 classNavActiveBranch.Clear();
                 treeRows.Clear();
+                nav.AutoScrollPosition=Point.Empty;
                 int y = 8;
-                int indent = Math.Max(8, (int)(9 * Theme.Zoom));
+                int indent = Math.Max(8, (int)(9 * navigationZoom));
                 Func<string, string, int, string, Action, Label> add = delegate(string key, string label, int level, string parentKey, Action action)
                 {
                     string text = Lang.T(label);
@@ -2344,12 +2350,12 @@ namespace AzerothLauncher
                            string.Equals(key, "Additional resources", StringComparison.OrdinalIgnoreCase) ||
                            string.Equals(key, className + " Build Guides", StringComparison.OrdinalIgnoreCase))));
                     if (activeBranch) classNavActiveBranch.Add(key);
-                    Font font = Theme.F(7.0f, FontStyle.Regular);
-                    Font bold = Theme.F(7.0f, FontStyle.Bold);
+                    Font font = sidebarRegular;
+                    Font bold = sidebarBold;
                     int left = level * indent;
                     int labelWidth = Math.Max(1, width - left);
                     int labelHeight = Math.Max(15, TextRenderer.MeasureText(text, bold, new Size(labelWidth, 100), TextFormatFlags.WordBreak | TextFormatFlags.NoPadding).Height + 2);
-                    labelHeight = Math.Min(labelHeight, Math.Max(1, nav.Height - y));
+                    // Keep complete rows; the tree can scroll on short windows without clipping labels.
                     var link = new Label { Text = text, AutoSize = false, Height = labelHeight, Width = labelWidth,
                         Left = left, Top = y, UseMnemonic = false, AutoEllipsis = false,
                         TextAlign = ContentAlignment.TopLeft,
@@ -3254,7 +3260,7 @@ namespace AzerothLauncher
                 using (var b = new SolidBrush(Theme.Hex("#30251a"))) g.FillPath(b, path);
                 using (var path = Round(heartBox, 5))
                 using (var p = new Pen(Theme.Gold, 1)) g.DrawPath(p, path);
-                using (var heartFont = new Font("Segoe UI Symbol", 16 * zoom, FontStyle.Regular, GraphicsUnit.Point))
+                using (var heartFont = new Font("Segoe UI Symbol", 16 * zoom * 96f / 72f, FontStyle.Regular, GraphicsUnit.Pixel))
                     Theme.CenterText(g, "♥", heartFont, Theme.Gold, heartBox, null);
             }
         }
@@ -3522,8 +3528,8 @@ draw();wake();
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
-            if (m.Msg == WM_PAINT && TextLength == 0)        // the hint while nothing is typed
-                using (var g = CreateGraphics())
+            if ((m.Msg == WM_PAINT || m.Msg == 0x318) && TextLength == 0) // WM_PRINTCLIENT also supports off-screen/native printing
+                using (var g = m.Msg == WM_PAINT ? CreateGraphics() : Graphics.FromHdc(m.WParam))
                     TextRenderer.DrawText(g, "\u2315  " + Lang.T("Search the guide: a spell, a boss, a key..."), Font,
                                           new Rectangle(2, 1, Width - 4, Height - 2), Theme.GoldDim,
                                           TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
