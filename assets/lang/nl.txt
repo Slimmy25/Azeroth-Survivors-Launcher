@@ -1519,8 +1519,8 @@ switched off: the two conflict.
 = uitgeschakeld: de twee botsen.
 these two can't be on together. Switching one on switches the other off.
 = deze twee kunnen niet tegelijk aan staan. Zet je de ene aan, dan gaat de andere uit.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Platte, donkere eenheidskaders en een compacte actiebalk, naambordjes in Plater-stijl (Survivor Plates), geluk en kaartkansen op de XP-balk, een chatpaneel met tabbladen en automatische raidmarkeringen. Kan niet tegelijk aan staan met AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Platte, donkere eenheidskaders en een compacte actiebalk, naambordjes in Plater-stijl (Survivor Plates), geluk en kaartkansen op de XP-balk, een chatpaneel met tabbladen en automatische raidmarkeringen. Kan niet tegelijk aan staan met Slim Suite.
 The game updated itself and is opening again...
 = De game heeft zichzelf bijgewerkt en gaat weer open...
 The game updated itself and opened again.

@@ -48,17 +48,19 @@ if exist "%OUT%" del "%OUT%"
 rem every language file in assets\lang is built in (see assets\lang\README.md)
 set "LANGRES="
 set "CLASSFAVRES="
+set "GALLERYRES="
 for %%f in (assets\lang\*.txt) do set "LANGRES=!LANGRES! /resource:assets\lang\%%~nxf,AS.lang.%%~nf.txt"
 for %%f in (assets\retro\*.png) do set "LANGRES=!LANGRES! /resource:assets\retro\%%~nxf,AS.retro.%%~nxf"
 for %%f in (assets\fonts\*.ttf) do set "LANGRES=!LANGRES! /resource:assets\fonts\%%~nxf,AS.font.%%~nxf"
 for %%f in (assets\favorites\class-*.jpg) do set "CLASSFAVRES=!CLASSFAVRES! /resource:assets\favorites\%%~nxf,AS.favorites.%%~nxf"
+for %%f in (assets\addon-gallery\*) do set "GALLERYRES=!GALLERYRES! /resource:assets\addon-gallery\%%~nxf,AS.addon-gallery.%%~nxf"
 
 echo Building %OUT% ...
 "%CSC%" /nologo /target:winexe /platform:anycpu /optimize+ /langversion:5 /warn:3 /nowarn:162,429 !BUILD_KIND! %EXTRA_CSC_FLAGS% ^
   /out:"%OUT%" /win32icon:assets\AzerothSurvivors.ico /win32manifest:app.manifest ^
   /r:System.dll /r:System.Core.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll ^
   /r:System.Management.dll /r:System.IO.Compression.dll /r:System.IO.Compression.FileSystem.dll ^
-  /resource:assets\logo.png,AS.logo.png /resource:assets\discord\symbol-blurple.png,AS.discord-blurple.png /resource:assets\discord\symbol-white.png,AS.discord-white.png /resource:assets\portrait.png,AS.portrait.png /resource:assets\gear\dps-up.png,AS.gear.dps-up.png /resource:assets\favorites\codex-aura.png,AS.favorites.codex-aura.png /resource:assets\favorites\heroic-icon.png,AS.favorites.heroic-icon.png /resource:assets\favorites\zones-bosses.jpg,AS.favorites.zones-bosses.jpg /resource:assets\favorites\gear-planner.jpg,AS.favorites.gear-planner.jpg /resource:assets\favorites\jewelry-card.jpg,AS.favorites.jewelry-card.jpg /resource:assets\favorites\talents-button.png,AS.favorites.talents-button.png !CLASSFAVRES! ^
+  /resource:assets\logo.png,AS.logo.png /resource:assets\discord\symbol-blurple.png,AS.discord-blurple.png /resource:assets\discord\symbol-white.png,AS.discord-white.png /resource:assets\portrait.png,AS.portrait.png /resource:assets\gear\dps-up.png,AS.gear.dps-up.png /resource:assets\favorites\codex-aura.png,AS.favorites.codex-aura.png /resource:assets\favorites\heroic-icon.png,AS.favorites.heroic-icon.png /resource:assets\favorites\zones-bosses.jpg,AS.favorites.zones-bosses.jpg /resource:assets\favorites\gear-planner.jpg,AS.favorites.gear-planner.jpg /resource:assets\favorites\jewelry-card.jpg,AS.favorites.jewelry-card.jpg /resource:assets\favorites\talents-button.png,AS.favorites.talents-button.png !CLASSFAVRES! !GALLERYRES! ^
   /resource:assets\native\webp\x64\libwebp.dll,AS.webp.x64.libwebp.dll /resource:assets\native\webp\x64\libsharpyuv.dll,AS.webp.x64.libsharpyuv.dll /resource:assets\native\webp\x86\libwebp.dll,AS.webp.x86.libwebp.dll /resource:assets\native\webp\x86\libsharpyuv.dll,AS.webp.x86.libsharpyuv.dll ^
   /resource:assets\AzerothSurvivors.ico,AS.app.ico /resource:assets\changelog.txt,AS.changelog.txt ^
   /resource:assets\addons.txt,AS.addons.txt /resource:assets\launcher-about.txt,AS.launcher-about.txt /resource:assets\guide.txt,AS.guide.txt /resource:assets\game-text.txt,AS.game-text.txt /resource:assets\talents.txt,AS.talents.txt /resource:assets\items.txt,AS.items.txt /resource:videos\big-streamers\videos.txt,AS.big-streamers.txt /resource:assets\gear-stats.txt,AS.gear-stats.txt /resource:assets\gear-sets.txt,AS.gear-sets.txt /resource:assets\transmog.txt,AS.transmog.txt /resource:assets\spell-icons.txt,AS.spell-icons.txt /resource:assets\npc-models.txt,AS.npc-models.txt /resource:assets\item-models.txt,AS.item-models.txt /resource:assets\item-icons.txt,AS.item-icons.txt !LANGRES! ^

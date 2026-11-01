@@ -12,7 +12,7 @@ A free helper for Azeroth Survivors, the game made by Aethus. Slimjim made it fo
 - Plays the game: PLAY starts the game after checking for a launcher update. Closing the launcher exits it; it does not stay in the system tray.
 - Optional cloud save: off by default for a new install; existing saved preferences are kept. When enabled, syncs the game's save folder and addon settings to your chosen cloud folder, with recovery backups. The game controls where it writes live saves; changing the launcher's save-folder field only changes the folder used for import and sync.
 - Addons: switch addons on and off, install approved ones with one click from Download More, keep them up to date and uninstall them. Advanced settings add profiles that keep their own game settings.
-- Its own addons: AZS Handbook (this Guide inside the game) and AZS Minor Mods (small changes you switch on and off). Maidenhead's Azeroth Stats is an optional third-party addon; the launcher can read its saved run history.
+- Its own addons: AZS Handbook (this Guide inside the game) and Slim Suite (a Swiss-army knife of useful tools and interface controls). Maidenhead's Azeroth Stats is an optional third-party addon; the launcher can read its saved run history.
 - Guide: the New Player Handbook and Wiki. The Wiki has class guides, Items and Transmog; Codex entries stay in class guides while Archive is retained outside search and navigation.
   Item hovers show their Wowhead Classic 3D model when a match is available.
 - Theorycrafting: a shared Gear and Talent Builder, Build Guides and Build Videos. Named talent builds are shared across classes and open in their saved class.

@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = đã tắt: hai addon này xung đột.
 these two can't be on together. Switching one on switches the other off.
 = hai addon này không thể bật cùng lúc. Bật cái này thì cái kia sẽ tắt.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Khung đơn vị phẳng, tối và thanh hành động gọn, bảng tên kiểu Plater (Survivor Plates), may mắn và tỉ lệ thẻ trên thanh XP, khung chat có thẻ và dấu raid tự động. Không thể bật cùng AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Khung đơn vị phẳng, tối và thanh hành động gọn, bảng tên kiểu Plater (Survivor Plates), may mắn và tỉ lệ thẻ trên thanh XP, khung chat có thẻ và dấu raid tự động. Không thể bật cùng Slim Suite.
 The game updated itself and is opening again...
 = Trò chơi đã tự cập nhật và đang mở lại...
 The game updated itself and opened again.

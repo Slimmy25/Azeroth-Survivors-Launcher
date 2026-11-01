@@ -25,13 +25,24 @@ These projects deserve a place up front:
 - **Addons:** browse community addons and manage your installed collection.
   - **Download More** shows available SurvivorsForge pictures and the launcher’s static Verified marks; it does not download addons from SurvivorsForge.
   - AZSSpellMeter and AZS Max Hit are alternatives; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.
+  - **Slim Suite** (`/azsmods`) provides UI movement, sizing, scaling and gameplay helpers. Its settings are grouped into “Modifying the User Interface” and “New/Unique, but Minor Features.”
 - **Guide:** beginner help, class guides, items, and links between related topics.
 - **Theorycrafting:** explore talent trees and compare gear and set bonuses.
 - **Display:** resize the window while preserving its proportions, or maximize it in a centered, ratio-fitted size. Adjust interface size under Options > Launcher without changing Windows scaling.
 - **Saves:** import/export game saves and optionally sync through your own cloud folder.
 - **Community:** videos, creator guides, and the developer's patch notes.
 
-![Launcher home with community videos and game news](docs/screenshots/home-community.png)
+## Screenshots
+
+These screenshots were captured from the local WinForms preview with sample data. The display renderer simulates some display contexts; the images are not a physical mixed-monitor test.
+
+| Wiki | Class guide | Talent builder |
+| --- | --- | --- |
+| ![Wiki guide landing page](docs/screenshots/wiki-guide.png) | ![Class guide](docs/screenshots/guide-class-gear.png) | ![Talent tree builder](docs/screenshots/talent-tree-builder.png) |
+
+| Gear planner | Statistics | Launcher settings |
+| --- | --- | --- |
+| ![Gear planner and set bonuses](docs/screenshots/gear-planner-tier-bonus.png) | ![Statistics overview](docs/screenshots/stats-overview.png) | ![Launcher settings](docs/screenshots/options-path.png) |
 
 ## More information
 

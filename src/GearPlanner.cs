@@ -367,11 +367,21 @@ namespace AzerothLauncher
             BackColor = Theme.Hex("#0e0d14"), ForeColor = Theme.Gold,
             TabStop = false, Visible = false
         };
+        readonly RichTextBox amuletEffectView = JewelryView();
+        readonly RichTextBox ringTrinketEffectView = JewelryView();
         readonly VScrollBar itemScroll = new VScrollBar();
         int itemOffset;
         string scrollSlot;
         Action pendingBonusLayout, pendingItemLayout;
         bool nativeLayoutQueued;
+
+        static RichTextBox JewelryView()
+        {
+            return new RichTextBox { ReadOnly = true, BorderStyle = BorderStyle.None, WordWrap = true,
+                ScrollBars = RichTextBoxScrollBars.Vertical, DetectUrls = false,
+                BackColor = Theme.Hex("#0e0d14"), ForeColor = Theme.Gold, TabStop = false, Visible = false,
+                Margin = new Padding(2) };
+        }
 
         void QueueNativeLayout()
         {
@@ -507,6 +517,10 @@ namespace AzerothLauncher
             Controls.Add(itemScroll);
             bonusView.Font = Theme.F(8.25f);
             Controls.Add(bonusView);
+            amuletEffectView.Font = Theme.F(7.5f);
+            ringTrinketEffectView.Font = Theme.F(7.5f);
+            Controls.Add(amuletEffectView);
+            Controls.Add(ringTrinketEffectView);
             tip.InitialDelay = 150;
             tip.AutoPopDelay = 30000;
             if (Unused.Contains(chosenSlot)) chosenSlot = "Head";
@@ -681,7 +695,12 @@ namespace AzerothLauncher
             var statBounds = new Rectangle(mid.X, top, Math.Max(30, mid.Width), Math.Max(1, statHeight));
             DrawStatColumns(g, statBounds, fullStatHeight <= 0 ? 1f : statHeight / (float)fullStatHeight);
             int setsTop = statBounds.Bottom + Theme.Px(6);
-            DrawSets(g, new Rectangle(mid.X, setsTop, mid.Width, by - 8 - setsTop));   // above the weapons
+            int belowStats = Math.Max(0, by - 8 - setsTop);
+            int jewelryHeight = belowStats >= Theme.Px(54)
+                ? Math.Min(Theme.Px(78), Math.Max(Theme.Px(42), belowStats / 3)) : 0;
+            int jewelryTop = by - 8 - jewelryHeight;
+            DrawSets(g, new Rectangle(mid.X, setsTop, mid.Width, Math.Max(0, jewelryTop - setsTop - (jewelryHeight > 0 ? Theme.Px(4) : 0))));
+            DrawJewelryEffects(g, new Rectangle(mid.X, jewelryTop, mid.Width, jewelryHeight));
 
             // the selector: what the chosen slot can hold, each with its picture
             if(!MainOnly) Selector(g, pick);
@@ -770,6 +789,58 @@ namespace AzerothLauncher
                 bonusView.Visible=visible;
             };
             QueueNativeLayout();
+        }
+
+        static string EquippedJewelryText(Dictionary<string, object> slots, params string[] names)
+        {
+            var parts = new List<string>();
+            foreach (string slot in names)
+            {
+                object value;
+                Jewel jewel = slots != null && slots.TryGetValue(slot, out value) ? value as Jewel : null;
+                if (jewel == null) continue;
+                var lines = new List<string> { jewel.Name };
+                if (jewel.Lines != null) lines.AddRange(jewel.Lines);
+                parts.Add(string.Join("\n", lines.ToArray()));
+            }
+            return parts.Count == 0 ? Lang.T("None selected") : string.Join("\n\n", parts.ToArray());
+        }
+
+        void DrawJewelryEffects(Graphics g, Rectangle bounds)
+        {
+            string amulet = Lang.T("Amulet") + "\n" + EquippedJewelryText(slots, "Neck");
+            string rings = Lang.T("Rings & Trinkets") + "\n" + EquippedJewelryText(slots,
+                "Finger 1", "Finger 2", "Trinket 1", "Trinket 2");
+            pendingBonusLayout = Combine(pendingBonusLayout, delegate
+            {
+                bool visible = MainOnly && bounds.Width >= Theme.Px(64) && bounds.Height >= Theme.Px(28);
+                if (visible)
+                {
+                    int gap = Theme.Px(5), half = Math.Max(24, (bounds.Width - gap) / 2);
+                    amuletEffectView.Bounds = new Rectangle(bounds.X, bounds.Y, half, bounds.Height);
+                    ringTrinketEffectView.Bounds = new Rectangle(bounds.X + half + gap, bounds.Y,
+                        Math.Max(24, bounds.Width - half - gap), bounds.Height);
+                    if (amuletEffectView.Text != amulet) amuletEffectView.Text = amulet;
+                    if (ringTrinketEffectView.Text != rings) ringTrinketEffectView.Text = rings;
+                }
+                amuletEffectView.Visible = ringTrinketEffectView.Visible = visible;
+            });
+            if (bounds.Height > 0)
+            {
+                int gap = Theme.Px(5), half = Math.Max(24, (bounds.Width - gap) / 2);
+                using (var edge = new Pen(SlotEdge))
+                {
+                    g.DrawRectangle(edge, bounds.X, bounds.Y, Math.Max(1, half - 1), Math.Max(1, bounds.Height - 1));
+                    g.DrawRectangle(edge, bounds.X + half + gap, bounds.Y,
+                        Math.Max(1, bounds.Width - half - gap - 1), Math.Max(1, bounds.Height - 1));
+                }
+            }
+            QueueNativeLayout();
+        }
+
+        static Action Combine(Action first, Action next)
+        {
+            return delegate { if (first != null) first(); if (next != null) next(); };
         }
 
         // a line wrapped word by word, the spells and talents in it in gold (as the Guide links them); its height

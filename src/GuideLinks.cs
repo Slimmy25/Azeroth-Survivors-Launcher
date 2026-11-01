@@ -820,9 +820,10 @@ namespace AzerothLauncher
         Image picture, shownPicture;                          // a picture under the text (ShowPicture)
         readonly List<Image> galleryImages = new List<Image>();
         int galleryIndex, galleryHeight;
+        int galleryWidth;
         Rectangle galleryPrevious, galleryNext, galleryClose;
         bool galleryMode, galleryExpanded, galleryPinned;
-        static int W { get { return Theme.Px(box != null && box.galleryExpanded ? 460 : box != null && box.galleryMode ? 176 : 300); } }
+        static int W { get { return box != null && box.galleryExpanded && box.galleryWidth > 0 ? box.galleryWidth : Theme.Px(300); } }
         static int ModelH { get { return Theme.Px(230); } }
         Font titleFont, bodyFont;
 
@@ -1007,6 +1008,8 @@ namespace AzerothLauncher
             HookHost(owner);
             Form host = RootHost(owner);
             if (host == null) { Hide(); return; }
+            Rectangle ownerBounds = host.RectangleToScreen(host.ClientRectangle);
+            if (ownerBounds.Width < 40 || ownerBounds.Height < 40) { Hide(); return; }
             // Parent the card to the actual launcher HWND. Its position is then expressed in the
             // same client-coordinate space as the launcher, even when monitors use different DPI.
             if (box.Parent != host)
@@ -1024,6 +1027,10 @@ namespace AzerothLauncher
             box.shownPicture = pic;
             box.title = title;
             box.hoverOwner = owner;
+            const int margin = 6;
+            box.galleryWidth = box.galleryExpanded
+                ? Math.Min(ownerBounds.Width - margin * 2, Math.Max(Theme.Px(320), (int)(ownerBounds.Width * .70f)))
+                : 0;
             if (applyGear) body = GearEffect.Apply(title, body); // only content hovers get the planner's live totals
             if (model != null || IsItemTitle(title)) body = ShortItemExplanation(body);
             box.body = body;
@@ -1032,8 +1039,6 @@ namespace AzerothLauncher
             if (icon != null) th = Math.Max(th, 36);
             int bh;
             using (var mg = Graphics.FromImage(measure)) bh = box.Flow(mg, bf, false);
-            Rectangle ownerBounds = host.RectangleToScreen(host.ClientRectangle);
-            if (ownerBounds.Width < 40 || ownerBounds.Height < 40) { Hide(); return; }
             Point p;
             if (screenAnchor.HasValue) p = screenAnchor.Value;
             else if (owner.ClientRectangle.Contains(owner.PointToClient(Cursor.Position)) && owner.IsHandleCreated) p = Cursor.Position;
@@ -1041,15 +1046,19 @@ namespace AzerothLauncher
 
             // Confine every tooltip to its launcher window. Clamping to the monitor's working area alone lets
             // bottom-edge hovers spill over other apps (the launcher can sit above another window).
-            const int margin = 6;
             int availableWidth = ownerBounds.Width - margin * 2;
             int availableHeight = ownerBounds.Height - margin * 2;
             int width = Math.Min(W, availableWidth);
-            box.galleryHeight = box.galleryMode
-                ? box.galleryExpanded
-                    ? Math.Max(Theme.Px(140), Math.Min(width - Theme.Px(32), availableHeight - th - bh - Theme.Px(54)))
-                    : Math.Max(Theme.Px(72), Math.Min(Theme.Px(105), availableHeight - th - bh - Theme.Px(42)))
-                : 0;
+            if (box.galleryMode && box.galleryExpanded)
+            {
+                int chromeHeight = th + bh + Theme.Px(64);
+                int desiredHeight = Math.Min(availableHeight, (int)(availableHeight * .90f));
+                box.galleryHeight = Math.Max(Theme.Px(80), desiredHeight - chromeHeight);
+                box.galleryHeight = Math.Min(box.galleryHeight, Math.Max(Theme.Px(1), availableHeight - chromeHeight));
+            }
+            else if (box.galleryMode)
+                box.galleryHeight = Math.Max(Theme.Px(72), Math.Min(Theme.Px(180), availableHeight - th - bh - Theme.Px(42)));
+            else box.galleryHeight = 0;
             int galleryExtra = box.galleryMode ? box.galleryHeight + Theme.Px(box.galleryExpanded ? 42 : 12) : 0;
             int height = Math.Min(th + bh + 22 + galleryExtra + (box.modelLayout ? ModelH + 8 : 0) + (pic != null ? pic.Height + 10 : 0), availableHeight);
             var size = new Size(width, height);
@@ -1089,6 +1098,7 @@ namespace AzerothLauncher
             galleryPinned = false;
             galleryIndex = 0;
             galleryHeight = 0;
+            galleryWidth = 0;
             galleryPrevious = galleryNext = galleryClose = Rectangle.Empty;
             foreach (Image image in galleryImages) try { image.Dispose(); } catch (Exception) { }
             galleryImages.Clear();

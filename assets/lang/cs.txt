@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = vypnuto: ty dva spolu kolidují.
 these two can't be on together. Switching one on switches the other off.
 = tyto dva nemohou být zapnuté současně. Zapnutím jednoho se druhý vypne.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Ploché tmavé rámečky jednotek a kompaktní akční lišta, jmenovky ve stylu Plater (Survivor Plates), štěstí a šance karet na liště zkušeností, chat s kartami a automatické raidové značky. Nemůže být zapnutý spolu s AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Ploché tmavé rámečky jednotek a kompaktní akční lišta, jmenovky ve stylu Plater (Survivor Plates), štěstí a šance karet na liště zkušeností, chat s kartami a automatické raidové značky. Nemůže být zapnutý spolu s Slim Suite.
 The game updated itself and is opening again...
 = Hra se sama aktualizovala a znovu se otevírá...
 The game updated itself and opened again.

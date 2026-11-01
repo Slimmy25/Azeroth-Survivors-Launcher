@@ -1,10 +1,10 @@
-# AZS Minor Mods HUD mobility worklist
+# Slim Suite HUD mobility worklist
 
 This tracks the requested movable HUD elements and the limits established by the provided addon API documentation (`addon_docs(1).md`). The action bar, build rows and announcement banner are separate game elements; do not combine them just because the game originally groups or positions them together.
 
 ## Stored-levels “Level Up!” button
 
-**Status: implemented locally; not verified in-game.** AZS Minor Mods now offers a movable replacement button, controlled by the `Replace Level Up button with movable version` setting. It uses `AZS_OpenStoredLevels()` to open the game's native choices and hides/restores the original through `AZS_SetHudShown("levels", ...)`. The button is a separate `MOVABLE` entry, so the existing Unlock UI handle provides move, resize, scale and optional snap behavior. It is hidden until `AZS_GetStoredLevels()` reports at least one unspent level, and its counter shows the full number waiting to be spent. The count is polled every 0.25 seconds so the button appears again as soon as a new point becomes available and disappears once all points are spent. The API does not expose the native button's icon, so the replacement currently omits that icon instead of substituting an unrelated one. The native choice screen remains game-owned and unchanged.
+**Status: implemented locally; not verified in-game.** Slim Suite now offers a movable replacement button, controlled by the `Replace Level Up button with movable version` setting. It uses `AZS_OpenStoredLevels()` to open the game's native choices and hides/restores the original through `AZS_SetHudShown("levels", ...)`. The button is a separate `MOVABLE` entry, so the existing Unlock UI handle provides move, resize, scale and optional snap behavior. It is hidden until `AZS_GetStoredLevels()` reports at least one unspent level, and its counter shows the full number waiting to be spent. The count is polled every 0.25 seconds so the button appears again as soon as a new point becomes available and disappears once all points are spent. The API does not expose the native button's icon, so the replacement currently omits that icon instead of substituting an unrelated one. The native choice screen remains game-owned and unchanged.
 
 Local package: `dist/AZSMinorMods-LevelUp-Movable-LocalTest.zip`.
 

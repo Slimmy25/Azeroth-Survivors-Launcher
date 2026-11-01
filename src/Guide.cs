@@ -842,14 +842,6 @@ namespace AzerothLauncher
         void SetGuideTrail(List<object> trail, params GuideFavoriteRoute[] routes)
         {
             SetCrumbs(trail.ToArray());
-            int crumb = 0;
-            for (int i = 0; i + 1 < trail.Count; i += 2, crumb++)
-            {
-                if (crumb >= routes.Length || routes[crumb] == null) continue;
-                GuideFavoriteRoute route = routes[crumb];
-                int target = crumb;
-                sideHead.SetCrumbFavorite(target, delegate { AddGuideFavorite(route); });
-            }
         }
 
         static string GuideClassKey(string topic, string page)
@@ -1382,7 +1374,24 @@ namespace AzerothLauncher
             star.Click += delegate
             {
                 GuideFavoriteRoute favorite = CurrentGuideFavoriteRoute();
-                if (favorite != null) AddGuideFavorite(favorite);
+                if (favorite == null) return;
+                bool wikiLocation = guideWikiIndex || (gTopic >= 0 && gTopic < Data.Guide.Count &&
+                    GroupOf(Data.Guide[gTopic].Title) == 1);
+                if (wikiLocation)
+                {
+                    using (var choose = new WikiFavoriteLocationDialog())
+                    {
+                        DialogResult result = choose.ShowModal(panel.FindForm());
+                        if (result == DialogResult.Yes) AddGuideFavorite(favorite);
+                        else if (result == DialogResult.No)
+                        {
+                            var top = new GuideFavoriteRoute(favorite.Kind, favorite.Topic, favorite.Page,
+                                favorite.ClassKey, favorite.Url, "", 0, 0);
+                            AddGuideFavorite(top);
+                        }
+                    }
+                }
+                else AddGuideFavorite(favorite);
             };
             star.MouseEnter += delegate
             {
@@ -1455,6 +1464,23 @@ namespace AzerothLauncher
             guideVideoBrowser.Dock = DockStyle.Fill;
             guideVideoFrame.Controls.Add(guideVideoBrowser);
             LayoutGuideVideo();
+        }
+
+        sealed class WikiFavoriteLocationDialog : WowDialog
+        {
+            public WikiFavoriteLocationDialog() : base("Save Wiki favorite")
+            {
+                BackAction = delegate { DialogResult = DialogResult.Cancel; Close(); };
+                Begin();
+                Heading("Save Wiki favorite", null, 24);
+                Para("Current Location, or top of page?", 11, FontStyle.Regular, Theme.Text, 24, 0, 8, 440);
+                var current = B("CURRENT LOCATION", delegate { DialogResult = DialogResult.Yes; Close(); }, 168, 36, 9);
+                var top = B("TOP OF PAGE", delegate { DialogResult = DialogResult.No; Close(); }, 146, 36, 9);
+                var cancel = B("CANCEL", delegate { DialogResult = DialogResult.Cancel; Close(); }, 110, 36, 9);
+                Body.MinWidth = 480;
+                Body.Add(new HRow(8, current, top, cancel), Align.Center, 12, 12, 12, 12);
+                Finish();
+            }
         }
 
         sealed class TalentBuildImportDialog : WowDialog

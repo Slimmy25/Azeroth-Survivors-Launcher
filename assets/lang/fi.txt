@@ -1519,8 +1519,8 @@ switched off: the two conflict.
 = poistettu käytöstä: nämä kaksi ovat ristiriidassa.
 these two can't be on together. Switching one on switches the other off.
 = näitä kahta ei voi käyttää yhtä aikaa. Kun otat toisen käyttöön, toinen poistuu käytöstä.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Litteät, tummat yksikkökehykset ja kompakti toimintopalkki, Plater-tyyliset nimikyltit (Survivor Plates), onni ja korttien todennäköisyydet XP-palkissa, välilehdellinen chat-paneeli ja automaattiset raid-merkit. Ei voi olla käytössä yhtä aikaa AZS Minor Modsin kanssa.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Litteät, tummat yksikkökehykset ja kompakti toimintopalkki, Plater-tyyliset nimikyltit (Survivor Plates), onni ja korttien todennäköisyydet XP-palkissa, välilehdellinen chat-paneeli ja automaattiset raid-merkit. Ei voi olla käytössä yhtä aikaa Slim Suitein kanssa.
 The game updated itself and is opening again...
 = Peli päivitti itsensä ja avautuu uudelleen...
 The game updated itself and opened again.

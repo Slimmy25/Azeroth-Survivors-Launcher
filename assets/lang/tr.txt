@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = kapatıldı: ikisi çakışıyor.
 these two can't be on together. Switching one on switches the other off.
 = bu ikisi aynı anda açık olamaz. Birini açınca diğeri kapanır.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Düz, koyu birim çerçeveleri ve kompakt bir aksiyon çubuğu, Plater tarzı isim plakaları (Survivor Plates), XP çubuğunda şans ve kart olasılıkları, sekmeli sohbet paneli ve otomatik raid işaretleri. AZS Minor Mods ile aynı anda açık olamaz.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Düz, koyu birim çerçeveleri ve kompakt bir aksiyon çubuğu, Plater tarzı isim plakaları (Survivor Plates), XP çubuğunda şans ve kart olasılıkları, sekmeli sohbet paneli ve otomatik raid işaretleri. Slim Suite ile aynı anda açık olamaz.
 The game updated itself and is opening again...
 = Oyun kendini güncelledi ve yeniden açılıyor...
 The game updated itself and opened again.

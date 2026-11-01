@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = 꺼짐: 두 애드온이 충돌합니다.
 these two can't be on together. Switching one on switches the other off.
 = 이 두 애드온은 함께 켤 수 없습니다. 하나를 켜면 다른 하나는 꺼집니다.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= 평평하고 어두운 유닛 프레임과 작은 행동 단축바, Plater 스타일 이름표(Survivor Plates), 경험치 바의 행운과 카드 확률, 탭이 있는 채팅 창, 자동 공격대 징표. AZS Minor Mods와 함께 켤 수 없습니다.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= 평평하고 어두운 유닛 프레임과 작은 행동 단축바, Plater 스타일 이름표(Survivor Plates), 경험치 바의 행운과 카드 확률, 탭이 있는 채팅 창, 자동 공격대 징표. Slim Suite와 함께 켤 수 없습니다.
 The game updated itself and is opening again...
 = 게임이 스스로 업데이트하고 다시 열리는 중입니다...
 The game updated itself and opened again.

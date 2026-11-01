@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = oprit: cele două intră în conflict.
 these two can't be on together. Switching one on switches the other off.
 = aceste două nu pot fi pornite împreună. Pornirea unuia îl oprește pe celălalt.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Cadre de unități plate și întunecate și o bară de acțiuni compactă, plăcuțe de nume în stil Plater (Survivor Plates), noroc și șansele cărților pe bara de XP, un panou de chat cu file și marcaje de raid automate. Nu poate fi pornit împreună cu AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Cadre de unități plate și întunecate și o bară de acțiuni compactă, plăcuțe de nume în stil Plater (Survivor Plates), noroc și șansele cărților pe bara de XP, un panou de chat cu file și marcaje de raid automate. Nu poate fi pornit împreună cu Slim Suite.
 The game updated itself and is opening again...
 = Jocul s-a actualizat singur și se deschide din nou...
 The game updated itself and opened again.

@@ -33,7 +33,7 @@
 -- Lua 5.0 / 1.12 interface: scripts read `this`, `event`, `arg1`, `arg2`; no # operator; only the 1.12 API.
 
 local K = AZSKIT;
-local NAME = "AZS Minor Mods";
+local NAME = "Slim Suite";
 
 -- the words that make a chat line a level-up line (matched without case): the game's own two level-up lines,
 -- "Congratulations, you have reached level 12!" (its LEVEL_UP text) and "You have gained 3% damage, 12 maximum health
@@ -85,6 +85,8 @@ local function DB()
 	if ( d.buffGrowthDirection ~= "up" and d.buffGrowthDirection ~= "down" ) then d.buffGrowthDirection = "down"; end
 	if ( d.buffCustomLayout == nil ) then d.buffCustomLayout = d.orientations.BuffFrame == "vertical"; end
 	if ( type(d.sizeMenuPosition) ~= "table" ) then d.sizeMenuPosition = {}; end
+	if ( d.gridSpacing == nil ) then d.gridSpacing = 128; end
+	if ( d.showEditGrid == nil ) then d.showEditGrid = true; end
 	if ( d.tallyVertical == nil ) then d.tallyVertical = false; end
 	if ( d.showEmptyActionSlots == nil ) then d.showEmptyActionSlots = false; end
 	if ( d.buildRowsAttached == nil ) then d.buildRowsAttached = true; end
@@ -410,6 +412,7 @@ local mutedBaseMouse = {};
 local VisualInsets;
 local ApplyFeatureMute;
 local sizeMenu, sizeMenuText, sizeMenuWidth, sizeMenuHeight, sizeMenuScale, sizeMenuPadding;
+local editGrid, editGridLines = nil, {};
 local sizeTarget;
 local lockPanel;
 local xpBarDetached = false;
@@ -450,22 +453,17 @@ end
 
 local function LayoutItemRow()
 	if ( not itemRow ) then return; end
-	local shown = {};
-	for i = 1, table.getn(itemRowButtons) do
-		local button = itemRowButtons[i];
-		if ( button and button.slot and button.itemTexture ) then table.insert(shown, button); end
-	end
 	local gap = 4;
-	local count = table.getn(shown);
 	if ( not DB().sizes.AZSMinorModsItemRowFrame ) then
-		itemRow:SetWidth(math.max(32, count * 32 + math.max(0, count - 1) * gap));
+		-- Keep the four equipment slots visible when empty so the row can always be placed and sized.
+		itemRow:SetWidth(4 * 32 + 3 * gap);
 		itemRow:SetHeight(36);
 	end
 	local width = itemRow:GetWidth() or 36;
 	local height = itemRow:GetHeight() or 36;
-	local iconSize = count > 0 and math.max(16, math.min(height - 4, (width - gap * math.max(0, count - 1)) / count)) or 32;
-	for i = 1, table.getn(shown) do
-		local button = shown[i];
+	local iconSize = math.max(16, math.min(height - 4, (width - gap * 3) / 4));
+	for i = 1, table.getn(itemRowButtons) do
+		local button = itemRowButtons[i];
 		button:ClearAllPoints();
 		button:SetWidth(iconSize); button:SetHeight(iconSize);
 		button:SetPoint("LEFT", itemRow, "LEFT", (i - 1) * (iconSize + gap), 0);
@@ -515,18 +513,15 @@ local function RefreshItemRow()
 			else
 				button.slot, button.itemTexture, button.itemName = nil, nil, nil;
 				button.icon:SetTexture(nil);
-				button:Hide();
+				-- The empty quickslot frame is intentional: it keeps the custom second row visible
+				-- and movable before the first item is equipped.
+				button:Show();
 			end
 		end
 	end
 	LayoutItemRow();
-	if ( table.getn(visible) > 0 ) then
-		itemRow:Show();
-		if ( d.unlocked and handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Show(); end
-	else
-		itemRow:Hide();
-		if ( handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Hide(); end
-	end
+	itemRow:Show();
+	if ( d.unlocked and handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Show(); end
 end
 
 local function CreateItemRow()
@@ -560,9 +555,6 @@ local function CreateItemRow()
 			elseif ( this.itemName ) then GameTooltip:AddLine(this.itemName); GameTooltip:Show(); end
 		end);
 		button:SetScript("OnLeave", function() if ( GameTooltip ) then GameTooltip:Hide(); end end);
-		button:SetScript("OnClick", function()
-			if ( this.slot and UseInventoryItem ) then pcall(UseInventoryItem, this.slot); end
-		end);
 		itemRowButtons[i] = button;
 	end
 	RefreshItemRow();
@@ -575,6 +567,13 @@ itemRowEvents:RegisterEvent("PLAYER_ENTERING_WORLD");
 itemRowEvents:SetScript("OnEvent", function()
 	if ( event == "UNIT_INVENTORY_CHANGED" and arg1 ~= "player" ) then return; end
 	pcall(RefreshItemRow);
+end);
+-- Some game gear changes are applied by the run rather than a bag click. Poll the four exposed
+-- equipment slots as a fallback so the item deck updates even if that transition omits the event.
+local itemRowPoll = 0;
+itemRowEvents:SetScript("OnUpdate", function()
+	itemRowPoll = itemRowPoll + (arg1 or 0);
+	if ( itemRowPoll >= 0.5 ) then itemRowPoll = 0; pcall(RefreshItemRow); end
 end);
 
 local function SetNativeTallyHidden(on)
@@ -1281,6 +1280,27 @@ local function SavePosition(name, f)
 	p.x, p.y = f:GetLeft(), f:GetBottom();
 end
 
+-- Resize, scale and snapped anchors can all push visible child controls past a screen edge.
+-- Clamp the drawn bounds (not just the parent frame) and convert a clipped relative anchor to
+-- a stable absolute location. Save the corrected place immediately so it survives /reload.
+local function ClampToClient(name, frame)
+	if ( not frame or not UIParent ) then return; end
+	local left, bottom = frame:GetLeft(), frame:GetBottom();
+	if ( not left or not bottom ) then return; end
+	local minX, minY, maxOffsetX, maxOffsetY = VisualInsets(frame);
+	local maxX = UIParent:GetWidth() - maxOffsetX;
+	local maxY = UIParent:GetHeight() - maxOffsetY;
+	local x = math.max(-minX, math.min(maxX, left));
+	local y = math.max(-minY, math.min(maxY, bottom));
+	if ( math.abs(x - left) > 0.01 or math.abs(y - bottom) > 0.01 ) then
+		frame:ClearAllPoints();
+		frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
+		SavePosition(name, frame);
+		local p = DB().places[name];
+		p.relative, p.point, p.relativePoint, p.dx, p.dy = nil, nil, nil, nil, nil;
+	end
+end
+
 local function ApplySize(name, f)
 	local s = DB().sizes[name];
 	if ( type(s) == "table" and s.w and s.h and s.w > 0 and s.h > 0 ) then
@@ -1652,6 +1672,12 @@ local function PlaceAll()
 	for pass = 1, table.getn(MOVABLE) do
 		for i = 1, table.getn(MOVABLE) do pcall(Place, MOVABLE[i][1], false); end
 	end
+	-- Relative snaps and scale changes must not leave a frame clipped or padded away from the edge.
+	for i = 1, table.getn(MOVABLE) do
+		local name = MOVABLE[i][1];
+		local frame = getglobal(name);
+		if ( frame ) then pcall(ClampToClient, name, frame); end
+	end
 end
 
 local function ApplyTallyLayout(resetSize)
@@ -1838,9 +1864,14 @@ local function OpenSizeMenu(name, label)
 			local t = getglobal(sizeTarget);
 			if ( not t ) then return; end
 			local w, h = t:GetWidth(), t:GetHeight();
+			local effective = t.GetEffectiveScale and t:GetEffectiveScale() or 1;
+			local rootScale = UIParent:GetEffectiveScale() or 1;
+			local scaleRatio = effective / rootScale;
+			if ( scaleRatio <= 0 ) then scaleRatio = 1; end
 			if ( axis == "w" ) then
 				local minWidth = sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "horizontal" and 280 or 40;
-				w = math.max(minWidth, math.min((UIParent:GetWidth() or 1920), w + delta));
+				if ( sizeTarget == "AZSMinorModsItemRowFrame" ) then minWidth = 76; end
+				w = math.max(minWidth, math.min((UIParent:GetWidth() or 1920) / scaleRatio, w + delta));
 			else
 				local minHeight = sizeTarget == "AZSMinorModsBossFrames" and CurrentOrientation(sizeTarget) == "vertical" and 60
 					or sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "vertical" and 40 or 24;
@@ -1850,7 +1881,7 @@ local function OpenSizeMenu(name, label)
 				elseif ( sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "vertical" ) then
 					minHeight = 36 + (FramePadding(sizeTarget) * 3);
 				end
-				h = math.max(minHeight, math.min((UIParent:GetHeight() or 1080), h + delta));
+				h = math.max(minHeight, math.min((UIParent:GetHeight() or 1080) / scaleRatio, h + delta));
 			end
 			t:SetWidth(w); t:SetHeight(h);
 			DB().sizes[sizeTarget] = { w = w, h = h };
@@ -2043,10 +2074,40 @@ local function ShowLockPanel()
 		local note = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
 		note:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 10, -8);
 		note:SetText("Drag to move. Right-click for size, scale, layout and hide options. Shift-left-click also hides/shows.");
-		local button = K.Button(lockPanel, "Lock UI", 76, function() AZSMinorMods_SetUnlocked(false); end);
+		local button = K.Button(lockPanel, "Done", 76, function() AZSMinorMods_SetUnlocked(false); end);
 		button:SetPoint("BOTTOMRIGHT", lockPanel, "BOTTOMRIGHT", -8, 6);
 	end
 	lockPanel:Show();
+end
+
+local function HideEditGrid()
+	if ( editGrid ) then editGrid:Hide(); end
+end
+
+local function ShowEditGrid()
+	HideEditGrid();
+	local spacing = tonumber(DB().gridSpacing) or 128;
+	if ( not DB().showEditGrid or not DB().unlocked ) then return; end
+	if ( not editGrid ) then
+		editGrid = CreateFrame("Frame", "AZSMinorModsEditGrid", UIParent);
+		editGrid:SetAllPoints(UIParent);
+		editGrid:SetFrameStrata("HIGH");
+		editGrid:EnableMouse(false);
+	end
+	local width, height = UIParent:GetWidth(), UIParent:GetHeight();
+	local count, i = 1, 1;
+	local function Line(x, y, w, h)
+		local tex = editGridLines[count];
+		if ( not tex ) then tex = editGrid:CreateTexture(nil, "OVERLAY"); editGridLines[count] = tex; end
+		count = count + 1;
+		tex:ClearAllPoints(); tex:SetPoint("TOPLEFT", editGrid, "TOPLEFT", x, -y); tex:SetWidth(w); tex:SetHeight(h);
+		tex:SetTexture(0.95, 0.76, 0.3, 0.26); tex:Show();
+	end
+	while ( i < width ) do Line(i, 0, 1, height); i = i + spacing; end
+	i = 1;
+	while ( i < height ) do Line(0, i, width, 1); i = i + spacing; end
+	for i = count, table.getn(editGridLines) do editGridLines[i]:Hide(); end
+	editGrid:Show();
 end
 
 local function SnapPosition(name, f)
@@ -2216,6 +2277,7 @@ function AZSMinorMods_SetUnlocked(on, quiet)
 	elseif ( lockPanel ) then
 		lockPanel:Hide();
 	end
+	if ( on ) then ShowEditGrid(); else HideEditGrid(); end
 	for i = 1, table.getn(MOVABLE) do
 		local name = MOVABLE[i][1];
 		if ( on ) then
@@ -2417,35 +2479,122 @@ local function Check(parent, label, y, get, set)
 end
 
 local function WinBuild()
-	win = K.Window("AZSMinorModsFrame", NAME, 420, 528);
+	win = K.Window("AZSMinorModsFrame", "Slim Suite", 470, 560);
 	local hero = K.Hero(win, 380);
+	hero:SetWidth(430);
 	hero:SetPoint("TOPLEFT", win, "TOPLEFT", 20, -30);
 	K.Icon(hero.icon, "INV_Misc_Gear_02");
-	hero.heading:SetText("Minor Mods");
-	hero.line:SetText("Every change on its own: tick what you want.");
-	local y = -104;
-	local function Row(label, get, set)
-		Check(win, label, y, get, set);
-		y = y - 28;
+	hero.heading:SetText("Slim Suite");
+	hero.line:SetText("A Swiss-army knife of useful tools and UI controls.");
+	local tabUi = K.Button(win, "Modifying the User Interface", 210, nil);
+	tabUi:SetPoint("TOPLEFT", win, "TOPLEFT", 20, -101);
+	local tabOther = K.Button(win, "New/Unique, but Minor Features", 210, nil);
+	tabOther:SetPoint("TOPLEFT", tabUi, "TOPRIGHT", 4, 0);
+	local bodyTop = -132;
+	local uiScroll, uiChild = K.Scroll("AZSMinorModsUiScroll", win, 422);
+	uiScroll:SetPoint("TOPLEFT", win, "TOPLEFT", 20, bodyTop);
+	uiScroll:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -30, 48);
+	local otherScroll, otherChild = K.Scroll("AZSMinorModsOtherScroll", win, 422);
+	otherScroll:SetPoint("TOPLEFT", win, "TOPLEFT", 20, bodyTop);
+	otherScroll:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -30, 48);
+	local addonsScroll, addonsChild = K.Scroll("AZSMinorModsAddonsScroll", win, 422);
+	addonsScroll:SetPoint("TOPLEFT", win, "TOPLEFT", 20, bodyTop);
+	addonsScroll:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -30, 48);
+	local function AddRows(parent, entries, startY)
+		local y = startY;
+		for i = 1, table.getn(entries) do
+			local row = entries[i]; Check(parent, row[1], y, row[2], row[3]); y = y - 28;
+		end
+		parent:SetHeight(math.max(20, -y + 12));
 	end
-	Row("No level-up, stat bonus or new spell lines in chat", function() return DB().hideLevel; end, function(v) DB().hideLevel = v; end);
-	Row("Camera as far out as it goes (50)", function() return DB().camera; end,
-	    function(v) DB().camera = v; Camera(v); end);
-	Row("Mark bosses: Skull, Cross, Diamond", function() return DB().bossMarks; end, function(v) DB().bossMarks = v; end);
-	Row("Mark minibosses: Star, Triangle, Diamond", function() return DB().miniMarks; end, function(v) DB().miniMarks = v; end);
-	Row("Blink a marker over a friend who falls (16 times)", function() return DB().deathMarks; end, function(v) DB().deathMarks = v; end);
-	Row("Play a sound when you or a teammate dies", function() return DB().deathSound; end, function(v) DB().deathSound = v; end);
-	Row("Hide the target frame", function() return DB().hideTarget; end, function(v) DB().hideTarget = v; TargetFrameHidden(v); end);
-	Row("Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end);
-	Row("Show empty slots in Action Bar 1", function() return DB().showEmptyActionSlots; end, function(v) DB().showEmptyActionSlots = v; ApplyActionSlotGrid(); end);
-	Row("Cooldown numbers on the spell squares", function() return DB().cooldowns; end, function(v) DB().cooldowns = v; end);
-	Row("Replace Level Up button with movable version", function() return DB().moveLevelButton; end, function(v) DB().moveLevelButton = v; pcall(UpdateLevelButton); end);
-	Row("Toggle UI Settings (drag, resize and scale)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end);
-	Row("Anchor moved frames to nearby frames", function() return DB().anchorSnap; end, function(v) SetAnchorSnap(v); end);
-	Row("Minimap button", function() local m = DB().minimap; return not (m and m.hide); end,
-	    function(v) if ( AZSMinorMods_Mini ) then local m = DB().minimap; if ( (m and m.hide and true or false) == v ) then AZSMinorMods_Mini.Toggle(); end end end);
-	local reset = K.Button(win, "Reset positions", 150, function() AZSMinorMods_ResetPlaces(); end);
-	reset:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -24, 20);
+	local function CheckboxRows()
+		AddRows(uiChild, {
+			{"Toggle UI Settings (drag, resize and scale)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end},
+			{"Anchor moved frames to nearby frames", function() return DB().anchorSnap; end, function(v) SetAnchorSnap(v); end},
+			{"Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end},
+			{"Show empty slots in Action Bar 1", function() return DB().showEmptyActionSlots; end, function(v) DB().showEmptyActionSlots = v; ApplyActionSlotGrid(); end}
+		}, -8);
+		uiChild:SetHeight(232);
+		local gridTitle = uiChild:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+		gridTitle:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10, -124); gridTitle:SetText("Grid spacing in pixels (smaller values make smaller squares)");
+		local gridCheck = CreateFrame("CheckButton", nil, uiChild, "UICheckButtonTemplate");
+		gridCheck:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 8, -148); gridCheck:SetWidth(24); gridCheck:SetHeight(24);
+		gridCheck:SetScript("OnShow", function() this:SetChecked(DB().showEditGrid and 1 or nil); end);
+		gridCheck:SetScript("OnClick", function() DB().showEditGrid = this:GetChecked() and true or false; if ( DB().unlocked ) then ShowEditGrid(); end end);
+		local gridLabel = uiChild:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
+		gridLabel:SetPoint("LEFT", gridCheck, "RIGHT", 2, 0); gridLabel:SetText("Show sizing grid");
+		local gridSizes = {256, 128, 64, 32};
+		local gridButtons = {};
+		for i = 1, table.getn(gridSizes) do
+			local pixels = gridSizes[i];
+			local button = K.Button(uiChild, tostring(pixels) .. " px", 58, function()
+				DB().gridSpacing = pixels;
+				for j = 1, table.getn(gridButtons) do gridButtons[j]:UnlockHighlight(); end
+				this:LockHighlight();
+				if ( DB().unlocked ) then ShowEditGrid(); end
+			end);
+			button:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10 + (i - 1) * 64, -184);
+			table.insert(gridButtons, button);
+			if ( (tonumber(DB().gridSpacing) or 128) == pixels ) then button:LockHighlight(); end
+		end
+	end
+	local function BuildOther()
+		AddRows(otherChild, {
+			{"No level-up, stat bonus or new spell lines in chat", function() return DB().hideLevel; end, function(v) DB().hideLevel = v; end},
+			{"Camera as far out as it goes (50)", function() return DB().camera; end, function(v) DB().camera = v; Camera(v); end},
+			{"Mark bosses: Skull, Cross, Diamond", function() return DB().bossMarks; end, function(v) DB().bossMarks = v; end},
+			{"Mark minibosses: Star, Triangle, Diamond", function() return DB().miniMarks; end, function(v) DB().miniMarks = v; end},
+			{"Blink a marker over a friend who falls (16 times)", function() return DB().deathMarks; end, function(v) DB().deathMarks = v; end},
+			{"Play a sound when you or a teammate dies", function() return DB().deathSound; end, function(v) DB().deathSound = v; end},
+			{"Hide the target frame", function() return DB().hideTarget; end, function(v) DB().hideTarget = v; TargetFrameHidden(v); end},
+			{"Cooldown numbers on the spell squares", function() return DB().cooldowns; end, function(v) DB().cooldowns = v; end},
+			{"Replace Level Up button with movable version", function() return DB().moveLevelButton; end, function(v) DB().moveLevelButton = v; pcall(UpdateLevelButton); end},
+			{"Minimap button", function() local m = DB().minimap; return not (m and m.hide); end, function(v) if ( AZSMinorMods_Mini ) then local m = DB().minimap; if ( (m and m.hide and true or false) == v ) then AZSMinorMods_Mini.Toggle(); end end end}
+		}, -8);
+	end
+	local function BuildAddonManager()
+		local title = addonsChild:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+		title:SetPoint("TOPLEFT", addonsChild, "TOPLEFT", 8, -8); title:SetText("Enabled game addons");
+		local note = addonsChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		note:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6); note:SetText("Changes apply after reload. Uncheck to disable an addon.");
+		local n = (GetNumAddOns and GetNumAddOns()) or 0;
+		local y = -48;
+		for index = 1, n do
+			local name, addonTitle, addonNotes, enabled = GetAddOnInfo(index);
+			local state = GetAddOnEnableState and GetAddOnEnableState(nil, index) or (enabled and 1 or 0);
+			if ( name and string.sub(string.lower(name), 1, 9) ~= "blizzard_" and (state or 0) > 0 ) then
+				local cb = CreateFrame("CheckButton", nil, addonsChild, "UICheckButtonTemplate");
+				cb:SetPoint("TOPLEFT", addonsChild, "TOPLEFT", 6, y); cb:SetWidth(24); cb:SetHeight(24);
+				cb:SetChecked((state or 0) > 0 and 1 or nil);
+				cb:SetScript("OnClick", function()
+					if ( this:GetChecked() ) then EnableAddOn(name); else DisableAddOn(name); end
+				end);
+				local label = addonsChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+				label:SetPoint("LEFT", cb, "RIGHT", 4, 0); label:SetWidth(372); label:SetJustifyH("LEFT"); label:SetText(addonTitle or name);
+				y = y - 26;
+			end
+		end
+		addonsChild:SetHeight(math.max(64, -y + 12));
+		local reload = K.Button(win, "Reload for changes", 160, function() if ( ReloadUI ) then ReloadUI(); end end);
+		reload:SetPoint("BOTTOMLEFT", win, "BOTTOMLEFT", 28, 17);
+		win.reloadButton = reload;
+	end
+	CheckboxRows(); BuildOther(); BuildAddonManager();
+	local reset = K.Button(win, "Reset positions", 140, function() AZSMinorMods_ResetPlaces(); end);
+	reset:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -24, 17);
+	local function SelectPage(which)
+		uiScroll:Hide(); otherScroll:Hide(); addonsScroll:Hide();
+		if ( win.reloadButton ) then win.reloadButton:Hide(); end
+		if ( which == "ui" ) then uiScroll:Show(); tabUi:LockHighlight(); tabOther:UnlockHighlight();
+		elseif ( which == "other" ) then otherScroll:Show(); tabUi:UnlockHighlight(); tabOther:LockHighlight();
+		else addonsScroll:Show(); if ( win.reloadButton ) then win.reloadButton:Show(); end end
+	end
+	tabUi:SetScript("OnClick", function() SelectPage("ui"); end);
+	tabOther:SetScript("OnClick", function() SelectPage("other"); end);
+	local addonsTab = K.Button(otherChild, "Manage Addons", 132, function() SelectPage("addons"); end);
+	addonsTab:SetPoint("TOPLEFT", otherChild, "TOPLEFT", 10, -292);
+	otherChild:SetHeight(330);
+	SelectPage("ui");
 end
 
 function AZSMinorMods_Toggle()
@@ -2521,7 +2670,7 @@ local okMini, errMini = pcall(function()
 		click = function() AZSMinorMods_Toggle(); end,
 		tooltip = function(tt)
 			tt:AddLine(NAME);
-			tt:AddLine("Small changes, each on or off.", 1, 1, 1);
+			tt:AddLine("Gameplay helpers and UI controls.", 1, 1, 1);
 			tt:AddLine(" ");
 			tt:AddLine("Click: the settings. /azsmods minimap hides this button.", 0.6, 0.6, 0.6);
 		end });

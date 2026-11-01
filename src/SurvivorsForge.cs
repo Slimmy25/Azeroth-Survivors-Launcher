@@ -17,7 +17,7 @@ namespace AzerothLauncher
     {
         public string Id, Name, Tag, AssetUrl, Sha256, Trust, ImagePath, LogoPath;
         public List<string> ImagePaths = new List<string>();
-        public bool Removed;
+        public bool Removed, HasSourceScreenshots;
     }
 
     public static class SurvivorsForge
@@ -173,7 +173,7 @@ namespace AzerothLauncher
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
             req.Accept = "application/json";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.14 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.15 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -214,7 +214,7 @@ namespace AzerothLauncher
                 throw new InvalidDataException("Unexpected SurvivorsForge image address.");
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.14 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.15 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -319,6 +319,7 @@ namespace AzerothLauncher
                 if (related == null || related.Removed) continue;
                 foreach (string path in related.ImagePaths)
                     if (!string.IsNullOrWhiteSpace(path) && !info.ImagePaths.Contains(path)) info.ImagePaths.Add(path);
+                info.HasSourceScreenshots = info.HasSourceScreenshots || related.HasSourceScreenshots;
                 if (string.IsNullOrWhiteSpace(info.ImagePath)) info.ImagePath = related.ImagePath;
             }
             return info;
@@ -358,8 +359,9 @@ namespace AzerothLauncher
             if (!string.Equals(Json.Str(details, "art_tag"), info.Tag, StringComparison.Ordinal) ||
                 !SameUrl(info.AssetUrl, Json.Str(details, "art_asset_url")) ||
                 !string.Equals(info.Sha256, Json.Str(details, "art_sha256"), StringComparison.OrdinalIgnoreCase)) return info;
-            info.ImagePath = Json.Str(details, "image_path");
-            if (string.IsNullOrWhiteSpace(info.ImagePath)) info.ImagePath = Json.Str(details, "icon_path");
+            // Screenshots belong in the picture browser; catalog cards use the addon's icon.
+            info.ImagePath = Json.Str(details, "icon_path");
+            info.HasSourceScreenshots = string.Equals(Json.Str(details, "has_screenshots"), "true", StringComparison.OrdinalIgnoreCase);
             string detailLogo = Json.Str(details, "logo_path");
             if (!string.IsNullOrWhiteSpace(detailLogo)) info.LogoPath = detailLogo;
             foreach (object path in Json.AsList(Json.Get(details, "image_paths")) ?? new List<object>())
@@ -448,7 +450,8 @@ namespace AzerothLauncher
                                                     SameUrl(Json.Str(cached, "art_asset_url"), Json.Str(latest, "asset_url"));
                             if (cached != null && string.Equals(Json.Str(cached, "tag"), tag, StringComparison.Ordinal) &&
                                 Json.AsList(Json.Get(cached, "versions")) != null &&
-                                Json.AsList(Json.Get(cached, "image_paths")) != null && artMatchesLatest && detailIsFresh) continue;
+                                Json.AsList(Json.Get(cached, "image_paths")) != null &&
+                                !string.IsNullOrWhiteSpace(Json.Str(cached, "has_screenshots")) && artMatchesLatest && detailIsFresh) continue;
                             lock (gate) if (detailsBusy.Contains(id)) continue; else detailsBusy.Add(id);
                             try { FetchDetails(new AddonEntry { ForgeId = id, Url = entry.Url }, addon, latest); detailsChanged = true; }
                             catch (Exception) { }
@@ -514,6 +517,7 @@ namespace AzerothLauncher
                     if (!string.IsNullOrEmpty(imagePath) && !imagePaths.Contains(imagePath)) imagePaths.Add(imagePath);
                     if (string.IsNullOrEmpty(Json.Str(cached, "image_path"))) cached["image_path"] = imagePath;
                 }
+                cached["has_screenshots"] = imagePaths.Count > 0 ? "true" : "false";
                 // Prefer an addon screenshot for the card and gallery's first image. Use its
                 // icon only when SurvivorsForge has no screenshots for that addon.
                 if (imagePaths.Count == 0 && !string.IsNullOrEmpty(iconPath)) imagePaths.Add(iconPath);
@@ -540,14 +544,59 @@ namespace AzerothLauncher
         public static List<Image> LoadGalleryImages(ForgeAddonInfo info)
         {
             var result = new List<Image>();
-            if (info == null || info.Removed) return result;
-            foreach (string path in info.ImagePaths ?? new List<string>())
+            if (info == null) return result;
+            if (!info.Removed && info.HasSourceScreenshots)
             {
-                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) continue;
-                Image image = WebPDecoder.LoadImage(path);
-                if (image != null) result.Add(image);       // unsupported/corrupt artwork never breaks Addons
+                foreach (string path in info.ImagePaths ?? new List<string>())
+                {
+                    if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) continue;
+                    Image image = WebPDecoder.LoadImage(path);
+                    if (image != null) result.Add(image);       // unsupported/corrupt artwork never breaks Addons
+                }
             }
+            if (result.Count == 0) LoadLocalGallery(info.Id, result);
             return result;
+        }
+
+        public static bool HasGalleryImages(ForgeAddonInfo info)
+        {
+            return info != null && ((!info.Removed && info.HasSourceScreenshots) || LocalGalleryResource(info.Id, 0) != null);
+        }
+
+        static void LoadLocalGallery(string id, List<Image> result)
+        {
+            for (int i = 0; ; i++)
+            {
+                string name = LocalGalleryResource(id, i);
+                if (name == null) break;
+                try
+                {
+                    using (Stream stream = Util.ResourceStream(name))
+                    {
+                        if (stream == null) continue;
+                        using (var memory = new MemoryStream())
+                        {
+                            stream.CopyTo(memory);
+                            Image image = WebPDecoder.LoadImage(memory.ToArray());
+                            if (image != null) result.Add(image);
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }
+        }
+
+        static string LocalGalleryResource(string id, int index)
+        {
+            string prefix = "AS.addon-gallery.";
+            if (string.Equals(id, "moveui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "moveui.png" : null;
+            if (string.Equals(id, "localclock-addon", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "localclock-addon.png" : null;
+            if (string.Equals(id, "blackwellui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "blackwellui.png" : null;
+            if (string.Equals(id, "azsmoveanything", StringComparison.OrdinalIgnoreCase))
+                return index == 0 ? prefix + "kodfod-moveanything-1.png" : index == 1 ? prefix + "kodfod-moveanything-2.png" : null;
+            if (string.Equals(id, "aetherhud", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "aetherhud.webp" : null;
+            if (string.Equals(id, "azerloot", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerloot.png" : null;
+            return null;
         }
 
         public static Image LoadWatermark(ForgeAddonInfo info)

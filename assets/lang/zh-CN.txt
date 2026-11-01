@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = 已关闭：两者冲突。
 these two can't be on together. Switching one on switches the other off.
 = 这两个插件不能同时开启。开启其中一个，另一个就会关闭。
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= 扁平暗色的单位框体和紧凑的动作条，Plater 风格的姓名板（Survivor Plates），经验条上的幸运值和卡牌概率，带标签页的聊天面板，以及自动团队标记。不能与 AZS Minor Mods 同时开启。
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= 扁平暗色的单位框体和紧凑的动作条，Plater 风格的姓名板（Survivor Plates），经验条上的幸运值和卡牌概率，带标签页的聊天面板，以及自动团队标记。不能与 Slim Suite 同时开启。
 The game updated itself and is opening again...
 = 游戏已自行更新，正在重新打开...
 The game updated itself and opened again.

@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = बंद किया गया: ये दोनों आपस में टकराते हैं।
 these two can't be on together. Switching one on switches the other off.
 = ये दोनों एक साथ चालू नहीं हो सकते। एक को चालू करने पर दूसरा बंद हो जाता है।
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= सपाट, गहरे यूनिट फ़्रेम और छोटा ऐक्शन बार, Plater जैसी नेमप्लेट (Survivor Plates), XP बार पर भाग्य और कार्डों की संभावना, टैब वाला चैट पैनल और अपने-आप रेड निशान। AZS Minor Mods के साथ एक साथ चालू नहीं हो सकता।
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= सपाट, गहरे यूनिट फ़्रेम और छोटा ऐक्शन बार, Plater जैसी नेमप्लेट (Survivor Plates), XP बार पर भाग्य और कार्डों की संभावना, टैब वाला चैट पैनल और अपने-आप रेड निशान। Slim Suite के साथ एक साथ चालू नहीं हो सकता।
 The game updated itself and is opening again...
 = गेम ने ख़ुद को अपडेट किया और फिर से खुल रहा है...
 The game updated itself and opened again.

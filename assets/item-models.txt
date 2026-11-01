@@ -322,3 +322,19 @@ Tracker's Breastplate|9924|18934
 Tracker's Gauntlets|9920|18936
 Tracker's Greaves|9917|18937
 Tracker's Legguards|9922|18935
+Amulet of Vek'nilash|21608|34204
+Amulet of the Darkmoon|19491|32008
+Animated Chain Necklace|18723|6539
+Choker of Enlightenment|17109|9858
+Choker of the Fire Lord|18814|1399
+Jeklik's Opaline Talisman|19923|32395
+Malice Stone Pendant|22943|35358
+Mark of Fordring|15411|23716
+Medallion of Steadfast Might|17065|4841
+Onyxia Tooth Pendant|18404|9860
+Pendant of the Fallen Dragon|19371|31889
+Prestor's Talisman of Connivery|19377|31899
+Pristine Enchanted South Seas Kelp|19613|32716
+Talvash's Enhancing Necklace|7673|9854
+The Eye of Hakkar|19856|32297
+Woven Ivy Necklace|19159|31633

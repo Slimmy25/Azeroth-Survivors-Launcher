@@ -1,5 +1,5 @@
 -- AZS Kit: the look every AZS addon shares, the one AZS Stats has (its window, cards, buttons, scroll list and minimap
--- button), so AZS Handbook, AZS Minor Mods and any later AZS addon look the same. Each of those
+-- button), so AZS Handbook, Slim Suite and any later AZS addon look the same. Each of those
 -- addons carries its own copy of this file (the launcher writes the same file into each); whichever copy loads first
 -- makes AZSKIT, and a newer copy replaces an older one. When the look changes here, it changes for all of them;
 -- AZS Stats has the same pieces in AZSStatsUI.lua and is kept to match.

@@ -1519,8 +1519,8 @@ switched off: the two conflict.
 = dimatikan: keduanya bentrok.
 these two can't be on together. Switching one on switches the other off.
 = keduanya tidak bisa menyala bersamaan. Menyalakan satu akan mematikan yang lain.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Bingkai unit datar dan gelap serta bilah aksi ringkas, papan nama gaya Plater (Survivor Plates), keberuntungan dan peluang kartu di bilah XP, panel chat bertab, dan penanda raid otomatis. Tidak bisa menyala bersama AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Bingkai unit datar dan gelap serta bilah aksi ringkas, papan nama gaya Plater (Survivor Plates), keberuntungan dan peluang kartu di bilah XP, panel chat bertab, dan penanda raid otomatis. Tidak bisa menyala bersama Slim Suite.
 The game updated itself and is opening again...
 = Game memperbarui dirinya dan sedang terbuka lagi...
 The game updated itself and opened again.

@@ -129,7 +129,7 @@ YouTube in a launcher-managed video window and are not saved as video files. Eac
 | --- | --- |
 | **Azeroth Stats** (`/azstats`) | Maidenhead's optional tracker. The launcher reads its local SavedVariables for run totals, history, combat samples and observed build changes. |
 | **AZS Handbook** (`/handbook`) | The launcher's whole Guide, inside the game. |
-| **AZS Minor Mods** (`/azsmods`) | Small changes, each on or off: no level-up, stat-bonus or new-spell lines in chat, boss markers, a blinking marker on a friend who falls, an optional sound when you or a teammate dies, move and lock the UI, hide the target frame, a plain action bar of just the six spell squares (no gryphons), the camera at its farthest. |
+| **Slim Suite** (`/azsmods`) | Movable UI frames, grid alignment, frame sizing and scale, gameplay helpers, and optional interface features. The settings are split between “Modifying the User Interface” and “New/Unique, but Minor Features.” |
 
 They use the game's addon API and share one look (`addons/AZSKit`).
 

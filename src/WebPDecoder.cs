@@ -46,6 +46,13 @@ namespace AzerothLauncher
             }
         }
 
+        public static Image LoadImage(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0 || bytes.Length > 16 * 1024 * 1024) return null;
+            try { using (var stream = new MemoryStream(bytes)) using (Image image = Image.FromStream(stream)) return (Image)image.Clone(); }
+            catch (Exception) { return Decode(bytes); }
+        }
+
         static Image Decode(byte[] bytes)
         {
             if (bytes == null || bytes.Length < 12 || bytes.Length > 16 * 1024 * 1024 || !EnsureLoaded()) return null;

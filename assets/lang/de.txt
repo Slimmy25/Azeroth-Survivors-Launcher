@@ -1519,8 +1519,8 @@ switched off: the two conflict.
 = ausgeschaltet: die beiden vertragen sich nicht.
 these two can't be on together. Switching one on switches the other off.
 = diese beiden können nicht gleichzeitig an sein. Schaltest du eins ein, geht das andere aus.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Flache, dunkle Einheitenfenster und eine kompakte Aktionsleiste, Namensplaketten im Plater-Stil (Survivor Plates), Glück und Kartenchancen an der EP-Leiste, ein Chatfenster mit Reitern und automatische Schlachtzugsmarkierungen. Kann nicht zusammen mit AZS Minor Mods an sein.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Flache, dunkle Einheitenfenster und eine kompakte Aktionsleiste, Namensplaketten im Plater-Stil (Survivor Plates), Glück und Kartenchancen an der EP-Leiste, ein Chatfenster mit Reitern und automatische Schlachtzugsmarkierungen. Kann nicht zusammen mit Slim Suite an sein.
 The game updated itself and is opening again...
 = Das Spiel hat sich selbst aktualisiert und öffnet sich wieder...
 The game updated itself and opened again.

@@ -1519,8 +1519,8 @@ switched off: the two conflict.
 = avstängt: de två krockar.
 these two can't be on together. Switching one on switches the other off.
 = de här två kan inte vara på samtidigt. Slår du på det ena stängs det andra av.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Platta, mörka enhetsramar och en kompakt åtgärdsrad, namnskyltar i Plater-stil (Survivor Plates), tur och kortens odds på XP-raden, en chattpanel med flikar och automatiska raidmarkörer. Kan inte vara på samtidigt som AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Platta, mörka enhetsramar och en kompakt åtgärdsrad, namnskyltar i Plater-stil (Survivor Plates), tur och kortens odds på XP-raden, en chattpanel med flikar och automatiska raidmarkörer. Kan inte vara på samtidigt som Slim Suite.
 The game updated itself and is opening again...
 = Spelet uppdaterade sig självt och öppnas igen...
 The game updated itself and opened again.

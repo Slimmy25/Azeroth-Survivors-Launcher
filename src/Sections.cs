@@ -10,76 +10,6 @@ using System.Windows.Forms;
 
 namespace AzerothLauncher
 {
-    // A transparent child overlay: only the heart is visible. It shares the launcher's client
-    // coordinate system with the breadcrumb, avoiding screen-DPI offsets from a separate Form.
-    sealed class FavoriteHeartPopup : Control
-    {
-        public event Action FavoriteClicked;
-
-        public FavoriteHeartPopup()
-        {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
-                     ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw |
-                     ControlStyles.SupportsTransparentBackColor, true);
-            BackColor = Color.Transparent;
-            Size = new Size(34, 34);
-            Cursor = Cursors.Hand;
-            // Keep only the heart-shaped region. A normal transparent child paints its parent's
-            // background across its rectangular client area, which creates the visible dark box.
-            using (var path = HeartPath()) Region = new Region(path);
-        }
-
-        GraphicsPath HeartPath()
-        {
-            var path = new GraphicsPath();
-            float x = 4, y = 4, s = 26;
-            path.AddBezier(x + s / 2, y + s * 0.95f, x - s * 0.15f, y + s * 0.45f,
-                           x + s * 0.12f, y - s * 0.12f, x + s / 2, y + s * 0.25f);
-            path.AddBezier(x + s / 2, y + s * 0.25f, x + s * 0.88f, y - s * 0.12f,
-                           x + s * 1.15f, y + s * 0.45f, x + s / 2, y + s * 0.95f);
-            path.CloseFigure();
-            return path;
-        }
-
-        public void PlaceAbove(Rectangle textBoundsOnScreen, Rectangle headerBoundsOnScreen, Control coordinateOwner)
-        {
-            if (textBoundsOnScreen.IsEmpty || coordinateOwner == null || IsDisposed) return;
-            // Convert the same screen-space glyph bounds back into the launcher's client space.
-            // Both the breadcrumb and this control are then laid out by the same WinForms DPI context.
-            Rectangle text = coordinateOwner.RectangleToClient(textBoundsOnScreen);
-            Rectangle header = coordinateOwner.RectangleToClient(headerBoundsOnScreen);
-            // Center the visible heart shape on the measured glyphs, excluding the
-            // breadcrumb's arrow, separators and padding. Keep the shape ABOVE the bar.
-            using (var path = HeartPath())
-            {
-                RectangleF shape = path.GetBounds();
-                int x = (int)Math.Round(text.Left + text.Width / 2f - (shape.Left + shape.Width / 2f));
-                int y = (int)Math.Floor(header.Top - 2 - shape.Bottom);
-                Location = new Point(x, y);
-            }
-        }
-
-        protected override void OnPaintBackground(PaintEventArgs e) { base.OnPaintBackground(e); } // transparent parent background
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            using (var path = HeartPath())
-            {
-                using (var brush = new SolidBrush(Theme.Gold)) g.FillPath(brush, path);
-            }
-            base.OnPaint(e);
-        }
-
-        protected override void OnMouseClick(MouseEventArgs e)
-        {
-            base.OnMouseClick(e);
-            if (e.Button == MouseButtons.Left && FavoriteClicked != null) FavoriteClicked();
-        }
-    }
-
     // the bronze title bar: round emblem portrait, the section's name, a red X
     // The section window's title bar: the back arrow, then the trail of where you are ("Guide › Theorycrafting ›
     // Talent Tree Builder › Priest"): click a step to go back to it. The red X closes the section.
@@ -87,6 +17,7 @@ namespace AzerothLauncher
     {
         public Action CloseClicked;
         public Action HelpClicked;                           // "Lost?" beside the X: how the path at the top works
+        public Action FavoriteClicked;
         public Action HelpLeft;
         bool helpShown;                                      // only on a section's other pages, never on its main page
         public bool HelpShown { get { return helpShown; } set { if (helpShown != value) { helpShown = value; Invalidate(); } } }
@@ -104,16 +35,13 @@ namespace AzerothLauncher
         List<KeyValuePair<string, Action>> crumbs = new List<KeyValuePair<string, Action>>();
         readonly List<KeyValuePair<Rectangle, Action>> hot = new List<KeyValuePair<Rectangle, Action>>();
         readonly List<KeyValuePair<Rectangle, int>> crumbRects = new List<KeyValuePair<Rectangle, int>>();
-        readonly List<KeyValuePair<Rectangle, int>> crumbTextRects = new List<KeyValuePair<Rectangle, int>>();
-        readonly Dictionary<int, Action> crumbFavorites = new Dictionary<int, Action>();
+        Rectangle favoriteBox = Rectangle.Empty;
         // a step's drop-down (the other choices at that level), and where its arrow was drawn
         readonly Dictionary<int, List<KeyValuePair<string, Action>>> menus = new Dictionary<int, List<KeyValuePair<string, Action>>>();
         readonly List<KeyValuePair<Rectangle, int>> arrows = new List<KeyValuePair<Rectangle, int>>();
         int hoverArrow = -1;
         int hover = -1;                                      // the step under the pointer (-2: the back arrow)
-        int favoriteHoverStep = -1;
-        FavoriteHeartPopup favoritePopup;
-        int favoritePopupStep = -1, quietFavoriteStep = -1;
+        bool favoriteHover;
         Form hoverHost;
 
         public SideHead()
@@ -155,9 +83,9 @@ namespace AzerothLauncher
         {
             if (hoverTimer != null) hoverTimer.Stop();
             CloseOpenMenu();
-            CloseFavoritePopup();
-            if (helpTip) helpTip = false;
+            favoriteHover = false;
             GuideHover.Hide(this);
+            if (helpTip) helpTip = false;
         }
 
         internal void HideTransientUi() { HoverHostDeactivated(this, EventArgs.Empty); }
@@ -170,7 +98,6 @@ namespace AzerothLauncher
                 hoverHost = null;
                 if (hoverTimer != null) { hoverTimer.Stop(); hoverTimer.Dispose(); hoverTimer = null; }
                 CloseOpenMenu();
-                CloseFavoritePopup();
                 GuideHover.Hide(this);
             }
             base.Dispose(disposing);
@@ -187,23 +114,15 @@ namespace AzerothLauncher
         {
             if (hoverTimer != null) hoverTimer.Stop();
             CloseOpenMenu();
-            CloseFavoritePopup();
+            FavoriteClicked = null;
             crumbs = list ?? new List<KeyValuePair<string, Action>>();
             menus.Clear();
-            crumbFavorites.Clear();
             hover = -1;
             hoverStep = -1;
             hoverArrow = -1;
             quietStep = -1;
-            quietFavoriteStep = -1;
-            favoriteHoverStep = -1;
+            favoriteHover = false;
             Invalidate();
-        }
-
-        // Any location in a link-tree can be saved from its word in the breadcrumb trail.
-        public void SetCrumbFavorite(int i, Action add)
-        {
-            if (i >= 0 && i < crumbs.Count && add != null) { crumbFavorites[i] = add; Invalidate(); }
         }
 
         // the choices of step i (not the first one): a small arrow beside it opens them
@@ -221,6 +140,16 @@ namespace AzerothLauncher
         public Point HelpScreenAnchor { get { Rectangle box = HelpBox; return box.IsEmpty ? PointToScreen(Point.Empty) : PointToScreen(new Point(box.Left + box.Width / 2, box.Bottom)); } }
         public Rectangle HelpScreenBounds { get { Rectangle box = HelpBox; return box.IsEmpty ? Rectangle.Empty : RectangleToScreen(box); } }
         Rectangle BackBox { get { return BackClicked != null ? new Rectangle(Theme.Px(44),Theme.Px(8),Theme.Px(30),Theme.Px(20)) : Rectangle.Empty; } }
+        Rectangle FavoriteBox
+        {
+            get
+            {
+                if (FavoriteClicked == null) return Rectangle.Empty;
+                Rectangle help = HelpBox;
+                int right = !help.IsEmpty ? help.Left - Theme.Px(4) : (closable ? Width - Theme.Px(32) : Width - Theme.Px(8));
+                return new Rectangle(right - Theme.Px(20), Theme.Px(8), Theme.Px(18), Theme.Px(20));
+            }
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -236,7 +165,7 @@ namespace AzerothLauncher
             menuText.Clear();
             stepRects.Clear();
             crumbRects.Clear();
-            crumbTextRects.Clear();
+            favoriteBox = FavoriteBox;
             int x = Theme.Px(50);
             Rectangle bb = BackBox;
             if (!bb.IsEmpty)
@@ -277,26 +206,6 @@ namespace AzerothLauncher
                     crumbRects.Add(new KeyValuePair<Rectangle, int>(Rectangle.Round(r), i));
                     Color c = !last && hover == i ? Color.White : Theme.Hex("#e6cf8c");
                     using (var b = new SolidBrush(c)) g.DrawString(t, last ? f : fs, b, r, sf);
-                    // Measure the visible text glyphs using the same font, layout box and trimming as DrawString.
-                    // The breadcrumb box also contains layout padding (and sometimes a menu arrow), so centering
-                    // the favorite popup over that box can visibly pull it away from the word.
-                    Rectangle textBounds = Rectangle.Round(r);
-                    try
-                    {
-                        using (StringFormat measure = (StringFormat)sf.Clone())
-                        {
-                            measure.SetMeasurableCharacterRanges(new[] { new CharacterRange(0, t.Length) });
-                            Region[] measured = g.MeasureCharacterRanges(t, last ? f : fs, r, measure);
-                            if (measured != null && measured.Length > 0)
-                            {
-                                RectangleF glyphs = measured[0].GetBounds(g);
-                                if (glyphs.Width > 0 && glyphs.Height > 0) textBounds = Rectangle.Ceiling(glyphs);
-                                foreach (Region region in measured) if (region != null) region.Dispose();
-                            }
-                        }
-                    }
-                    catch (ArgumentException) { }
-                    crumbTextRects.Add(new KeyValuePair<Rectangle, int>(textBounds, i));
                     if (menu)
                     {
                         // the drop-down arrow: the other choices at this step
@@ -331,6 +240,12 @@ namespace AzerothLauncher
                 using (var p = new Pen(Theme.Hex("#d6a640"), 2)) g.DrawRectangle(p, hb);
                 using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var b = new SolidBrush(Theme.Hex("#f0c050"))) g.DrawString(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold), b, new RectangleF(hb.X, hb.Y + Theme.Px(1), hb.Width, hb.Height), sf);
+            }
+            if (!favoriteBox.IsEmpty)
+            {
+                using (var b = new SolidBrush(favoriteHover ? Theme.Hex("#fff2b0") : Theme.Gold))
+                    TextRenderer.DrawText(g, "★", Theme.F(12, FontStyle.Bold), favoriteBox, b.Color,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
             }
             Rectangle xb = CloseBox;
             if (xb.IsEmpty) return;
@@ -380,106 +295,15 @@ namespace AzerothLauncher
             return Rectangle.Empty;
         }
 
-        int FavoriteAt(Point pt)
-        {
-            foreach (var crumb in crumbRects)
-            {
-                // Only the rendered breadcrumb label activates its favorite heart.
-                // The wider step rectangle also includes padding and menu arrows.
-                Rectangle label = CrumbRect(crumb.Value);
-                if (crumbFavorites.ContainsKey(crumb.Value) && !label.IsEmpty &&
-                    label.Contains(pt)) return crumb.Value;
-            }
-            return -1;
-        }
-
-        Rectangle CrumbRect(int i)
-        {
-            foreach (var crumb in crumbTextRects) if (crumb.Value == i) return crumb.Key;
-            return Rectangle.Empty;
-        }
-
-        Rectangle CrumbScreenRect(int i)
-        {
-            Rectangle text = CrumbRect(i);
-            return text.IsEmpty ? Rectangle.Empty : RectangleToScreen(text);
-        }
-
-        void CloseFavoritePopup()
-        {
-            if (favoritePopup != null && !favoritePopup.IsDisposed)
-            {
-                Control parent = favoritePopup.Parent;
-                if (parent != null) parent.Controls.Remove(favoritePopup);
-                favoritePopup.Dispose();
-            }
-            favoritePopup = null;
-            favoritePopupStep = -1;
-        }
-
-        void ShowFavoritePopup(int step, Rectangle anchor)
-        {
-            Action add;
-            if (anchor.IsEmpty || !crumbFavorites.TryGetValue(step, out add)) return;
-            CloseFavoritePopup();
-            var popup = new FavoriteHeartPopup();
-            favoritePopup = popup;
-            favoritePopupStep = step;
-            popup.FavoriteClicked += delegate
-            {
-                quietFavoriteStep = step;                    // do not reopen until the pointer leaves this path name
-                CloseFavoritePopup();
-                WowButton.Fire(add);
-            };
-            // Parent the heart to the same top-level launcher as its breadcrumb. It is a child
-            // control rather than a second window, so DPI scaling and monitor coordinates cannot
-            // pull it toward the desktop corner or out of alignment with short/long labels.
-            Control owner = hoverHost;
-            if (owner == null || owner.IsDisposed)
-            {
-                Form form = FindForm();
-                while (form != null && !form.TopLevel) form = form.Parent as Form;
-                owner = form;
-            }
-            if (owner == null) { favoritePopup = null; favoritePopupStep = -1; popup.Dispose(); return; }
-            owner.Controls.Add(popup);
-            popup.BringToFront();
-            popup.PlaceAbove(RectangleToScreen(anchor), RectangleToScreen(ClientRectangle), owner);
-        }
-
         void HoverTick()
         {
             Point pt = PointToClient(Cursor.Position);
             int s = ClientRectangle.Contains(pt) ? StepAt(pt) : -1;
-            int favoriteStep = ClientRectangle.Contains(pt) ? FavoriteAt(pt) : -1;
-            bool inPopup = favoritePopup != null && !favoritePopup.IsDisposed && favoritePopup.Parent != null &&
-                           favoritePopup.Bounds.Contains(favoritePopup.Parent.PointToClient(Cursor.Position));
-            bool inBridge = false;
-            if (favoritePopup != null && !favoritePopup.IsDisposed && favoritePopup.Parent != null)
-            {
-                Rectangle label = CrumbScreenRect(favoritePopupStep);
-                Rectangle heart = favoritePopup.Parent.RectangleToScreen(favoritePopup.Bounds);
-                if (!label.IsEmpty) inBridge = Rectangle.Union(label, heart).Contains(Cursor.Position);
-            }
             bool inMenu = openMenu != null && !openMenu.IsDisposed && openMenu.Visible && openMenu.Bounds.Contains(Cursor.Position);
-            int retainedStep = favoriteStep >= 0 ? favoriteStep :
-                               inMenu ? openMenuStep :
-                               inPopup || inBridge ? favoritePopupStep : -1;
-            if (quietFavoriteStep >= 0 && retainedStep != quietFavoriteStep) quietFavoriteStep = -1;
-
-            // Treat the breadcrumb, its heart and its drop-down as one hover target. That lets the
-            // heart stay above the same path name while the pointer travels into the open menu.
-            if (favoritePopup != null && !favoritePopup.IsDisposed && retainedStep != favoritePopupStep)
-                CloseFavoritePopup();
-            if (retainedStep >= 0 && retainedStep != quietFavoriteStep && crumbFavorites.ContainsKey(retainedStep) &&
-                (favoritePopup == null || favoritePopup.IsDisposed || favoritePopupStep != retainedStep))
-                ShowFavoritePopup(retainedStep, CrumbRect(retainedStep));
-            else if (retainedStep >= 0 && favoritePopup != null && !favoritePopup.IsDisposed && favoritePopupStep == retainedStep)
-                favoritePopup.PlaceAbove(CrumbScreenRect(retainedStep), RectangleToScreen(ClientRectangle), favoritePopup.Parent);
 
             if (openMenu != null && !openMenu.IsDisposed)
             {
-                if (inMenu || s == openMenuStep || retainedStep == openMenuStep) return;
+                if (inMenu || s == openMenuStep) return;
                 openMenu.Close();
             }
             if (s >= 0 && s == hoverStep && s != quietStep) ShowMenu(s, StepRect(s));
@@ -494,12 +318,10 @@ namespace AzerothLauncher
         protected override void OnMouseMove(MouseEventArgs e)
         {
             int st = StepAt(e.Location);
-            int favoriteStep = FavoriteAt(e.Location);
             if (st != quietStep) quietStep = -1;
-            if (st != hoverStep || favoriteStep != favoriteHoverStep)
+            if (st != hoverStep)
             {
                 hoverStep = st;
-                favoriteHoverStep = favoriteStep;
                 if (hoverTimer == null)
                 {
                     hoverTimer = new Timer();
@@ -511,7 +333,11 @@ namespace AzerothLauncher
             int h = HotAt(e.Location), ha = ArrowAt(e.Location);
             if (ha < 0) ha = MenuTextAt(e.Location);          // the last step's name lights its arrow
             if (h != hover || ha != hoverArrow) { hover = h; hoverArrow = ha; Invalidate(); }
-            Cursor = (closeEnabled && CloseBox.Contains(e.Location)) || h != -1 || ha != -1 || favoriteStep >= 0 ? Cursors.Hand : Cursors.Default;   // "Lost?" is not clicked: pointed at
+            favoriteHover = !favoriteBox.IsEmpty && favoriteBox.Contains(e.Location);
+            Cursor = (closeEnabled && CloseBox.Contains(e.Location)) || h != -1 || ha != -1 || favoriteHover ? Cursors.Hand : Cursors.Default;   // "Lost?" is not clicked: pointed at
+            if (favoriteHover) GuideHover.ShowHelp(this, Lang.T("Save to Quick Access"), Lang.T("Save this location to Quick Access."));
+            else GuideHover.Hide(this);
+            Invalidate();
             // "Lost?": a small note while the pointer is on it (no window over the launcher)
             bool onHelp = HelpBox.Contains(e.Location);
             if (onHelp && !helpTip) { helpTip = true; WowButton.Fire(HelpClicked); }
@@ -526,7 +352,7 @@ namespace AzerothLauncher
 
         bool helpTip;                                        // the "Lost?" note is showing
 
-        protected override void OnMouseLeave(EventArgs e) { if (helpTip) { helpTip = false; if (HelpLeft != null) HelpLeft(); } if (hover != -1 || hoverArrow != -1) { hover = -1; hoverArrow = -1; Invalidate(); } base.OnMouseLeave(e); }
+        protected override void OnMouseLeave(EventArgs e) { favoriteHover = false; GuideHover.Hide(this); if (helpTip) { helpTip = false; if (HelpLeft != null) HelpLeft(); } if (hover != -1 || hoverArrow != -1) { hover = -1; hoverArrow = -1; Invalidate(); } base.OnMouseLeave(e); }
 
         void ShowMenu(int i, Rectangle at)
         {
@@ -563,7 +389,7 @@ namespace AzerothLauncher
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && !CloseBox.Contains(e.Location) && !HelpBox.Contains(e.Location) && Owner2 != null)
+            if (e.Button == MouseButtons.Left && !CloseBox.Contains(e.Location) && !HelpBox.Contains(e.Location) && !FavoriteBox.Contains(e.Location) && Owner2 != null)
             {
                 Point s = PointToScreen(e.Location);
                 dragOffset = new Point(s.X - Owner2.Left, s.Y - Owner2.Top);   // drag the title bar to move the window
@@ -581,6 +407,7 @@ namespace AzerothLauncher
                 if (Moved != null && Owner2 != null) Moved(Owner2.Location);
             }
             else if (e.Button == MouseButtons.Left && CloseBox.Contains(e.Location) && closeEnabled) { CloseOpenMenu(); WowButton.Fire(CloseClicked); }
+            else if (e.Button == MouseButtons.Left && FavoriteBox.Contains(e.Location) && FavoriteClicked != null) WowButton.Fire(FavoriteClicked);
             else if (e.Button == MouseButtons.Left && HelpBox.Contains(e.Location)) { }   // "Lost?" only answers the pointer
             else if (e.Button == MouseButtons.Left && ArrowAt(e.Location) >= 0) ClickMenu(ArrowAt(e.Location));
             else if (e.Button == MouseButtons.Left)
@@ -1156,7 +983,7 @@ namespace AzerothLauncher
                                   TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
             y += Theme.Px(26);
             DrawLostHelpSection(g, "Click a breadcrumb to go back. Hover ▼ to choose another page.", PathExamplePart(true), ref y, width);
-            DrawLostHelpSection(g, "Hover a guide or settings name in the path and click the star above it to save that location. A guide favorite keeps your reading position. Click a favorite to open it, hold left-click and drag to move it, or right-click to remove it.", PathExamplePart(false), ref y, width);
+            DrawLostHelpSection(g, "Click the star in the section header to save this location. Wiki pages let you save your current reading spot or the page top. Click a favorite to open it, hold left-click and drag to move it, or right-click to remove it.", PathExamplePart(false), ref y, width);
             if(scroll!=null) scroll.AutoScrollMinSize=new Size(0,y+Theme.Px(8));
         }
 
@@ -1616,23 +1443,21 @@ namespace AzerothLauncher
 
         void BindCrumbFavorites(List<KeyValuePair<string, Action>> trail)
         {
-            // Community, Addons and Stats are utility destinations. Guide paths use their explicit
-            // per-crumb routes in SetGuideTrail; settings subpages are favoriteable below.
-            if (current == "Community" || current == "Guide" || current == "Addons" || current == "Stats") return;
-            for (int i = 0; i < trail.Count; i++)
-            {
-                GuideFavoriteRoute route = CrumbFavoriteRoute(trail[i].Key, i);
-                if (route == null) continue;
-                int step = i;
-                sideHead.SetCrumbFavorite(step, delegate { AddGuideFavorite(route); });
-            }
+            // Guide pages have a dedicated star beside their search field, where Wiki pages can
+            // ask whether to save the exact reading point or the page top. Every other navigable
+            // section gets one stable star in the title bar for its current location.
+            sideHead.FavoriteClicked = null;
+            if (trail == null || trail.Count == 0 || current == "Community" || current == "Guide" || current == "Setup") return;
+            int at = trail.Count - 1;
+            GuideFavoriteRoute route = CrumbFavoriteRoute(trail[at].Key, at);
+            if (route == null) return;
+            sideHead.FavoriteClicked = delegate { AddGuideFavorite(route); };
+            sideHead.Invalidate();
         }
 
         GuideFavoriteRoute CrumbFavoriteRoute(string label, int step)
         {
             if (current == "Community" || label == "Community") return null;
-            if (step == 0) return null; // major roots stay out of Quick Access
-
             if (current == "Guide")
             {
                 for (int i = 0; i < 3; i++)
@@ -2433,15 +2258,6 @@ namespace AzerothLauncher
                 if (a.Category == Data.AddonCategories[cat]) items.Add(a);
             items.Sort(delegate(AddonEntry a, AddonEntry b) { return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase); });   // A to Z
             int y0 = 4;
-            if (Data.AddonCategories[cat] == Data.UiCategory)
-            {
-                var pick = UI.Text("Most interfaces overlap. Survivor UI and SurvivorUI Classic are bundled and toggle together; use their in-game chooser to pick one. Other known conflicts switch off when you enable an interface.",
-                                   9, FontStyle.Italic, Theme.GoldDim, listbg, sp.ClientSize.Width - 24);
-                pick.Size = VStack.Measure(pick);
-                pick.Location = new Point(10, 6);
-                sp.Controls.Add(pick);
-                y0 = pick.Bottom + 6;
-            }
             if (Data.AddonCategories[cat] == Data.MyAddonsCategory)
             {
                 var hint = UI.Text("Put addon .zip files in the My Addons folder; they stay on this PC.", 9, FontStyle.Italic,
@@ -2454,9 +2270,8 @@ namespace AzerothLauncher
                 sp.Controls.Add(open);
                 y0 = Math.Max(hint.Bottom, open.Bottom) + 8;
             }
-            string forgeCopy = "Addons are all Verified by the mod team to be safe, secure, and generally useful.\n" +
-                "Partnership with SurvivorsForge to get addon pictures, as well as using their expertise to doublecheck that the addons that we all use are safe. " +
-                "There is plenty of more addons on his website that even I don't feature, please check them out at the hyperlink above.";
+            string forgeCopy = "SurvivorsForge helps provide addon pictures and shares its addon expertise.\n" +
+                "Visit the SurvivorsForge website to discover even more addons than the ones listed here.";
             var trust = new LinkLabel();
             trust.Text = forgeCopy;
             trust.Font = Theme.F(9, FontStyle.Regular);
@@ -2471,8 +2286,8 @@ namespace AzerothLauncher
             trust.Size = new Size(Math.Max(80, sp.ClientSize.Width - 20),
                 TextRenderer.MeasureText(forgeCopy, trust.Font, new Size(Math.Max(80, sp.ClientSize.Width - 20), 1000),
                     TextFormatFlags.WordBreak | TextFormatFlags.NoPadding).Height + 4);
-            int sfStart = forgeCopy.IndexOf("SurvivorsForge", StringComparison.Ordinal);
-            if (sfStart >= 0) trust.Links.Add(sfStart, "SurvivorsForge".Length, "https://rezondes.github.io/SurvivorsForge/");
+            int sfStart = forgeCopy.IndexOf("SurvivorsForge website", StringComparison.Ordinal);
+            if (sfStart >= 0) trust.Links.Add(sfStart, "SurvivorsForge website".Length, "https://rezondes.github.io/SurvivorsForge/");
             trust.LinkClicked += delegate(object sender, LinkLabelLinkClickedEventArgs e)
             {
                 string target = e.Link.LinkData as string;
@@ -2530,13 +2345,18 @@ namespace AzerothLauncher
                 // The seal means this catalog entry was manually reviewed once. Keep that
                 // decision in the shipped catalog; do not infer it from rolling API status.
                 Image watermark = it.ForgeVerified ? SurvivorsForge.LoadWatermark(forge) : null;
+                bool verified = it.ForgeVerified;
                 var btn = update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
                 if (update) btn.Selected = true;
                 if (btn.Width > cw - 14) btn.Width = cw - 14;  // never wider than its block
                 int ty = 6;
-                int nameWidth = watermark == null ? textW : Math.Max(30, textW - Theme.Px(21));
+                var badge = verified ? UI.Text("Verified", 7.5f, FontStyle.Italic, Theme.Good,
+                    listbg, Theme.Px(50), false) : null;
+                if (badge != null) badge.Size = VStack.Measure(badge);
+                int nameWidth = watermark == null ? textW : Math.Max(30,
+                    textW - Theme.Px(16) - (badge == null ? 0 : badge.Width + Theme.Px(4)) - Theme.Px(6));
                 var name = UI.Text(it.Name, 9.5f, FontStyle.Bold, Theme.Gold, listbg, nameWidth, false);
                 name.Size = VStack.Measure(name);
                 name.Location = new Point(7, ty);
@@ -2546,11 +2366,18 @@ namespace AzerothLauncher
                     forgeMark.Image = watermark;
                     forgeMark.SizeMode = PictureBoxSizeMode.Zoom;
                     forgeMark.BackColor = listbg;
-                    forgeMark.Bounds = new Rectangle(cw - Theme.Px(23), ty, Theme.Px(16), Theme.Px(16));
+                    int groupWidth = Theme.Px(16) + (badge == null ? 0 : badge.Width + Theme.Px(4));
+                    int groupLeft = cw - Theme.Px(7) - groupWidth;
+                    forgeMark.Bounds = new Rectangle(groupLeft, ty, Theme.Px(16), Theme.Px(16));
                     forgeMark.Disposed += delegate { try { watermark.Dispose(); } catch (Exception) { } };
                     inner.Controls.Add(forgeMark);
+                    if (badge != null)
+                    {
+                        badge.Location = new Point(forgeMark.Right + Theme.Px(4), ty + Math.Max(0, (forgeMark.Height - badge.Height) / 2));
+                        inner.Controls.Add(badge);
+                    }
                 }
-                if (forge != null && forge.ImagePaths != null && forge.ImagePaths.Count > 0)
+                if (SurvivorsForge.HasGalleryImages(forge))
                 {
                     name.Cursor = Cursors.Hand;
                     name.MouseEnter += delegate
@@ -2565,34 +2392,18 @@ namespace AzerothLauncher
                     {
                         if (e.Button != MouseButtons.Left || !GuideHover.CanShow(name)) return;
                         List<Image> gallery = SurvivorsForge.LoadGalleryImages(forge);
-                        try { GuideHover.ShowGallery(name, it.Name, "Addon pictures from SurvivorsForge.", gallery, true); }
+                        string sourceText = forge.HasSourceScreenshots ? "Screenshots from SurvivorsForge." : "Provided addon screenshots.";
+                        try { GuideHover.ShowGallery(name, it.Name, sourceText, gallery, true); }
                         finally { foreach (Image image in gallery) try { image.Dispose(); } catch (Exception) { } }
                     };
                 }
                 inner.Controls.Add(name);
                 ty += name.Height + 1;
-                string trustText = it.ForgeVerified ? "Verified" : null;
-                if (!string.IsNullOrEmpty(trustText))
+                if (verified && watermark == null && badge != null)
                 {
-                    var badge = UI.Text(trustText, 7.5f, FontStyle.Italic,
-                        Theme.Good,
-                        listbg, textW, false);
-                    badge.Size = VStack.Measure(badge);
                     badge.Location = new Point(7, ty);
                     inner.Controls.Add(badge);
                     ty += badge.Height + 2;
-                }
-                Image cardImage = SurvivorsForge.LoadCardImage(forge);
-                if (cardImage != null)
-                {
-                    var shot = new PictureBox();
-                    shot.Image = cardImage;
-                    shot.Disposed += delegate { try { cardImage.Dispose(); } catch (Exception) { } };
-                    shot.SizeMode = PictureBoxSizeMode.Zoom;
-                    shot.BackColor = listbg;
-                    shot.Bounds = new Rectangle(7, ty, Math.Max(30, textW), 52);
-                    inner.Controls.Add(shot);
-                    ty += shot.Height + 3;
                 }
                 if (it.Description.Length > 0)
                 {

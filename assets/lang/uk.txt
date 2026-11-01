@@ -1520,8 +1520,8 @@ switched off: the two conflict.
 = вимкнено: ці два конфліктують.
 these two can't be on together. Switching one on switches the other off.
 = ці два не можна вмикати одночасно. Якщо ввімкнути один, інший вимкнеться.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Пласкі темні рамки юнітів і компактна панель дій, таблички імен у стилі Plater (Survivor Plates), удача й шанси карт на смузі досвіду, чат із вкладками та автоматичні рейдові мітки. Не можна вмикати разом з AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Пласкі темні рамки юнітів і компактна панель дій, таблички імен у стилі Plater (Survivor Plates), удача й шанси карт на смузі досвіду, чат із вкладками та автоматичні рейдові мітки. Не можна вмикати разом з Slim Suite.
 The game updated itself and is opening again...
 = Гра оновилася сама й відкривається знову...
 The game updated itself and opened again.

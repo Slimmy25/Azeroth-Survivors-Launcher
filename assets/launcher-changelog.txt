@@ -1,9 +1,19 @@
+# v3.15 (2026-11-01)
+
+- Renamed AZS Minor Mods to Slim Suite, moved it to Gameplay, and added separate interface and minor-feature settings pages. The interface page includes a 32, 64, 128, or 256 pixel layout grid; the enabled-addon manager lets you disable addons and reload to apply the change.
+- Download More now uses the supplied addon screenshots until matching SurvivorsForge screenshots are available. Source screenshots take priority when present. Addon cards remain text-first, with screenshot previews and a gallery on hover/click.
+- Added one-word descriptions for addon listings, and updated the Handbook and Slim Suite descriptions.
+- Added a wiki favorite choice for saving the current reading position or the top of the page.
+- Gear Planner now shows separate effects for the selected amulet and the selected rings and trinkets. Added model references for the listed classic necklaces.
+- Updated README documentation and replaced its six screenshots with captures from the local display preview.
+
+===
 # v3.14 (2026-11-01)
 
 - Added AZS Max Hit and AZS MoveAnything to Download More. AZS Max Hit and AZSSpellMeter cannot be enabled together; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.
 - Renamed the existing Move UI catalog entry to MoveAnything By JamieeLee and added AZS MoveAnything By kodfod with the user's static SurvivorsForge verification.
 - Renamed the damage meter entry and mirrored package to AZSSpellMeter.
-- Addon cards now prefer SurvivorsForge screenshots, fall back to an addon icon, and show a small hover preview. Clicking an addon name opens a centered screenshot gallery with previous/next controls.
+- Addon cards show text and descriptions without screenshot thumbnails. Hovering an addon name shows a larger screenshot preview; clicking opens a centered, client-sized gallery with previous/next controls. The Verified label now follows the SurvivorsForge logo.
 - Shared addon bundles merge pictures from each linked SurvivorsForge listing. Review labels remain fixed in the local addon catalog.
 - Updated the Guide and talent data through game patch 0.137.0, including the reworked Enhancement Shaman tree and its new spells and effects.
 - AZS Minor Mods adds a separate worn-ring and trinket row. It orders items by when they are first observed equipped, with row position saved across reloads.

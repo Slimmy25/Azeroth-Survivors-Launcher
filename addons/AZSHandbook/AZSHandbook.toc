@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: AZS Handbook
-## Notes: The launcher's Guide in game: every topic and page, each class's spells, talents and gear, the Talent Tree Builder and the Gear Planner. Type /handbook in game.
+## Notes: This is an ingame companion guide similar to the launcher provided by Slimjim Type /handbook.
 ## Author: Slimjim
 ## SavedVariables: AZSHandbookDB
 AZSKit.lua

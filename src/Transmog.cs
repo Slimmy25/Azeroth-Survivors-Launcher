@@ -61,8 +61,10 @@ namespace AzerothLauncher
             foreach (var x in All) if (x.Kind == "tabard" && x.How.StartsWith("Buy")) l.Add("- " + x.Name + ": " + x.How);
             l.Add("# Weapon Glows");
             l.Add("Pick your class's glow, or none, on any weapon in the armory. A picked glow also replaces a legendary weapon's own.");
+            l.Add("To preview a glow in 3D, open the Wowhead Dressing Room, choose a weapon, then use its illusion picker.");
+            l.Add("@video Preview weapon glows in 3D | https://www.wowhead.com/dressing-room");
             foreach (var x in All) if (x.Kind == "glow") l.Add("- " + x.Name + ": " + x.How);
-            l.Add("Wowhead's static item pictures do not show Classic weapon enchant glows.");
+            l.Add("Static item pictures do not show weapon glows; use the live Dressing Room preview above.");
             return l;
         }
     }
