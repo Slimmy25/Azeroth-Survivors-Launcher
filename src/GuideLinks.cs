@@ -818,7 +818,11 @@ namespace AzerothLauncher
         string model;                                         // a real item's name: its model picture under the text
         bool modelLayout;
         Image picture, shownPicture;                          // a picture under the text (ShowPicture)
-        static int W { get { return Theme.Px(300); } }
+        readonly List<Image> galleryImages = new List<Image>();
+        int galleryIndex, galleryHeight;
+        Rectangle galleryPrevious, galleryNext, galleryClose;
+        bool galleryMode, galleryExpanded, galleryPinned;
+        static int W { get { return Theme.Px(box != null && box.galleryExpanded ? 460 : box != null && box.galleryMode ? 176 : 300); } }
         static int ModelH { get { return Theme.Px(230); } }
         Font titleFont, bodyFont;
 
@@ -850,6 +854,7 @@ namespace AzerothLauncher
         public static void ShowPicture(Control owner, string title, string body, Image picture)
         {
             if (box == null || box.IsDisposed) box = new GuideHover();
+            box.ClearGallery();
             box.picture = picture;
             ShowCore(owner, title, body, null, null, false);
         }
@@ -857,12 +862,34 @@ namespace AzerothLauncher
         public static void ShowPictureAt(Control owner, string title, string body, Image picture, Point screenAnchor)
         {
             if (box == null || box.IsDisposed) box = new GuideHover();
+            box.ClearGallery();
             box.picture = picture;
             ShowCore(owner, title, body, null, null, false, screenAnchor);
         }
 
+        public static void ShowGallery(Control owner, string title, string body, IList<Image> images)
+        {
+            ShowGallery(owner, title, body, images, false);
+        }
+
+        public static void ShowGallery(Control owner, string title, string body, IList<Image> images, bool expanded)
+        {
+            if (images == null || images.Count == 0) { Hide(owner); return; }
+            if (box == null || box.IsDisposed) box = new GuideHover();
+            box.ClearGallery();
+            foreach (Image image in images) if (image != null) box.galleryImages.Add((Image)image.Clone());
+            if (box.galleryImages.Count == 0) return;
+            box.galleryMode = true;
+            box.galleryExpanded = expanded;
+            box.galleryPinned = expanded;
+            box.picture = null;
+            box.galleryIndex = 0;
+            ShowCore(owner, title, body, null, null, false);
+        }
+
         public static void ShowHelp(Control owner, string title, string body)
         {
+            if (box != null) box.ClearGallery();
             ShowCore(owner, title, body, null, null, false);
         }
 
@@ -964,6 +991,7 @@ namespace AzerothLauncher
         // under the text (it loads the first time, then comes from the cache)
         public static void Show(Control owner, string title, string body, Image icon, string model)
         {
+            if (box != null) box.ClearGallery();
             ShowCore(owner, title, body, icon, model, true);
         }
 
@@ -1017,11 +1045,25 @@ namespace AzerothLauncher
             int availableWidth = ownerBounds.Width - margin * 2;
             int availableHeight = ownerBounds.Height - margin * 2;
             int width = Math.Min(W, availableWidth);
-            int height = Math.Min(th + bh + 22 + (box.modelLayout ? ModelH + 8 : 0) + (pic != null ? pic.Height + 10 : 0), availableHeight);
+            box.galleryHeight = box.galleryMode
+                ? box.galleryExpanded
+                    ? Math.Max(Theme.Px(140), Math.Min(width - Theme.Px(32), availableHeight - th - bh - Theme.Px(54)))
+                    : Math.Max(Theme.Px(72), Math.Min(Theme.Px(105), availableHeight - th - bh - Theme.Px(42)))
+                : 0;
+            int galleryExtra = box.galleryMode ? box.galleryHeight + Theme.Px(box.galleryExpanded ? 42 : 12) : 0;
+            int height = Math.Min(th + bh + 22 + galleryExtra + (box.modelLayout ? ModelH + 8 : 0) + (pic != null ? pic.Height + 10 : 0), availableHeight);
             var size = new Size(width, height);
             int x = p.X + 16, y = p.Y + 20;
-            if (x + size.Width > ownerBounds.Right - margin) x = p.X - size.Width - 8;
-            if (y + size.Height > ownerBounds.Bottom - margin) y = p.Y - size.Height - 8;
+            if (box.galleryExpanded)
+            {
+                x = ownerBounds.Left + (ownerBounds.Width - size.Width) / 2;
+                y = ownerBounds.Top + (ownerBounds.Height - size.Height) / 2;
+            }
+            else
+            {
+                if (x + size.Width > ownerBounds.Right - margin) x = p.X - size.Width - 8;
+                if (y + size.Height > ownerBounds.Bottom - margin) y = p.Y - size.Height - 8;
+            }
             x = Math.Max(ownerBounds.Left + margin, Math.Min(x, ownerBounds.Right - size.Width - margin));
             y = Math.Max(ownerBounds.Top + margin, Math.Min(y, ownerBounds.Bottom - size.Height - margin));
             box.Bounds = host.RectangleToClient(new Rectangle(x, y, size.Width, size.Height));
@@ -1032,11 +1074,56 @@ namespace AzerothLauncher
 
         public static new void Hide()
         {
-            if (box != null && !box.IsDisposed && box.Visible) box.HideCard();
-            if (box != null) box.hoverOwner = null;
+            if (box == null) return;
+            if (!box.IsDisposed && box.Visible) box.HideCard();
+            box.hoverOwner = null;
+            box.ClearGallery();
         }
 
         void HideCard() { base.Hide(); }
+
+        void ClearGallery()
+        {
+            galleryMode = false;
+            galleryExpanded = false;
+            galleryPinned = false;
+            galleryIndex = 0;
+            galleryHeight = 0;
+            galleryPrevious = galleryNext = galleryClose = Rectangle.Empty;
+            foreach (Image image in galleryImages) try { image.Dispose(); } catch (Exception) { }
+            galleryImages.Clear();
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && galleryExpanded && galleryClose.Contains(e.Location))
+            {
+                Hide();
+                return;
+            }
+            if (e.Button == MouseButtons.Left && galleryMode && galleryImages.Count > 1)
+            {
+                if (galleryPrevious.Contains(e.Location)) galleryIndex = (galleryIndex + galleryImages.Count - 1) % galleryImages.Count;
+                else if (galleryNext.Contains(e.Location)) galleryIndex = (galleryIndex + 1) % galleryImages.Count;
+                Invalidate();
+            }
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            Cursor = galleryMode && (galleryPrevious.Contains(e.Location) || galleryNext.Contains(e.Location) || galleryClose.Contains(e.Location))
+                ? Cursors.Hand : Cursors.Default;
+            base.OnMouseMove(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            Control owner = hoverOwner;
+            if (galleryMode && !galleryPinned && (owner == null || owner.IsDisposed ||
+                !owner.RectangleToScreen(owner.ClientRectangle).Contains(Cursor.Position))) Hide();
+            base.OnMouseLeave(e);
+        }
 
         static bool IsItemTitle(string title)
         {
@@ -1071,7 +1158,11 @@ namespace AzerothLauncher
 
         public static void Hide(Control owner)
         {
-            if (box != null && !box.IsDisposed && box.hoverOwner == owner) Hide();
+            if (box == null || box.IsDisposed || box.hoverOwner != owner) return;
+            // Keep an addon gallery alive as the pointer moves from the name into its arrows.
+            if (box.galleryPinned) return;
+            if (box.galleryMode && box.Visible && box.RectangleToScreen(box.ClientRectangle).Contains(Cursor.Position)) return;
+            Hide();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -1097,6 +1188,42 @@ namespace AzerothLauncher
             g.Restore(st);
             if (shownPicture != null)
                 g.DrawImage(shownPicture, (Width - shownPicture.Width) / 2, Height - shownPicture.Height - 10, shownPicture.Width, shownPicture.Height);
+            if (galleryMode && galleryImages.Count > 0)
+            {
+                int bodyHeight = Flow(g, bf, false);
+                int top = Math.Min(Height - galleryHeight - Theme.Px(galleryExpanded ? 42 : 24) - 8, 10 + th + bodyHeight + 8);
+                var imageRect = new Rectangle(10, top, Width - 20, galleryHeight);
+                using (var b = new SolidBrush(Theme.Hex("#0b0910"))) g.FillRectangle(b, imageRect);
+                Image current = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
+                float k = Math.Min((float)imageRect.Width / Math.Max(1, current.Width), (float)imageRect.Height / Math.Max(1, current.Height));
+                int iw = Math.Max(1, (int)(current.Width * k)), ih = Math.Max(1, (int)(current.Height * k));
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(current, new Rectangle(imageRect.X + (imageRect.Width - iw) / 2, imageRect.Y + (imageRect.Height - ih) / 2, iw, ih));
+                using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, imageRect);
+                int footerY = imageRect.Bottom + 3, footerH = Theme.Px(galleryExpanded ? 26 : 18), arrowW = Theme.Px(galleryExpanded ? 48 : 30);
+                galleryPrevious = new Rectangle(10, footerY, arrowW, footerH);
+                galleryNext = new Rectangle(Width - 10 - arrowW, footerY, arrowW, footerH);
+                galleryClose = galleryExpanded ? new Rectangle(Width - Theme.Px(22), Theme.Px(4), Theme.Px(18), Theme.Px(18)) : Rectangle.Empty;
+                if (galleryExpanded)
+                    TextRenderer.DrawText(g, "×", Theme.F(10, FontStyle.Bold), galleryClose, Theme.Gold,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                if (galleryImages.Count > 1)
+                {
+                    TextRenderer.DrawText(g, "‹", Theme.F(galleryExpanded ? 14 : 11, FontStyle.Bold), galleryPrevious, Theme.Gold,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, (galleryIndex + 1).ToString(CultureInfo.InvariantCulture) + " / " + galleryImages.Count.ToString(CultureInfo.InvariantCulture),
+                        Theme.F(galleryExpanded ? 9 : 8, FontStyle.Regular), new Rectangle(galleryPrevious.Right, footerY, Math.Max(1, galleryNext.Left - galleryPrevious.Right), footerH), Theme.GoldDim,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, "›", Theme.F(galleryExpanded ? 14 : 11, FontStyle.Bold), galleryNext, Theme.Gold,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                }
+                else
+                {
+                    galleryPrevious = galleryNext = Rectangle.Empty;
+                    TextRenderer.DrawText(g, "1 / 1", Theme.F(8, FontStyle.Regular), new Rectangle(10, footerY, Width - 20, footerH), Theme.GoldDim,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                }
+            }
             if (model != null)
             {
                 Image pic = SpellIcons.ItemModel(model, this);

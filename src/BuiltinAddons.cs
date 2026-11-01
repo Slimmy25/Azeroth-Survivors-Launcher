@@ -28,7 +28,7 @@ namespace AzerothLauncher
         public static readonly BuiltinAddon[] All =
         {
             new BuiltinAddon { Folder = "AZSHandbook", Files = new[] { "AZSHandbook.toc", "AZSHandbook.lua" }, Generated = "AZSHandbookData.lua" },
-            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua" },
+            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua", "AZSMinorModsItems.lua" },
                 BinaryFiles = new[] { "Baby Crying.mp3", "SourceSerif4SmText-Bold.ttf", "SourceSerif4SmText-Regular.ttf", "SourceSerif4-OFL.txt" } },
         };
 

@@ -32,12 +32,16 @@ Windows client, `AzerothSurvivors.exe`. The game, its code, its data, its patch 
 
 ## SurvivorsForge
 
-The game owner has approved this launcher's addon manager. Community members manually review addon code and versions;
-SurvivorsForge supplies version-specific review status and addon pictures for releases that exactly match its records.
-The launcher keeps its own addon catalog and download sources.
+The game owner has approved this launcher's addon manager. Community members manually review addon code and releases;
+the launcher records those decisions as static catalog marks. SurvivorsForge supplies addon pictures when a matching
+listing has them. The launcher keeps its own addon catalog and download sources; it does not download addons from
+SurvivorsForge.
 
 - [SurvivorsForge website](https://forge.rezondes.net/)
 - [SurvivorsForge project repository](https://github.com/Rezondes/SurvivorsForge)
+- ASTinyPlates v1.3.4 carries the launcher's static Verified mark, separately from any changing API scan state.
+
+The launcher bundles the x86 and x64 WebP decoder libraries from the MIT-licensed `Imazen.WebP.NativeRuntime` 1.6.1 NuGet packages. The native WebP libraries carry the BSD-style license in `assets/native/webp/COPYING`.
 
 ## World of Warcraft and Blizzard Entertainment
 
@@ -126,11 +130,13 @@ marked as built-ins are maintained in this repository and installed from the lau
 | Big Cursor | JamieeLee | <https://github.com/JamieeLee/BigCursor> |
 | BlackwellUI (BUI) | Blackwell | <https://github.com/Blackwellcode/BlackwellUI> |
 | Cursor Reticle | Muffla | <https://github.com/Muffla/CursorReticle> |
-| Damage Meter (AZS Spell Meter) | Kexo | <https://github.com/kex0/AZSSpellMeter> |
+| AZSSpellMeter | Kexo | <https://github.com/kex0/AZSSpellMeter> |
+| AZS Max Hit | ghoulcompiler | <https://github.com/ghoulcompiler/AZSMaxHit> |
 | Keijin UI | KeijinDE | <https://github.com/KeijinDE/KeijinUI_modern-as-ui> |
 | LocalClock | JamieeLee | <https://github.com/JamieeLee/LocalClock-Addon> |
 | LuckyOdds | Cadoky | <https://github.com/cadoky/LuckyOdds> |
-| Move UI | JamieeLee | <https://github.com/JamieeLee/MoveUI> |
+| MoveAnything (JamieeLee) | JamieeLee | <https://github.com/JamieeLee/MoveUI> |
+| MoveAnything (AZS) | kodfod | <https://github.com/kodfod/AZSMoveAnything> |
 | Survivor UI + Survivor UI Classic | morderous | <https://github.com/morderous/survivor-ui> and <https://github.com/morderous/survivorui-classic> (bundled; GPL-3.0) |
 | SurvivorsDragonUi | Mxgwyn | <https://github.com/migwynkriid13/SurvivorsDragonUi> |
 | AZS Stats, AZS Handbook, AZS Minor Mods | Slimjim | this repository |

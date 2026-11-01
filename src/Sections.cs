@@ -1987,7 +1987,7 @@ namespace AzerothLauncher
             credits.Size = VStack.Measure(credits);
             Put(credits, PW - 20 - credits.Width, ShowLauncherChangelog ? 8 + (int)(32 * Theme.Zoom) + 6 : 8);
             var forgeLinks = new LinkLabel();
-            forgeLinks.Text = "Addon pictures and review data by SurvivorsForge  ·  website  ·  repository";
+            forgeLinks.Text = "Addon pictures by SurvivorsForge  ·  website  ·  repository";
             forgeLinks.Font = Theme.F(9, FontStyle.Regular);
             forgeLinks.ForeColor = Theme.Credit;
             forgeLinks.LinkColor = Theme.Gold;
@@ -2149,9 +2149,37 @@ namespace AzerothLauncher
 
         Dictionary<string, object> AddonInstalls() { return Cfg.Section("addon_installs"); }
 
+        string LegacyAddonName(string name)
+        {
+            foreach (AddonEntry e in Data.Addons)
+            {
+                if (!string.Equals(e.Name, name, StringComparison.Ordinal)) continue;
+                if (e.Folders.Contains("AZSSpellMeter")) return "Damage Meter By Kexo";
+                if (e.Folders.Contains("MoveUI")) return "Move UI By JamieeLee";
+            }
+            return null;
+        }
+
+        object AddonSetting(Dictionary<string, object> section, string name)
+        {
+            object value;
+            if (section != null && section.TryGetValue(name, out value)) return value;
+            string legacy = LegacyAddonName(name);
+            return !string.IsNullOrEmpty(legacy) && section != null && section.TryGetValue(legacy, out value) ? value : null;
+        }
+
+        void ClearLegacyAddonSettings(string name)
+        {
+            string legacy = LegacyAddonName(name);
+            if (string.IsNullOrEmpty(legacy)) return;
+            AddonInstalls().Remove(legacy);
+            AddonInstalledAt().Remove(legacy);
+            AddonPins().Remove(legacy);
+        }
+
         List<string> RecordedFolders(string name)
         {
-            var l = Json.AsList(Json.Get(AddonInstalls(), name));
+            var l = Json.AsList(AddonSetting(AddonInstalls(), name));
             if (l == null) return null;
             var r = new List<string>();
             foreach (object o in l) r.Add(Convert.ToString(o));
@@ -2166,7 +2194,11 @@ namespace AzerothLauncher
                     string at = BuiltinAddons.PathOf(AddonsDir(), BuiltinAddons.Find(e.Url));
                     return at == null ? new List<string>() : new List<string> { Path.GetFileName(at) };
                 }
-            return Addons.FoldersOf(AddonsDir(), name, RecordedFolders(name));
+            List<string> recorded = RecordedFolders(name);
+            if (recorded == null)
+                foreach (AddonEntry e in Data.Addons)
+                    if (string.Equals(e.Name, name, StringComparison.Ordinal)) { recorded = e.Folders; break; }
+            return Addons.FoldersOf(AddonsDir(), name, recorded);
         }
 
         // ---- addon updates: when each Download More addon was installed (UTC), against when its copy on GitHub
@@ -2226,6 +2258,7 @@ namespace AzerothLauncher
         void UnpinAddon(string name)
         {
             AddonPins().Remove(name);
+            ClearLegacyAddonSettings(name);
             Cfg.Save();
             foreach (var e in Data.Addons) if (e.Name == name) { DownloadAddon(e.Name, e.Url); return; }
             BuildPanel("Addons");
@@ -2249,10 +2282,12 @@ namespace AzerothLauncher
             {
                 if (BuiltinAddons.Find(e.Url) != null || AddonFoldersOf(e.Name).Count == 0) continue;
                 var vers = AddonArchive.Versions(e.Name);
+                string legacyName = LegacyAddonName(e.Name);
+                if (vers.Count == 0 && !string.IsNullOrEmpty(legacyName)) vers = AddonArchive.Versions(legacyName);
                 if (vers.Count == 0) continue;
                 any++;
                 string name = e.Name;
-                string pin = Json.Str(AddonPins(), name);
+                string pin = Convert.ToString(AddonSetting(AddonPins(), name), System.Globalization.CultureInfo.InvariantCulture);
                 WowButton b = null;
                 b = new WowButton(name + (pin.Length > 0 ? " *" : "") + " ▾", delegate
                 {
@@ -2360,12 +2395,12 @@ namespace AzerothLauncher
         bool AddonHasUpdate(AddonEntry it)
         {
             if (mirrorDates == null || it.Category == Data.MyAddonsCategory || !Net.IsWebAddress(it.Url)) return false;
-            if (AddonPins().ContainsKey(it.Name)) return false;   // rolled back on purpose: left as it is
+            if (AddonSetting(AddonPins(), it.Name) != null) return false;   // rolled back on purpose: left as it is
             string file = Uri.UnescapeDataString(it.Url.Substring(it.Url.LastIndexOf('/') + 1));
             DateTime up;
             if (!mirrorDates.TryGetValue(file, out up)) return false;
             DateTime installed = DateTime.MinValue;
-            string rec = Json.Str(AddonInstalledAt(), it.Name);
+            string rec = Convert.ToString(AddonSetting(AddonInstalledAt(), it.Name), System.Globalization.CultureInfo.InvariantCulture);
             if (!DateTime.TryParse(rec, System.Globalization.CultureInfo.InvariantCulture,
                                    System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out installed))
             {
@@ -2492,22 +2527,55 @@ namespace AzerothLauncher
                 bool haveIt = AddonFoldersOf(it.Name).Count > 0;
                 bool update = haveIt && AddonHasUpdate(it);
                 ForgeAddonInfo forge = SurvivorsForge.GetInfo(it);
+                // The seal means this catalog entry was manually reviewed once. Keep that
+                // decision in the shipped catalog; do not infer it from rolling API status.
+                Image watermark = it.ForgeVerified ? SurvivorsForge.LoadWatermark(forge) : null;
                 var btn = update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
                 if (update) btn.Selected = true;
                 if (btn.Width > cw - 14) btn.Width = cw - 14;  // never wider than its block
                 int ty = 6;
-                var name = UI.Text(it.Name, 9.5f, FontStyle.Bold, Theme.Gold, listbg, textW, false);
+                int nameWidth = watermark == null ? textW : Math.Max(30, textW - Theme.Px(21));
+                var name = UI.Text(it.Name, 9.5f, FontStyle.Bold, Theme.Gold, listbg, nameWidth, false);
                 name.Size = VStack.Measure(name);
                 name.Location = new Point(7, ty);
+                if (watermark != null)
+                {
+                    var forgeMark = new PictureBox();
+                    forgeMark.Image = watermark;
+                    forgeMark.SizeMode = PictureBoxSizeMode.Zoom;
+                    forgeMark.BackColor = listbg;
+                    forgeMark.Bounds = new Rectangle(cw - Theme.Px(23), ty, Theme.Px(16), Theme.Px(16));
+                    forgeMark.Disposed += delegate { try { watermark.Dispose(); } catch (Exception) { } };
+                    inner.Controls.Add(forgeMark);
+                }
+                if (forge != null && forge.ImagePaths != null && forge.ImagePaths.Count > 0)
+                {
+                    name.Cursor = Cursors.Hand;
+                    name.MouseEnter += delegate
+                    {
+                        if (!GuideHover.CanShow(name)) return;
+                        List<Image> gallery = SurvivorsForge.LoadGalleryImages(forge);
+                        try { GuideHover.ShowGallery(name, it.Name, "Click to browse addon pictures.", gallery, false); }
+                        finally { foreach (Image image in gallery) try { image.Dispose(); } catch (Exception) { } }
+                    };
+                    name.MouseLeave += delegate { GuideHover.Hide(name); };
+                    name.MouseClick += delegate(object sender, MouseEventArgs e)
+                    {
+                        if (e.Button != MouseButtons.Left || !GuideHover.CanShow(name)) return;
+                        List<Image> gallery = SurvivorsForge.LoadGalleryImages(forge);
+                        try { GuideHover.ShowGallery(name, it.Name, "Addon pictures from SurvivorsForge.", gallery, true); }
+                        finally { foreach (Image image in gallery) try { image.Dispose(); } catch (Exception) { } }
+                    };
+                }
                 inner.Controls.Add(name);
                 ty += name.Height + 1;
-                string trustText = SurvivorsForge.TrustLabel(forge);
+                string trustText = it.ForgeVerified ? "Verified" : null;
                 if (!string.IsNullOrEmpty(trustText))
                 {
                     var badge = UI.Text(trustText, 7.5f, FontStyle.Italic,
-                        string.Equals(forge.Trust, "verified", StringComparison.OrdinalIgnoreCase) ? Theme.Good : Theme.GoldDim,
+                        Theme.Good,
                         listbg, textW, false);
                     badge.Size = VStack.Measure(badge);
                     badge.Location = new Point(7, ty);
@@ -2518,20 +2586,11 @@ namespace AzerothLauncher
                 if (cardImage != null)
                 {
                     var shot = new PictureBox();
-                    Image watermark = SurvivorsForge.LoadWatermark(forge);
                     shot.Image = cardImage;
+                    shot.Disposed += delegate { try { cardImage.Dispose(); } catch (Exception) { } };
                     shot.SizeMode = PictureBoxSizeMode.Zoom;
                     shot.BackColor = listbg;
                     shot.Bounds = new Rectangle(7, ty, Math.Max(30, textW), 52);
-                    shot.Paint += delegate(object sender, PaintEventArgs e)
-                    {
-                        if (watermark != null)
-                        {
-                            int mw = Math.Min(22, shot.Width / 4), mh = (int)(watermark.Height * (mw / (float)Math.Max(1, watermark.Width)));
-                            e.Graphics.DrawImage(watermark, shot.Width - mw - 3, 3, mw, mh);
-                        }
-                    };
-                    shot.Disposed += delegate { try { if (watermark != null) watermark.Dispose(); } catch (Exception) { } };
                     inner.Controls.Add(shot);
                     ty += shot.Height + 3;
                 }
@@ -2544,7 +2603,6 @@ namespace AzerothLauncher
                     if (shortDesc.Length > 64) shortDesc = shortDesc.Substring(0, 62).TrimEnd() + "…";
                     var d = UI.Text(shortDesc, 7.5f, FontStyle.Regular, Theme.Text, listbg, textW, false);
                     addonTips.SetToolTip(d, Lang.T(it.Description));
-                    addonTips.SetToolTip(inner, Lang.T(it.Description));
                     d.Size = VStack.Measure(d);
                     d.Location = new Point(7, ty);
                     inner.Controls.Add(d);
@@ -2604,9 +2662,14 @@ namespace AzerothLauncher
             string expectedForgeSha = null;
             bool askForge = false;
             AddonEntry forgeEntry = null;
+            AddonEntry catalogEntry = null;
             foreach (AddonEntry candidate in Data.Addons)
-                if (string.Equals(candidate.Name, name, StringComparison.Ordinal) && string.Equals(candidate.Url, url, StringComparison.Ordinal) &&
-                    !string.IsNullOrWhiteSpace(candidate.ForgeId)) { forgeEntry = candidate; break; }
+                if (string.Equals(candidate.Name, name, StringComparison.Ordinal) && string.Equals(candidate.Url, url, StringComparison.Ordinal))
+                {
+                    catalogEntry = candidate;
+                    if (!string.IsNullOrWhiteSpace(candidate.ForgeId)) forgeEntry = candidate;
+                    break;
+                }
             if (forgeEntry != null)
             {
                 string forgeError;
@@ -2618,6 +2681,23 @@ namespace AzerothLauncher
                 if (askForge && !quiet && Msg.Show(this,
                     "SurvivorsForge has not marked this exact addon version Verified. Do you still want to install it?",
                     "Addon version", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+            }
+            var conflictingOn = new List<string>();
+            if (catalogEntry != null)
+            {
+                try
+                {
+                    List<KeyValuePair<string, bool>> installed = Addons.Scan(AddonsDir());
+                    foreach (string folder in catalogEntry.Folders)
+                        foreach (var partner in Addons.PartnersOf(AddonsDir(), folder, installed))
+                            foreach (var currentAddon in installed)
+                                if (currentAddon.Key == partner.Key && currentAddon.Value && !conflictingOn.Contains(currentAddon.Key))
+                                    conflictingOn.Add(currentAddon.Key);
+                }
+                catch (Exception) { }
+                if (conflictingOn.Count > 0 && !quiet && Msg.Show(this,
+                    name + " cannot be enabled with " + string.Join(", ", conflictingOn.ToArray()) + ". Install it and switch those addons off?",
+                    "Addon conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             }
             if (addonDlBusy)
             {
@@ -2648,14 +2728,34 @@ namespace AzerothLauncher
                     SetStatus(err == null ? name + " installed." : name + " failed.");
                     if (err == null)
                     {
+                        var switchedOff = new List<string>();
+                        if (catalogEntry != null)
+                        {
+                            foreach (string folder in catalogEntry.Folders)
+                                try
+                                {
+                                    foreach (string off in Addons.SwitchOffPartners(AddonsDir(), folder))
+                                        if (!switchedOff.Contains(off)) switchedOff.Add(off);
+                                }
+                                catch (Exception) { }
+                            try
+                            {
+                                foreach (string off in Addons.EnforceConflicts(AddonsDir()))
+                                    if (!switchedOff.Contains(off)) switchedOff.Add(off);
+                            }
+                            catch (Exception) { }
+                        }
                         var rec = new List<object>();
                         foreach (string n in names) rec.Add(n);
                         AddonInstalls()[name] = rec;
                         AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
                         AddonPins().Remove(name);            // the newest copy: no longer [Outdated]
+                        ClearLegacyAddonSettings(name);
                         Cfg.Save();
                         if (after != null) try { after(); } catch (Exception) { }
                         if (current == "Addons" || current == "Stats") BuildPanel(current);
+                        if (switchedOff.Count > 0)
+                            SetStatus(name + " installed. " + string.Join(", ", switchedOff.ToArray()) + " switched off because they conflict.");
                     }
                     else if (quiet)
                     {
@@ -2698,6 +2798,7 @@ namespace AzerothLauncher
             }
             AddonInstalls().Remove(name);
             AddonInstalledAt().Remove(name);
+            ClearLegacyAddonSettings(name);
             Cfg.Save();
             SetStatus(removed.Count > 0 ? name + " uninstalled." : name + " was not installed.");
             if (current == "Addons") BuildPanel("Addons");
@@ -3125,10 +3226,28 @@ namespace AzerothLauncher
             foreach (var a in addons) if (!a.Value) allOn = false;
             bool target = !allOn;                            // all on -> switch all off, otherwise all on
             var errors = new List<string>();
-            foreach (var a in addons)
-                if (a.Value != target)
-                    try { Addons.SetEnabled(d, a.Key, target); }
-                    catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
+            if (target)
+            {
+                // Toggle All still honors incompatibilities: turn candidates on in order,
+                // switch their conflicting partner off, then keep each pair's preferred member.
+                foreach (var a in addons)
+                    if (!a.Value)
+                        try
+                        {
+                            Addons.SetEnabled(d, a.Key, true);
+                            Addons.SwitchOffPartners(d, a.Key);
+                        }
+                        catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
+                try { Addons.EnforceConflicts(d); }
+                catch (Exception e) { errors.Add("Conflicting addons: " + e.Message); }
+            }
+            else
+            {
+                foreach (var a in addons)
+                    if (a.Value)
+                        try { Addons.SetEnabled(d, a.Key, false); }
+                        catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
+            }
             SetStatus("All addons " + (target ? "enabled." : "disabled."));
             BuildPanel("Addons");
             if (errors.Count > 0)

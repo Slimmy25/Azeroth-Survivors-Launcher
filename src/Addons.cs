@@ -86,6 +86,14 @@ namespace AzerothLauncher
                            Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "BlackwellUI" }, Other = new[] { "AetherHUD" },
                            Why = "both replace the game's interface" },
+            new Conflict { Preferred = new[] { "AZSSpellMeter" }, Other = new[] { "AZSMaxHit" },
+                           Why = "both provide a damage meter" },
+            new Conflict { Preferred = new[] { "AzerothCursor" }, Other = new[] { "BigCursor" },
+                           Why = "both replace or overlay the mouse cursor" },
+            new Conflict { Preferred = new[] { "AzerothCursor" }, Other = new[] { "CursorReticle" },
+                           Why = "both replace or overlay the mouse cursor" },
+            new Conflict { Preferred = new[] { "BigCursor" }, Other = new[] { "CursorReticle" },
+                           Why = "both replace or overlay the mouse cursor" },
         };
 
         static string Key(string s)
@@ -508,6 +516,9 @@ namespace AzerothLauncher
                 }
                 catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
             }
+            // Profiles may predate a newly added conflict rule; restore their switches, then
+            // enforce the current catalog's incompatibilities before returning to the caller.
+            changed += EnforceConflicts(addonDir).Count;
             return changed;
         }
 

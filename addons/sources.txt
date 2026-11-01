@@ -21,7 +21,7 @@ Keijin-UI-by-Keijin.zip         | https://github.com/KeijinDE/KeijinUI_modern-as
 BlackwellUI-by-Blackwell.zip    | github-latest:Blackwellcode/BlackwellUI
 AetherHUD-by-Rehabrocket.zip    | github-latest:NORehabRocket/AetherHUD:AetherHUD
 LuckyOdds-by-Cadoky.zip         | github-latest:cadoky/LuckyOdds:LuckyOdds
-Damage-Meter-by-Kexo.zip        | github-latest:kex0/AZSSpellMeter
+AZSSpellMeter-by-Kexo.zip       | github-latest:kex0/AZSSpellMeter
 # Maidenhead's two: their current versions are pre-releases, which "github-latest" skips, so the exact zips are named
 Azeroth-FieldKit-by-Maidenhead.zip | https://github.com/Maidenquinn/azeroth-fieldkit/releases/download/v0.2.1-review.3/AzerothFieldKit-0.2.1-review.3.zip
 Azeroth-Stats-by-Maidenhead.zip | https://github.com/Maidenquinn/AzerothStats/releases/download/v1.7.0-beta.1/AzerothStats-1.7.0-beta.1.zip
@@ -31,5 +31,7 @@ LocalClock-by-JamieeLee.zip | github-latest:JamieeLee/LocalClock-Addon:LocalCloc
 MinimapButtonBag-by-Tunhadil-LaYt.zip | local:MBB
 BugSack-by-Fritti-Rabbit.zip    | local:!BugGrabber+BugSack
 BigCursor-by-JamieeLee.zip | github-latest:JamieeLee/BigCursor:BigCursor
-MoveUI-by-JamieeLee.zip | github-latest:JamieeLee/MoveUI:MoveUI-
+MoveAnything-by-JamieeLee.zip | github-latest:JamieeLee/MoveUI:MoveUI-
+AZSMoveAnything-by-kodfod.zip | github-latest:kodfod/AZSMoveAnything:AZSMoveAnything
+AZSMaxHit-by-ghoulcompiler.zip | github-latest:ghoulcompiler/AZSMaxHit:AZSMaxHit-
 ASBuilder-v1.10.0.zip | github-latest:cadoky/ASBuilder:ASBuilder-

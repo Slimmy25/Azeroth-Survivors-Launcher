@@ -87,6 +87,10 @@ local function DB()
 	if ( type(d.sizeMenuPosition) ~= "table" ) then d.sizeMenuPosition = {}; end
 	if ( d.tallyVertical == nil ) then d.tallyVertical = false; end
 	if ( d.showEmptyActionSlots == nil ) then d.showEmptyActionSlots = false; end
+	if ( d.buildRowsAttached == nil ) then d.buildRowsAttached = true; end
+	if ( type(d.itemRowEquipped) ~= "table" ) then d.itemRowEquipped = {}; end
+	if ( type(d.itemRowSeen) ~= "table" ) then d.itemRowSeen = {}; end
+	if ( type(d.itemRowCounter) ~= "number" ) then d.itemRowCounter = 0; end
 	if ( type(d.chatOffsets) ~= "table" ) then d.chatOffsets = {}; end
 	if ( d.anchorSnap == nil ) then d.anchorSnap = false; end
 	if ( type(d.words) ~= "table" ) then d.words = {}; end
@@ -191,16 +195,13 @@ local function Camera(zoomOut)
 	if ( zoomOut and CameraZoomOut ) then pcall(CameraZoomOut, MAX_CAMERA); end
 end
 
--- ---------------------------------------------------------------- raid markers on bosses, and on friends who fall
--- The game's raid markers (they work alone and in co-op): the bosses alive get a Skull, a Cross and a Diamond, in the
--- order they came (AZS_GetBosses). With miniboss markers on, the minibosses among them get a Star, a Triangle and a
--- Diamond, and the Skull and Cross go to the rest (the final boss, and whoever it brings). A marker needs the boss as
--- a unit: the target, the mouseover, a friend's target, or, when none of those is it, a quick target-and-back by its
--- name. Square, Moon and Circle are never put on a boss: they blink over friends who fall.
-local BOSS_ICONS = { 8, 7, 3 };                          -- Skull, Cross, Diamond
-local FINAL_ICONS = { 8, 7 };                            -- Skull, Cross (with miniboss markers on)
-local MINI_ICONS = { 1, 4, 3 };                          -- Star, Triangle, Diamond
-local DEATH_ICONS = { 6, 5, 2 };                         -- Square, Moon, Circle: one for each friend who falls
+-- ---------------------------------------------------------------- raid markers on bosses and guardians, and on friends who fall
+-- Bosses and awake guardians share one oldest-first kill-priority order. The game unit list is sampled
+-- continuously; first-seen IDs retain their order until they leave the active list.
+-- Boss markers: Skull (8), Cross (7), Circle (2), Star (1). Friendly death markers: Diamond (3),
+-- Triangle (4), Moon (5), Square (6).
+local BOSS_ICONS = { 8, 7, 2, 1 };
+local DEATH_ICONS = { 3, 4, 5, 6 };
 local DEATH_BLINKS = 16;                                 -- on and off this many times
 local DEATH_SOUND = "Interface\\AddOns\\AZSMinorMods\\Baby Crying.mp3";
 local function PlayDeathSound()
@@ -240,8 +241,9 @@ local MINIBOSSES = {
 	["anub'rekhan"] = true, ["noth the plaguebringer"] = true, ["patchwerk"] = true, ["sapphiron"] = true,
 };
 local function IsMini(name) return name and MINIBOSSES[string.lower(name)] and true or false; end
-local marked = {};                                        -- boss id -> its marker
+local marked = {};                                        -- boss/guardian id -> its marker
 local tries = {};                                         -- boss id -> target-and-back tries (at most 3)
+local bossBirthOrder, nextBossBirthOrder = {}, 0;
 local fallen = {};                                        -- party unit -> was down at the last look
 local partyNames = {};                                    -- party unit -> identity, so a replacement in the same slot is new
 local blinks = {};                                        -- party unit -> { left = times, at = next change, on = shown }
@@ -283,31 +285,46 @@ end
 
 local function BossMarks()
 	local d = DB();
-	if ( not (d.bossMarks or d.miniMarks) or type(AZS_GetBosses) ~= "function" ) then return; end
+	if ( not (d.bossMarks or d.miniMarks) ) then return; end
 	-- only while a run is being played: out of it the list can still hold the last run's bosses
 	if ( type(AZS_GetPhase) == "function" and AZS_GetPhase() ~= "playing" ) then return; end
-	local ok, bosses = pcall(AZS_GetBosses);
-	if ( not ok or type(bosses) ~= "table" ) then return; end
-	local alive = {};
-	local bossList = d.miniMarks and FINAL_ICONS or BOSS_ICONS;
-	local nb, nm = 0, 0;                                   -- bosses and minibosses so far, each in the order they came
-	for i = 1, table.getn(bosses) do
-		local b = bosses[i];
-		if ( b.id ) then alive[b.id] = true; end
-		local icon = nil;
-		if ( d.miniMarks and IsMini(b.name) ) then
-			nm = nm + 1;
-			icon = MINI_ICONS[nm];
-		else
-			nb = nb + 1;
-			if ( d.bossMarks ) then icon = bossList[nb]; end
+	local active, alive = {}, {};
+	local ok, bosses = false, nil;
+	if ( type(AZS_GetBosses) == "function" ) then ok, bosses = pcall(AZS_GetBosses); end
+	if ( ok and type(bosses) == "table" ) then
+		for i = 1, table.getn(bosses) do
+			local b = bosses[i];
+			if ( type(b) == "table" and b.id and b.name ) then
+				active[b.id] = { id = b.id, name = b.name, kind = b.kind or "boss" };
+			end
 		end
-		if ( icon and b.id and b.name and marked[b.id] ~= icon ) then
+	end
+	-- AZS_UNITS is authoritative for guardian identity/state. Ordinary spawned adds are ignored because
+	-- only explicitly classified boss/final/guardian/elite entries are admitted here.
+	local units = type(AZS_UNITS) == "table" and AZS_UNITS or {};
+	for i = 1, table.getn(units) do
+		local u = units[i];
+		if ( type(u) == "table" and (u.kind == "final" or u.kind == "boss" or u.kind == "guardian")
+				and u.id and u.name and (u.kind ~= "guardian" or u.state == 1) ) then
+			active[u.id] = { id = u.id, name = u.name, kind = u.kind };
+		end
+	end
+	local ordered = {};
+	for id, item in pairs(active) do
+		alive[id] = true;
+		if ( not bossBirthOrder[id] ) then nextBossBirthOrder = nextBossBirthOrder + 1; bossBirthOrder[id] = nextBossBirthOrder; end
+		item.birth = bossBirthOrder[id]; table.insert(ordered, item);
+	end
+	table.sort(ordered, function(a, b) return a.birth < b.birth; end);
+	for i = 1, table.getn(ordered) do
+		local b, icon = ordered[i], BOSS_ICONS[i];
+		if ( icon and d.bossMarks and marked[b.id] ~= icon ) then
 			if ( MarkBoss(b.name, icon, b.id) ) then marked[b.id] = icon; end
 		end
 	end
 	for id in pairs(marked) do if ( not alive[id] ) then marked[id] = nil; end end
 	for id in pairs(tries) do if ( not alive[id] ) then tries[id] = nil; end end
+	for id in pairs(bossBirthOrder) do if ( not alive[id] ) then bossBirthOrder[id] = nil; end end
 end
 
 -- a friend down in co-op: their own marker over their head, on and off 16 times. The first three friends have their
@@ -382,6 +399,7 @@ local MOVABLE = { { "PlayerFrame", "Player" }, { "TargetFrame", "Target" }, { "P
                   { "AZSMinorModsClockFrame", "Run clock / Next boss" },
                   { "AZSMinorModsBossFrames", "Encounter bars" },
                   { "AZSMinorModsAnnouncementFrame", "Event announcements" },
+                  { "AZSMinorModsItemRowFrame", "Worn rings / trinkets" },
                   { "AZSMinorModsTallyFrame", "Kills / Gold / Cache" }, { "GameTooltip", "Tooltip" } };
 local handles = {};
 local baseSizes = {};
@@ -419,6 +437,145 @@ local announcementFade = 0.6;
 local lastBannerId;
 local encounterRows = {};
 local actionBarOriginal;
+local itemRow;
+local itemRowButtons = {};
+
+-- The item deck reads the four real 1.12 jewelry equipment slots. The catalog is generated from
+-- the game's item data, while the inventory API supplies the currently worn icon and tooltip.
+local ITEM_EQUIP_SLOTS = { 11, 12, 13, 14 };
+local function ItemTextureKey(texture)
+	if ( type(texture) ~= "string" ) then return nil; end
+	return string.gsub(texture, "^Interface.Icons.", "");
+end
+
+local function LayoutItemRow()
+	if ( not itemRow ) then return; end
+	local shown = {};
+	for i = 1, table.getn(itemRowButtons) do
+		local button = itemRowButtons[i];
+		if ( button and button.slot and button.itemTexture ) then table.insert(shown, button); end
+	end
+	local gap = 4;
+	local count = table.getn(shown);
+	if ( not DB().sizes.AZSMinorModsItemRowFrame ) then
+		itemRow:SetWidth(math.max(32, count * 32 + math.max(0, count - 1) * gap));
+		itemRow:SetHeight(36);
+	end
+	local width = itemRow:GetWidth() or 36;
+	local height = itemRow:GetHeight() or 36;
+	local iconSize = count > 0 and math.max(16, math.min(height - 4, (width - gap * math.max(0, count - 1)) / count)) or 32;
+	for i = 1, table.getn(shown) do
+		local button = shown[i];
+		button:ClearAllPoints();
+		button:SetWidth(iconSize); button:SetHeight(iconSize);
+		button:SetPoint("LEFT", itemRow, "LEFT", (i - 1) * (iconSize + gap), 0);
+	end
+end
+
+local function RefreshItemRow()
+	if ( not itemRow ) then return; end
+	local d = DB();
+	local equipped, visible = {}, {};
+	for i = 1, table.getn(ITEM_EQUIP_SLOTS) do
+		local slot = ITEM_EQUIP_SLOTS[i];
+		local texture = GetInventoryItemTexture and GetInventoryItemTexture("player", slot) or nil;
+		local link = GetInventoryItemLink and GetInventoryItemLink("player", slot) or nil;
+		if ( texture ) then
+			local identity = link or tostring(texture);
+			local previous = d.itemRowEquipped[slot];
+			if ( type(previous) ~= "table" or previous.identity ~= identity ) then
+				local order = d.itemRowSeen[identity];
+				if ( type(order) ~= "number" ) then
+					d.itemRowCounter = d.itemRowCounter + 1;
+					order = d.itemRowCounter;
+					d.itemRowSeen[identity] = order;
+				end
+				previous = { identity = identity, order = order };
+				d.itemRowEquipped[slot] = previous;
+			end
+			equipped[slot] = { texture = texture, link = link, order = previous.order,
+			                   knownName = AZSMinorModsItemCatalog and AZSMinorModsItemCatalog[ItemTextureKey(texture)] or nil };
+			table.insert(visible, { slot = slot, item = equipped[slot] });
+		else
+			d.itemRowEquipped[slot] = nil;
+		end
+	end
+	table.sort(visible, function(a, b) return a.item.order < b.item.order; end);
+	for i = 1, table.getn(itemRowButtons) do
+		local button = itemRowButtons[i];
+		local entry = visible[i];
+		if ( button ) then
+			if ( entry ) then
+				button.slot = entry.slot;
+				button.itemTexture = entry.item.texture;
+				button.itemName = entry.item.knownName;
+				button.icon:SetTexture(entry.item.texture);
+				button.icon:Show();
+				button:Show();
+			else
+				button.slot, button.itemTexture, button.itemName = nil, nil, nil;
+				button.icon:SetTexture(nil);
+				button:Hide();
+			end
+		end
+	end
+	LayoutItemRow();
+	if ( table.getn(visible) > 0 ) then
+		itemRow:Show();
+		if ( d.unlocked and handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Show(); end
+	else
+		itemRow:Hide();
+		if ( handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Hide(); end
+	end
+end
+
+local function CreateItemRow()
+	if ( itemRow or not UIParent ) then return; end
+	itemRow = CreateFrame("Frame", "AZSMinorModsItemRowFrame", UIParent);
+	itemRow:SetWidth(140); itemRow:SetHeight(36);
+	local d = DB();
+	if ( not d.places.AZSMinorModsItemRowFrame ) then
+		if ( d.buildRowsAttached ) then
+			d.places.AZSMinorModsItemRowFrame = { relative = "MainMenuBar", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
+		else
+			d.places.AZSMinorModsItemRowFrame = { x = 8, y = 130 };
+		end
+	end
+	itemRow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 8, -130);
+	itemRow:SetFrameStrata("MEDIUM");
+	for i = 1, 4 do
+		local button = CreateFrame("Button", "AZSMinorModsItemButton" .. i, itemRow);
+		button:SetWidth(32); button:SetHeight(32);
+		button:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2");
+		button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square");
+		button.icon = button:CreateTexture(nil, "ARTWORK");
+		button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 3, -3);
+		button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3);
+		button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93);
+		button:EnableMouse(true);
+		button:SetScript("OnEnter", function()
+			if ( not this.slot or not GameTooltip ) then return; end
+			GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+			if ( GameTooltip.SetInventoryItem ) then GameTooltip:SetInventoryItem("player", this.slot);
+			elseif ( this.itemName ) then GameTooltip:AddLine(this.itemName); GameTooltip:Show(); end
+		end);
+		button:SetScript("OnLeave", function() if ( GameTooltip ) then GameTooltip:Hide(); end end);
+		button:SetScript("OnClick", function()
+			if ( this.slot and UseInventoryItem ) then pcall(UseInventoryItem, this.slot); end
+		end);
+		itemRowButtons[i] = button;
+	end
+	RefreshItemRow();
+end
+CreateItemRow();
+
+local itemRowEvents = CreateFrame("Frame");
+itemRowEvents:RegisterEvent("UNIT_INVENTORY_CHANGED");
+itemRowEvents:RegisterEvent("PLAYER_ENTERING_WORLD");
+itemRowEvents:SetScript("OnEvent", function()
+	if ( event == "UNIT_INVENTORY_CHANGED" and arg1 ~= "player" ) then return; end
+	pcall(RefreshItemRow);
+end);
 
 local function SetNativeTallyHidden(on)
 	if ( type(AZS_SetHudShown) ~= "function" or tallyNativeWasShown ~= true ) then return; end
@@ -769,8 +926,8 @@ local function EncounterList()
 		local priority = type(unit) == "table" and BossPriority(unit) or nil;
 		local awake = type(unit) == "table" and (unit.kind ~= "guardian" or unit.state == 1);
 		if ( priority and awake and type(unit.id) == "number" and type(unit.name) == "string"
-				and type(unit.hp) == "number" and type(unit.hpm) == "number" and unit.hp > 0 and unit.hpm > 0 ) then
-			table.insert(list, { id = unit.id, name = unit.name, hp = unit.hp, hpm = unit.hpm, priority = priority, order = i });
+			and type(unit.hp) == "number" and type(unit.hpm) == "number" and unit.hp > 0 and unit.hpm > 0 ) then
+			table.insert(list, { id = unit.id, name = unit.name, kind = unit.kind, hp = unit.hp, hpm = unit.hpm, priority = priority, order = i });
 		end
 	end
 	table.sort(list, function(a, b)
@@ -859,7 +1016,8 @@ local function UpdateEncounterRows(list)
 		row.bar:ClearAllPoints();
 		row:ClearAllPoints();
 		row:SetPoint("TOPLEFT", bossFrame, "TOPLEFT", padding + ((i - 1) * (cardWidth + gap)), -padding);
-		row.name:SetText(unit.name);
+	local role = unit.kind == "guardian" and "Guardian" or (unit.kind == "elite" and "Elite" or "Boss");
+		row.name:SetText(unit.name .. "  [" .. role .. "]");
 		if ( vertical ) then
 			SetEncounterFont(row.name, 8.5);
 			local barTopOffset = 34 + padding;
@@ -877,7 +1035,8 @@ local function UpdateEncounterRows(list)
 			row.name:SetHeight(22);
 			row.name:SetPoint("TOPLEFT", row, "TOPLEFT", 4 + padding, -(2 + padding));
 			if ( row.bar.SetOrientation ) then pcall(row.bar.SetOrientation, row.bar, "HORIZONTAL"); end
-			row.bar:SetWidth(math.max(20, cardWidth - 8 - (padding * 2)));
+			local width = math.max(20, cardWidth - 8 - (padding * 2));
+			row.bar:SetWidth(unit.kind == "guardian" and math.max(20, width * 0.78) or width);
 			row.bar:SetHeight(math.min(8, math.max(5, rowHeight - 30 - padding)));
 			row.bar:SetPoint("TOPLEFT", row, "TOPLEFT", 4 + padding, -(28 + padding));
 		end
@@ -1103,6 +1262,7 @@ tallyTicker:SetScript("OnUpdate", function()
 		pcall(UpdateAnnouncementFrame);
 		pcall(UpdateLevelButton);
 		pcall(ApplyActionSlotGrid);
+		pcall(RefreshItemRow);
 		local tooltipHandle = handles.GameTooltip;
 		if ( tooltipHandle ) then
 			if ( DB().unlocked and GameTooltip and GameTooltip:IsShown() ) then tooltipHandle:Show();
@@ -1128,6 +1288,7 @@ local function ApplySize(name, f)
 		f:SetHeight(s.h);
 	end
 	if ( name == "AZSMinorModsClockFrame" ) then ApplyClockLayout(); end
+	if ( name == "AZSMinorModsItemRowFrame" ) then LayoutItemRow(); end
 	local scale = DB().scales[name];
 	local value = type(scale) == "number" and scale or 1;
 	if ( name == "PartyMemberFrame1" ) then
@@ -1619,13 +1780,31 @@ local function DetachExperienceBar()
 	xpBarDetached = true;
 end
 
+local function ToggleBuildRowsAttached()
+	if ( not itemRow or not MainMenuBar ) then return; end
+	local rowName = "AZSMinorModsItemRowFrame";
+	if ( DB().buildRowsAttached ) then
+		SavePosition(rowName, itemRow);
+		local p = DB().places[rowName];
+		p.relative, p.point, p.relativePoint, p.dx, p.dy = nil, nil, nil, nil, nil;
+		DB().buildRowsAttached = false;
+	else
+		DB().places[rowName] = { relative = "MainMenuBar", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
+		DB().buildRowsAttached = true;
+	end
+	PlaceAll();
+	if ( sizeMenu and sizeMenu.attachButton ) then
+		sizeMenu.attachButton:SetText(DB().buildRowsAttached and "Detach item row" or "Attach item row");
+	end
+end
+
 local function OpenSizeMenu(name, label)
 	local f = getglobal(name);
 	if ( not f ) then return; end
 	if ( not sizeMenu ) then
 		sizeMenu = CreateFrame("Frame", nil, UIParent);
 		sizeMenu:SetWidth(206);
-		sizeMenu:SetHeight(240);
+		sizeMenu:SetHeight(270);
 		sizeMenu:SetFrameStrata("DIALOG");
 		sizeMenu:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 		                      tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
@@ -1756,6 +1935,9 @@ local function OpenSizeMenu(name, label)
 		end);
 		muteButton:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 10, -178);
 		sizeMenu.muteButton = muteButton;
+		local attachButton = K.Button(sizeMenu, "Detach item row", 184, function() ToggleBuildRowsAttached(); end);
+		attachButton:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 10, -208);
+		sizeMenu.attachButton = attachButton;
 		local reset = K.Button(sizeMenu, "Reset", 62, function()
 			local t = sizeTarget and getglobal(sizeTarget);
 			local s = sizeTarget and baseSizes[sizeTarget];
@@ -1817,6 +1999,10 @@ local function OpenSizeMenu(name, label)
 				sizeMenu.growthButton:SetText("Grow " .. BuffGrowthDirection());
 			else sizeMenu.growthButton:Hide(); end
 		end
+		if ( name == "MainMenuBar" or name == "AZSMinorModsItemRowFrame" ) then
+			sizeMenu.attachButton:Show();
+			sizeMenu.attachButton:SetText(DB().buildRowsAttached and "Detach item row" or "Attach item row");
+		else sizeMenu.attachButton:Hide(); end
 		local canPad = name == "AZSMinorModsClockFrame" or name == "AZSMinorModsBossFrames" or name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsAnnouncementFrame" or name == "BuffFrame";
 		if ( canPad ) then
 			sizeMenuPadding:Show(); sizeMenu.padDown:Show(); sizeMenu.padUp:Show();
@@ -1837,7 +2023,7 @@ local function OpenSizeMenu(name, label)
 		x, y = GetCursorPosition(); x, y = x / scale, y / scale; x, y = x + 8, y + 8;
 	end
 	x = math.max(0, math.min(sw - 206, x));
-	y = math.max(0, math.min(sh - 240, y));
+	y = math.max(0, math.min(sh - 270, y));
 	sizeMenu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
 	if ( type(saved) ~= "table" ) then DB().sizeMenuPosition = { x = x, y = y }; end
 	sizeMenu:Show();

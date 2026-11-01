@@ -16,6 +16,7 @@ namespace AzerothLauncher
     public sealed class ForgeAddonInfo
     {
         public string Id, Name, Tag, AssetUrl, Sha256, Trust, ImagePath, LogoPath;
+        public List<string> ImagePaths = new List<string>();
         public bool Removed;
     }
 
@@ -32,7 +33,6 @@ namespace AzerothLauncher
         static Dictionary<string, object> state;
         static List<Action> registryCallbacks = new List<Action>();
         static HashSet<string> detailsBusy = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        static Timer timer;
 
         static string CacheDir { get { return Path.Combine(Util.DataDir, "SurvivorsForge"); } }
         static string StatePath { get { return Path.Combine(CacheDir, "cache.json"); } }
@@ -86,13 +86,8 @@ namespace AzerothLauncher
         {
             if (Program.DisplayPreviewBuild) return;   // the isolated graphics build stays offline
             EnsureLoaded();
-            lock (gate)
-            {
-                if (timer == null)
-                    timer = new Timer(delegate { RefreshRegistry(null); }, null,
-                        TimeSpan.FromHours(RefreshHours), TimeSpan.FromHours(RefreshHours));
-            }
-            RefreshRegistry(null);                        // first launch fetches immediately; later starts honor the saved interval
+            // SurvivorsForge is contacted only when the user opens Download More. Review labels
+            // are local catalog decisions; the on-demand lookup supplies artwork and install hashes.
         }
 
         static bool RegistryAvailable()
@@ -178,7 +173,7 @@ namespace AzerothLauncher
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
             req.Accept = "application/json";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.12 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.14 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -219,7 +214,7 @@ namespace AzerothLauncher
                 throw new InvalidDataException("Unexpected SurvivorsForge image address.");
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.12 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.14 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -244,9 +239,15 @@ namespace AzerothLauncher
         static string CacheImage(string url, bool refreshExisting = false)
         {
             if (string.IsNullOrWhiteSpace(url)) return null;
-            string leaf = Path.GetFileName(new Uri(url).AbsolutePath);
+            Uri imageUri = new Uri(url);
+            string leaf = Path.GetFileName(imageUri.AbsolutePath);
             if (string.IsNullOrWhiteSpace(leaf) || leaf.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) return null;
-            string path = Path.Combine(ImagesDir, leaf);
+            // Image endpoints commonly reuse names such as icon.webp or screenshot-1.webp.
+            // Include the URL hash so two addons cannot overwrite each other's cached art.
+            string key;
+            using (SHA256 sha = SHA256.Create())
+                key = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(imageUri.AbsoluteUri))).Replace("-", "").ToLowerInvariant();
+            string path = Path.Combine(ImagesDir, key + "-" + leaf);
             if (!refreshExisting && File.Exists(path) && new FileInfo(path).Length > 0) return path;
             byte[] bytes = GetBytes(url);
             Directory.CreateDirectory(ImagesDir);
@@ -293,6 +294,11 @@ namespace AzerothLauncher
             return null;
         }
 
+        static Dictionary<string, object> LatestVersion(Dictionary<string, object> registryAddon)
+        {
+            return registryAddon == null ? null : Json.AsDict(Json.Get(registryAddon, "latest"));
+        }
+
         static bool SameUrl(string a, string b)
         {
             Uri x, y;
@@ -302,14 +308,35 @@ namespace AzerothLauncher
 
         public static ForgeAddonInfo GetInfo(AddonEntry entry)
         {
+            if (entry == null) return null;
+            ForgeAddonInfo info = GetInfoSingle(entry);
+            if (info == null || info.Removed) return info;
+            foreach (string id in entry.ForgeIds ?? new List<string>())
+            {
+                if (string.IsNullOrWhiteSpace(id) || string.Equals(id, entry.ForgeId, StringComparison.OrdinalIgnoreCase)) continue;
+                var relatedEntry = new AddonEntry { ForgeId = id, Url = entry.Url };
+                ForgeAddonInfo related = GetInfoSingle(relatedEntry);
+                if (related == null || related.Removed) continue;
+                foreach (string path in related.ImagePaths)
+                    if (!string.IsNullOrWhiteSpace(path) && !info.ImagePaths.Contains(path)) info.ImagePaths.Add(path);
+                if (string.IsNullOrWhiteSpace(info.ImagePath)) info.ImagePath = related.ImagePath;
+            }
+            return info;
+        }
+
+        static ForgeAddonInfo GetInfoSingle(AddonEntry entry)
+        {
             if (entry == null || string.IsNullOrWhiteSpace(entry.ForgeId)) return null;
             Dictionary<string, object> addon = RegistryAddon(entry.ForgeId);
             if (addon == null)
             {
-                return RegistryAvailable() ? new ForgeAddonInfo { Id = entry.ForgeId, Removed = true } : null;
+                if (RegistryAvailable()) return new ForgeAddonInfo { Id = entry.ForgeId, Removed = true };
+                return new ForgeAddonInfo { Id = entry.ForgeId, LogoPath = Json.Str(State(), "logo_path") };
             }
-            Dictionary<string, object> version = ExactVersion(entry, addon);
-            if (version == null) return new ForgeAddonInfo { Id = entry.ForgeId, Name = Json.Str(addon, "name") };
+            // A locally mirrored ZIP has a different URL from its upstream release. Use the
+            // matched upstream addon and latest art for the catalog identity when URLs differ.
+            Dictionary<string, object> version = ExactVersion(entry, addon) ?? LatestVersion(addon);
+            if (version == null) return new ForgeAddonInfo { Id = entry.ForgeId, Name = Json.Str(addon, "name"), LogoPath = Json.Str(State(), "logo_path") };
             var info = new ForgeAddonInfo
             {
                 Id = entry.ForgeId,
@@ -317,15 +344,31 @@ namespace AzerothLauncher
                 Tag = Json.Str(version, "tag"),
                 AssetUrl = Json.Str(version, "asset_url"),
                 Sha256 = Json.Str(version, "sha256"),
-                Trust = Json.Str(version, "trust")
+                Trust = Json.Str(version, "trust"),
+                // The SurvivorsForge mark identifies this catalog partnership, not the
+                // release's safety state, so show it even before exact-version art loads.
+                LogoPath = Json.Str(State(), "logo_path")
             };
-            if (!string.Equals(info.Trust, "verified", StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(info.Sha256)) return info;
+            // Artwork is attached to an explicitly matched addon identity. The visible Verified
+            // seal is a separate, one-time flag in assets/addons.txt.
+            if (string.IsNullOrWhiteSpace(info.Sha256) ||
+                string.Equals(info.Trust, "blocked", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(info.Trust, "source_changed", StringComparison.OrdinalIgnoreCase)) return info;
             Dictionary<string, object> details = CachedDetails(entry.ForgeId);
             if (!string.Equals(Json.Str(details, "art_tag"), info.Tag, StringComparison.Ordinal) ||
                 !SameUrl(info.AssetUrl, Json.Str(details, "art_asset_url")) ||
                 !string.Equals(info.Sha256, Json.Str(details, "art_sha256"), StringComparison.OrdinalIgnoreCase)) return info;
             info.ImagePath = Json.Str(details, "image_path");
-            info.LogoPath = Json.Str(details, "logo_path");
+            if (string.IsNullOrWhiteSpace(info.ImagePath)) info.ImagePath = Json.Str(details, "icon_path");
+            string detailLogo = Json.Str(details, "logo_path");
+            if (!string.IsNullOrWhiteSpace(detailLogo)) info.LogoPath = detailLogo;
+            foreach (object path in Json.AsList(Json.Get(details, "image_paths")) ?? new List<object>())
+            {
+                string value = Convert.ToString(path, CultureInfo.InvariantCulture);
+                if (!string.IsNullOrWhiteSpace(value) && !info.ImagePaths.Contains(value)) info.ImagePaths.Add(value);
+            }
+            if (!string.IsNullOrWhiteSpace(info.ImagePath) && !info.ImagePaths.Contains(info.ImagePath))
+                info.ImagePaths.Insert(0, info.ImagePath);
             return info;
         }
 
@@ -334,7 +377,8 @@ namespace AzerothLauncher
             if (info == null) return null;
             if (info.Removed) return "Unavailable";
             if (string.IsNullOrWhiteSpace(info.Trust)) return "Version not matched";
-            return info.Trust == "verified" ? "Verified" : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(info.Trust.Replace('_', ' '));
+            return string.Equals(info.Trust, "verified", StringComparison.OrdinalIgnoreCase)
+                ? "Verified" : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(info.Trust.Replace('_', ' '));
         }
 
         public static bool CanInstall(AddonEntry entry, out string expectedSha256, out bool askFirst, out string error)
@@ -354,8 +398,9 @@ namespace AzerothLauncher
             if (string.IsNullOrWhiteSpace(info.Sha256))
             { error = "SurvivorsForge has not published a SHA-256 for this addon version, so it cannot be installed yet."; return false; }
             expectedSha256 = info.Sha256;
-            askFirst = string.Equals(info.Trust, "flagged", StringComparison.OrdinalIgnoreCase) ||
-                       string.Equals(info.Trust, "unscanned", StringComparison.OrdinalIgnoreCase);
+            askFirst = !entry.ForgeVerified &&
+                       (string.Equals(info.Trust, "flagged", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(info.Trust, "unscanned", StringComparison.OrdinalIgnoreCase));
             return true;
         }
 
@@ -367,24 +412,48 @@ namespace AzerothLauncher
                 ThreadPool.QueueUserWorkItem(delegate
                 {
                     bool detailsChanged = false;
+                    try
+                    {
+                        string logoPath = Json.Str(State(), "logo_path");
+                        if (string.IsNullOrWhiteSpace(logoPath) || !File.Exists(logoPath))
+                        {
+                            logoPath = CacheImage(LogoUrl);
+                            if (!string.IsNullOrWhiteSpace(logoPath))
+                            {
+                                lock (gate) State()["logo_path"] = logoPath;
+                                detailsChanged = true;
+                            }
+                        }
+                    }
+                    catch (Exception) { } // branding artwork is optional and never blocks browsing
                     foreach (AddonEntry entry in entries ?? new List<AddonEntry>())
                     {
-                        if (entry == null || string.IsNullOrWhiteSpace(entry.ForgeId)) continue;
-                        Dictionary<string, object> addon = RegistryAddon(entry.ForgeId);
-                        if (addon == null) continue;
-                        Dictionary<string, object> latest = Json.AsDict(Json.Get(addon, "latest"));
-                        string tag = Json.Str(latest, "tag");
-                        Dictionary<string, object> cached = CachedDetails(entry.ForgeId);
-                        DateTime lastRegistrySuccess = ReadUtc("last_success_utc");
-                        DateTime detailsFetched;
-                        bool detailIsFresh = DateTime.TryParse(Json.Str(cached, "fetched_utc"), CultureInfo.InvariantCulture,
-                            DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out detailsFetched) && detailsFetched >= lastRegistrySuccess;
-                        if (cached != null && string.Equals(Json.Str(cached, "tag"), tag, StringComparison.Ordinal) &&
-                            Json.AsList(Json.Get(cached, "versions")) != null && detailIsFresh) continue;
-                        lock (gate) if (detailsBusy.Contains(entry.ForgeId)) continue; else detailsBusy.Add(entry.ForgeId);
-                        try { FetchDetails(entry, addon, latest); detailsChanged = true; }
-                        catch (Exception) { }
-                        finally { lock (gate) detailsBusy.Remove(entry.ForgeId); }
+                        if (entry == null) continue;
+                        var ids = new List<string>();
+                        if (!string.IsNullOrWhiteSpace(entry.ForgeId)) ids.Add(entry.ForgeId);
+                        foreach (string relatedId in entry.ForgeIds ?? new List<string>())
+                            if (!string.IsNullOrWhiteSpace(relatedId) && !ids.Contains(relatedId)) ids.Add(relatedId);
+                        foreach (string id in ids)
+                        {
+                            Dictionary<string, object> addon = RegistryAddon(id);
+                            if (addon == null) continue;
+                            Dictionary<string, object> latest = Json.AsDict(Json.Get(addon, "latest"));
+                            string tag = Json.Str(latest, "tag");
+                            Dictionary<string, object> cached = CachedDetails(id);
+                            DateTime lastRegistrySuccess = ReadUtc("last_success_utc");
+                            DateTime detailsFetched;
+                            bool detailIsFresh = DateTime.TryParse(Json.Str(cached, "fetched_utc"), CultureInfo.InvariantCulture,
+                                DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out detailsFetched) && detailsFetched >= lastRegistrySuccess;
+                            bool artMatchesLatest = string.Equals(Json.Str(cached, "art_tag"), tag, StringComparison.Ordinal) &&
+                                                    SameUrl(Json.Str(cached, "art_asset_url"), Json.Str(latest, "asset_url"));
+                            if (cached != null && string.Equals(Json.Str(cached, "tag"), tag, StringComparison.Ordinal) &&
+                                Json.AsList(Json.Get(cached, "versions")) != null &&
+                                Json.AsList(Json.Get(cached, "image_paths")) != null && artMatchesLatest && detailIsFresh) continue;
+                            lock (gate) if (detailsBusy.Contains(id)) continue; else detailsBusy.Add(id);
+                            try { FetchDetails(new AddonEntry { ForgeId = id, Url = entry.Url }, addon, latest); detailsChanged = true; }
+                            catch (Exception) { }
+                            finally { lock (gate) detailsBusy.Remove(id); }
+                        }
                     }
                     SaveState();
                     if (detailsChanged) RunUi(completed);       // avoids a page-rebuild loop when a cache is already current
@@ -412,22 +481,29 @@ namespace AzerothLauncher
             cached["fetched_utc"] = UtcStamp(DateTime.UtcNow);
             cached["detail"] = detail;
             cached["versions"] = versions;
+            cached["image_paths"] = new List<object>();
             Dictionary<string, object> eligible = null;
             foreach (object value in versions)
             {
                 Dictionary<string, object> version = Json.AsDict(value);
                 if (SameUrl(entry.Url, Json.Str(version, "asset_url"))) { eligible = version; break; }
             }
-            if (eligible == null && SameUrl(entry.Url, Json.Str(latest, "asset_url"))) eligible = latest;
+            // Launcher-hosted mirrors intentionally have a different URL. Artwork is for the
+            // addon identity, so if no exact mirror URL exists, use the API's current release.
+            if (eligible == null) eligible = latest;
             string icon = Json.Str(detail, "icon_url");
-            if (eligible != null && string.Equals(Json.Str(eligible, "trust"), "verified", StringComparison.OrdinalIgnoreCase) &&
-                !string.IsNullOrWhiteSpace(Json.Str(eligible, "sha256")) && !string.IsNullOrWhiteSpace(icon))
+            string eligibleTrust = Json.Str(eligible, "trust");
+            if (eligible != null && !string.IsNullOrWhiteSpace(Json.Str(eligible, "sha256")) &&
+                !string.Equals(eligibleTrust, "blocked", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(eligibleTrust, "source_changed", StringComparison.OrdinalIgnoreCase))
             {
                 cached["art_tag"] = Json.Str(eligible, "tag");
                 cached["art_asset_url"] = Json.Str(eligible, "asset_url");
                 cached["art_sha256"] = Json.Str(eligible, "sha256");
+                var imagePaths = new List<object>();
+                string iconPath = CacheImage(icon);
                 cached["icon_url"] = icon;
-                cached["icon_path"] = CacheImage(icon);
+                cached["icon_path"] = iconPath;
                 List<object> images = Json.AsList(Json.Get(detail, "images")) ?? new List<object>();
                 foreach (object image in images)
                 {
@@ -435,9 +511,16 @@ namespace AzerothLauncher
                     string imageUrl = Json.Str(imageInfo, "url");
                     if (string.IsNullOrWhiteSpace(imageUrl)) continue;
                     string imagePath = CacheImage(imageUrl);
+                    if (!string.IsNullOrEmpty(imagePath) && !imagePaths.Contains(imagePath)) imagePaths.Add(imagePath);
                     if (string.IsNullOrEmpty(Json.Str(cached, "image_path"))) cached["image_path"] = imagePath;
                 }
-                cached["logo_path"] = CacheImage(LogoUrl, true); // refreshed once per scheduled metadata cycle, never per view
+                // Prefer an addon screenshot for the card and gallery's first image. Use its
+                // icon only when SurvivorsForge has no screenshots for that addon.
+                if (imagePaths.Count == 0 && !string.IsNullOrEmpty(iconPath)) imagePaths.Add(iconPath);
+                else if (!string.IsNullOrEmpty(iconPath) && !imagePaths.Contains(iconPath)) imagePaths.Add(iconPath);
+                if (string.IsNullOrWhiteSpace(Json.Str(cached, "image_path"))) cached["image_path"] = iconPath;
+                cached["image_paths"] = imagePaths;
+                cached["logo_path"] = CacheImage(LogoUrl);     // shared provider mark: reuse the cache across addon entries
             }
             lock (gate)
             {
@@ -449,18 +532,29 @@ namespace AzerothLauncher
 
         public static Image LoadCardImage(ForgeAddonInfo info)
         {
-            if (info == null || info.Removed || !string.Equals(info.Trust, "verified", StringComparison.OrdinalIgnoreCase) ||
+            if (info == null || info.Removed ||
                 string.IsNullOrWhiteSpace(info.ImagePath) || !File.Exists(info.ImagePath)) return null;
-            try { using (Image image = Image.FromFile(info.ImagePath)) return (Image)image.Clone(); }
-            catch (Exception) { return null; }             // unsupported codecs fall back without breaking Addons
+            return WebPDecoder.LoadImage(info.ImagePath);
+        }
+
+        public static List<Image> LoadGalleryImages(ForgeAddonInfo info)
+        {
+            var result = new List<Image>();
+            if (info == null || info.Removed) return result;
+            foreach (string path in info.ImagePaths ?? new List<string>())
+            {
+                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) continue;
+                Image image = WebPDecoder.LoadImage(path);
+                if (image != null) result.Add(image);       // unsupported/corrupt artwork never breaks Addons
+            }
+            return result;
         }
 
         public static Image LoadWatermark(ForgeAddonInfo info)
         {
-            if (info == null || !string.Equals(info.Trust, "verified", StringComparison.OrdinalIgnoreCase) ||
+            if (info == null || info.Removed ||
                 string.IsNullOrWhiteSpace(info.LogoPath) || !File.Exists(info.LogoPath)) return null;
-            try { using (Image image = Image.FromFile(info.LogoPath)) return (Image)image.Clone(); }
-            catch (Exception) { return null; }
+            return WebPDecoder.LoadImage(info.LogoPath);
         }
     }
 }

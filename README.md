@@ -17,12 +17,14 @@ These projects deserve a place up front:
 - **[ASBuilder](https://github.com/cadoky/ASBuilder)** by **Cadoky** — the talent and gear build-sharing project behind our work on compatible import/export codes for [ASBuilds](https://asbuilds.app/).
 - **[Azeroth Stats](https://github.com/Maidenquinn/AzerothStats)** by **Maidenhead** — the in-game run and build tracker supporting our work on launcher statistics.
 - **[ASDataSync](https://github.com/KeijinDE/ASDataSync)** by **Keijin** — the original cloud-save sync framework that this launcher's cloud saving is built on, used with his blessing.
-- **[SurvivorsForge](https://forge.rezondes.net/) ([project repository](https://github.com/Rezondes/SurvivorsForge))** — The game owner has approved the launcher’s addon manager. Community members manually review addon code and version releases; SurvivorsForge supplies review status and pictures for addon versions that match its records. The launcher continues to use its own addon catalog and download sources.
+- **[SurvivorsForge](https://forge.rezondes.net/) ([project repository](https://github.com/Rezondes/SurvivorsForge))** — The game owner has approved the launcher’s addon manager. Community members manually review addon code and releases; the launcher records those decisions in its own catalog. SurvivorsForge supplies addon pictures when a matching listing has them. The launcher keeps its own addon catalog and download sources.
 
 ## Inside the launcher
 
 - **Install and play:** guided setup, game downloads, and updates.
 - **Addons:** browse community addons and manage your installed collection.
+  - **Download More** shows available SurvivorsForge pictures and the launcher’s static Verified marks; it does not download addons from SurvivorsForge.
+  - AZSSpellMeter and AZS Max Hit are alternatives; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.
 - **Guide:** beginner help, class guides, items, and links between related topics.
 - **Theorycrafting:** explore talent trees and compare gear and set bonuses.
 - **Display:** resize the window while preserving its proportions, or maximize it in a centered, ratio-fitted size. Adjust interface size under Options > Launcher without changing Windows scaling.

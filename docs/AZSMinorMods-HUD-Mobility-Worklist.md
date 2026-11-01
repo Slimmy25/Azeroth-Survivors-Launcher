@@ -10,14 +10,11 @@ Local package: `dist/AZSMinorMods-LevelUp-Movable-LocalTest.zip`.
 
 ## Six-spell / four-item build rows
 
-**Status: investigation required before changing controls.** The supplied API documents `AZS_SetHudShown("build", shown)` as controlling the spells and jewelry rows together. It does not document separate show/hide controls, the item row's frame name, or item icon/name data. `AZS_SPELLS` describes spell IDs, ranks and cooldowns, but does not define a UI frame or the four item controls.
+**Status: local implementation in progress; not verified in-game.** The six spell squares remain the game's existing `ActionButton1`–`ActionButton6` row, whose spell cooldown data is read from `AZS_SPELLS`. The four-item companion row is populated independently by polling the player's worn equipment slots 11–14 (two rings and two trinkets) and responding to inventory-change events. A bundled catalog generated from `assets/items.txt` supplies display names where an inventory link is unavailable; the actual equipped texture and native inventory tooltip come from the game.
 
-Requirements:
+The item row records each item's first observed equipped order in SavedVariables, so reloading or moving the same item between ring/trinket slots retains its place. On a fresh profile, already-worn items are ordered by the first slot scan (11 through 14); the game/API does not expose when the player originally acquired those items. The rows start attached with a small gap, can be detached from either row's right-click menu, then moved and sized independently. Each row can also be hidden through its own movable-feature controls.
 
-- Keep the six-spell row and four-item row independently movable, sizeable and individually hideable.
-- Keep both separate from the action bar, which remains its own movable element.
-- Preserve the native spell/item interactions and existing game visuals where possible.
-- Identify the native row frames before adding handles. If the game exposes no separate frames, determine whether a faithful replacement can be built from documented data without losing item identity or functionality; do not silently hide both rows or invent game data.
+The provided Aethus API documentation exposes `AZS_SetHudShown("build", shown)` for the native spell and jewelry build rows together, plus `AZS_SPELLS` for spell data. It does not document separate visibility controls or an item-acquisition history. This implementation does not claim to hide/replace the native jewelry row or provide an acquisition timestamp. In-game checks are still needed for the game's inventory texture/link APIs and for avoiding duplication with its own jewelry UI.
 
 ## Buff layout direction
 

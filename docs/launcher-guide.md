@@ -69,6 +69,8 @@ The STATS screenshot uses made-up sample data. The other screenshots show the lo
   - **WoW 1.12 addons** are classic addons converted to work in this game.
   - **My Addons** lists the addon .zip files you keep on your own PC.
 - Addons from Download More are installed only when chosen. First-time setup offers Maidenhead's Azeroth Stats; you can decline it.
+- Addon cards show available SurvivorsForge pictures: hover a listing name for a small preview, or click it for a centered gallery. Missing source artwork remains unavailable rather than being replaced with a made-up addon image.
+- AZSSpellMeter and AZS Max Hit cannot be enabled together. Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive. The launcher switches off an incompatible addon when you enable another one, and resolves conflicts when a saved profile is loaded or Toggle All is used.
 
 ### The Guide
 The launcher separates the **Guide** and **Theorycrafting** destinations:

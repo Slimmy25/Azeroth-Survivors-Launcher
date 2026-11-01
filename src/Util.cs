@@ -773,6 +773,8 @@ namespace AzerothLauncher
     public class AddonEntry
     {
         public string Category, Name, Url, Description, ForgeId;
+        public bool ForgeVerified;                 // one-time review flag recorded with this catalog entry
+        public List<string> ForgeIds = new List<string>();
         public List<string> Folders = new List<string>();    // its folders in the AddOns folder (addons.txt's 4th field)
     }
 
@@ -974,9 +976,23 @@ namespace AzerothLauncher
                         e.Url = found;
                     }
                     int descriptionEnd = f.Length;
-                    if (f.Length > 4 && f[f.Length - 1].Trim().StartsWith("forge-id=", StringComparison.OrdinalIgnoreCase))
+                    // Catalog metadata is kept at the end so descriptions may still contain '|'.
+                    while (descriptionEnd > 4 && f[descriptionEnd - 1].Trim().StartsWith("forge-", StringComparison.OrdinalIgnoreCase))
                     {
-                        e.ForgeId = f[f.Length - 1].Trim().Substring("forge-id=".Length).Trim();
+                        string meta = f[descriptionEnd - 1].Trim();
+                        if (meta.StartsWith("forge-id=", StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach (string id in meta.Substring("forge-id=".Length).Split(','))
+                            {
+                                string cleanId = id.Trim();
+                                if (cleanId.Length == 0 || e.ForgeIds.Contains(cleanId)) continue;
+                                e.ForgeIds.Add(cleanId);
+                            }
+                            if (e.ForgeIds.Count > 0) e.ForgeId = e.ForgeIds[0];
+                        }
+                        else if (meta.StartsWith("forge-verified=", StringComparison.OrdinalIgnoreCase))
+                            e.ForgeVerified = string.Equals(meta.Substring("forge-verified=".Length).Trim(), "true", StringComparison.OrdinalIgnoreCase);
+                        else break;
                         descriptionEnd--;
                     }
                     e.Description = descriptionEnd > 4 ? string.Join("|", f, 4, descriptionEnd - 4).Trim() : "";

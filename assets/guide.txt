@@ -147,7 +147,7 @@ Gamepads are supported. On menus, the D-pad or left stick moves between buttons,
 
 # Nameplates and local time
 Options > Combat > Nameplate Layout changes at once, even during a run. Stacking spreads enemy nameplates apart for readability; Overlapping keeps each plate directly above its enemy.
-A clock beneath the minimap shows your device's local time: 12-hour time in English and 24-hour time in other languages. It moves and hides with the minimap and follows HUD Scale. This is separate from the run timer.
+A clock beneath the minimap shows your device's local time: 12-hour time in English and 24-hour time in other languages. It moves and hides with the minimap and follows HUD Scale. This is separate from the run timer. Hide only this clock with Options > Interface > Show Local Clock; addons can also read or hide it without hiding the minimap or run timer.
 
 # The damage meter
 The meter window has three views: Damage Done (every spell, pet, talent and item, with its share of the run), Healing Done (the health each source gave you, overhealing left out) and Boss Damage (the last boss fight only). Lines in blue are a talent's or amulet's own damage. Its Reset button only clears the window: the run's numbers are kept.
@@ -294,10 +294,10 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Shadow: Shadow Weaving, Shadowy Apparitions, Shadowform
 
 @page Shaman | Chain lightning and totems that fight beside you
-"Storms that jump from foe to foe, and totems that fight beside you."
+"Storms that jump from foe to foe, and an Enhancement path that now fights in melee."
 - Health: 195
 - Starts with: Lightning Bolt
-- Plays best: in the middle distance, dropping totems and letting lightning jump through the horde.
+- Plays best: Elemental and Restoration use ranged spells and totems; Enhancement closes in with Stormstrike and Rockbiter Weapon.
 
 # Spell pool
 - Lightning Bolt (starting spell): strikes the 2 nearest enemies.
@@ -305,17 +305,31 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Earth Shock: a strong strike on the nearest enemy.
 - Flame Shock: fire damage over time on the healthiest enemies.
 - Frost Shock: strikes the 2 nearest enemies and slows them.
+- Stormstrike: Enhancement's Nature melee strike; prioritizes nearby bosses and elites.
+- Rockbiter Weapon: Enhancement's quick melee swing at two enemies. Rockbiter Initiation teaches it and replaces Lightning Bolt for that run; it is not a regular Shaman spell-pool pick.
 - Lightning Shield: for a while, enemies that hit you in melee take damage.
 - Magma Totem: drops a totem beside you that burns every enemy near it.
 - Searing Totem: drops a totem beside you that shoots the nearest enemies.
 - Fire Nova: hits every enemy around you.
 - Healing Wave: a big heal when your health drops.
-- Call of Flame: your totems explode in flame when they expire.
 - You can have at most 30 totems out.
 
 # Talent trees
 - Elemental: Lightning Overload, Elemental Fury, Elemental Mastery
-- Enhancement: Windfury, Maelstrom Weapon, Feral Spirit
+- Enhancement uses a new melee-focused tree; points from the former tree were refunded.
+  - Thundering Strikes: Rockbiter and Stormstrike gain critical chance.
+  - Stormguard: while Lightning Shield is active, you take less damage (up to 15%).
+  - Resonant Shocks: every Shock hits up to 3 additional nearby enemies for 35% damage.
+  - Shattering Elements: your next different Shock within 6 seconds deals extra damage.
+  - Rockbiter Initiation: start each run with Rockbiter Weapon instead of Lightning Bolt.
+  - Windfury Weapon: Rockbiter and Stormstrike can strike twice more.
+  - Flametongue Weapon: Rockbiter can trigger a free, stronger Fire Nova.
+  - Frostbrand Weapon: Stormstrike can trigger a free Frost Shock against up to 3 enemies.
+  - Ancestral Fortitude: repeated Stormstrikes can cast a free Healing Wave at 50% effectiveness.
+  - Flurry: melee critical strikes speed up Rockbiter and Stormstrike cooldown recovery for 4 seconds.
+  - Sweeping Storm: Stormstrike hits additional nearby enemies.
+  - Elemental Sunder: Rockbiter and Stormstrike make targets take 10% more Fire and Nature damage for 4 seconds.
+  - Stormbound Echoes: Enhancement procs can repeat; your damage also heals you, and you start each run with Stormstrike.
 - Restoration: Call of the Elements, Reincarnation, Totemic Wrath
 
 @page Mage | The glass cannon with the biggest area damage

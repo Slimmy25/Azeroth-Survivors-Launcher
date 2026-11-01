@@ -152,6 +152,7 @@ Reincarnation
 Rejuvenation
 Rend
 Renew
+Rockbiter Weapon
 Rupture
 Seal Fate
 Seal of Command
@@ -181,6 +182,7 @@ Splitting Ice
 Starfall
 Starfire
 Stoneform
+Stormstrike
 Summon Water Elemental
 Sweeping Strikes
 Swiftmend
