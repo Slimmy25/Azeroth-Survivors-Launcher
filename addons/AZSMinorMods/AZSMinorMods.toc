@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: AZS Minor Mods
-## Notes: Small changes, each on or off: movable and resizable UI with per-frame scaling, optional vertical XP and buff layouts, empty Action Bar 1 slots, separate XP bar, run clock / next-boss timer, transparent encounter bars and 10-second fading event announcements; chat and boss markers. /azsmods or the minimap button.
+## Notes: Small changes, each on or off: movable and resizable UI with per-frame scaling, screen-edge placement and Shift-click hide/show, optional vertical XP, buff and run-clock layouts, upward/downward buff growth and adjustable layout padding, empty Action Bar 1 slots, separate XP bar, transparent encounter bars and 10-second fading event announcements; chat and boss markers. /azsmods or the minimap button.
 ## Author: Slimjim
 ## SavedVariables: AZSMinorModsDB
 AZSKit.lua

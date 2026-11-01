@@ -5,6 +5,7 @@ A free helper for Azeroth Survivors, the game made by Aethus. Slimjim made it fo
 - ASBuilder by Cadoky: the talent and gear build-sharing project behind our compatible import/export work. https://github.com/cadoky/ASBuilder
 - Azeroth Stats by Maidenhead: the in-game run and build tracker used for the launcher's statistics. https://github.com/Maidenquinn/AzerothStats
 - ASDataSync by Keijin: the original cloud-save sync framework this launcher builds on, used with his blessing. https://github.com/KeijinDE/ASDataSync
+- SurvivorsForge provides addon pictures and community-reviewed, version-specific status for matching releases. The game owner has approved this launcher's addon manager. The launcher keeps its own addon catalog and download sources. https://forge.rezondes.net/ | https://github.com/Rezondes/SurvivorsForge
 
 # What it does
 - First-time setup lets browser players import a save, existing players locate their game, and new players install the game. Existing players skip the game download; new players start it at the final setup step.

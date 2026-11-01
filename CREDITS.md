@@ -30,6 +30,15 @@ Windows client, `AzerothSurvivors.exe`. The game, its code, its data, its patch 
   `assets/AzerothSurvivors.ico`, and the small round picture in the corner of its windows, `assets/portrait.png`) is
   Aethus's work and belongs to Aethus.
 
+## SurvivorsForge
+
+The game owner has approved this launcher's addon manager. Community members manually review addon code and versions;
+SurvivorsForge supplies version-specific review status and addon pictures for releases that exactly match its records.
+The launcher keeps its own addon catalog and download sources.
+
+- [SurvivorsForge website](https://forge.rezondes.net/)
+- [SurvivorsForge project repository](https://github.com/Rezondes/SurvivorsForge)
+
 ## World of Warcraft and Blizzard Entertainment
 
 Azeroth Survivors runs on the World of Warcraft 1.12 interface, and is set in Blizzard's world of Azeroth. World of

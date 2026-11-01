@@ -17,7 +17,7 @@ These projects deserve a place up front:
 - **[ASBuilder](https://github.com/cadoky/ASBuilder)** by **Cadoky** — the talent and gear build-sharing project behind our work on compatible import/export codes for [ASBuilds](https://asbuilds.app/).
 - **[Azeroth Stats](https://github.com/Maidenquinn/AzerothStats)** by **Maidenhead** — the in-game run and build tracker supporting our work on launcher statistics.
 - **[ASDataSync](https://github.com/KeijinDE/ASDataSync)** by **Keijin** — the original cloud-save sync framework that this launcher's cloud saving is built on, used with his blessing.
-- **[SurvivorsForge](https://rezondes.github.io/SurvivorsForge/) and [SurvivorsForge Addon Forge](https://forge.rezondes.net/)** — Slimjim is partnering with this project to source addon picture data only; it will not be used to download addon files. The integration is not implemented yet. API terms and usage rules will be reviewed before code is written.
+- **[SurvivorsForge](https://forge.rezondes.net/) ([project repository](https://github.com/Rezondes/SurvivorsForge))** — The game owner has approved the launcher’s addon manager. Community members manually review addon code and version releases; SurvivorsForge supplies review status and pictures for addon versions that match its records. The launcher continues to use its own addon catalog and download sources.
 
 ## Inside the launcher
 

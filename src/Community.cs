@@ -379,20 +379,15 @@ namespace AzerothLauncher
                 int previewW = Math.Min(Theme.Px(170), Math.Max(Theme.Px(112), PW / 3));
                 int previewH = previewW * 9 / 16;
                 int previewX = PW - previewW - Theme.Px(18);
-                Color previewGold = Theme.Mix(Theme.Gold, Theme.Card, .42);
                 Color previewText = Theme.Mix(Theme.Text, Theme.Card, .42);
-                var previewTitle = UI.Text("WHAT'S NEXT · CLICK TO CHOOSE", 7.5f, FontStyle.Bold,
-                    previewGold, Color.Transparent, previewW);
-                previewTitle.Size = VStack.Measure(previewTitle);
                 var nextTitle = UI.Text(next.Title.Length > 0 ? next.Title : "Next video", 7.5f, FontStyle.Regular,
                     previewText, Color.Transparent, previewW, false);
                 nextTitle.Size = VStack.Measure(nextTitle);
-                int posterTop = previewTitle.Height + Theme.Px(3), titleTop = posterTop + previewH + Theme.Px(3);
+                int posterTop = 0, titleTop = posterTop + previewH + Theme.Px(3);
                 int previewHeight = titleTop + nextTitle.Height + Theme.Px(5);
                 int previewY = PH - previewHeight - Theme.Px(12);
                 var preview = new Bordered(Theme.Mix(Theme.GoldDim, Theme.Card, .45), 1) { BackColor = Color.Transparent,
                     Bounds = new Rectangle(previewX, previewY, previewW + Theme.Px(8), previewHeight), Cursor = Cursors.Hand };
-                previewTitle.Location = new Point(4, 2); preview.Controls.Add(previewTitle);
                 nextTitle.Location = new Point(4, titleTop);
                 preview.Controls.Add(nextTitle);
                 var nextPoster = new VideoPoster(next, new Size(previewW, previewH));
@@ -404,7 +399,7 @@ namespace AzerothLauncher
                     BuildPanel("Community");
                 };
                 preview.Click += delegate { chooseNext(); };
-                previewTitle.Click += delegate { chooseNext(); }; nextTitle.Click += delegate { chooseNext(); };
+                nextTitle.Click += delegate { chooseNext(); };
                 nextPoster.Click += delegate { chooseNext(); };
                 preview.Controls.Add(nextPoster);
                 panel.Controls.Add(preview);

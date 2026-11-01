@@ -1,3 +1,11 @@
+# v3.12 (2026-11-01)
+
+- Added SurvivorsForge addon pictures and version-specific review status for exact catalog matches. Artwork is cached locally and shown only for matching releases marked Verified; the launcher keeps its own download sources.
+- Expanded AZS Minor Mods UI controls with vertical clock and buff layouts, configurable padding, screen-edge placement, optional feature hiding and saved positions across `/reload`.
+- The replacement Level Up button now appears only when an unspent level is available and shows the number waiting to be spent.
+- Removed the extra heading above the home page's next-video preview.
+
+===
 # v3.11 (2026-11-01)
 
 - Added ASBuilder by Cadoky to Download More > Misc, using the creator's latest published addon release.

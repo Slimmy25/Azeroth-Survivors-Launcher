@@ -772,7 +772,7 @@ namespace AzerothLauncher
     // ------------------------------------------------------------------ built-in data
     public class AddonEntry
     {
-        public string Category, Name, Url, Description;
+        public string Category, Name, Url, Description, ForgeId;
         public List<string> Folders = new List<string>();    // its folders in the AddOns folder (addons.txt's 4th field)
     }
 
@@ -973,7 +973,13 @@ namespace AzerothLauncher
                         if (found == null) continue;
                         e.Url = found;
                     }
-                    e.Description = f.Length > 4 ? string.Join("|", f, 4, f.Length - 4).Trim() : "";
+                    int descriptionEnd = f.Length;
+                    if (f.Length > 4 && f[f.Length - 1].Trim().StartsWith("forge-id=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        e.ForgeId = f[f.Length - 1].Trim().Substring("forge-id=".Length).Trim();
+                        descriptionEnd--;
+                    }
+                    e.Description = descriptionEnd > 4 ? string.Join("|", f, 4, descriptionEnd - 4).Trim() : "";
                     if (f.Length > 3)
                         foreach (string t in f[3].Split(','))
                             if (t.Trim().Length > 0) e.Folders.Add(t.Trim());

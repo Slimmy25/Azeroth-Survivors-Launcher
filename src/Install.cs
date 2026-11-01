@@ -436,13 +436,29 @@ namespace AzerothLauncher
         // keepAs: where a copy of the downloaded .zip is kept (Addon Archive, for rollback), or null
         public static List<string> InstallAddonZip(string url, string addonDir, string keepAs)
         {
+            return InstallAddonZip(url, addonDir, keepAs, null);
+        }
+
+        // expectedSha256 is supplied only when an exact SurvivorsForge release-asset match was found.
+        public static List<string> InstallAddonZip(string url, string addonDir, string keepAs, string expectedSha256)
+        {
             Directory.CreateDirectory(addonDir);
             Directory.CreateDirectory(Util.TempDir);
             string tmp = Path.Combine(Util.TempDir, "addon_" + Guid.NewGuid().ToString("N") + ".zip");
             try
             {
-                if (File.Exists(url)) File.Copy(url, tmp, true);      // MY ADDONS: a .zip on this PC
-                else Net.Download(url, tmp, false, "addon", null, null, 0);
+                string actualSha256;
+                if (File.Exists(url))
+                {
+                    File.Copy(url, tmp, true);                        // MY ADDONS: a .zip on this PC
+                    using (var sha = System.Security.Cryptography.SHA256.Create())
+                    using (var input = File.OpenRead(tmp))
+                        actualSha256 = BitConverter.ToString(sha.ComputeHash(input)).Replace("-", "").ToLowerInvariant();
+                }
+                else actualSha256 = Net.Download(url, tmp, false, "addon", null, null, 0);
+                if (!string.IsNullOrWhiteSpace(expectedSha256) &&
+                    !string.Equals(actualSha256, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
+                    throw new UserError("The downloaded addon does not match the SHA-256 published for this exact SurvivorsForge version. Nothing was installed.");
                 if (Kind(tmp) != "zip")
                     throw new UserError("The link did not give a .zip file. It must be a direct download link " +
                                         "(share pages such as LimeWire do not work).");

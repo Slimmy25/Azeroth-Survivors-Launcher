@@ -1986,7 +1986,31 @@ namespace AzerothLauncher
             credits.TextAlign = ContentAlignment.TopRight;
             credits.Size = VStack.Measure(credits);
             Put(credits, PW - 20 - credits.Width, ShowLauncherChangelog ? 8 + (int)(32 * Theme.Zoom) + 6 : 8);
-            var line = Put(UI.Line(Theme.GoldDim, PW - 40, 2), 20, BottomOf(credits) + 4);
+            var forgeLinks = new LinkLabel();
+            forgeLinks.Text = "Addon pictures and review data by SurvivorsForge  ·  website  ·  repository";
+            forgeLinks.Font = Theme.F(9, FontStyle.Regular);
+            forgeLinks.ForeColor = Theme.Credit;
+            forgeLinks.LinkColor = Theme.Gold;
+            forgeLinks.ActiveLinkColor = Theme.Gold;
+            forgeLinks.VisitedLinkColor = Theme.GoldDim;
+            forgeLinks.LinkBehavior = LinkBehavior.HoverUnderline;
+            forgeLinks.BackColor = Theme.Panel;
+            forgeLinks.AutoSize = true;
+            int websiteStart = forgeLinks.Text.IndexOf("SurvivorsForge", StringComparison.Ordinal);
+            forgeLinks.Links.Add(websiteStart, "SurvivorsForge".Length, "https://forge.rezondes.net/");
+            int siteStart = forgeLinks.Text.LastIndexOf("website", StringComparison.Ordinal);
+            forgeLinks.Links.Add(siteStart, "website".Length, "https://forge.rezondes.net/");
+            int repoStart = forgeLinks.Text.IndexOf("repository", StringComparison.Ordinal);
+            forgeLinks.Links.Add(repoStart, "repository".Length, "https://github.com/Rezondes/SurvivorsForge");
+            forgeLinks.LinkClicked += delegate(object sender, LinkLabelLinkClickedEventArgs e)
+            {
+                string target = e.Link.LinkData as string;
+                if (!string.IsNullOrEmpty(target)) Util.OpenInShell(target);
+            };
+            forgeLinks.Size = TextRenderer.MeasureText(forgeLinks.Text, forgeLinks.Font, new Size(PW - 40, 200),
+                TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
+            Put(forgeLinks, PW - 20 - forgeLinks.Width, BottomOf(credits) + 1);
+            var line = Put(UI.Line(Theme.GoldDim, PW - 40, 2), 20, BottomOf(forgeLinks) + 4);
             var box = UI.Log(Theme.Panel, 11);
             box.Bounds = new Rectangle(20, BottomOf(line) + 10, PW - 34, PH - BottomOf(line) - 18);
             Put(box, box.Left, box.Top);
@@ -2395,6 +2419,44 @@ namespace AzerothLauncher
                 sp.Controls.Add(open);
                 y0 = Math.Max(hint.Bottom, open.Bottom) + 8;
             }
+            string forgeCopy = "Addons are all Verified by the mod team to be safe, secure, and generally useful.\n" +
+                "Partnership with SurvivorsForge to get addon pictures, as well as using their expertise to doublecheck that the addons that we all use are safe. " +
+                "There is plenty of more addons on his website that even I don't feature, please check them out at the hyperlink above.";
+            var trust = new LinkLabel();
+            trust.Text = forgeCopy;
+            trust.Font = Theme.F(9, FontStyle.Regular);
+            trust.ForeColor = Theme.Text;
+            trust.LinkColor = Theme.Gold;
+            trust.ActiveLinkColor = Theme.Gold;
+            trust.VisitedLinkColor = Theme.GoldDim;
+            trust.LinkBehavior = LinkBehavior.HoverUnderline;
+            trust.BackColor = listbg;
+            trust.AutoSize = false;
+            trust.TextAlign = ContentAlignment.TopLeft;
+            trust.Size = new Size(Math.Max(80, sp.ClientSize.Width - 20),
+                TextRenderer.MeasureText(forgeCopy, trust.Font, new Size(Math.Max(80, sp.ClientSize.Width - 20), 1000),
+                    TextFormatFlags.WordBreak | TextFormatFlags.NoPadding).Height + 4);
+            int sfStart = forgeCopy.IndexOf("SurvivorsForge", StringComparison.Ordinal);
+            if (sfStart >= 0) trust.Links.Add(sfStart, "SurvivorsForge".Length, "https://rezondes.github.io/SurvivorsForge/");
+            trust.LinkClicked += delegate(object sender, LinkLabelLinkClickedEventArgs e)
+            {
+                string target = e.Link.LinkData as string;
+                if (!string.IsNullOrEmpty(target)) Util.OpenInShell(target);
+            };
+            trust.Location = new Point(10, y0 + 4);
+            sp.Controls.Add(trust);
+            int ruleY = trust.Bottom + 7;
+            var rule = UI.Line(Theme.Bad, Math.Max(40, sp.ClientSize.Width - 20), 2);
+            rule.Location = new Point(10, ruleY);
+            sp.Controls.Add(rule);
+            y0 = rule.Bottom + 9;
+
+            // Pull provider details only while a download category is open; the seven-day cache prevents view changes
+            // from becoming extra API refreshes. Rebuild after the bounded fetch so eligible artwork can appear.
+            SurvivorsForge.PrepareDownloadPage(items, delegate
+            {
+                if (!IsDisposed && current == "Addons" && addonMode == "download") BuildPanel("Addons");
+            });
             if (items.Count == 0)
             {
                 var l = UI.Text("No downloadable addons listed yet.",
@@ -2429,6 +2491,7 @@ namespace AzerothLauncher
                 card.Controls.Add(inner);
                 bool haveIt = AddonFoldersOf(it.Name).Count > 0;
                 bool update = haveIt && AddonHasUpdate(it);
+                ForgeAddonInfo forge = SurvivorsForge.GetInfo(it);
                 var btn = update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
@@ -2440,6 +2503,38 @@ namespace AzerothLauncher
                 name.Location = new Point(7, ty);
                 inner.Controls.Add(name);
                 ty += name.Height + 1;
+                string trustText = SurvivorsForge.TrustLabel(forge);
+                if (!string.IsNullOrEmpty(trustText))
+                {
+                    var badge = UI.Text(trustText, 7.5f, FontStyle.Italic,
+                        string.Equals(forge.Trust, "verified", StringComparison.OrdinalIgnoreCase) ? Theme.Good : Theme.GoldDim,
+                        listbg, textW, false);
+                    badge.Size = VStack.Measure(badge);
+                    badge.Location = new Point(7, ty);
+                    inner.Controls.Add(badge);
+                    ty += badge.Height + 2;
+                }
+                Image cardImage = SurvivorsForge.LoadCardImage(forge);
+                if (cardImage != null)
+                {
+                    var shot = new PictureBox();
+                    Image watermark = SurvivorsForge.LoadWatermark(forge);
+                    shot.Image = cardImage;
+                    shot.SizeMode = PictureBoxSizeMode.Zoom;
+                    shot.BackColor = listbg;
+                    shot.Bounds = new Rectangle(7, ty, Math.Max(30, textW), 52);
+                    shot.Paint += delegate(object sender, PaintEventArgs e)
+                    {
+                        if (watermark != null)
+                        {
+                            int mw = Math.Min(22, shot.Width / 4), mh = (int)(watermark.Height * (mw / (float)Math.Max(1, watermark.Width)));
+                            e.Graphics.DrawImage(watermark, shot.Width - mw - 3, 3, mw, mh);
+                        }
+                    };
+                    shot.Disposed += delegate { try { if (watermark != null) watermark.Dispose(); } catch (Exception) { } };
+                    inner.Controls.Add(shot);
+                    ty += shot.Height + 3;
+                }
                 if (it.Description.Length > 0)
                 {
                     // a short line on the block; the whole description when the pointer rests on it
@@ -2506,6 +2601,24 @@ namespace AzerothLauncher
         void DownloadAddon(string name, string url, Action after = null, bool quiet = false)
         {
             if (AddonsLocked()) return;
+            string expectedForgeSha = null;
+            bool askForge = false;
+            AddonEntry forgeEntry = null;
+            foreach (AddonEntry candidate in Data.Addons)
+                if (string.Equals(candidate.Name, name, StringComparison.Ordinal) && string.Equals(candidate.Url, url, StringComparison.Ordinal) &&
+                    !string.IsNullOrWhiteSpace(candidate.ForgeId)) { forgeEntry = candidate; break; }
+            if (forgeEntry != null)
+            {
+                string forgeError;
+                if (!SurvivorsForge.CanInstall(forgeEntry, out expectedForgeSha, out askForge, out forgeError))
+                {
+                    Msg.Show(this, forgeError, "Addon version", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (askForge && !quiet && Msg.Show(this,
+                    "SurvivorsForge has not marked this exact addon version Verified. Do you still want to install it?",
+                    "Addon version", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+            }
             if (addonDlBusy)
             {
                 SetStatus("Another addon is still downloading.");
@@ -2524,7 +2637,7 @@ namespace AzerothLauncher
                     if (builtin != null) { BuiltinAddons.Install(dir, builtin); names = new List<string> { builtin.Folder }; }
                     else
                     {
-                        names = Archive.InstallAddonZip(url, dir, Net.IsWebAddress(url) ? AddonArchive.NewPath(name) : null);
+                        names = Archive.InstallAddonZip(url, dir, Net.IsWebAddress(url) ? AddonArchive.NewPath(name) : null, expectedForgeSha);
                         AddonArchive.Tidy(name);              // kept for ROLLBACK (Addons › Advanced)
                     }
                 }

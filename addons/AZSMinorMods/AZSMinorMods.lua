@@ -79,7 +79,11 @@ local function DB()
 	if ( type(d.places) ~= "table" ) then d.places = {}; end
 	if ( type(d.sizes) ~= "table" ) then d.sizes = {}; end
 	if ( type(d.scales) ~= "table" ) then d.scales = {}; end
+	if ( type(d.muted) ~= "table" ) then d.muted = {}; end
+	if ( type(d.padding) ~= "table" ) then d.padding = {}; end
 	if ( type(d.orientations) ~= "table" ) then d.orientations = {}; end
+	if ( d.buffGrowthDirection ~= "up" and d.buffGrowthDirection ~= "down" ) then d.buffGrowthDirection = "down"; end
+	if ( d.buffCustomLayout == nil ) then d.buffCustomLayout = d.orientations.BuffFrame == "vertical"; end
 	if ( type(d.sizeMenuPosition) ~= "table" ) then d.sizeMenuPosition = {}; end
 	if ( d.tallyVertical == nil ) then d.tallyVertical = false; end
 	if ( d.showEmptyActionSlots == nil ) then d.showEmptyActionSlots = false; end
@@ -381,7 +385,13 @@ local MOVABLE = { { "PlayerFrame", "Player" }, { "TargetFrame", "Target" }, { "P
                   { "AZSMinorModsTallyFrame", "Kills / Gold / Cache" }, { "GameTooltip", "Tooltip" } };
 local handles = {};
 local baseSizes = {};
-local sizeMenu, sizeMenuText, sizeMenuWidth, sizeMenuHeight, sizeMenuScale;
+local mutedBaseAlphas = {};
+local mutedBaseMouse = {};
+-- Forward declarations are required because placement and the update ticker are
+-- defined before the implementations later in this file.
+local VisualInsets;
+local ApplyFeatureMute;
+local sizeMenu, sizeMenuText, sizeMenuWidth, sizeMenuHeight, sizeMenuScale, sizeMenuPadding;
 local sizeTarget;
 local lockPanel;
 local xpBarDetached = false;
@@ -585,9 +595,8 @@ local function UpdateLevelButton()
 	local level = type(UnitLevel) == "function" and UnitLevel("player") or nil;
 	levelButton.level:SetText("LEVEL " .. (level and tostring(level) or ""));
 	levelButton.count:SetText(count > 0 and tostring(count) or "");
-	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
-	local runActive = phase == "ready" or phase == "playing" or phase == "choosing" or phase == "paused";
-	if ( count > 0 or DB().unlocked or runActive ) then levelButton:Show(); else levelButton:Hide(); end
+	-- The game's stored-level count is the availability signal. Do not preview this button before a point is spendable.
+	if ( count > 0 ) then levelButton:Show(); else levelButton:Hide(); end
 end
 
 local function CreateLevelButton()
@@ -639,6 +648,46 @@ local function ClockText(seconds)
 	return string.format("%02d:%02d", math.floor(seconds / 60), math.mod(seconds, 60));
 end
 
+local function FramePaddingLimit(name)
+	if ( name == "AZSMinorModsClockFrame" ) then return 6; end
+	if ( name == "AZSMinorModsBossFrames" ) then return 8; end
+	if ( name == "AZSMinorModsTallyFrame" ) then return 8; end
+	if ( name == "AZSMinorModsAnnouncementFrame" ) then return 20; end
+	if ( name == "BuffFrame" ) then return 16; end
+	return 0;
+end
+
+local function FramePadding(name)
+	local value = DB().padding[name];
+	return type(value) == "number" and math.max(0, math.min(FramePaddingLimit(name), value)) or 0;
+end
+
+local function ApplyClockLayout()
+	if ( not clockFrame or not clockFrame.time or not clockFrame.next ) then return; end
+	local orientation = DB().orientations.AZSMinorModsClockFrame;
+	if ( orientation ~= "horizontal" ) then orientation = "vertical"; end
+	local padding = FramePadding("AZSMinorModsClockFrame");
+	if ( orientation == "vertical" ) then
+		clockFrame.time:ClearAllPoints();
+		clockFrame.time:SetPoint("TOP", clockFrame, "TOP", 0, -padding);
+		clockFrame.time:SetWidth(math.max(100, clockFrame:GetWidth() - (padding * 2)));
+		clockFrame.time:SetJustifyH("CENTER");
+		clockFrame.next:ClearAllPoints();
+		clockFrame.next:SetPoint("TOP", clockFrame.time, "BOTTOM", 0, -(2 + padding));
+		clockFrame.next:SetWidth(math.max(100, clockFrame:GetWidth() - (padding * 2)));
+		clockFrame.next:SetJustifyH("CENTER");
+	else
+		clockFrame.time:ClearAllPoints();
+		clockFrame.time:SetPoint("LEFT", clockFrame, "LEFT", 4 + padding, 0);
+		clockFrame.time:SetWidth(math.max(60, (clockFrame:GetWidth() - (padding * 2)) * 0.34));
+		clockFrame.time:SetJustifyH("RIGHT");
+		clockFrame.next:ClearAllPoints();
+		clockFrame.next:SetPoint("LEFT", clockFrame.time, "RIGHT", 8 + padding, 0);
+		clockFrame.next:SetPoint("RIGHT", clockFrame, "RIGHT", -(4 + padding), 0);
+		clockFrame.next:SetJustifyH("LEFT");
+	end
+end
+
 local function CreateClockFrame()
 	clockFrame = CreateFrame("Frame", "AZSMinorModsClockFrame", UIParent);
 	clockFrame:SetWidth(220);
@@ -657,6 +706,7 @@ local function CreateClockFrame()
 	clockFrame.next:SetJustifyH("CENTER");
 	clockFrame.next:SetTextColor(0.74, 0.72, 0.66);
 	-- Both lines share one parent and one movement handle; they cannot be separated while repositioning.
+	ApplyClockLayout();
 	local savedOriginal = DB().clockNativeOriginal;
 	if ( savedOriginal ~= nil ) then
 		clockNativeWasShown = savedOriginal and true or false;
@@ -734,19 +784,15 @@ local function ClampAbsoluteFrame(name, f)
 	if ( not f or DB().unlocked ) then return; end
 	local saved = DB().places[name];
 	if ( type(saved) == "table" and saved.relative ) then return; end
-	local uiScale = UIParent:GetEffectiveScale() or 1;
-	local frameScale = f:GetEffectiveScale() or uiScale;
-	local factor = frameScale / uiScale;
-	local width = (f:GetWidth() or 0) * factor;
-	local height = (f:GetHeight() or 0) * factor;
-	local maxX = math.max(0, UIParent:GetWidth() - width);
-	local maxY = math.max(0, UIParent:GetHeight() - height);
+	local minX, minY, maxOffsetX, maxOffsetY = VisualInsets(f);
+	local maxX = UIParent:GetWidth() - maxOffsetX;
+	local maxY = UIParent:GetHeight() - maxOffsetY;
 	local x, y = f:GetLeft(), f:GetBottom();
 	if ( x == nil and type(saved) == "table" ) then x = saved.x; end
 	if ( y == nil and type(saved) == "table" ) then y = saved.y; end
 	if ( type(x) ~= "number" or type(y) ~= "number" ) then return; end
-	local nx = math.max(0, math.min(maxX, x));
-	local ny = math.max(0, math.min(maxY, y));
+	local nx = math.max(-minX, math.min(maxX, x));
+	local ny = math.max(-minY, math.min(maxY, y));
 	if ( nx ~= x or ny ~= y ) then
 		f:ClearAllPoints();
 		f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", nx, ny);
@@ -788,50 +834,52 @@ local function UpdateEncounterRows(list)
 	local count = table.getn(list);
 	if ( count == 0 ) then return 0; end
 	local vertical = EncounterVertical();
-	local gap = vertical and 10 or 8;
+	local padding = FramePadding("AZSMinorModsBossFrames");
+	local gap = (vertical and 10 or 8) + padding;
 	local configured = DB().sizes.AZSMinorModsBossFrames;
 	local defaultCardWidth = vertical and 34 or 184;
 	local minCardWidth = vertical and 34 or 120;
-	local minimumFrameWidth = count * (vertical and 18 or minCardWidth) + ((count - 1) * gap);
-	local frameWidth = type(configured) == "table" and configured.w or (count * defaultCardWidth + ((count - 1) * gap));
+	local minimumFrameWidth = count * (vertical and 18 or minCardWidth) + ((count - 1) * gap) + (padding * 2);
+	local frameWidth = type(configured) == "table" and configured.w or (count * defaultCardWidth + ((count - 1) * gap) + (padding * 2));
 	frameWidth = math.max(minimumFrameWidth, frameWidth);
-	local cardWidth = vertical and defaultCardWidth or math.max(minCardWidth, (frameWidth - ((count - 1) * gap)) / count);
-	if ( vertical ) then cardWidth = math.max(18, (frameWidth - ((count - 1) * gap)) / count); end
-	frameWidth = count * cardWidth + ((count - 1) * gap);
+	local cardWidth = math.max(vertical and 18 or minCardWidth, (frameWidth - (padding * 2) - ((count - 1) * gap)) / count);
+	frameWidth = count * cardWidth + ((count - 1) * gap) + (padding * 2);
 	local frameHeight = type(configured) == "table" and configured.h or (vertical and 184 or 40);
-	frameHeight = math.max(vertical and 60 or 36, frameHeight);
+	local minimumHeight = vertical and math.max(60, 52 + (padding * 3)) or math.max(36, 36 + (padding * 4));
+	frameHeight = math.max(minimumHeight, frameHeight);
 	bossFrame:SetWidth(frameWidth);
 	bossFrame:SetHeight(frameHeight);
+	local rowHeight = math.max(vertical and 50 or 28, frameHeight - (padding * 2));
 	for i = 1, table.getn(list) do
 		local unit = list[i];
 		local row = EncounterRow(i);
 		row:SetWidth(cardWidth);
-		row:SetHeight(frameHeight);
+		row:SetHeight(rowHeight);
 		row.name:ClearAllPoints();
 		row.bar:ClearAllPoints();
 		row:ClearAllPoints();
-		row:SetPoint("TOPLEFT", bossFrame, "TOPLEFT", (i - 1) * (cardWidth + gap), 0);
+		row:SetPoint("TOPLEFT", bossFrame, "TOPLEFT", padding + ((i - 1) * (cardWidth + gap)), -padding);
 		row.name:SetText(unit.name);
 		if ( vertical ) then
 			SetEncounterFont(row.name, 8.5);
-			local barTopOffset = 34;
+			local barTopOffset = 34 + padding;
 			-- Match the narrow, evenly spaced columns in the reference. Each boss name stays above its own bar.
 			row.name:SetWidth(cardWidth);
 			row.name:SetHeight(30);
-			row.name:SetPoint("TOP", row, "TOP", 0, -2);
+			row.name:SetPoint("TOP", row, "TOP", 0, -(2 + padding));
 			if ( row.bar.SetOrientation ) then pcall(row.bar.SetOrientation, row.bar, "VERTICAL"); end
-			row.bar:SetWidth(cardWidth);
-			row.bar:SetHeight(math.max(24, frameHeight - barTopOffset));
+			row.bar:SetWidth(math.max(10, cardWidth - (padding * 2)));
+			row.bar:SetHeight(math.max(18, rowHeight - barTopOffset - padding));
 			row.bar:SetPoint("TOP", row, "TOP", 0, -barTopOffset);
 		else
 			SetEncounterFont(row.name, 10);
-			row.name:SetWidth(cardWidth - 8);
+			row.name:SetWidth(cardWidth - 8 - (padding * 2));
 			row.name:SetHeight(22);
-			row.name:SetPoint("TOPLEFT", row, "TOPLEFT", 4, -2);
+			row.name:SetPoint("TOPLEFT", row, "TOPLEFT", 4 + padding, -(2 + padding));
 			if ( row.bar.SetOrientation ) then pcall(row.bar.SetOrientation, row.bar, "HORIZONTAL"); end
-			row.bar:SetWidth(math.max(36, cardWidth - 8));
-			row.bar:SetHeight(math.min(8, math.max(5, frameHeight - 30)));
-			row.bar:SetPoint("TOPLEFT", row, "TOPLEFT", 4, -28);
+			row.bar:SetWidth(math.max(20, cardWidth - 8 - (padding * 2)));
+			row.bar:SetHeight(math.min(8, math.max(5, rowHeight - 30 - padding)));
+			row.bar:SetPoint("TOPLEFT", row, "TOPLEFT", 4 + padding, -(28 + padding));
 		end
 		-- Keep the StatusBar range small and stable. Raw boss HP can be very large, and using it as
 		-- the range can hide small health changes at the UI's numeric precision; show the live fraction.
@@ -893,7 +941,9 @@ local function UpdateBossFrames()
 	if ( not bossFrame ) then return; end
 	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
 	local live = phase == "playing" or phase == "choosing" or phase == "paused";
-	if ( bossNativeWasShown == true and live ) then
+	-- The replacement is driven by the documented AZS_UNITS data, independently of whether the
+	-- player had the native boss frames enabled. Visibility of the original HUD must not gate ours.
+	if ( live ) then
 		local list = EncounterList();
 		local height = UpdateEncounterRows(list);
 		if ( height > 0 ) then
@@ -1058,6 +1108,10 @@ tallyTicker:SetScript("OnUpdate", function()
 			if ( DB().unlocked and GameTooltip and GameTooltip:IsShown() ) then tooltipHandle:Show();
 			else tooltipHandle:Hide(); end
 		end
+		for i = 1, table.getn(MOVABLE) do
+			local name = MOVABLE[i][1];
+			if ( DB().muted[name] ) then pcall(ApplyFeatureMute, name); end
+		end
 	end
 end);
 
@@ -1073,6 +1127,7 @@ local function ApplySize(name, f)
 		f:SetWidth(s.w);
 		f:SetHeight(s.h);
 	end
+	if ( name == "AZSMinorModsClockFrame" ) then ApplyClockLayout(); end
 	local scale = DB().scales[name];
 	local value = type(scale) == "number" and scale or 1;
 	if ( name == "PartyMemberFrame1" ) then
@@ -1080,11 +1135,139 @@ local function ApplySize(name, f)
 	elseif ( f.SetScale ) then f:SetScale(value); end
 end
 
+-- Include visible child frames in edge clamping. Some Blizzard bars draw their buttons a few
+-- logical pixels outside the parent frame, so clamping only the parent's rectangle leaves a gap.
+VisualInsets = function(frame)
+	local baseLeft, baseBottom = frame:GetLeft(), frame:GetBottom();
+	if ( not baseLeft or not baseBottom ) then return 0, 0, 0, 0; end
+	local uiScale = UIParent:GetEffectiveScale() or 1;
+	local frameScale = frame:GetEffectiveScale() or uiScale;
+	local factor = frameScale / uiScale;
+	if ( frame == MainMenuBar or frame == PartyMemberFrame1 ) then
+		-- These Blizzard groups have unused parent padding or detached siblings. Clamp their
+		-- actual visible controls as a group so scale cannot leave a gap or clip a companion.
+		local minX, minY, maxX, maxY;
+		local function Include(child)
+			if ( not child or (child.IsShown and not child:IsShown()) ) then return; end
+			local left, right, bottom, top = child:GetLeft(), child:GetRight(), child:GetBottom(), child:GetTop();
+			if ( left and right and bottom and top ) then
+				local l, r, b, t = left - baseLeft, right - baseLeft, bottom - baseBottom, top - baseBottom;
+				minX = minX and math.min(minX, l) or l; maxX = maxX and math.max(maxX, r) or r;
+				minY = minY and math.min(minY, b) or b; maxY = maxY and math.max(maxY, t) or t;
+			end
+		end
+		if ( frame == MainMenuBar ) then
+			for i = 1, 6 do Include(getglobal("ActionButton" .. i)); end
+			Include(ActionBarUpButton); Include(ActionBarDownButton);
+		else
+			for i = 1, 4 do Include(getglobal("PartyMemberFrame" .. i)); end
+		end
+		if ( minX and minY and maxX and maxY ) then return minX, minY, maxX, maxY; end
+	end
+	local minX, minY = 0, 0;
+	local maxX = (frame:GetWidth() or 0) * factor;
+	local maxY = (frame:GetHeight() or 0) * factor;
+	local function IncludeDescendants(parent, seen)
+		if ( not parent or seen[parent] or not parent.GetChildren ) then return; end
+		seen[parent] = true;
+		local ok, children = pcall(function() return { parent:GetChildren() }; end);
+		if ( not ok or type(children) ~= "table" ) then return; end
+		for i = 1, table.getn(children) do
+			local child = children[i];
+			if ( child and (not child.IsShown or child:IsShown()) ) then
+				local got, left, right, bottom, top = pcall(function()
+					return child:GetLeft(), child:GetRight(), child:GetBottom(), child:GetTop();
+				end);
+				if ( got and left and right and bottom and top ) then
+					minX = math.min(minX, left - baseLeft);
+					maxX = math.max(maxX, right - baseLeft);
+					minY = math.min(minY, bottom - baseBottom);
+					maxY = math.max(maxY, top - baseBottom);
+				end
+				IncludeDescendants(child, seen);
+			end
+		end
+	end
+	IncludeDescendants(frame, {});
+	return minX, minY, maxX, maxY;
+end;
+
+local function CollectFeatureFrames(frame, list, seen, depth)
+	if ( not frame or seen[frame] or depth > 4 ) then return; end
+	seen[frame] = true;
+	table.insert(list, frame);
+	if ( not frame.GetChildren ) then return; end
+	local ok, children = pcall(function() return { frame:GetChildren() }; end);
+	if ( not ok or type(children) ~= "table" ) then return; end
+	for i = 1, table.getn(children) do CollectFeatureFrames(children[i], list, seen, depth + 1); end
+end
+
+ApplyFeatureMute = function(name)
+	local frame = getglobal(name);
+	if ( not frame ) then return; end
+	local list, seen = {}, {};
+	CollectFeatureFrames(frame, list, seen, 0);
+	if ( name == "PartyMemberFrame1" ) then
+		for i = 2, 4 do CollectFeatureFrames(getglobal("PartyMemberFrame" .. i), list, seen, 0); end
+	elseif ( name == "ChatFrame1" ) then
+		CollectFeatureFrames(getglobal("ChatFrame1Tab"), list, seen, 0);
+		CollectFeatureFrames(getglobal("ChatFrame1EditBox"), list, seen, 0);
+	end
+	local muted = DB().muted[name] and true or false;
+	for i = 1, table.getn(list) do
+		local target = list[i];
+		if ( target and target.GetAlpha and target.SetAlpha ) then
+			if ( muted ) then
+				if ( mutedBaseAlphas[target] == nil ) then
+					local ok, alpha = pcall(target.GetAlpha, target);
+					mutedBaseAlphas[target] = ok and alpha or 1;
+				end
+				if ( mutedBaseMouse[target] == nil and target.IsMouseEnabled ) then
+					local ok, enabled = pcall(target.IsMouseEnabled, target);
+					if ( ok ) then mutedBaseMouse[target] = enabled and true or false; end
+				end
+				pcall(target.SetAlpha, target, 0);
+				if ( target.EnableMouse and mutedBaseMouse[target] ~= nil ) then pcall(target.EnableMouse, target, false); end
+			else
+				local alpha = mutedBaseAlphas[target];
+				if ( alpha ~= nil ) then pcall(target.SetAlpha, target, alpha); mutedBaseAlphas[target] = nil; end
+				local enabled = mutedBaseMouse[target];
+				if ( enabled ~= nil and target.EnableMouse ) then pcall(target.EnableMouse, target, enabled); mutedBaseMouse[target] = nil; end
+			end
+		end
+	end
+	local handle = handles[name];
+	if ( handle ) then
+		if ( muted ) then
+			handle:SetBackdropColor(0.22, 0.22, 0.24, 0.58);
+			handle:SetBackdropBorderColor(0.6, 0.6, 0.62, 0.85);
+			if ( handle.text and name ~= "GameTooltip" ) then handle.text:SetTextColor(0.72, 0.72, 0.74); end
+		else
+			handle:SetBackdropColor(0.1, 0.6, 0.1, 0.45);
+			handle:SetBackdropBorderColor(0.3, 1, 0.3, 0.9);
+			if ( handle.text and name ~= "GameTooltip" ) then handle.text:SetTextColor(1, 1, 1); end
+		end
+	end
+end;
+
+local function ToggleFeatureMute(name)
+	DB().muted[name] = not DB().muted[name];
+	ApplyFeatureMute(name);
+	if ( sizeMenu and sizeMenu.muteButton ) then
+		sizeMenu.muteButton:SetText(DB().muted[name] and "Show feature" or "Hide feature");
+	end
+end
+
 local function CurrentOrientation(name)
 	local orientation = DB().orientations[name];
 	if ( orientation == "vertical" or orientation == "horizontal" ) then return orientation; end
+	if ( name == "AZSMinorModsClockFrame" ) then return "vertical"; end
 	if ( name == "PartyMemberFrame1" ) then return "vertical"; end
 	return "horizontal";
+end
+
+local function BuffGrowthDirection()
+	return DB().buffGrowthDirection == "up" and "up" or "down";
 end
 
 local function ApplyBuffOrientation()
@@ -1111,15 +1294,7 @@ local function ApplyBuffOrientation()
 	end
 	if ( not iconW or not iconH or table.getn(visible) == 0 ) then return; end
 	buffLayoutApplying = true;
-	if ( orientation == "vertical" ) then
-		for i = 1, table.getn(visible) do
-			local button = visible[i];
-			button:ClearAllPoints();
-			button:SetPoint("TOPLEFT", BuffFrame, "TOPLEFT", 0, -((i - 1) * (iconH + 4)));
-		end
-		BuffFrame:SetWidth(iconW);
-		BuffFrame:SetHeight(table.getn(visible) * (iconH + 4) - 4);
-	else
+	if ( orientation == "horizontal" and not DB().buffCustomLayout ) then
 		for i = 1, limit do
 			local button = getglobal("BuffButton" .. i);
 			local points = buffButtonOriginalPoints[i];
@@ -1133,6 +1308,47 @@ local function ApplyBuffOrientation()
 		end
 		local base = baseSizes.BuffFrame;
 		if ( base ) then BuffFrame:SetWidth(base.w); BuffFrame:SetHeight(base.h); end
+		buffLayoutApplying = false;
+		return;
+	end
+	local gap, count = 4 + FramePadding("BuffFrame"), table.getn(visible);
+	local customSize = DB().sizes.BuffFrame;
+	local columns, rows;
+	if ( orientation == "vertical" ) then
+		local maxRows = count;
+		if ( type(customSize) == "table" and customSize.h and customSize.h > 0 ) then
+			maxRows = math.max(1, math.floor((customSize.h + gap) / (iconH + gap)));
+		end
+		rows = math.min(count, maxRows);
+		columns = math.ceil(count / rows);
+	else
+		local base = baseSizes.BuffFrame;
+		local maxWidth = type(customSize) == "table" and customSize.w or (base and base.w) or (iconW * 10);
+		columns = math.max(1, math.min(count, math.floor((maxWidth + gap) / (iconW + gap))));
+		rows = math.ceil(count / columns);
+	end
+	local direction = BuffGrowthDirection();
+	local verticalOffset = direction == "up" and 1 or -1;
+	for i = 1, count do
+		local column, row;
+		if ( orientation == "vertical" ) then
+			column = math.floor((i - 1) / rows);
+			row = math.mod(i - 1, rows);
+		else
+			column = math.mod(i - 1, columns);
+			row = math.floor((i - 1) / columns);
+		end
+		local button = visible[i];
+		button:ClearAllPoints();
+		-- Keep the first icon at the anchor. New rows/vertical icons extend in the selected direction.
+		button:SetPoint("BOTTOMLEFT", BuffFrame, "BOTTOMLEFT", column * (iconW + gap), verticalOffset * row * (iconH + gap));
+	end
+	if ( type(customSize) == "table" and customSize.w and customSize.h ) then
+		BuffFrame:SetWidth(customSize.w);
+		BuffFrame:SetHeight(customSize.h);
+	else
+		BuffFrame:SetWidth(columns * (iconW + gap) - gap);
+		BuffFrame:SetHeight(rows * (iconH + gap) - gap);
 	end
 	buffLayoutApplying = false;
 end
@@ -1248,6 +1464,8 @@ local function Place(name, ignoreAnchor)
 	local w, h = f:GetWidth(), f:GetHeight();
 	if ( w and h and w > 0 and h > 0 and not baseSizes[name] ) then baseSizes[name] = { w = w, h = h }; end
 	ApplySize(name, f);
+	-- Our edge clamp uses visible child bounds; let it place an inset parent slightly outside the screen.
+	if ( f.SetClampedToScreen ) then f:SetClampedToScreen(false); end
 	if ( (name == "BuffFrame" or name == "MainMenuBar") and f.SetUserPlaced ) then f:SetUserPlaced(true); end
 	if ( type(p) ~= "table" ) then return; end
 	local relative = not ignoreAnchor and p.relative and getglobal(p.relative) or nil;
@@ -1257,13 +1475,11 @@ local function Place(name, ignoreAnchor)
 	elseif ( p.x and p.y ) then
 		-- Saved coordinates can come from a taller or wider display. Clamp absolute restores to this UIParent
 		-- without rewriting the saved location, so a later return to the larger display restores the user's layout.
-		local uiScale = UIParent:GetEffectiveScale() or 1;
-		local frameScale = f:GetEffectiveScale() or uiScale;
-		local factor = frameScale / uiScale;
-		local maxX = math.max(0, UIParent:GetWidth() - ((f:GetWidth() or 0) * factor));
-		local maxY = math.max(0, UIParent:GetHeight() - ((f:GetHeight() or 0) * factor));
-		local x = math.max(0, math.min(maxX, K.Num(p.x)));
-		local y = math.max(0, math.min(maxY, K.Num(p.y)));
+		local minX, minY, maxOffsetX, maxOffsetY = VisualInsets(f);
+		local maxX = UIParent:GetWidth() - maxOffsetX;
+		local maxY = UIParent:GetHeight() - maxOffsetY;
+		local x = math.max(-minX, math.min(maxX, K.Num(p.x)));
+		local y = math.max(-minY, math.min(maxY, K.Num(p.y)));
 		f:ClearAllPoints();
 		f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
 	end
@@ -1280,6 +1496,7 @@ end
 local function ApplyTallyLayout(resetSize)
 	if ( not tallyFrame ) then return; end
 	local vertical = DB().tallyVertical and true or false;
+	local padding = FramePadding("AZSMinorModsTallyFrame");
 	if ( resetSize ) then
 		local w, h = vertical and 104 or 252, vertical and 54 or 28;
 		tallyFrame:SetWidth(w); tallyFrame:SetHeight(h);
@@ -1287,13 +1504,13 @@ local function ApplyTallyLayout(resetSize)
 	end
 	if ( vertical ) then
 		tallyFrame.text:ClearAllPoints();
-		tallyFrame.text:SetPoint("TOPLEFT", tallyFrame, "TOPLEFT", 4, -2);
+		tallyFrame.text:SetPoint("TOPLEFT", tallyFrame, "TOPLEFT", 4 + padding, -(2 + padding));
 		tallyFrame.text:SetJustifyH("LEFT");
 		tallyFrame.text:SetJustifyV("TOP");
 	else
 		tallyFrame.text:ClearAllPoints();
-		tallyFrame.text:SetPoint("LEFT", tallyFrame, "LEFT", 4, 0);
-		tallyFrame.text:SetPoint("RIGHT", tallyFrame, "RIGHT", -4, 0);
+		tallyFrame.text:SetPoint("LEFT", tallyFrame, "LEFT", 4 + padding, 0);
+		tallyFrame.text:SetPoint("RIGHT", tallyFrame, "RIGHT", -(4 + padding), 0);
 		tallyFrame.text:SetJustifyH("LEFT");
 		tallyFrame.text:SetJustifyV("MIDDLE");
 	end
@@ -1309,6 +1526,16 @@ local function ToggleMovableOrientation(name)
 	end
 	local nextOrientation = CurrentOrientation(name) == "vertical" and "horizontal" or "vertical";
 	DB().orientations[name] = nextOrientation;
+	if ( name == "AZSMinorModsClockFrame" ) then
+		local w, h = nextOrientation == "vertical" and 220 or 360, nextOrientation == "vertical" and 54 or 32;
+		clockFrame:SetWidth(w); clockFrame:SetHeight(h);
+		DB().sizes[name] = { w = w, h = h };
+		ApplyClockLayout();
+		PlaceAll();
+		UpdateClock();
+		return;
+	end
+	if ( name == "BuffFrame" ) then DB().buffCustomLayout = true; end
 	if ( name == "AZSMinorModsBossFrames" ) then DB().sizes[name] = nil; end
 	if ( name == "CastingBarFrame" ) then
 		local f = CastingBarFrame;
@@ -1327,6 +1554,21 @@ local function ToggleMovableOrientation(name)
 	end
 	ApplyMovableOrientation(name);
 	PlaceAll();
+end
+
+local function ApplyMovablePadding(name)
+	if ( name == "AZSMinorModsClockFrame" ) then ApplyClockLayout();
+	elseif ( name == "AZSMinorModsBossFrames" ) then UpdateBossFrames();
+	elseif ( name == "AZSMinorModsTallyFrame" ) then ApplyTallyLayout(false);
+	elseif ( name == "AZSMinorModsAnnouncementFrame" and announcementFrame and announcementFrame.text ) then
+		local padding = FramePadding(name);
+		announcementFrame.text:ClearAllPoints();
+		announcementFrame.text:SetPoint("TOPLEFT", announcementFrame, "TOPLEFT", padding + 10, -padding);
+		announcementFrame.text:SetPoint("BOTTOMRIGHT", announcementFrame, "BOTTOMRIGHT", -(padding + 10), padding);
+	elseif ( name == "BuffFrame" ) then
+		DB().buffCustomLayout = true;
+		pcall(ApplyBuffOrientation);
+	end
 end
 
 
@@ -1383,7 +1625,7 @@ local function OpenSizeMenu(name, label)
 	if ( not sizeMenu ) then
 		sizeMenu = CreateFrame("Frame", nil, UIParent);
 		sizeMenu:SetWidth(206);
-		sizeMenu:SetHeight(180);
+		sizeMenu:SetHeight(240);
 		sizeMenu:SetFrameStrata("DIALOG");
 		sizeMenu:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 		                      tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
@@ -1417,13 +1659,24 @@ local function OpenSizeMenu(name, label)
 			local t = getglobal(sizeTarget);
 			if ( not t ) then return; end
 			local w, h = t:GetWidth(), t:GetHeight();
-			if ( axis == "w" ) then w = math.max(40, math.min((UIParent:GetWidth() or 1920), w + delta));
+			if ( axis == "w" ) then
+				local minWidth = sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "horizontal" and 280 or 40;
+				w = math.max(minWidth, math.min((UIParent:GetWidth() or 1920), w + delta));
 			else
-				local minHeight = sizeTarget == "AZSMinorModsBossFrames" and CurrentOrientation(sizeTarget) == "vertical" and 60 or 24;
+				local minHeight = sizeTarget == "AZSMinorModsBossFrames" and CurrentOrientation(sizeTarget) == "vertical" and 60
+					or sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "vertical" and 40 or 24;
+				if ( sizeTarget == "AZSMinorModsBossFrames" ) then
+					local pad = FramePadding(sizeTarget);
+					minHeight = CurrentOrientation(sizeTarget) == "vertical" and math.max(60, 52 + (pad * 3)) or math.max(36, 36 + (pad * 4));
+				elseif ( sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "vertical" ) then
+					minHeight = 36 + (FramePadding(sizeTarget) * 3);
+				end
 				h = math.max(minHeight, math.min((UIParent:GetHeight() or 1080), h + delta));
 			end
 			t:SetWidth(w); t:SetHeight(h);
 			DB().sizes[sizeTarget] = { w = w, h = h };
+			if ( sizeTarget == "BuffFrame" ) then pcall(ApplyBuffOrientation); end
+			if ( sizeTarget == "AZSMinorModsClockFrame" ) then ApplyClockLayout(); end
 			PlaceAll();
 			sizeMenuWidth:SetText("Width: " .. math.floor(w + 0.5));
 			sizeMenuHeight:SetText("Height: " .. math.floor(h + 0.5));
@@ -1465,10 +1718,53 @@ local function OpenSizeMenu(name, label)
 		end);
 		layout:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 10, -116);
 		sizeMenu.layoutButton = layout;
+		local growth;
+		growth = K.Button(sizeMenu, "Grow down", 68, function()
+			if ( sizeTarget ~= "BuffFrame" ) then return; end
+			DB().buffCustomLayout = true;
+			DB().buffGrowthDirection = BuffGrowthDirection() == "up" and "down" or "up";
+			growth:SetText("Grow " .. BuffGrowthDirection());
+			pcall(ApplyBuffOrientation);
+			PlaceAll();
+		end);
+		growth:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -10, -116);
+		growth:Hide();
+		sizeMenu.growthButton = growth;
+		sizeMenuPadding = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		sizeMenuPadding:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 12, -148);
+		local padDown = K.Button(sizeMenu, "-", 30, function()
+			if ( not sizeTarget ) then return; end
+			DB().padding[sizeTarget] = math.max(0, FramePadding(sizeTarget) - 2);
+			ApplyMovablePadding(sizeTarget);
+			sizeMenuPadding:SetText("Padding: " .. FramePadding(sizeTarget));
+			local t = getglobal(sizeTarget);
+			if ( t ) then sizeMenuWidth:SetText("Width: " .. math.floor(t:GetWidth() + 0.5)); sizeMenuHeight:SetText("Height: " .. math.floor(t:GetHeight() + 0.5)); end
+		end);
+		padDown:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -72, -142);
+		local padUp = K.Button(sizeMenu, "+", 30, function()
+			if ( not sizeTarget ) then return; end
+			DB().padding[sizeTarget] = math.min(FramePaddingLimit(sizeTarget), FramePadding(sizeTarget) + 2);
+			ApplyMovablePadding(sizeTarget);
+			sizeMenuPadding:SetText("Padding: " .. FramePadding(sizeTarget));
+			local t = getglobal(sizeTarget);
+			if ( t ) then sizeMenuWidth:SetText("Width: " .. math.floor(t:GetWidth() + 0.5)); sizeMenuHeight:SetText("Height: " .. math.floor(t:GetHeight() + 0.5)); end
+		end);
+		padUp:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -32, -142);
+		sizeMenu.padDown, sizeMenu.padUp = padDown, padUp;
+		local muteButton = K.Button(sizeMenu, "Hide feature", 112, function()
+			if ( sizeTarget ) then ToggleFeatureMute(sizeTarget); end
+		end);
+		muteButton:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 10, -178);
+		sizeMenu.muteButton = muteButton;
 		local reset = K.Button(sizeMenu, "Reset", 62, function()
 			local t = sizeTarget and getglobal(sizeTarget);
 			local s = sizeTarget and baseSizes[sizeTarget];
-			if ( t and sizeTarget == "AZSMinorModsTallyFrame" ) then
+			if ( sizeTarget ) then DB().padding[sizeTarget] = nil; end
+			if ( t and sizeTarget == "AZSMinorModsClockFrame" ) then
+				DB().orientations[sizeTarget], DB().sizes[sizeTarget], DB().scales[sizeTarget] = "vertical", nil, nil;
+				t:SetScale(1); t:SetWidth(220); t:SetHeight(54);
+				ApplyClockLayout(); PlaceAll(); OpenSizeMenu(sizeTarget, sizeTarget);
+			elseif ( t and sizeTarget == "AZSMinorModsTallyFrame" ) then
 				DB().scales[sizeTarget] = nil;
 				t:SetScale(1);
 				ApplyTallyLayout(true);
@@ -1486,7 +1782,9 @@ local function OpenSizeMenu(name, label)
 				else t:SetWidth(s.w); t:SetHeight(s.h); end
 				DB().sizes[sizeTarget] = nil;
 				if ( sizeTarget == "MainMenuBar" and CurrentOrientation(sizeTarget) == "vertical" ) then ApplyMovableOrientation(sizeTarget); end
+				if ( sizeTarget == "BuffFrame" ) then pcall(ApplyBuffOrientation); end
 				PlaceAll();
+				if ( sizeTarget ) then pcall(ApplyMovablePadding, sizeTarget); end
 				OpenSizeMenu(sizeTarget, sizeTarget);
 			else
 				K.Print(NAME, "the original size is not available yet; try again after the frame appears.");
@@ -1504,14 +1802,29 @@ local function OpenSizeMenu(name, label)
 	local scale = DB().scales[name] or 1;
 	sizeMenuScale:SetText("Scale: " .. math.floor(scale * 100 + 0.5) .. "%");
 	if ( sizeMenu.layoutButton ) then
-		local canOrient = name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsBossFrames" or name == "MainMenuBar" or name == "MainMenuExpBar" or name == "BuffFrame" or name == "PartyMemberFrame1" or (name == "CastingBarFrame" and CastingBarFrame and CastingBarFrame.SetOrientation);
+		local canOrient = name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsClockFrame" or name == "AZSMinorModsBossFrames" or name == "MainMenuBar" or name == "MainMenuExpBar" or name == "BuffFrame" or name == "PartyMemberFrame1" or (name == "CastingBarFrame" and CastingBarFrame and CastingBarFrame.SetOrientation);
 		if ( canOrient ) then
 			sizeMenu.layoutButton:Show();
+			sizeMenu.layoutButton:SetWidth(name == "BuffFrame" and 116 or 138);
 			local orientation = name == "AZSMinorModsTallyFrame" and (DB().tallyVertical and "vertical" or "horizontal") or CurrentOrientation(name);
 			sizeMenu.layoutButton:SetText(orientation == "vertical" and "Switch to horizontal" or "Switch to vertical");
 		else
 			sizeMenu.layoutButton:Hide();
 		end
+		if ( sizeMenu.growthButton ) then
+			if ( name == "BuffFrame" ) then
+				sizeMenu.growthButton:Show();
+				sizeMenu.growthButton:SetText("Grow " .. BuffGrowthDirection());
+			else sizeMenu.growthButton:Hide(); end
+		end
+		local canPad = name == "AZSMinorModsClockFrame" or name == "AZSMinorModsBossFrames" or name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsAnnouncementFrame" or name == "BuffFrame";
+		if ( canPad ) then
+			sizeMenuPadding:Show(); sizeMenu.padDown:Show(); sizeMenu.padUp:Show();
+			sizeMenuPadding:SetText("Padding: " .. FramePadding(name));
+		else
+			sizeMenuPadding:Hide(); sizeMenu.padDown:Hide(); sizeMenu.padUp:Hide();
+		end
+		sizeMenu.muteButton:SetText(DB().muted[name] and "Show feature" or "Hide feature");
 	end
 	sizeMenu:ClearAllPoints();
 	local saved = DB().sizeMenuPosition;
@@ -1524,7 +1837,7 @@ local function OpenSizeMenu(name, label)
 		x, y = GetCursorPosition(); x, y = x / scale, y / scale; x, y = x + 8, y + 8;
 	end
 	x = math.max(0, math.min(sw - 206, x));
-	y = math.max(0, math.min(sh - 180, y));
+	y = math.max(0, math.min(sh - 240, y));
 	sizeMenu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
 	if ( type(saved) ~= "table" ) then DB().sizeMenuPosition = { x = x, y = y }; end
 	sizeMenu:Show();
@@ -1534,7 +1847,7 @@ local function ShowLockPanel()
 	if ( not lockPanel ) then
 		lockPanel = CreateFrame("Frame", "AZSMinorModsMovePanel", UIParent);
 		lockPanel:SetWidth(250);
-		lockPanel:SetHeight(58);
+		lockPanel:SetHeight(76);
 		lockPanel:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 18, -78);
 		lockPanel:SetFrameStrata("DIALOG");
 		lockPanel:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -1543,7 +1856,7 @@ local function ShowLockPanel()
 		lockPanel:SetBackdropBorderColor(0.85, 0.65, 0.2, 1);
 		local note = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
 		note:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 10, -8);
-		note:SetText("Drag a green handle to move. Right-click to resize, scale or change layout.");
+		note:SetText("Drag to move. Right-click for size, scale, layout and hide options. Shift-left-click also hides/shows.");
 		local button = K.Button(lockPanel, "Lock UI", 76, function() AZSMinorMods_SetUnlocked(false); end);
 		button:SetPoint("BOTTOMRIGHT", lockPanel, "BOTTOMRIGHT", -8, 6);
 	end
@@ -1643,10 +1956,16 @@ local function Handle(name, label)
 				return;
 			end
 			if ( arg1 ~= "LeftButton" ) then return; end
+			if ( IsShiftKeyDown and IsShiftKeyDown() ) then
+				ToggleFeatureMute(name);
+				return;
+			end
 			local t = getglobal(name);
 			if ( not t ) then return; end
 			t:SetMovable(true);
-			if ( t.SetClampedToScreen ) then t:SetClampedToScreen(true); end
+			-- We clamp the visible child bounds ourselves below; native clamping would keep the
+			-- parent inside the screen and leave a gap when its buttons extend beyond its edges.
+			if ( t.SetClampedToScreen ) then t:SetClampedToScreen(false); end
 			if ( (name == "BuffFrame" or name == "MainMenuBar" or name == "PartyMemberFrame1") and t.SetUserPlaced ) then t:SetUserPlaced(true); end
 			local scale = UIParent:GetEffectiveScale() or 1;
 			local x, y = GetCursorPosition(); x, y = x / scale, y / scale;
@@ -1672,11 +1991,11 @@ local function Handle(name, label)
 				local x, y = GetCursorPosition(); x, y = x / scale, y / scale;
 				local deltaX, deltaY = x - this.dragStartX, y - this.dragStartY;
 				local nextX, nextY = this.frameStartX + deltaX, this.frameStartY + deltaY;
-				local frameScale = (t:GetEffectiveScale() or scale) / scale;
-				local maxX = math.max(0, UIParent:GetWidth() - ((t:GetWidth() or 0) * frameScale));
-				local maxY = math.max(0, UIParent:GetHeight() - ((t:GetHeight() or 0) * frameScale));
-				nextX = math.max(0, math.min(maxX, nextX));
-				nextY = math.max(0, math.min(maxY, nextY));
+				local minX, minY, maxOffsetX, maxOffsetY = VisualInsets(t);
+				local maxX = UIParent:GetWidth() - maxOffsetX;
+				local maxY = UIParent:GetHeight() - maxOffsetY;
+				nextX = math.max(-minX, math.min(maxX, nextX));
+				nextY = math.max(-minY, math.min(maxY, nextY));
 				t:ClearAllPoints();
 				t:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", nextX, nextY);
 				SavePosition(name, t);          -- keep the newest location even if /reload happens mid-session
@@ -1719,9 +2038,10 @@ function AZSMinorMods_SetUnlocked(on, quiet)
 		elseif ( handles[name] ) then
 			handles[name]:Hide();
 		end
+		if ( DB().muted[name] ) then pcall(ApplyFeatureMute, name); end
 	end
 	pcall(UpdateLevelButton);
-	if ( not quiet ) then K.Print(NAME, on and "drag a green handle to move it; right-click one to resize, scale or change layout. Use Lock UI when done." or "the UI is locked."); end
+	if ( not quiet ) then K.Print(NAME, on and "drag a handle to move it; right-click for size, scale, layout or hide. Shift-left-click hides/shows a feature. Use Lock UI when done." or "the UI is locked."); end
 end
 
 local tooltipOwnerOriginal;
@@ -2004,7 +2324,7 @@ end);
 local buffLayoutUpdater = CreateFrame("Frame");
 buffLayoutUpdater:RegisterEvent("UNIT_AURA");
 buffLayoutUpdater:SetScript("OnEvent", function()
-	if ( arg1 == "player" and CurrentOrientation("BuffFrame") == "vertical" ) then pcall(ApplyBuffOrientation); end
+	if ( arg1 == "player" and (CurrentOrientation("BuffFrame") == "vertical" or DB().buffCustomLayout) ) then pcall(ApplyBuffOrientation); end
 end);
 pcall(HookChat);                                          -- right away too, so lines printed while loading are caught
 
