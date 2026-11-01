@@ -1,6 +1,6 @@
 # Display scaling overhaul: results
 
-Status: implementation is complete on the isolated `feature/display-scaling-overhaul` branch. It has not been merged or published. The local preview executable is built with `AZS_DISPLAY_PREVIEW`; it has a separate instance identity and settings location and disables self-update and addon auto-update.
+Status: the baseline scaling overhaul was merged to `main` and published under the existing v3.08 release on 2026-11-01. Follow-up minimize/restore refinements are being reviewed locally. The preview executable is built with `AZS_DISPLAY_PREVIEW`; it has a separate instance identity and settings location and disables self-update and addon auto-update.
 
 ## What changed
 

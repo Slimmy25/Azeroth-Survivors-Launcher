@@ -16,6 +16,7 @@ namespace AzerothLauncher
     {
         public string Folder;                                 // the folder in AddOns
         public string[] Files;                                // its own files (resources AS.addon.<Folder>.<file>)
+        public string[] BinaryFiles;                          // non-text resources (same name convention)
         public string Generated;                              // a file the launcher makes (null: none)
     }
 
@@ -27,7 +28,8 @@ namespace AzerothLauncher
         public static readonly BuiltinAddon[] All =
         {
             new BuiltinAddon { Folder = "AZSHandbook", Files = new[] { "AZSHandbook.toc", "AZSHandbook.lua" }, Generated = "AZSHandbookData.lua" },
-            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua" } },
+            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua" },
+                BinaryFiles = new[] { "dragon-studio-baby-crying-463213.mp3" } },
         };
 
         public static BuiltinAddon Find(string url)
@@ -44,6 +46,29 @@ namespace AzerothLauncher
             yield return new KeyValuePair<string, string>(Kit, Util.ReadResource("AS.addon.kit." + Kit));
             if (a.Generated != null)
                 yield return new KeyValuePair<string, string>(a.Generated, HandbookData.Lua());
+        }
+
+        static byte[] BinaryResource(string name)
+        {
+            using (Stream stream = Util.ResourceStream(name))
+            {
+                if (stream == null) return new byte[0];
+                using (var memory = new MemoryStream()) { stream.CopyTo(memory); return memory.ToArray(); }
+            }
+        }
+
+        static IEnumerable<KeyValuePair<string, byte[]>> BinaryContents(BuiltinAddon a)
+        {
+            if (a.BinaryFiles == null) yield break;
+            foreach (string f in a.BinaryFiles)
+                yield return new KeyValuePair<string, byte[]>(f, BinaryResource("AS.addon." + a.Folder + "." + f));
+        }
+
+        static bool SameBytes(byte[] left, byte[] right)
+        {
+            if (left == null || right == null || left.Length != right.Length) return false;
+            for (int i = 0; i < left.Length; i++) if (left[i] != right[i]) return false;
+            return true;
         }
 
         // its folder in AddOns, turned on or off, or null
@@ -68,6 +93,12 @@ namespace AzerothLauncher
                 try { if (!File.Exists(p) || Norm(File.ReadAllText(p, Encoding.UTF8)) != Norm(kv.Value)) return true; }
                 catch (Exception) { return true; }
             }
+            foreach (var kv in BinaryContents(a))
+            {
+                string p = Path.Combine(dir, kv.Key);
+                try { if (kv.Value.Length == 0 || !File.Exists(p) || !SameBytes(File.ReadAllBytes(p), kv.Value)) return true; }
+                catch (Exception) { return true; }
+            }
             return false;
         }
 
@@ -81,6 +112,11 @@ namespace AzerothLauncher
             {
                 if (kv.Value.Length == 0) throw new UserError("This launcher was built without " + a.Folder + ".");
                 File.WriteAllText(Path.Combine(dir, kv.Key), kv.Value.Replace("\r\n", "\n").Replace("\n", "\r\n"), new UTF8Encoding(false));
+            }
+            foreach (var kv in BinaryContents(a))
+            {
+                if (kv.Value.Length == 0) throw new UserError("This launcher was built without " + a.Folder + ".");
+                File.WriteAllBytes(Path.Combine(dir, kv.Key), kv.Value);
             }
         }
 

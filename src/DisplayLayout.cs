@@ -95,6 +95,7 @@ namespace AzerothLauncher
         DisplayLayout displayLayout;
         bool displayReady, changingDisplay;
         Timer displayResizeTimer;
+        Size lastPanelLayoutClientSize;
         int U(float value) { return displayLayout == null ? (int)Math.Round(value) : displayLayout.Px(value); }
         bool CompactDisplay { get { return W < U(980); } }
         int HeaderBottom { get { return CompactDisplay ? Math.Max(50, Math.Min(U(80), (int)(H * .15f))) : Math.Max(U(74), Math.Min(U(196), (int)(H * .26f))); } }
@@ -145,14 +146,26 @@ namespace AzerothLauncher
             MaximizeBox = true;
             MinimumSize = MinimumWindowSize();
             displayReady = true;
+            lastPanelLayoutClientSize = ClientSize;
             LayoutResponsiveDisplay(false);
             displayResizeTimer = new Timer { Interval = 130 };
             displayResizeTimer.Tick += delegate
             {
                 displayResizeTimer.Stop();
-                if (!PreviewMode && Screen.FromControl(this).WorkingArea != displayLayout.WorkArea)
-                    ChangeDisplay(Screen.FromControl(this).WorkingArea, NativeDisplay.Dpi(this), true);
-                else LayoutResponsiveDisplay(true);
+                if (!Visible || WindowState == FormWindowState.Minimized) return;
+                Screen screen = Screen.FromControl(this);
+                Rectangle workArea = screen.WorkingArea;
+                int dpi = NativeDisplay.Dpi(this);
+                if (!PreviewMode && (workArea != displayLayout.WorkArea || dpi != displayLayout.Dpi))
+                {
+                    ChangeDisplay(workArea, dpi, true);
+                    return;
+                }
+
+                // Moving the window within the same display does not change the panel layout.
+                // Rebuild only after its client size changed; minimize/restore alone needs repaint,
+                // not a destructive view reconstruction.
+                if (ClientSize != lastPanelLayoutClientSize) LayoutResponsiveDisplay(true);
             };
             Resize += delegate
             {
@@ -236,6 +249,7 @@ namespace AzerothLauncher
                     }
                     RestoreDisplayedScrollPositions(positions);
                 }
+                if (rebuild) lastPanelLayoutClientSize = ClientSize;
                 Invalidate(true);
             }
             finally { Theme.Zoom = Theme.DisplayScale; changingDisplay = false; }

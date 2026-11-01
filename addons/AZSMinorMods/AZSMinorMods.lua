@@ -10,6 +10,7 @@
 --     Triangle and a Diamond instead, so the Skull and Cross are left for the final boss.
 --   * In co-op, a friend who falls gets a marker over their head, blinking on and off 15 times. Each friend has their
 --     own (Square, Moon, Circle), so several can be down at once. Those three are kept for this alone.
+--   * Play the included sound once when you or a teammate dies (off until enabled).
 --   * Move the UI: unlock it, drag the player, target and party frames, the minimap, buffs, cast bar, action bars and
 --     where you want them, then lock it again. The places are kept (Reset puts them back).
 --   * Hide the target frame: this game picks its own targets, so the frame can go.
@@ -59,6 +60,7 @@ local function DB()
 	d.box, d.bloat, d.x, d.y = nil, nil, nil, nil;          -- the retired Say & Party box and "Remove bloat"
 	if ( d.bossMarks == nil ) then d.bossMarks = true; end
 	if ( d.deathMarks == nil ) then d.deathMarks = true; end
+	if ( d.deathSound == nil ) then d.deathSound = false; end
 	if ( d.miniMarks == nil ) then d.miniMarks = true; end
 	if ( d.hideTarget == nil ) then d.hideTarget = false; end
 	if ( type(d.places) ~= "table" ) then d.places = {}; end
@@ -175,6 +177,15 @@ local FINAL_ICONS = { 8, 7 };                            -- Skull, Cross (with m
 local MINI_ICONS = { 1, 4, 3 };                          -- Star, Triangle, Diamond
 local DEATH_ICONS = { 6, 5, 2 };                         -- Square, Moon, Circle: one for each friend who falls
 local DEATH_BLINKS = 15;                                 -- on and off this many times
+local DEATH_SOUND = "Interface\\AddOns\\AZSMinorMods\\dragon-studio-baby-crying-463213.mp3";
+local function PlayDeathSound()
+	if ( not DB().deathSound or not PlaySoundFile ) then return; end
+	pcall(PlaySoundFile, DEATH_SOUND);
+end
+
+local deathSoundFrame = CreateFrame("Frame");
+deathSoundFrame:RegisterEvent("PLAYER_DEAD");
+deathSoundFrame:SetScript("OnEvent", function() PlayDeathSound(); end);
 
 -- the minibosses: every zone's bosses before its final boss, as the Guide lists them (names without case)
 local MINIBOSSES = {
@@ -207,6 +218,7 @@ local function IsMini(name) return name and MINIBOSSES[string.lower(name)] and t
 local marked = {};                                        -- boss id -> its marker
 local tries = {};                                         -- boss id -> target-and-back tries (at most 3)
 local fallen = {};                                        -- party unit -> was down at the last look
+local partyNames = {};                                    -- party unit -> identity, so a replacement in the same slot is new
 local blinks = {};                                        -- party unit -> { left = times, at = next change, on = shown }
 
 local function Units()
@@ -284,12 +296,29 @@ local function DeathIcon(u, i)
 end
 
 local function DeathMarks(now)
-	if ( not DB().deathMarks ) then return; end
+	local d = DB();
 	for i = 1, 4 do
 		local u = "party" .. i;
-		local down = UnitExists(u) and (UnitIsDeadOrGhost and UnitIsDeadOrGhost(u) or UnitHealth(u) == 0) and true or false;
-		if ( down and not fallen[u] ) then blinks[u] = { left = DEATH_BLINKS * 2, at = now, on = false, slot = i }; end
-		fallen[u] = down;
+		if ( not UnitExists(u) ) then
+			fallen[u] = nil; partyNames[u] = nil;
+		else
+			local name = UnitName(u);
+			-- Wait for the unit's identity before counting a transition; this avoids double-alerts while the party frame loads.
+			if ( name ) then
+				if ( partyNames[u] ~= name ) then partyNames[u] = name; fallen[u] = false; end
+				local connected = not UnitIsConnected or UnitIsConnected(u);
+				local down = connected and (UnitIsDeadOrGhost and UnitIsDeadOrGhost(u) or UnitHealth(u) == 0) and true or false;
+				if ( down and not fallen[u] ) then
+					if ( d.deathSound ) then PlayDeathSound(); end
+					if ( d.deathMarks ) then blinks[u] = { left = DEATH_BLINKS * 2, at = now, on = false, slot = i }; end
+				end
+				fallen[u] = down;
+			end
+		end
+	end
+	if ( not d.deathMarks ) then
+		for u in pairs(blinks) do if ( UnitExists(u) ) then pcall(SetRaidTarget, u, 0); end; blinks[u] = nil; end
+		return;
 	end
 	for u, b in pairs(blinks) do
 		if ( not b.icon ) then b.icon = DeathIcon(u, b.slot); end
@@ -572,6 +601,7 @@ local function WinBuild()
 	Row("Mark bosses: Skull, Cross, Diamond", function() return DB().bossMarks; end, function(v) DB().bossMarks = v; end);
 	Row("Mark minibosses: Star, Triangle, Diamond", function() return DB().miniMarks; end, function(v) DB().miniMarks = v; end);
 	Row("Blink a marker over a friend who falls (15 times)", function() return DB().deathMarks; end, function(v) DB().deathMarks = v; end);
+	Row("Play a sound when you or a teammate dies", function() return DB().deathSound; end, function(v) DB().deathSound = v; end);
 	Row("Hide the target frame", function() return DB().hideTarget; end, function(v) DB().hideTarget = v; TargetFrameHidden(v); end);
 	Row("Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end);
 	Row("Cooldown numbers on the spell squares", function() return DB().cooldowns; end, function(v) DB().cooldowns = v; end);

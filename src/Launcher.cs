@@ -175,13 +175,19 @@ namespace AzerothLauncher
                 SetGuideView(l.Topic, l.Page);
                 After(30, delegate { ShowSpellRow(l.Term); });   // a spell: its row on the page, scrolled to and lit up
             };
-            // Restore repaint: everything is redrawn after minimizing and restoring from the taskbar.
+            // Keep the last visible state so launcher actions can restore a minimized window
+            // without demoting a maximized one to its normal-size bounds.
             Resize += delegate
             {
                 if (WindowState == FormWindowState.Minimized) { wasMinimized = true; return; }
-                if (!wasMinimized) return;
-                wasMinimized = false;
-                After(1, RepaintAfterRestore);
+                if (wasMinimized)
+                {
+                    wasMinimized = false;
+                    lastNonMinimizedWindowState = WindowState;
+                    After(1, RepaintAfterRestore);
+                    return;
+                }
+                lastNonMinimizedWindowState = WindowState;
             };
             Shown += delegate
             {
@@ -684,6 +690,7 @@ namespace AzerothLauncher
         }
 
         bool wasMinimized;
+        FormWindowState lastNonMinimizedWindowState = FormWindowState.Normal;
 
         // back from the taskbar: the section shown again (the game's start may have closed it) and every part redrawn
         void RepaintAfterRestore()
@@ -704,8 +711,9 @@ namespace AzerothLauncher
 
         public void ShowWindowFront()
         {
+            bool minimized = WindowState == FormWindowState.Minimized;
             Show();
-            WindowState = FormWindowState.Normal;
+            if (minimized) WindowState = lastNonMinimizedWindowState;
             TopMost = true;
             Activate();
             BringToFront();
