@@ -32,3 +32,4 @@ MinimapButtonBag-by-Tunhadil-LaYt.zip | local:MBB
 BugSack-by-Fritti-Rabbit.zip    | local:!BugGrabber+BugSack
 BigCursor-by-JamieeLee.zip | github-latest:JamieeLee/BigCursor:BigCursor
 MoveUI-by-JamieeLee.zip | github-latest:JamieeLee/MoveUI:MoveUI_
+ASBuilder-v1.10.0.zip | github-latest:cadoky/ASBuilder:ASBuilder-

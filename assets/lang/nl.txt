@@ -1066,10 +1066,6 @@ Download cancelled.
 = Download geannuleerd.
 The download server did not accept the launcher's login.
 = De downloadserver accepteerde de login van de launcher niet.
-The backup host's page has no download link right now.
-= De pagina van de reserveserver heeft nu geen downloadlink.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= De download van de reserveserver is beschadigd (de controlesom klopt niet). Probeer het opnieuw.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = De launcher draait al.\n\nZoek het pictogram in het systeemvak (bij de klok).
 INSTALL FROM A FILE

@@ -1066,10 +1066,6 @@ Download cancelled.
 = Download abgebrochen.
 The download server did not accept the launcher's login.
 = Der Downloadserver hat die Anmeldung des Launchers nicht akzeptiert.
-The backup host's page has no download link right now.
-= Die Seite des Ersatzservers hat gerade keinen Downloadlink.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Der Download vom Ersatzserver ist beschädigt (die Prüfsumme stimmt nicht). Bitte versuche es erneut.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Der Launcher läuft bereits.\n\nSuche sein Symbol im Infobereich (neben der Uhr).
 INSTALL FROM A FILE

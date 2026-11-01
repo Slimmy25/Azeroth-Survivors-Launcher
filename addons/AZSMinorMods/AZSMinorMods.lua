@@ -12,10 +12,10 @@
 --     own (Square, Moon, Circle), so several can be down at once. Those three are kept for this alone.
 --   * Play the included sound once when you or a teammate dies (off until enabled).
 --   * Move, resize and scale the UI: drag a green handle to move it; right-click for width, height and scale.
---     The action bar, cast bar, party frames and kills/gold/cache tally can switch between horizontal and vertical layouts.
---     Bar 2 and Right bar are intentionally not included. Optional anchoring latches nearby movable frames together.
---     Positions and custom sizes are kept (Reset puts positions back; each size menu can reset its own frame).
---     The experience bar is detached from the action bar and gets its own handle.
+--     The action bar, XP bar, buffs, cast bar, party frames and kills/gold/cache tally can switch between horizontal and vertical layouts.
+--     Bar 2 and Right bar are intentionally not included; Action Bar 1 can optionally show empty slots.
+--     Optional anchoring latches nearby movable frames together. Positions and custom sizes are saved continuously across /reload.
+--     The resize menu and tooltip can also be moved while settings are active. The experience bar is detached from the action bar.
 --     The primary chat window, tab and input box move together from one Chat handle.
 --   * The kills, gold and next-cache cost use the documented AZS_RUN values in a movable replacement for the tally.
 --     Right-click its green handle to switch between a compact horizontal row and a vertical three-line layout.
@@ -80,7 +80,9 @@ local function DB()
 	if ( type(d.sizes) ~= "table" ) then d.sizes = {}; end
 	if ( type(d.scales) ~= "table" ) then d.scales = {}; end
 	if ( type(d.orientations) ~= "table" ) then d.orientations = {}; end
+	if ( type(d.sizeMenuPosition) ~= "table" ) then d.sizeMenuPosition = {}; end
 	if ( d.tallyVertical == nil ) then d.tallyVertical = false; end
+	if ( d.showEmptyActionSlots == nil ) then d.showEmptyActionSlots = false; end
 	if ( type(d.chatOffsets) ~= "table" ) then d.chatOffsets = {}; end
 	if ( d.anchorSnap == nil ) then d.anchorSnap = false; end
 	if ( type(d.words) ~= "table" ) then d.words = {}; end
@@ -368,7 +370,7 @@ end);
 
 -- ---------------------------------------------------------------- moving the UI, and the target frame
 -- Unlocked, each of these frames gets a handle over it (its name on a green panel): drag the handle and the frame
--- follows. Locked, the handles go and the frames stay where they were put; the places are put back at every login.
+-- follows. The current lock state and every moved position are retained in SavedVariables across /reload.
 local MOVABLE = { { "PlayerFrame", "Player" }, { "TargetFrame", "Target" }, { "PartyMemberFrame1", "Party" },
                   { "MinimapCluster", "Minimap" }, { "BuffFrame", "Buffs" }, { "CastingBarFrame", "Cast bar" },
                   { "MainMenuBar", "Action bars" }, { "MainMenuExpBar", "XP bar" }, { "ChatFrame1", "Chat" },
@@ -376,13 +378,16 @@ local MOVABLE = { { "PlayerFrame", "Player" }, { "TargetFrame", "Target" }, { "P
                   { "AZSMinorModsClockFrame", "Run clock / Next boss" },
                   { "AZSMinorModsBossFrames", "Encounter bars" },
                   { "AZSMinorModsAnnouncementFrame", "Event announcements" },
-                  { "AZSMinorModsTallyFrame", "Kills / Gold / Cache" } };
+                  { "AZSMinorModsTallyFrame", "Kills / Gold / Cache" }, { "GameTooltip", "Tooltip" } };
 local handles = {};
 local baseSizes = {};
 local sizeMenu, sizeMenuText, sizeMenuWidth, sizeMenuHeight, sizeMenuScale;
 local sizeTarget;
 local lockPanel;
 local xpBarDetached = false;
+local buffButtonOriginalPoints = {};
+local buffLayoutApplying = false;
+local actionSlotsGridApplied = false;
 local tallyFrame;
 local tallyNativeWasShown;
 local tallyNativeOverridden = false;
@@ -435,7 +440,7 @@ local function UpdateTally()
 	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
 	local active = phase and phase ~= "ready";
 	local run = type(AZS_RUN) == "table" and AZS_RUN or nil;
-	if ( active and run and (tallyNativeWasShown or DB().unlocked) ) then
+	if ( active and run ) then
 		local kills, gold, cache = TallyValue(run.kills), TallyValue(run.gold), TallyValue(run.chest);
 		if ( DB().tallyVertical ) then
 			tallyFrame.text:SetText("Kills  " .. kills .. "\nGold  " .. gold .. "\nCache  " .. cache);
@@ -568,18 +573,21 @@ end
 
 local function UpdateLevelButton()
 	if ( not levelButton ) then return; end
-	local canReplace = type(AZS_GetStoredLevels) == "function"
-		and type(AZS_OpenStoredLevels) == "function" and type(AZS_SetHudShown) == "function";
-	local replacing = DB().moveLevelButton and canReplace and levelNativeWasShown == true;
+	local canReplace = type(AZS_OpenStoredLevels) == "function";
+	local replacing = DB().moveLevelButton and canReplace;
 	SetNativeLevelButtonHidden(replacing);
 	if ( not replacing ) then levelButton:Hide(); return; end
 	local count = 0;
-	local ok, value = pcall(AZS_GetStoredLevels);
-	if ( ok and type(value) == "number" ) then count = math.max(0, math.floor(value)); end
+	if ( type(AZS_GetStoredLevels) == "function" ) then
+		local ok, value = pcall(AZS_GetStoredLevels);
+		if ( ok and type(value) == "number" ) then count = math.max(0, math.floor(value)); end
+	end
 	local level = type(UnitLevel) == "function" and UnitLevel("player") or nil;
 	levelButton.level:SetText("LEVEL " .. (level and tostring(level) or ""));
 	levelButton.count:SetText(count > 0 and tostring(count) or "");
-	if ( count > 0 or DB().unlocked ) then levelButton:Show(); else levelButton:Hide(); end
+	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
+	local runActive = phase == "ready" or phase == "playing" or phase == "choosing" or phase == "paused";
+	if ( count > 0 or DB().unlocked or runActive ) then levelButton:Show(); else levelButton:Hide(); end
 end
 
 local function CreateLevelButton()
@@ -780,15 +788,18 @@ local function UpdateEncounterRows(list)
 	local count = table.getn(list);
 	if ( count == 0 ) then return 0; end
 	local vertical = EncounterVertical();
-	local gap = 8;
+	local gap = vertical and 10 or 8;
 	local configured = DB().sizes.AZSMinorModsBossFrames;
-	local defaultCardWidth = vertical and 76 or 184;
-	local minCardWidth = vertical and 56 or 120;
+	local defaultCardWidth = vertical and 34 or 184;
+	local minCardWidth = vertical and 34 or 120;
+	local minimumFrameWidth = count * (vertical and 18 or minCardWidth) + ((count - 1) * gap);
 	local frameWidth = type(configured) == "table" and configured.w or (count * defaultCardWidth + ((count - 1) * gap));
-	local cardWidth = math.max(minCardWidth, (frameWidth - ((count - 1) * gap)) / count);
+	frameWidth = math.max(minimumFrameWidth, frameWidth);
+	local cardWidth = vertical and defaultCardWidth or math.max(minCardWidth, (frameWidth - ((count - 1) * gap)) / count);
+	if ( vertical ) then cardWidth = math.max(18, (frameWidth - ((count - 1) * gap)) / count); end
 	frameWidth = count * cardWidth + ((count - 1) * gap);
-	local frameHeight = type(configured) == "table" and configured.h or (vertical and 140 or 40);
-	frameHeight = math.max(vertical and 100 or 36, frameHeight);
+	local frameHeight = type(configured) == "table" and configured.h or (vertical and 184 or 40);
+	frameHeight = math.max(vertical and 60 or 36, frameHeight);
 	bossFrame:SetWidth(frameWidth);
 	bossFrame:SetHeight(frameHeight);
 	for i = 1, table.getn(list) do
@@ -803,13 +814,15 @@ local function UpdateEncounterRows(list)
 		row.name:SetText(unit.name);
 		if ( vertical ) then
 			SetEncounterFont(row.name, 8.5);
-			row.name:SetWidth(cardWidth - 4);
+			local barTopOffset = 34;
+			-- Match the narrow, evenly spaced columns in the reference. Each boss name stays above its own bar.
+			row.name:SetWidth(cardWidth);
 			row.name:SetHeight(30);
-			row.name:SetPoint("TOPLEFT", row, "TOPLEFT", 2, -2);
+			row.name:SetPoint("TOP", row, "TOP", 0, -2);
 			if ( row.bar.SetOrientation ) then pcall(row.bar.SetOrientation, row.bar, "VERTICAL"); end
-			row.bar:SetWidth(math.min(12, cardWidth - 12));
-			row.bar:SetHeight(math.max(24, frameHeight - 40));
-			row.bar:SetPoint("TOP", row, "TOP", 0, -36);
+			row.bar:SetWidth(cardWidth);
+			row.bar:SetHeight(math.max(24, frameHeight - barTopOffset));
+			row.bar:SetPoint("TOP", row, "TOP", 0, -barTopOffset);
 		else
 			SetEncounterFont(row.name, 10);
 			row.name:SetWidth(cardWidth - 8);
@@ -835,7 +848,8 @@ local function UpdateClock()
 	if ( not clockFrame ) then return; end
 	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
 	local live = phase == "ready" or phase == "playing" or phase == "choosing" or phase == "paused";
-	local showClock = clockNativeWasShown == true and live;
+	-- This movable replacement must not inherit the native clock's independent HUD visibility flag.
+	local showClock = live;
 	local preview = DB().unlocked and not showClock;
 	if ( showClock ) then
 		local elapsed = type(AZS_GetRunTime) == "function" and AZS_GetRunTime() or nil;
@@ -1038,6 +1052,12 @@ tallyTicker:SetScript("OnUpdate", function()
 		pcall(UpdateBossFrames);
 		pcall(UpdateAnnouncementFrame);
 		pcall(UpdateLevelButton);
+		pcall(ApplyActionSlotGrid);
+		local tooltipHandle = handles.GameTooltip;
+		if ( tooltipHandle ) then
+			if ( DB().unlocked and GameTooltip and GameTooltip:IsShown() ) then tooltipHandle:Show();
+			else tooltipHandle:Hide(); end
+		end
 	end
 end);
 
@@ -1065,6 +1085,69 @@ local function CurrentOrientation(name)
 	if ( orientation == "vertical" or orientation == "horizontal" ) then return orientation; end
 	if ( name == "PartyMemberFrame1" ) then return "vertical"; end
 	return "horizontal";
+end
+
+local function ApplyBuffOrientation()
+	if ( not BuffFrame or buffLayoutApplying ) then return; end
+	local orientation = CurrentOrientation("BuffFrame");
+	local limit = MAX_PLAYER_BUFFS or 32;
+	local visible, iconW, iconH = {}, nil, nil;
+	for i = 1, limit do
+		local button = getglobal("BuffButton" .. i);
+		if ( button ) then
+			if ( not buffButtonOriginalPoints[i] and button.GetNumPoints ) then
+				local points = {};
+				for p = 1, button:GetNumPoints() do
+					local a, relative, relativePoint, x, y = button:GetPoint(p);
+					points[p] = { a, relative, relativePoint, x, y };
+				end
+				buffButtonOriginalPoints[i] = points;
+			end
+			if ( button:IsShown() ) then
+				table.insert(visible, button);
+				iconW = iconW or button:GetWidth(); iconH = iconH or button:GetHeight();
+			end
+		end
+	end
+	if ( not iconW or not iconH or table.getn(visible) == 0 ) then return; end
+	buffLayoutApplying = true;
+	if ( orientation == "vertical" ) then
+		for i = 1, table.getn(visible) do
+			local button = visible[i];
+			button:ClearAllPoints();
+			button:SetPoint("TOPLEFT", BuffFrame, "TOPLEFT", 0, -((i - 1) * (iconH + 4)));
+		end
+		BuffFrame:SetWidth(iconW);
+		BuffFrame:SetHeight(table.getn(visible) * (iconH + 4) - 4);
+	else
+		for i = 1, limit do
+			local button = getglobal("BuffButton" .. i);
+			local points = buffButtonOriginalPoints[i];
+			if ( button and points and table.getn(points) > 0 ) then
+				button:ClearAllPoints();
+				for p = 1, table.getn(points) do
+					local a = points[p];
+					button:SetPoint(a[1], a[2], a[3], a[4], a[5]);
+				end
+			end
+		end
+		local base = baseSizes.BuffFrame;
+		if ( base ) then BuffFrame:SetWidth(base.w); BuffFrame:SetHeight(base.h); end
+	end
+	buffLayoutApplying = false;
+end
+
+local function ApplyActionSlotGrid()
+	local on = DB().showEmptyActionSlots and true or false;
+	if ( on == actionSlotsGridApplied ) then return; end
+	local action = on and ActionButton_ShowGrid or ActionButton_HideGrid;
+	if ( type(action) ~= "function" ) then return; end -- retry later once the game action buttons are available
+	local found = false;
+	for i = 1, 6 do
+		local button = getglobal("ActionButton" .. i);
+		if ( button ) then pcall(action, button); found = true; end
+	end
+	if ( found ) then actionSlotsGridApplied = on; end
 end
 
 local function CaptureActionBarLayout()
@@ -1125,6 +1208,18 @@ local function ApplyMovableOrientation(name)
 		if ( cast and cast.SetOrientation ) then
 			cast:SetOrientation(string.upper(orientation));
 		end
+	elseif ( name == "MainMenuExpBar" ) then
+		local xp = MainMenuExpBar;
+		if ( xp and xp.SetOrientation ) then pcall(xp.SetOrientation, xp, string.upper(orientation)); end
+		local base = baseSizes.MainMenuExpBar;
+		local saved = DB().sizes.MainMenuExpBar;
+		if ( xp and base and type(saved) ~= "table" ) then
+			if ( orientation == "vertical" ) then xp:SetWidth(base.h); xp:SetHeight(base.w);
+			else xp:SetWidth(base.w); xp:SetHeight(base.h); end
+			DB().sizes.MainMenuExpBar = { w = xp:GetWidth(), h = xp:GetHeight() };
+		end
+	elseif ( name == "BuffFrame" ) then
+		ApplyBuffOrientation();
 	elseif ( name == "AZSMinorModsBossFrames" ) then
 		UpdateBossFrames();
 	elseif ( name == "PartyMemberFrame1" ) then
@@ -1223,6 +1318,13 @@ local function ToggleMovableOrientation(name)
 			DB().sizes[name] = { w = h, h = w };
 		end
 	end
+	if ( name == "MainMenuExpBar" ) then
+		local f, s = MainMenuExpBar, baseSizes.MainMenuExpBar;
+		if ( f and s ) then
+			local w, h = CurrentOrientation(name) == "vertical" and s.h or s.w, CurrentOrientation(name) == "vertical" and s.w or s.h;
+			f:SetWidth(w); f:SetHeight(h); DB().sizes[name] = { w = w, h = h };
+		end
+	end
 	ApplyMovableOrientation(name);
 	PlaceAll();
 end
@@ -1289,6 +1391,21 @@ local function OpenSizeMenu(name, label)
 		sizeMenu:SetBackdropBorderColor(0.85, 0.65, 0.2, 1);
 		sizeMenuText = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
 		sizeMenuText:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 12, -10);
+		sizeMenu:SetMovable(true);
+		if ( sizeMenu.SetClampedToScreen ) then sizeMenu:SetClampedToScreen(true); end
+		sizeMenu.dragStrip = CreateFrame("Frame", nil, sizeMenu);
+		sizeMenu.dragStrip:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 4, -3);
+		sizeMenu.dragStrip:SetWidth(124); sizeMenu.dragStrip:SetHeight(20);
+		sizeMenu.dragStrip:EnableMouse(true);
+		sizeMenu.dragStrip:SetScript("OnMouseDown", function()
+			if ( arg1 == "LeftButton" ) then sizeMenu:StartMoving(); sizeMenu.dragging = true; end
+		end);
+		sizeMenu.dragStrip:SetScript("OnMouseUp", function()
+			if ( not sizeMenu.dragging ) then return; end
+			sizeMenu:StopMovingOrSizing(); sizeMenu.dragging = nil;
+			local left, bottom = sizeMenu:GetLeft(), sizeMenu:GetBottom();
+			if ( left and bottom ) then DB().sizeMenuPosition = { x = left, y = bottom }; end
+		end);
 		sizeMenuWidth = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
 		sizeMenuWidth:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 12, -34);
 		sizeMenuHeight = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
@@ -1301,7 +1418,10 @@ local function OpenSizeMenu(name, label)
 			if ( not t ) then return; end
 			local w, h = t:GetWidth(), t:GetHeight();
 			if ( axis == "w" ) then w = math.max(40, math.min((UIParent:GetWidth() or 1920), w + delta));
-			else h = math.max(24, math.min((UIParent:GetHeight() or 1080), h + delta)); end
+			else
+				local minHeight = sizeTarget == "AZSMinorModsBossFrames" and CurrentOrientation(sizeTarget) == "vertical" and 60 or 24;
+				h = math.max(minHeight, math.min((UIParent:GetHeight() or 1080), h + delta));
+			end
 			t:SetWidth(w); t:SetHeight(h);
 			DB().sizes[sizeTarget] = { w = w, h = h };
 			PlaceAll();
@@ -1384,7 +1504,7 @@ local function OpenSizeMenu(name, label)
 	local scale = DB().scales[name] or 1;
 	sizeMenuScale:SetText("Scale: " .. math.floor(scale * 100 + 0.5) .. "%");
 	if ( sizeMenu.layoutButton ) then
-		local canOrient = name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsBossFrames" or name == "MainMenuBar" or name == "PartyMemberFrame1" or (name == "CastingBarFrame" and CastingBarFrame and CastingBarFrame.SetOrientation);
+		local canOrient = name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsBossFrames" or name == "MainMenuBar" or name == "MainMenuExpBar" or name == "BuffFrame" or name == "PartyMemberFrame1" or (name == "CastingBarFrame" and CastingBarFrame and CastingBarFrame.SetOrientation);
 		if ( canOrient ) then
 			sizeMenu.layoutButton:Show();
 			local orientation = name == "AZSMinorModsTallyFrame" and (DB().tallyVertical and "vertical" or "horizontal") or CurrentOrientation(name);
@@ -1394,12 +1514,19 @@ local function OpenSizeMenu(name, label)
 		end
 	end
 	sizeMenu:ClearAllPoints();
-	local scale = UIParent:GetEffectiveScale() or 1;
-	local x, y = GetCursorPosition(); x, y = x / scale, y / scale;
+	local saved = DB().sizeMenuPosition;
 	local sw, sh = UIParent:GetWidth(), UIParent:GetHeight();
-	x = math.max(0, math.min(sw - 206, x + 8));
-	y = math.max(0, math.min(sh - 180, y + 8));
+	local x, y;
+	if ( type(saved) == "table" and type(saved.x) == "number" and type(saved.y) == "number" ) then
+		x, y = saved.x, saved.y;
+	else
+		local scale = UIParent:GetEffectiveScale() or 1;
+		x, y = GetCursorPosition(); x, y = x / scale, y / scale; x, y = x + 8, y + 8;
+	end
+	x = math.max(0, math.min(sw - 206, x));
+	y = math.max(0, math.min(sh - 180, y));
 	sizeMenu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
+	if ( type(saved) ~= "table" ) then DB().sizeMenuPosition = { x = x, y = y }; end
 	sizeMenu:Show();
 end
 
@@ -1472,6 +1599,24 @@ local function FinishHandleMove(h, name)
 	else SavePosition(name, t); DB().places[name].relative = nil; Place(name); end
 end
 
+local function BuffHandleBounds(frame)
+	local left, right, bottom, top;
+	local limit = MAX_PLAYER_BUFFS or 32;
+	for i = 1, limit do
+		local button = getglobal("BuffButton" .. i);
+		if ( button and button:IsShown() ) then
+			local l, r, b, t = button:GetLeft(), button:GetRight(), button:GetBottom(), button:GetTop();
+			if ( l and r and b and t ) then
+				left = left and math.min(left, l) or l; right = right and math.max(right, r) or r;
+				bottom = bottom and math.min(bottom, b) or b; top = top and math.max(top, t) or t;
+			end
+		end
+	end
+	if ( left and right and bottom and top ) then return left, bottom, right - left, top - bottom; end
+	local l, b = frame:GetLeft(), frame:GetBottom();
+	return l or 0, b or 0, 32, 32;
+end
+
 local function Handle(name, label)
 	local f = getglobal(name);
 	if ( not f ) then return nil; end
@@ -1481,12 +1626,17 @@ local function Handle(name, label)
 		h:SetFrameStrata("DIALOG");
 		h:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 		                tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
-		h:SetBackdropColor(0.1, 0.6, 0.1, 0.45);
+		if ( name == "GameTooltip" ) then
+			h:SetBackdropColor(0, 0, 0, 0); -- keep tooltip text readable while its drag outline is active
+			h:SetFrameStrata("TOOLTIP");
+		else
+			h:SetBackdropColor(0.1, 0.6, 0.1, 0.45);
+		end
 		h:SetBackdropBorderColor(0.3, 1, 0.3, 0.9);
 		h:EnableMouse(true);
 		h.text = h:CreateFontString(nil, "OVERLAY", "GameFontNormal");
 		h.text:SetPoint("CENTER", h, "CENTER", 0, 0);
-		h.text:SetText(label);
+		if ( name == "GameTooltip" ) then h.text:Hide(); else h.text:SetText(label); end
 		h:SetScript("OnMouseDown", function()
 			if ( arg1 == "RightButton" ) then
 				OpenSizeMenu(name, label);
@@ -1500,7 +1650,10 @@ local function Handle(name, label)
 			if ( (name == "BuffFrame" or name == "MainMenuBar" or name == "PartyMemberFrame1") and t.SetUserPlaced ) then t:SetUserPlaced(true); end
 			local scale = UIParent:GetEffectiveScale() or 1;
 			local x, y = GetCursorPosition(); x, y = x / scale, y / scale;
-			this.dragOffsetX, this.dragOffsetY = x - (t:GetLeft() or x), y - (t:GetBottom() or y);
+			this.dragStartX, this.dragStartY = x, y;
+			this.frameStartX, this.frameStartY = t:GetLeft() or x, t:GetBottom() or y;
+			local saved = DB().places[name];
+			if ( type(saved) == "table" ) then saved.relative, saved.point, saved.relativePoint, saved.dx, saved.dy = nil, nil, nil, nil, nil; end
 			this.dragging = true;
 		end);
 		h:SetScript("OnMouseUp", function()
@@ -1517,16 +1670,30 @@ local function Handle(name, label)
 				end
 				local scale = UIParent:GetEffectiveScale() or 1;
 				local x, y = GetCursorPosition(); x, y = x / scale, y / scale;
-				local maxX = math.max(0, UIParent:GetWidth() - ((t:GetWidth() or 0) * ((t:GetEffectiveScale() or scale) / scale)));
-				local maxY = math.max(0, UIParent:GetHeight() - ((t:GetHeight() or 0) * ((t:GetEffectiveScale() or scale) / scale)));
-				x = math.max(0, math.min(maxX, x - this.dragOffsetX));
-				y = math.max(0, math.min(maxY, y - this.dragOffsetY));
+				local deltaX, deltaY = x - this.dragStartX, y - this.dragStartY;
+				local nextX, nextY = this.frameStartX + deltaX, this.frameStartY + deltaY;
+				local frameScale = (t:GetEffectiveScale() or scale) / scale;
+				local maxX = math.max(0, UIParent:GetWidth() - ((t:GetWidth() or 0) * frameScale));
+				local maxY = math.max(0, UIParent:GetHeight() - ((t:GetHeight() or 0) * frameScale));
+				nextX = math.max(0, math.min(maxX, nextX));
+				nextY = math.max(0, math.min(maxY, nextY));
 				t:ClearAllPoints();
-				t:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
+				t:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", nextX, nextY);
+				SavePosition(name, t);          -- keep the newest location even if /reload happens mid-session
+			end
+			if ( name == "GameTooltip" and t:IsShown() ) then
+				this:SetFrameStrata("TOOLTIP");
+				if ( this:GetFrameLevel() <= t:GetFrameLevel() ) then this:SetFrameLevel(t:GetFrameLevel() + 1); end
 			end
 			this:ClearAllPoints();
-			this:SetPoint("TOPLEFT", t, "TOPLEFT", 0, 0);
-			this:SetPoint("BOTTOMRIGHT", t, "BOTTOMRIGHT", 0, 0);
+			if ( name == "BuffFrame" ) then
+				local l, b, w, h = BuffHandleBounds(t);
+				this:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", l, b);
+				this:SetWidth(math.max(24, w)); this:SetHeight(math.max(24, h));
+			else
+				this:SetPoint("TOPLEFT", t, "TOPLEFT", 0, 0);
+				this:SetPoint("BOTTOMRIGHT", t, "BOTTOMRIGHT", 0, 0);
+			end
 		end);
 		handles[name] = h;
 	end
@@ -1534,7 +1701,7 @@ local function Handle(name, label)
 end
 
 -- unlocked: the handles show (the frames are shown too, so even an empty party frame can be placed)
-function AZSMinorMods_SetUnlocked(on)
+function AZSMinorMods_SetUnlocked(on, quiet)
 	DB().unlocked = on and true or false;
 	if ( on ) then pcall(PrepareChatWindow); end
 	if ( not on and sizeMenu ) then sizeMenu:Hide(); end
@@ -1554,7 +1721,21 @@ function AZSMinorMods_SetUnlocked(on)
 		end
 	end
 	pcall(UpdateLevelButton);
-	K.Print(NAME, on and "drag a green handle to move it; right-click one to resize, scale or change layout. Use Lock UI when done." or "the UI is locked.");
+	if ( not quiet ) then K.Print(NAME, on and "drag a green handle to move it; right-click one to resize, scale or change layout. Use Lock UI when done." or "the UI is locked."); end
+end
+
+local tooltipOwnerOriginal;
+local function HookTooltipOwner()
+	if ( not GameTooltip or tooltipOwnerOriginal or not GameTooltip.SetOwner ) then return; end
+	tooltipOwnerOriginal = GameTooltip.SetOwner;
+	GameTooltip.SetOwner = function(self, owner, anchor, x, y)
+		tooltipOwnerOriginal(self, owner, anchor, x, y);
+		local p = DB().places.GameTooltip;
+		if ( DB().unlocked and type(p) == "table" and type(p.x) == "number" and type(p.y) == "number" ) then
+			self:ClearAllPoints();
+			self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", p.x, p.y);
+		end
+	end;
 end
 
 local function SetAnchorSnap(on)
@@ -1750,17 +1931,13 @@ local function WinBuild()
 	Row("Play a sound when you or a teammate dies", function() return DB().deathSound; end, function(v) DB().deathSound = v; end);
 	Row("Hide the target frame", function() return DB().hideTarget; end, function(v) DB().hideTarget = v; TargetFrameHidden(v); end);
 	Row("Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end);
+	Row("Show empty slots in Action Bar 1", function() return DB().showEmptyActionSlots; end, function(v) DB().showEmptyActionSlots = v; ApplyActionSlotGrid(); end);
 	Row("Cooldown numbers on the spell squares", function() return DB().cooldowns; end, function(v) DB().cooldowns = v; end);
 	Row("Replace Level Up button with movable version", function() return DB().moveLevelButton; end, function(v) DB().moveLevelButton = v; pcall(UpdateLevelButton); end);
-	Row("Unlock UI (drag moves; right-click resizes / scales)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end);
+	Row("Toggle UI Settings (drag, resize and scale)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end);
 	Row("Anchor moved frames to nearby frames", function() return DB().anchorSnap; end, function(v) SetAnchorSnap(v); end);
 	Row("Minimap button", function() local m = DB().minimap; return not (m and m.hide); end,
 	    function(v) if ( AZSMinorMods_Mini ) then local m = DB().minimap; if ( (m and m.hide and true or false) == v ) then AZSMinorMods_Mini.Toggle(); end end end);
-	local note = win:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall");
-	note:SetPoint("TOPLEFT", win, "TOPLEFT", 30, y - 4);
-	note:SetWidth(360);
-	note:SetJustifyH("LEFT");
-	note:SetText("Drag green handles to move. Right-click to resize, scale or change layout. Anchoring is optional.");
 	local reset = K.Button(win, "Reset positions", 150, function() AZSMinorMods_ResetPlaces(); end);
 	reset:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -24, 20);
 end
@@ -1807,9 +1984,6 @@ loader:SetScript("OnEvent", function()
 	local ok, err = pcall(HookChat);
 	if ( not ok ) then K.Print(NAME, "|cffff4040the chat could not be changed:|r " .. tostring(err)); end
 	pcall(Camera, event == "PLAYER_ENTERING_WORLD");
-	if ( event == "VARIABLES_LOADED" ) then
-		DB().unlocked = false;                             -- every session starts locked
-	end
 	-- the frames back where they were put (the game places some of them again as it loads), and the target frame
 	pcall(DetachExperienceBar);
 	if ( type(DB().places.ChatFrame1) == "table" ) then pcall(PrepareChatWindow); end
@@ -1818,9 +1992,19 @@ loader:SetScript("OnEvent", function()
 	pcall(TargetFrameHidden, DB().hideTarget);
 	if ( DB().plainBar ) then pcall(PlainBar, true); end
 	pcall(ApplyMovableOrientation, "MainMenuBar");
+	pcall(ApplyMovableOrientation, "MainMenuExpBar");
+	pcall(ApplyMovableOrientation, "BuffFrame");
 	pcall(ApplyMovableOrientation, "CastingBarFrame");
 	pcall(ApplyMovableOrientation, "PartyMemberFrame1");
+	pcall(ApplyActionSlotGrid);
+	pcall(HookTooltipOwner);
 	pcall(PlaceAll);
+	if ( event == "PLAYER_ENTERING_WORLD" and DB().unlocked ) then pcall(AZSMinorMods_SetUnlocked, true, true); end
+end);
+local buffLayoutUpdater = CreateFrame("Frame");
+buffLayoutUpdater:RegisterEvent("UNIT_AURA");
+buffLayoutUpdater:SetScript("OnEvent", function()
+	if ( arg1 == "player" and CurrentOrientation("BuffFrame") == "vertical" ) then pcall(ApplyBuffOrientation); end
 end);
 pcall(HookChat);                                          -- right away too, so lines printed while loading are caught
 

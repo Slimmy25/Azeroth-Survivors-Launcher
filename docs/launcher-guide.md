@@ -182,13 +182,13 @@ team. Unofficial mirrors are never used.
 | Host | Run by | Check |
 | --- | --- | --- |
 | Primary download host (`budapestmix.hu`) | Project endpoint | Pinned SHA-256 and MD5 |
-| Developer backup (`azerothsurvivors-mirror.sandervspl.dev`) | Project backup | Host-provided SHA-256 plus pinned checks |
 | Google Drive | Fotze, trusted head moderator | Pinned MD5 or matching SHA-256 |
-| Official website fallback | Aethus | Accepts a real `.rar`, `.zip` or `.7z` from the game site; checks the pinned SHA-256 when it matches |
+| Official website fallback | Aethus | Last resort after both regular hosts; accepts a real `.rar`, `.zip` or `.7z` from the game site |
 
 The project owner considers the Google Drive mirror from Fotze, a trusted head moderator, a trusted source and has
-chosen to keep its existing MD5 check. This is a deliberate project policy. The primary and developer backup hosts
-use their pinned checks; the official-site fallback is accepted only as a real game archive from Aethus's site.
+chosen to keep its existing MD5 check. This is a deliberate project policy. The primary host uses its pinned checks.
+The mod team removed the former developer backup mirror on 2026-11-01, and the launcher no longer contacts it. If both
+regular hosts fail, the launcher still tries Aethus's official site as a last resort.
 
 ## License
 

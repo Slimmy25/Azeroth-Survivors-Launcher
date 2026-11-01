@@ -1066,10 +1066,6 @@ Download cancelled.
 = Lataus peruttiin.
 The download server did not accept the launcher's login.
 = Latauspalvelin ei hyväksynyt käynnistimen kirjautumista.
-The backup host's page has no download link right now.
-= Varapalvelimen sivulla ei ole juuri nyt latauslinkkiä.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Varapalvelimelta ladattu tiedosto on vioittunut (tarkistussumma ei täsmää). Yritä uudelleen.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Käynnistin on jo käynnissä.\n\nEtsi sen kuvake ilmaisinalueelta (kellon vierestä).
 INSTALL FROM A FILE

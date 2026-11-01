@@ -1067,10 +1067,6 @@ Download cancelled.
 = Η λήψη ακυρώθηκε.
 The download server did not accept the launcher's login.
 = Ο διακομιστής λήψης δεν δέχτηκε τη σύνδεση του launcher.
-The backup host's page has no download link right now.
-= Η σελίδα του εφεδρικού διακομιστή δεν έχει σύνδεσμο λήψης αυτή τη στιγμή.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Η λήψη από τον εφεδρικό διακομιστή είναι κατεστραμμένη (το άθροισμα ελέγχου δεν ταιριάζει). Δοκίμασε ξανά.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Ο launcher τρέχει ήδη.\n\nΨάξε το εικονίδιό του στην περιοχή ειδοποιήσεων (δίπλα στο ρολόι).
 INSTALL FROM A FILE

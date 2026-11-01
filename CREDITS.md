@@ -17,10 +17,9 @@ does not contain.
 Windows client, `AzerothSurvivors.exe`. The game, its code, its data, its patch notes and its logo belong to Aethus.
 
 - **The game client is not in this repository and is not hosted by this project.** The launcher uses a primary download
-  endpoint, a developer backup at <https://azerothsurvivors-mirror.sandervspl.dev/>, a Google Drive mirror from Fotze,
-  and, as a last resort, the game's own page at <https://wow.aethus.pl/download>. The launcher checks downloads using
-  the project-maintained checks in `src/Launcher.cs`; the official-site fallback is accepted when it returns a valid
-  game archive.
+  endpoint and a Google Drive mirror from Fotze, then tries the game's own page at <https://wow.aethus.pl/download> as
+  a last resort. The mod team removed a former developer backup mirror on 2026-11-01. Regular-host downloads are
+  checked using the project-maintained checks in `src/Launcher.cs`.
   The project owner considers Fotze's Google Drive mirror a trusted source and has deliberately retained its MD5
   verification policy.
 - **Game data** the launcher shows (talent trees, spell and talent descriptions, names) is the game's own, by Aethus.

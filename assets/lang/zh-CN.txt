@@ -1067,10 +1067,6 @@ Download cancelled.
 = 下载已取消。
 The download server did not accept the launcher's login.
 = 下载服务器不接受启动器的登录。
-The backup host's page has no download link right now.
-= 备用服务器页面目前没有下载链接。
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= 从备用服务器下载的文件已损坏（校验和不匹配）。请重试。
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = 启动器已在运行。\n\n请在系统托盘（时钟旁）找到它的图标。
 INSTALL FROM A FILE

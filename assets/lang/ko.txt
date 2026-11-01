@@ -1067,10 +1067,6 @@ Download cancelled.
 = 다운로드를 취소했습니다.
 The download server did not accept the launcher's login.
 = 다운로드 서버가 런처의 로그인을 받아들이지 않았습니다.
-The backup host's page has no download link right now.
-= 예비 서버 페이지에 지금은 다운로드 링크가 없습니다.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= 예비 서버에서 받은 파일이 손상되었습니다(체크섬 불일치). 다시 시도하세요.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = 런처가 이미 실행 중입니다.\n\n시스템 트레이(시계 근처)에서 아이콘을 찾아보세요.
 INSTALL FROM A FILE

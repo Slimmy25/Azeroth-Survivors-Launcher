@@ -25,19 +25,17 @@ namespace AzerothLauncher
         // ("Azeroth Survivors Launcher - Temp": a name no other folder has, so nothing of the player's is ever wiped).
         public const string ClientUrl = "https://budapestmix.hu:5000/download";
         public const string ClientUser = "AzerothSurvivors_uSZfhjS", ClientPassword = "AzerothSurvivors_uSZfhjS";
-        // The developers' backup host: a page with a link to the newest archive and its SHA-256 (no login).
-        public const string ClientMirrorUrl = "https://azerothsurvivors-mirror.sandervspl.dev/";
-        // A third host, on Google Drive (the same game in its own archive, so its own MD5). This copy is published by one
+        // The second regular host is Google Drive (the same game in its own archive, so its own MD5). This copy is published by one
         // of the head moderators of the official Discord, a trusted source: it is kept with its MD5 check and no further
         // measures, by choice (MD5 can only be fooled by the person who made the file, see "Download hosts" in the
         // README). Only hosts endorsed by both Aethus and the mod team are ever used; no unofficial mirrors.
         public const string ClientDriveId = "12EHYJrgdANtgZvND49L_cxQwoObTbkWq";
-        // The last resort: the game's own download page. Never one of the three picked at random; only tried after
-        // all three have failed. Its archive may be newer than the checksums below, so it is accepted when it is a
+        // The last resort: the game's own download page. It is only tried after both regular hosts fail. Its archive
+        // may be newer than the checksums below, so it is accepted when it is a
         // real .rar/.zip/.7z archive from the game's own site.
         public const string ClientLastResortUrl = "https://wow.aethus.pl/download";
-        // Each install picks one of the hosts at random; if that one fails, the others are tried in turn. Every download
-        // is checked against the game's known checksums below (update them with a new game version).
+        // Each install picks one of the two regular hosts at random; if it fails, the other is tried. The game's own
+        // page remains the last resort. Regular-host downloads are checked against the game's known checksums below.
         public const string ClientSha256 = "971db7968dc37ec50b18d64a1de7f693e137f6793a7368e4d5c27bd9522eccd8";   // AzerothSurvivorsWindowsNew.rar
         public const string ClientMd5 = "7748bfdffaccd2f46d868cf69ad3e72c";                                       //   (760497456 bytes)
         public const string ClientDriveMd5 = "81887cd5d56dcca3b7dd086b0b498cf6";                                  // the Google Drive archive
@@ -1532,13 +1530,13 @@ namespace AzerothLauncher
 
         static readonly Random hostDice = new Random();
 
-        // One of the hosts at random; when it fails (not when you cancel), the next one.
+        // Try the two regular hosts in random order; if one fails (not when cancelled), try the other.
         static void DownloadClient(string file, Action<long, long> progress, ManualResetEvent cancel, Action<string> say)
         {
-            var hosts = new List<int> { 0, 1, 2 };            // 0 main, 1 backup, 2 Google Drive
+            var hosts = new List<int> { 0, 1 };               // 0 main, 1 Google Drive
             lock (hostDice)
                 for (int i = hosts.Count - 1; i > 0; i--) { int j = hostDice.Next(i + 1); int t = hosts[i]; hosts[i] = hosts[j]; hosts[j] = t; }
-            string[] names = { "main host", "backup host", "Google Drive host" };
+            string[] names = { "main host", "Google Drive host" };
             var errors = new List<string>();
             for (int i = 0; i < hosts.Count; i++)
             {
@@ -1548,7 +1546,6 @@ namespace AzerothLauncher
                 try
                 {
                     if (h == 0) DownloadFromMain(file, progress, cancel);
-                    else if (h == 1) DownloadFromMirror(file, progress, cancel);
                     else DownloadFromDrive(file, progress, cancel);
                     return;
                 }
@@ -1611,29 +1608,6 @@ namespace AzerothLauncher
             if (Archive.Kind(file) != null) return;
             try { File.Delete(file); } catch (Exception) { }
             throw new UserError("The game's download page did not give a game archive.");
-        }
-
-        // the backup host: its page names the newest archive (the link changes with every upload) and its SHA-256;
-        // the download must match the game's known checksums (and the page's, when it shows one)
-        static void DownloadFromMirror(string file, Action<long, long> progress, ManualResetEvent cancel)
-        {
-            string html;
-            using (HttpWebResponse resp = Net.Open(ClientMirrorUrl, 30000, true, "backup download", "text/html"))
-            using (var rd = new StreamReader(resp.GetResponseStream(), Encoding.UTF8))
-                html = rd.ReadToEnd();
-            var link = System.Text.RegularExpressions.Regex.Match(html,
-                "href\\s*=\\s*[\"']([^\"']*/downloads/[^\"']+\\.(?:rar|zip|7z))[\"']", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            if (!link.Success) throw new UserError("The backup host's page has no download link right now.");
-            string url = new Uri(new Uri(ClientMirrorUrl), System.Net.WebUtility.HtmlDecode(link.Groups[1].Value)).AbsoluteUri;
-            var sum = System.Text.RegularExpressions.Regex.Match(html, "SHA-?256.{0,300}?\\b([0-9a-fA-F]{64})\\b",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Singleline);
-            string sha = Net.Download(url, file, true, "backup download", progress, cancel, 0);
-            if (sum.Success && !string.Equals(sum.Groups[1].Value, sha, StringComparison.OrdinalIgnoreCase))
-            {
-                try { File.Delete(file); } catch (Exception) { }
-                throw new UserError("The download from the backup host is damaged (its checksum does not match). Please try again.");
-            }
-            CheckClient(file, sha, Net.LastMd5, false, "backup host");
         }
 
         // Google Drive: a large file first gives a "can't scan this file for viruses" page whose form holds the real

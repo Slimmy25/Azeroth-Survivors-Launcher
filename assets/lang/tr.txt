@@ -1067,10 +1067,6 @@ Download cancelled.
 = İndirme iptal edildi.
 The download server did not accept the launcher's login.
 = İndirme sunucusu başlatıcının girişini kabul etmedi.
-The backup host's page has no download link right now.
-= Yedek sunucunun sayfasında şu an indirme bağlantısı yok.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Yedek sunucudan inen dosya bozuk (sağlama toplamı uyuşmuyor). Tekrar dene.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Başlatıcı zaten çalışıyor.\n\nSimgesini bildirim alanında (saatin yanında) ara.
 INSTALL FROM A FILE

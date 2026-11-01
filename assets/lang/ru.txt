@@ -1067,10 +1067,6 @@ Download cancelled.
 = Загрузка отменена.
 The download server did not accept the launcher's login.
 = Сервер загрузки не принял логин лаунчера.
-The backup host's page has no download link right now.
-= На странице резервного сервера сейчас нет ссылки на загрузку.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Файл с резервного сервера повреждён (контрольная сумма не совпадает). Попробуйте ещё раз.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Лаунчер уже запущен.\n\nНайдите его значок в области уведомлений (рядом с часами).
 INSTALL FROM A FILE

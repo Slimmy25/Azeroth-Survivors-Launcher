@@ -1067,10 +1067,6 @@ Download cancelled.
 = डाउनलोड रद्द किया गया।
 The download server did not accept the launcher's login.
 = डाउनलोड सर्वर ने लॉन्चर का लॉगिन स्वीकार नहीं किया।
-The backup host's page has no download link right now.
-= बैकअप सर्वर के पेज पर अभी कोई डाउनलोड लिंक नहीं है।
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= बैकअप सर्वर से डाउनलोड खराब है (चेकसम मेल नहीं खाता)। फिर कोशिश करें।
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = लॉन्चर पहले से चल रहा है।\n\nइसका आइकन सिस्टम ट्रे (घड़ी के पास) में देखें।
 INSTALL FROM A FILE

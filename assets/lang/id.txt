@@ -1066,10 +1066,6 @@ Download cancelled.
 = Unduhan dibatalkan.
 The download server did not accept the launcher's login.
 = Server unduhan tidak menerima login launcher.
-The backup host's page has no download link right now.
-= Halaman server cadangan sedang tidak punya tautan unduhan.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Unduhan dari server cadangan rusak (checksum tidak cocok). Coba lagi.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Launcher sudah berjalan.\n\nCari ikonnya di area notifikasi (dekat jam).
 INSTALL FROM A FILE

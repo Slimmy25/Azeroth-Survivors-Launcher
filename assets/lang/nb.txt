@@ -1066,10 +1066,6 @@ Download cancelled.
 = Nedlastingen ble avbrutt.
 The download server did not accept the launcher's login.
 = Nedlastingsserveren godtok ikke launcherens innlogging.
-The backup host's page has no download link right now.
-= Reserveserverens side har ingen nedlastingslenke akkurat nå.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Nedlastingen fra reserveserveren er skadet (kontrollsummen stemmer ikke). Prøv igjen.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Launcheren kjører allerede.\n\nSe etter ikonet i systemstatusfeltet (ved klokken).
 INSTALL FROM A FILE
