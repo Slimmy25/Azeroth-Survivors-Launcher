@@ -1,3 +1,10 @@
+# v3.09 (2026-11-01)
+
+- AZS Minor Mods adds independently movable and resizable HUD controls for the XP bar, chat, stored-level button, clock, encounter bars and event announcements. Supported bars can change orientation and scale.
+- The run clock keeps its next-boss countdown together; encounter bars show live target health and grow as targets appear. Event announcements use localized banner text, last 10 seconds and fade in and out.
+- Fresh AZS Minor Mods installs include the bundled Baby Crying sound, Source Serif fonts and their license.
+
+===
 # v3.08 (2026-10-30)
 
 - Redesigned paired talent and gear tools: shared class selection, temporary class drafts, compact saves and import/export overlays, scrollable equipment and class-video links.

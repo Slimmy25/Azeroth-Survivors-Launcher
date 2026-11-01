@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: AZS Minor Mods
-## Notes: Small changes, each on or off: movable and resizable UI (including the joined run clock/next-boss countdown and separate active boss bars), optional frame anchoring, no level-up lines, boss markers, a blinking marker and optional sound when a friend falls, a plain action bar, hidden target frame, camera at 50. /azsmods or the minimap button.
+## Notes: Small changes, each on or off: movable and resizable UI with per-frame scaling, optional vertical layouts, separate XP bar, run clock / next-boss timer, transparent encounter bars and 10-second fading event announcements; chat and boss markers. /azsmods or the minimap button.
 ## Author: Slimjim
 ## SavedVariables: AZSMinorModsDB
 AZSKit.lua

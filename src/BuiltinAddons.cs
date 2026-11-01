@@ -29,7 +29,7 @@ namespace AzerothLauncher
         {
             new BuiltinAddon { Folder = "AZSHandbook", Files = new[] { "AZSHandbook.toc", "AZSHandbook.lua" }, Generated = "AZSHandbookData.lua" },
             new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua" },
-                BinaryFiles = new[] { "dragon-studio-baby-crying-463213.mp3" } },
+                BinaryFiles = new[] { "Baby Crying.mp3", "SourceSerif4SmText-Bold.ttf", "SourceSerif4SmText-Regular.ttf", "SourceSerif4-OFL.txt" } },
         };
 
         public static BuiltinAddon Find(string url)
