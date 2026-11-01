@@ -1,3 +1,8 @@
+# v3.16 (2026-11-01)
+
+- Rewrote every Download More addon description as a one-word sentence based on the feature its GitHub project promises.
+
+===
 # v3.15 (2026-11-01)
 
 - Renamed AZS Minor Mods to Slim Suite, moved it to Gameplay, and added separate interface and minor-feature settings pages. The interface page includes a 32, 64, 128, or 256 pixel layout grid; the enabled-addon manager lets you disable addons and reload to apply the change.

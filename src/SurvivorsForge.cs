@@ -173,7 +173,7 @@ namespace AzerothLauncher
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
             req.Accept = "application/json";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.15 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.16 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -214,7 +214,7 @@ namespace AzerothLauncher
                 throw new InvalidDataException("Unexpected SurvivorsForge image address.");
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.15 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.16 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
