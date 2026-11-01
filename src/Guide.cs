@@ -646,11 +646,10 @@ namespace AzerothLauncher
             guideFindNextButton = null;
             guideTabsBottom = 8;
             int sh = (int)(32 * Theme.Zoom);
-            // Reserve a dedicated slot beside the search field or theory-tool switch for the guide-location star.
+            // The guide-location star lives inside the secondary page area, so the search field can use the full row.
             int searchLeft = 8;
-            int starSlot = Math.Max(28, (int)(32 * Theme.Zoom));
             int rightMargin = 8;
-            int searchWidth = Math.Max(80, PW - searchLeft - starSlot - rightMargin - 4);
+            int searchWidth = Math.Max(80, PW - searchLeft - rightMargin - 4);
             if (gBuilder || gPlanner)
             {
                 guideSearch = null;
@@ -1359,13 +1358,9 @@ namespace AzerothLauncher
             GuideFavoriteRoute currentLocation = CurrentGuideFavoriteRoute();
             if (currentLocation == null) return;
             int starSize = Math.Max(24, (int)(28 * Theme.Zoom));
-            // Keep the star in the reserved header slot, beside rather than over the search field
-            // or the article/sidebar content. GuideHeader reserves this space on every guide page.
-            int x = guideHeaderControl != null && !guideHeaderControl.IsDisposed
-                ? guideHeaderControl.Right + 2 : PW - starSize - 8;
-            int y = guideHeaderControl != null && !guideHeaderControl.IsDisposed
-                ? guideHeaderControl.Top + (guideHeaderControl.Height - starSize) / 2 : GuideTop + 2;
-            if (gBuilder || gPlanner) { x = PW - starSize + 2; y = 0; }
+            // Keep the location favorite inside the secondary page area, aligned to its upper-right corner.
+            int x = Math.Max(4, PW - starSize - 8);
+            int y = Math.Max(2, GuideTop + 2);
             var star = new Label { Text = "★", AutoSize = false, Bounds = new Rectangle(x, y, starSize, starSize),
                 Font = new Font("Segoe UI Symbol", 15 * Theme.Zoom * 96f / 72f, FontStyle.Regular, GraphicsUnit.Pixel),
                 ForeColor = Theme.Gold, BackColor = Color.Transparent, TextAlign = ContentAlignment.MiddleCenter,
@@ -1425,7 +1420,7 @@ namespace AzerothLauncher
             if (guideFavoriteStar != null && !guideFavoriteStar.IsDisposed)
             {
                 var star = guideFavoriteStar;
-                star.Bounds = new Rectangle(Math.Max(margin, right - starSize), margin, starSize, starSize);
+                star.Bounds = new Rectangle(Math.Max(margin, right - starSize), GuideTop + margin, starSize, starSize);
                 float fontSize = 15 * sectionZoom * 96f / 72f;
                 if (Math.Abs(star.Font.Size - fontSize) > .05f)
                 {
@@ -2345,7 +2340,8 @@ namespace AzerothLauncher
                 var topLink = new Label { Text = "↑ " + Lang.T("Back to Top"), AutoSize = true, UseMnemonic = false,
                     Font = Theme.F(8.5f, FontStyle.Underline), ForeColor = Theme.Gold, BackColor = panel.BackColor,
                     Cursor = Cursors.Hand, AccessibleRole = AccessibleRole.Link };
-                topLink.Location = new Point(Math.Max(20, PW - 20 - topLink.Width), GuideTop + 2);
+                int starClearance = Math.Max(24, (int)(28 * Theme.Zoom)) + 8;
+                topLink.Location = new Point(Math.Max(20, PW - starClearance - topLink.Width), GuideTop + 2);
                 topLink.Click += delegate { sp.ScrollTo(0); };
                 topLink.MouseEnter += delegate { topLink.ForeColor = Theme.Hex("#fff2b0"); };
                 topLink.MouseLeave += delegate { topLink.ForeColor = Theme.Gold; };
@@ -2484,7 +2480,9 @@ namespace AzerothLauncher
 
             // sp belongs to the scroll frame, not panel: its Right is in frame coordinates.
             // Anchor to panel directly so the tree ends exactly before the favorites strip.
-            var nav = new GuideContentsPanel { Bounds = new Rectangle(PW - width, top, width, sp.Parent.Height), BackColor = panel.BackColor, HideBars=true };
+            // Leave a small landing area for the page favorite star above the tree.
+            int navTop = top + Math.Max(24, (int)(28 * Theme.Zoom));
+            var nav = new GuideContentsPanel { Bounds = new Rectangle(PW - width, navTop, width, Math.Max(1, PH - navTop - 4)), BackColor = panel.BackColor, HideBars=true };
             // One complete wheel notch jumps one in-article section; resource links
             // (builder/build guides) still require a click, so scrolling cannot leave the page.
             if(className!=null) nav.SectionStep = delegate(int direction) { StepClassSection(sp, direction); };

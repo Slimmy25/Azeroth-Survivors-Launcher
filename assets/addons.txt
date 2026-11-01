@@ -1,5 +1,5 @@
 # Addons offered in Addons > DOWNLOAD MORE. One addon per line:
-#   CATEGORY | Name shown | download URL | AddOn folders | one-word sentence [| forge-id=... | forge-verified=true]
+#   CATEGORY | Name shown | download URL | AddOn folders | one-word sentence [| forge-id=... | forge-verified=true | gallery-id=... | note=...]
 # The local gallery uses supplied screenshots until a matched SurvivorsForge entry publishes its own screenshots.
 # Categories: UI, GAMEPLAY, MISC, WOW 1.12 ADDONS. builtin:<folder> is packaged with the launcher.
 
@@ -22,6 +22,7 @@ MISC | Azeroth Stats By Maidenhead | https://github.com/Slimmy25/Azeroth-Survivo
 MISC | LocalClock By JamieeLee | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/LocalClock-by-JamieeLee.zip | LocalClock | Displays. | forge-id=localclock-addon
 MISC | Cursor Reticle By Muffla | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/CursorReticle-by-Muffla.zip | CursorReticle | Highlights.
 MISC | ASBuilder By Cadoky | https://github.com/cadoky/ASBuilder/releases/download/v1.10.0/ASBuilder-v1.10.0.zip | ASBuilder | Plans. | forge-id=asbuilder | forge-verified=true
+MISC | Azeroth Hub By Maidenquinn | https://github.com/Maidenquinn/AzerothHub/releases/download/v0.7.5/AzerothHub-0.7.5.zip | AzerothHub | Configures. | gallery-id=azerothhub | note=A full collection of addons featured in Survivorsforge - INGAME!
 MISC | AZS Handbook By Slimjim | builtin:AZSHandbook | AZSHandbook | Guides.
 GAMEPLAY | Slim Suite By Slimjim | builtin:AZSMinorMods | AZSMinorMods | Helps.
 WOW 1.12 ADDONS | MinimapButtonBag By Tunhadil & LaYt | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/MinimapButtonBag-by-Tunhadil-LaYt.zip | MBB | Consolidates.

@@ -173,7 +173,7 @@ namespace AzerothLauncher
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
             req.Accept = "application/json";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.16 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.17 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -214,7 +214,7 @@ namespace AzerothLauncher
                 throw new InvalidDataException("Unexpected SurvivorsForge image address.");
             var req = (HttpWebRequest)WebRequest.Create(uri);
             req.Method = "GET";
-            req.UserAgent = "AzerothSurvivorsLauncher/3.16 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
+            req.UserAgent = "AzerothSurvivorsLauncher/3.17 (+https://github.com/Slimmy25/Azeroth-Survivors-Launcher)";
             req.Timeout = RequestTimeoutMs;
             req.ReadWriteTimeout = RequestTimeoutMs;
             req.AllowAutoRedirect = false;
@@ -327,7 +327,9 @@ namespace AzerothLauncher
 
         static ForgeAddonInfo GetInfoSingle(AddonEntry entry)
         {
-            if (entry == null || string.IsNullOrWhiteSpace(entry.ForgeId)) return null;
+            if (entry == null) return null;
+            if (string.IsNullOrWhiteSpace(entry.ForgeId))
+                return string.IsNullOrWhiteSpace(entry.GalleryId) ? null : new ForgeAddonInfo { Id = entry.GalleryId };
             Dictionary<string, object> addon = RegistryAddon(entry.ForgeId);
             if (addon == null)
             {
@@ -596,6 +598,7 @@ namespace AzerothLauncher
                 return index == 0 ? prefix + "kodfod-moveanything-1.png" : index == 1 ? prefix + "kodfod-moveanything-2.png" : null;
             if (string.Equals(id, "aetherhud", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "aetherhud.webp" : null;
             if (string.Equals(id, "azerloot", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerloot.png" : null;
+            if (string.Equals(id, "azerothhub", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerothhub.png" : null;
             return null;
         }
 

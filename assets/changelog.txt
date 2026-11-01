@@ -2,6 +2,15 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.138.0
+-------
+Addons that draw their own combat numbers can now keep them fixed in the world: a number stays over the spot where an enemy died as you turn or move, and hides when that spot leaves your view. The game's own numbers are unchanged.
+
+- For addon authors: AZS_GetCombatTextEvents() gives each of your hits as the game knows it (the exact target, amount, crit, school, spell and source, your pets and totems too), even with the game's own numbers turned off.
+- For addon authors: AZS_ProjectCombatTextAnchors() turns a hit's anchor into a screen position, over the living enemy and then where it fell, with distance for sizing text. It works even if the enemy never had a nameplate.
+- For addon authors: AZS_RegisterCombatTextFrameHandler() runs after the camera moves each frame, so numbers placed there don't trail behind when you turn. See "World-anchored combat text" in the addon docs.
+===
+
 0.137.0
 -------
 Enhancement Shaman's procs now feed each other: Windfury strikes and Stormbound Echoes repeats count as real Rockbiter and Stormstrike attacks. Flametongue, Frostbrand, Resonant Shocks and three necklaces are remade, with two new talents in Stormguard and Elemental Sunder.

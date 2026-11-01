@@ -772,7 +772,7 @@ namespace AzerothLauncher
     // ------------------------------------------------------------------ built-in data
     public class AddonEntry
     {
-        public string Category, Name, Url, Description, ForgeId;
+        public string Category, Name, Url, Description, ForgeId, GalleryId, Note;
         public bool ForgeVerified;                 // one-time review flag recorded with this catalog entry
         public List<string> ForgeIds = new List<string>();
         public List<string> Folders = new List<string>();    // its folders in the AddOns folder (addons.txt's 4th field)
@@ -977,7 +977,9 @@ namespace AzerothLauncher
                     }
                     int descriptionEnd = f.Length;
                     // Catalog metadata is kept at the end so descriptions may still contain '|'.
-                    while (descriptionEnd > 4 && f[descriptionEnd - 1].Trim().StartsWith("forge-", StringComparison.OrdinalIgnoreCase))
+                    while (descriptionEnd > 4 && (f[descriptionEnd - 1].Trim().StartsWith("forge-", StringComparison.OrdinalIgnoreCase) ||
+                                                   f[descriptionEnd - 1].Trim().StartsWith("gallery-", StringComparison.OrdinalIgnoreCase) ||
+                                                   f[descriptionEnd - 1].Trim().StartsWith("note=", StringComparison.OrdinalIgnoreCase)))
                     {
                         string meta = f[descriptionEnd - 1].Trim();
                         if (meta.StartsWith("forge-id=", StringComparison.OrdinalIgnoreCase))
@@ -992,6 +994,10 @@ namespace AzerothLauncher
                         }
                         else if (meta.StartsWith("forge-verified=", StringComparison.OrdinalIgnoreCase))
                             e.ForgeVerified = string.Equals(meta.Substring("forge-verified=".Length).Trim(), "true", StringComparison.OrdinalIgnoreCase);
+                        else if (meta.StartsWith("gallery-id=", StringComparison.OrdinalIgnoreCase))
+                            e.GalleryId = meta.Substring("gallery-id=".Length).Trim();
+                        else if (meta.StartsWith("note=", StringComparison.OrdinalIgnoreCase))
+                            e.Note = meta.Substring("note=".Length).Trim();
                         else break;
                         descriptionEnd--;
                     }

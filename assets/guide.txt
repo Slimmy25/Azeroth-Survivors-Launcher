@@ -639,6 +639,9 @@ An addon can hide a part of the game's own screen (the clock, the boss bars, the
 # Addon frames over cards
 Addon authors can use AZS_SetOnTopOfScreens to keep their frames above the level-up and new-item cards.
 
+# World-anchored combat text
+Addons that draw their own combat numbers can use AZS_GetCombatTextEvents() to read each hit, including its target and source. AZS_ProjectCombatTextAnchors() provides a screen position over a living enemy or where it fell, and AZS_RegisterCombatTextFrameHandler() keeps those positions aligned after the camera moves. The anchor data includes distance for sizing, and works even without a nameplate. These APIs affect addon-drawn numbers; the game's own combat numbers stay unchanged.
+
 @topic Tips for New Players | Small things that make a big difference
 - Never stop moving. Walk in wide circles so the horde follows you in a line instead of surrounding you.
 - Learn your starting spell's range. Melee classes want to be close; casters and hunters want room.

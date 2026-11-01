@@ -76,6 +76,7 @@ local function DB()
 	if ( d.miniMarks == nil ) then d.miniMarks = true; end
 	if ( d.hideTarget == nil ) then d.hideTarget = false; end
 	if ( d.moveLevelButton == nil ) then d.moveLevelButton = true; end
+	if ( d.moveMeter == nil ) then d.moveMeter = true; end
 	if ( type(d.places) ~= "table" ) then d.places = {}; end
 	if ( type(d.sizes) ~= "table" ) then d.sizes = {}; end
 	if ( type(d.scales) ~= "table" ) then d.scales = {}; end
@@ -85,11 +86,17 @@ local function DB()
 	if ( d.buffGrowthDirection ~= "up" and d.buffGrowthDirection ~= "down" ) then d.buffGrowthDirection = "down"; end
 	if ( d.buffCustomLayout == nil ) then d.buffCustomLayout = d.orientations.BuffFrame == "vertical"; end
 	if ( type(d.sizeMenuPosition) ~= "table" ) then d.sizeMenuPosition = {}; end
-	if ( d.gridSpacing == nil ) then d.gridSpacing = 128; end
+	if ( type(d.lockPanelPosition) ~= "table" ) then d.lockPanelPosition = {}; end
+	if ( type(d.gridDivisions) ~= "number" ) then d.gridDivisions = tonumber(d.gridSpacing) or 128; end
+	if ( d.gridDivisions ~= 32 and d.gridDivisions ~= 64 and d.gridDivisions ~= 128 and d.gridDivisions ~= 256 ) then d.gridDivisions = 128; end
+	d.gridSpacing = nil;
 	if ( d.showEditGrid == nil ) then d.showEditGrid = true; end
+	if ( d.gridCenterVertical == nil ) then d.gridCenterVertical = true; end
+	if ( d.gridCenterHorizontal == nil ) then d.gridCenterHorizontal = true; end
 	if ( d.tallyVertical == nil ) then d.tallyVertical = false; end
 	if ( d.showEmptyActionSlots == nil ) then d.showEmptyActionSlots = false; end
 	if ( d.buildRowsAttached == nil ) then d.buildRowsAttached = true; end
+	if ( d.replaceBuildRows == nil ) then d.replaceBuildRows = true; end
 	if ( type(d.itemRowEquipped) ~= "table" ) then d.itemRowEquipped = {}; end
 	if ( type(d.itemRowSeen) ~= "table" ) then d.itemRowSeen = {}; end
 	if ( type(d.itemRowCounter) ~= "number" ) then d.itemRowCounter = 0; end
@@ -397,10 +404,12 @@ end);
 local MOVABLE = { { "PlayerFrame", "Player" }, { "TargetFrame", "Target" }, { "PartyMemberFrame1", "Party" },
                   { "MinimapCluster", "Minimap" }, { "BuffFrame", "Buffs" }, { "CastingBarFrame", "Cast bar" },
                   { "MainMenuBar", "Action bars" }, { "MainMenuExpBar", "XP bar" }, { "ChatFrame1", "Chat" },
+                  { "AZSMinorModsMeterFrame", "Damage meter" },
                   { "AZSMinorModsStoredLevelsButton", "Level Up" },
                   { "AZSMinorModsClockFrame", "Run clock / Next boss" },
                   { "AZSMinorModsBossFrames", "Encounter bars" },
                   { "AZSMinorModsAnnouncementFrame", "Event announcements" },
+                  { "AZSMinorModsSpellRowFrame", "Build spell row" },
                   { "AZSMinorModsItemRowFrame", "Worn rings / trinkets" },
                   { "AZSMinorModsTallyFrame", "Kills / Gold / Cache" }, { "GameTooltip", "Tooltip" } };
 local handles = {};
@@ -415,6 +424,8 @@ local sizeMenu, sizeMenuText, sizeMenuWidth, sizeMenuHeight, sizeMenuScale, size
 local editGrid, editGridLines = nil, {};
 local sizeTarget;
 local lockPanel;
+local ShowEditGrid;
+local SetAnchorSnap;
 local xpBarDetached = false;
 local buffButtonOriginalPoints = {};
 local buffLayoutApplying = false;
@@ -422,6 +433,10 @@ local actionSlotsGridApplied = false;
 local tallyFrame;
 local tallyNativeWasShown;
 local tallyNativeOverridden = false;
+local meterFrame;
+local meterNativeWasShown;
+local meterNativeOverridden = false;
+local UpdateMeter;
 local clockFrame;
 local clockNativeWasShown;
 local clockNativeOverridden = false;
@@ -442,6 +457,10 @@ local encounterRows = {};
 local actionBarOriginal;
 local itemRow;
 local itemRowButtons = {};
+local spellRow;
+local spellRowButtons = {};
+local buildNativeWasShown;
+local buildNativeOverridden = false;
 
 -- The item deck reads the four real 1.12 jewelry equipment slots. The catalog is generated from
 -- the game's item data, while the inventory API supplies the currently worn icon and tooltip.
@@ -456,17 +475,42 @@ local function LayoutItemRow()
 	local gap = 4;
 	if ( not DB().sizes.AZSMinorModsItemRowFrame ) then
 		-- Keep the four equipment slots visible when empty so the row can always be placed and sized.
-		itemRow:SetWidth(4 * 32 + 3 * gap);
-		itemRow:SetHeight(36);
+		if ( DB().orientations.AZSMinorModsItemRowFrame == "vertical" ) then
+			itemRow:SetWidth(36); itemRow:SetHeight(4 * 32 + 3 * gap);
+		else itemRow:SetWidth(4 * 32 + 3 * gap); itemRow:SetHeight(36); end
 	end
-	local width = itemRow:GetWidth() or 36;
-	local height = itemRow:GetHeight() or 36;
-	local iconSize = math.max(16, math.min(height - 4, (width - gap * 3) / 4));
+	local vertical = DB().orientations.AZSMinorModsItemRowFrame == "vertical";
+	local width, height = itemRow:GetWidth() or 36, itemRow:GetHeight() or 36;
+	local iconSize = vertical and math.max(12, math.min(width - 4, (height - gap * 3) / 4))
+		or math.max(12, math.min(height - 4, (width - gap * 3) / 4));
 	for i = 1, table.getn(itemRowButtons) do
 		local button = itemRowButtons[i];
 		button:ClearAllPoints();
 		button:SetWidth(iconSize); button:SetHeight(iconSize);
-		button:SetPoint("LEFT", itemRow, "LEFT", (i - 1) * (iconSize + gap), 0);
+		if ( vertical ) then button:SetPoint("TOP", itemRow, "TOP", 0, -((i - 1) * (iconSize + gap)));
+		else button:SetPoint("LEFT", itemRow, "LEFT", (i - 1) * (iconSize + gap), 0); end
+	end
+end
+
+local function LayoutSpellRow()
+	if ( not spellRow ) then return; end
+	local gap = 4;
+	if ( not DB().sizes.AZSMinorModsSpellRowFrame ) then
+		if ( DB().orientations.AZSMinorModsSpellRowFrame == "vertical" ) then
+			spellRow:SetWidth(36); spellRow:SetHeight(6 * 32 + 5 * gap);
+		else spellRow:SetWidth(6 * 32 + 5 * gap); spellRow:SetHeight(36); end
+	end
+	local vertical = DB().orientations.AZSMinorModsSpellRowFrame == "vertical";
+	local width, height = spellRow:GetWidth() or 36, spellRow:GetHeight() or 36;
+	local iconSize = vertical and math.max(12, math.min(width - 4, (height - gap * 5) / 6))
+		or math.max(12, math.min(height - 4, (width - gap * 5) / 6));
+	for i = 1, 6 do
+		local button = spellRowButtons[i];
+		if ( button ) then
+			button:ClearAllPoints(); button:SetWidth(iconSize); button:SetHeight(iconSize);
+			if ( vertical ) then button:SetPoint("TOP", spellRow, "TOP", 0, -((i - 1) * (iconSize + gap)));
+			else button:SetPoint("LEFT", spellRow, "LEFT", (i - 1) * (iconSize + gap), 0); end
+		end
 	end
 end
 
@@ -520,8 +564,8 @@ local function RefreshItemRow()
 		end
 	end
 	LayoutItemRow();
-	itemRow:Show();
-	if ( d.unlocked and handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Show(); end
+	if ( d.replaceBuildRows ) then itemRow:Show(); else itemRow:Hide(); end
+	if ( d.unlocked and d.replaceBuildRows and handles.AZSMinorModsItemRowFrame ) then handles.AZSMinorModsItemRowFrame:Show(); end
 end
 
 local function CreateItemRow()
@@ -529,9 +573,14 @@ local function CreateItemRow()
 	itemRow = CreateFrame("Frame", "AZSMinorModsItemRowFrame", UIParent);
 	itemRow:SetWidth(140); itemRow:SetHeight(36);
 	local d = DB();
+	local oldItemPlace = d.places.AZSMinorModsItemRowFrame;
+	if ( d.buildRowsAttached and type(oldItemPlace) == "table" and oldItemPlace.relative == "MainMenuBar"
+		and K.Num(oldItemPlace.dx) == 0 and K.Num(oldItemPlace.dy) == -4 ) then
+		oldItemPlace.relative = "AZSMinorModsSpellRowFrame";
+	end
 	if ( not d.places.AZSMinorModsItemRowFrame ) then
 		if ( d.buildRowsAttached ) then
-			d.places.AZSMinorModsItemRowFrame = { relative = "MainMenuBar", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
+			d.places.AZSMinorModsItemRowFrame = { relative = "AZSMinorModsSpellRowFrame", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
 		else
 			d.places.AZSMinorModsItemRowFrame = { x = 8, y = 130 };
 		end
@@ -561,6 +610,114 @@ local function CreateItemRow()
 end
 CreateItemRow();
 
+local function SpellTextureById(spellId)
+	if ( type(spellId) ~= "number" or not GetSpellBookItemInfo or not GetSpellTexture ) then return nil; end
+	-- AZS_SPELLS supplies canonical spell IDs. Resolve those against the real spellbook; never
+	-- substitute an icon based only on a localized name or a guessed spell key.
+	for i = 1, 512 do
+		local kind, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL or "spell");
+		if ( not kind ) then break; end
+		if ( kind == "SPELL" and tonumber(id) == spellId ) then
+			local ok, texture = pcall(GetSpellTexture, i, BOOKTYPE_SPELL or "spell");
+			if ( ok and texture ) then return texture, i; end
+		end
+	end
+	return nil;
+end
+
+local function RefreshSpellRow()
+	if ( not spellRow ) then return; end
+	local spells = type(AZS_SPELLS) == "table" and AZS_SPELLS or {};
+	local learnedCount = math.max(0, table.getn(spells) - 1); -- racial spell is last
+	for i = 1, 6 do
+		local button = spellRowButtons[i];
+		local spell = spells[i];
+		if ( i <= learnedCount and type(spell) == "table" ) then
+			local texture, spellBookSlot = SpellTextureById(tonumber(spell.spell));
+			button.spell, button.spellBookSlot = spell, spellBookSlot;
+			if ( texture ) then button.icon:SetTexture(texture); button.icon:Show(); else button.icon:SetTexture(nil); button.icon:Hide(); end
+		else
+			button.spell, button.spellBookSlot = nil, nil;
+			button.icon:SetTexture(nil); button.icon:Hide();
+		end
+		button:Show();
+	end
+	LayoutSpellRow();
+	if ( DB().replaceBuildRows ) then spellRow:Show(); else spellRow:Hide(); end
+	if ( DB().unlocked and DB().replaceBuildRows and handles.AZSMinorModsSpellRowFrame ) then handles.AZSMinorModsSpellRowFrame:Show(); end
+end
+
+local function CreateSpellRow()
+	if ( spellRow or not UIParent ) then return; end
+	spellRow = CreateFrame("Frame", "AZSMinorModsSpellRowFrame", UIParent);
+	spellRow:SetWidth(212); spellRow:SetHeight(36); spellRow:SetFrameStrata("MEDIUM");
+	local d = DB();
+	if ( not d.places.AZSMinorModsSpellRowFrame ) then
+		if ( d.buildRowsAttached ) then d.places.AZSMinorModsSpellRowFrame = { relative = "MainMenuBar", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
+		else d.places.AZSMinorModsSpellRowFrame = { x = 8, y = 170 }; end
+	end
+	spellRow:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 8, 170);
+	for i = 1, 6 do
+		local button = CreateFrame("Button", "AZSMinorModsSpellButton" .. i, spellRow);
+		button:SetID(i); button:SetWidth(32); button:SetHeight(32);
+		button:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2");
+		button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square");
+		button.icon = button:CreateTexture(nil, "ARTWORK");
+		button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 3, -3);
+		button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3);
+		button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93);
+		button:EnableMouse(true);
+		button:SetScript("OnEnter", function()
+			if ( not this.spell or not GameTooltip ) then return; end
+			GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+			if ( this.spellBookSlot and GameTooltip.SetSpellBookItem ) then GameTooltip:SetSpellBookItem(this.spellBookSlot, BOOKTYPE_SPELL or "spell");
+			elseif ( this.spell.key ) then
+				GameTooltip:AddLine(tostring(this.spell.key));
+				if ( this.spell.rank ) then GameTooltip:AddLine("Rank " .. tostring(this.spell.rank), 1, 0.82, 0); end
+				GameTooltip:Show();
+			end
+		end);
+		button:SetScript("OnLeave", function() if ( GameTooltip ) then GameTooltip:Hide(); end end);
+		spellRowButtons[i] = button;
+	end
+	RefreshSpellRow();
+end
+CreateSpellRow();
+
+local function SetNativeBuildHidden(on)
+	if ( type(AZS_SetHudShown) ~= "function" ) then return; end
+	if ( on ) then
+		local shown = true;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "build");
+			if ( ok and value ~= nil ) then
+				if ( type(value) == "number" ) then shown = value ~= 0;
+				elseif ( type(value) == "string" ) then shown = value ~= "0" and string.lower(value) ~= "false";
+				else shown = value and true or false; end
+			end
+		end
+		buildNativeWasShown = shown;
+		if ( shown ) then
+			DB().buildNativeOriginal = shown;
+			local ok = pcall(AZS_SetHudShown, "build", false);
+			buildNativeOverridden = ok and true or false;
+		end
+	elseif ( buildNativeOverridden ) then
+		local restore = DB().buildNativeOriginal;
+		if ( type(restore) ~= "boolean" ) then restore = buildNativeWasShown; end
+		local ok = pcall(AZS_SetHudShown, "build", restore);
+		if ( ok ) then buildNativeOverridden = false; DB().buildNativeOriginal = nil; end
+	end
+end
+
+local function ApplyBuildRowReplacement()
+	local enabled = DB().replaceBuildRows;
+	SetNativeBuildHidden(enabled);
+	if ( spellRow ) then if ( enabled ) then spellRow:Show(); else spellRow:Hide(); end end
+	if ( itemRow ) then if ( enabled ) then itemRow:Show(); else itemRow:Hide(); end end
+end
+ApplyBuildRowReplacement();
+
 local itemRowEvents = CreateFrame("Frame");
 itemRowEvents:RegisterEvent("UNIT_INVENTORY_CHANGED");
 itemRowEvents:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -573,7 +730,18 @@ end);
 local itemRowPoll = 0;
 itemRowEvents:SetScript("OnUpdate", function()
 	itemRowPoll = itemRowPoll + (arg1 or 0);
-	if ( itemRowPoll >= 0.5 ) then itemRowPoll = 0; pcall(RefreshItemRow); end
+	if ( itemRowPoll >= 0.5 ) then itemRowPoll = 0; pcall(RefreshItemRow); pcall(RefreshSpellRow); pcall(ApplyBuildRowReplacement); end
+end);
+
+local spellRowEvents = CreateFrame("Frame");
+spellRowEvents:RegisterEvent("PLAYER_ENTERING_WORLD");
+spellRowEvents:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
+spellRowEvents:RegisterEvent("ACTIONBAR_PAGE_CHANGED");
+spellRowEvents:RegisterEvent("CHAT_MSG_ADDON");
+spellRowEvents:SetScript("OnEvent", function()
+	if ( event == "CHAT_MSG_ADDON" and arg1 ~= "AZSSPELLS" ) then return; end
+	pcall(RefreshSpellRow);
+	pcall(ApplyBuildRowReplacement);
 end);
 
 local function SetNativeTallyHidden(on)
@@ -656,6 +824,124 @@ local function CreateTallyFrame()
 end
 
 CreateTallyFrame();
+
+local function SetNativeMeterHidden(on)
+	if ( type(AZS_SetHudShown) ~= "function" ) then return; end
+	if ( on ) then
+		local shown = true;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "meter");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown ) then
+			DB().meterNativeOriginal = shown;
+			local ok = pcall(AZS_SetHudShown, "meter", false);
+			meterNativeOverridden = ok and true or false;
+		end
+	elseif ( meterNativeOverridden ) then
+		local restore = DB().meterNativeOriginal;
+		if ( type(restore) ~= "boolean" ) then restore = meterNativeWasShown; end
+		local ok = pcall(AZS_SetHudShown, "meter", restore);
+		if ( ok ) then meterNativeOverridden = false; DB().meterNativeOriginal = nil; end
+	end
+end
+
+local function MeterNumber(value)
+	if ( type(value) ~= "number" ) then return "0"; end
+	if ( value >= 1000000 ) then return string.format("%.1fm", value / 1000000); end
+	if ( value >= 10000 ) then return string.format("%.1fk", value / 1000); end
+	return tostring(math.floor(value + 0.5));
+end
+
+local function CreateMeterFrame()
+	meterFrame = CreateFrame("Frame", "AZSMinorModsMeterFrame", UIParent);
+	meterFrame:SetWidth(250); meterFrame:SetHeight(180);
+	meterFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -220, 36);
+	meterFrame:SetFrameStrata("HIGH");
+	meterFrame:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	                         tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
+	meterFrame:SetBackdropColor(0.025, 0.02, 0.035, 0.88);
+	meterFrame:SetBackdropBorderColor(0.7, 0.52, 0.2, 0.9);
+	meterFrame:EnableMouse(false);
+	meterFrame.title = meterFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+	meterFrame.title:SetPoint("TOPLEFT", meterFrame, "TOPLEFT", 8, -7);
+	meterFrame.title:SetText("DAMAGE  ·  DPS");
+	meterFrame.total = meterFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+	meterFrame.total:SetPoint("TOPRIGHT", meterFrame, "TOPRIGHT", -8, -7);
+	meterFrame.rows = {};
+	for i = 1, 32 do
+		local row = meterFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		row:SetPoint("TOPLEFT", meterFrame, "TOPLEFT", 8, -27 - (i - 1) * 17);
+		row:SetPoint("RIGHT", meterFrame, "RIGHT", -8, 0);
+		row:SetJustifyH("LEFT");
+		meterFrame.rows[i] = row;
+	end
+	local savedOriginal = DB().meterNativeOriginal;
+	if ( savedOriginal ~= nil ) then
+		meterNativeWasShown = savedOriginal and true or false;
+		if ( type(AZS_SetHudShown) == "function" ) then pcall(AZS_SetHudShown, "meter", meterNativeWasShown); end
+		DB().meterNativeOriginal = nil;
+	else
+		local shown;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "meter");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown == nil and GetCVar ) then shown = GetCVar("hudMeter") ~= "0"; end
+		if ( shown == nil ) then shown = true; end
+		meterNativeWasShown = shown;
+	end
+	meterFrame:Hide();
+end
+
+CreateMeterFrame();
+
+UpdateMeter = function()
+	if ( not meterFrame ) then return; end
+	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
+	local active = phase and phase ~= "ready";
+	local editing = DB().unlocked and DB().moveMeter;
+	if ( not DB().moveMeter ) then
+		meterFrame:Hide(); SetNativeMeterHidden(false); return;
+	end
+	if ( not active and not editing ) then
+		meterFrame:Hide(); SetNativeMeterHidden(false); return;
+	end
+	SetNativeMeterHidden(true);
+	meterFrame:Show();
+	if ( not active or type(AZS_GetMeter) ~= "function" ) then
+		meterFrame.total:SetText("");
+		meterFrame.rows[1]:SetText(type(AZS_GetMeter) == "function" and "Damage meter preview" or "Game meter API unavailable");
+		for i = 2, table.getn(meterFrame.rows) do meterFrame.rows[i]:SetText(""); end
+		return;
+	end
+	local ok, lines, total, dps = pcall(AZS_GetMeter);
+	if ( not ok or type(lines) ~= "table" ) then
+		meterFrame.total:SetText(""); meterFrame.rows[1]:SetText("Waiting for damage data");
+		for i = 2, table.getn(meterFrame.rows) do meterFrame.rows[i]:SetText(""); end
+		return;
+	end
+	meterFrame.total:SetText(MeterNumber(total) .. "  |  " .. MeterNumber(dps) .. " DPS");
+	local maxRows = math.max(1, math.min(table.getn(meterFrame.rows), math.floor(((meterFrame:GetHeight() or 180) - 39) / 17)));
+	for i = 1, table.getn(meterFrame.rows) do
+		local entry = i <= maxRows and lines[i] or nil;
+		if ( type(entry) == "table" ) then
+			-- The documented API returns each line as name, damage, DPS, share, proc.
+			-- Accept both that tuple form and named fields so the panel stays compatible
+			-- with builds that expose the same values as a keyed table.
+			local name = type(entry.name) == "string" and entry.name or (type(entry[1]) == "string" and entry[1] or "Unknown source");
+			local damage = entry.dmg or entry.damage or entry[2];
+			local sourceDps = entry.dps or entry[3];
+			meterFrame.rows[i]:SetText(name .. "  " .. MeterNumber(damage) .. "  ·  " .. MeterNumber(sourceDps) .. " DPS");
+		else meterFrame.rows[i]:SetText(""); end
+	end
+end
+
+local meterPoll = CreateFrame("Frame");
+meterPoll:SetScript("OnUpdate", function()
+	this.elapsed = (this.elapsed or 0) + (arg1 or 0);
+	if ( this.elapsed >= 0.35 ) then this.elapsed = 0; pcall(UpdateMeter); end
+end);
 
 local function SetNativeClockHidden(on)
 	if ( type(AZS_SetHudShown) ~= "function" or clockNativeWasShown ~= true ) then return; end
@@ -957,7 +1243,7 @@ end
 
 local function EncounterRow(index)
 	if ( encounterRows[index] ) then return encounterRows[index]; end
-	local row = CreateFrame("Frame", nil, bossFrame);
+	local row = CreateFrame("Button", nil, bossFrame);
 	row:SetWidth(184);
 	row:SetHeight(40);
 	row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
@@ -981,7 +1267,25 @@ local function EncounterRow(index)
 	row.bar.background:SetTexture("Interface\\TargetingFrame\\UI-StatusBar");
 	row.bar.background:SetAllPoints(row.bar);
 	row.bar.background:SetVertexColor(0.04, 0.03, 0.03, 0.28);
-	row:EnableMouse(false);
+	row:EnableMouse(true);
+	row:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square");
+	row:SetScript("OnClick", function()
+		local unit = this.unit;
+		if ( not unit or not unit.name or not TargetByName ) then return; end
+		-- The encounter API exposes stable IDs for health tracking, but the client target API
+		-- selects visible units by name. Ask it for this exact name and leave range/visibility
+		-- rejection to the game; never retarget a different nearby enemy as a fallback.
+		pcall(TargetByName, unit.name, true);
+	end);
+	row:SetScript("OnEnter", function()
+		if ( not this.unit or not GameTooltip ) then return; end
+		GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+		GameTooltip:AddLine(this.unit.name .. "  [" .. (this.unit.kind == "guardian" and "Guardian" or (this.unit.kind == "elite" and "Elite" or "Boss")) .. "]");
+		GameTooltip:AddLine("Health: " .. tostring(math.floor(this.unit.hp)) .. " / " .. tostring(math.floor(this.unit.hpm)), 1, 0.82, 0);
+		GameTooltip:AddLine("Click to target", 0.75, 0.75, 0.75);
+		GameTooltip:Show();
+	end);
+	row:SetScript("OnLeave", function() if ( GameTooltip ) then GameTooltip:Hide(); end end);
 	encounterRows[index] = row;
 	return row;
 end
@@ -1009,6 +1313,7 @@ local function UpdateEncounterRows(list)
 	for i = 1, table.getn(list) do
 		local unit = list[i];
 		local row = EncounterRow(i);
+		row.unit = unit;
 		row:SetWidth(cardWidth);
 		row:SetHeight(rowHeight);
 		row.name:ClearAllPoints();
@@ -1303,12 +1608,17 @@ end
 
 local function ApplySize(name, f)
 	local s = DB().sizes[name];
+	if ( name == "GameTooltip" and type(s) ~= "table" ) then
+		s = { w = 260, h = 140 };
+		DB().sizes[name] = s;
+	end
 	if ( type(s) == "table" and s.w and s.h and s.w > 0 and s.h > 0 ) then
 		f:SetWidth(s.w);
 		f:SetHeight(s.h);
 	end
 	if ( name == "AZSMinorModsClockFrame" ) then ApplyClockLayout(); end
 	if ( name == "AZSMinorModsItemRowFrame" ) then LayoutItemRow(); end
+	if ( name == "AZSMinorModsSpellRowFrame" ) then LayoutSpellRow(); end
 	local scale = DB().scales[name];
 	local value = type(scale) == "number" and scale or 1;
 	if ( name == "PartyMemberFrame1" ) then
@@ -1324,6 +1634,11 @@ VisualInsets = function(frame)
 	local uiScale = UIParent:GetEffectiveScale() or 1;
 	local frameScale = frame:GetEffectiveScale() or uiScale;
 	local factor = frameScale / uiScale;
+	-- MainMenuExpBar's child textures retain their old horizontal extents after the native
+	-- status bar is rotated. Its own bounds are the visible/movable bounds in either layout.
+	if ( frame == MainMenuExpBar ) then
+		return 0, 0, (frame:GetWidth() or 0) * factor, (frame:GetHeight() or 0) * factor;
+	end
 	if ( frame == MainMenuBar or frame == PartyMemberFrame1 ) then
 		-- These Blizzard groups have unused parent padding or detached siblings. Clamp their
 		-- actual visible controls as a group so scale cannot leave a gap or clip a companion.
@@ -1706,6 +2021,13 @@ local function ApplyTallyLayout(resetSize)
 end
 
 local function ToggleMovableOrientation(name)
+	if ( name == "AZSMinorModsItemRowFrame" or name == "AZSMinorModsSpellRowFrame" ) then
+		DB().orientations[name] = CurrentOrientation(name) == "vertical" and "horizontal" or "vertical";
+		if ( name == "AZSMinorModsItemRowFrame" ) then LayoutItemRow(); else LayoutSpellRow(); end
+		DB().sizes[name] = { w = getglobal(name):GetWidth(), h = getglobal(name):GetHeight() };
+		PlaceAll();
+		return;
+	end
 	if ( name == "AZSMinorModsTallyFrame" ) then
 		DB().tallyVertical = not DB().tallyVertical;
 		ApplyTallyLayout(true);
@@ -1733,9 +2055,14 @@ local function ToggleMovableOrientation(name)
 		end
 	end
 	if ( name == "MainMenuExpBar" ) then
-		local f, s = MainMenuExpBar, baseSizes.MainMenuExpBar;
-		if ( f and s ) then
-			local w, h = CurrentOrientation(name) == "vertical" and s.h or s.w, CurrentOrientation(name) == "vertical" and s.w or s.h;
+		local f = MainMenuExpBar;
+		if ( f ) then
+			-- Rotate the current dimensions, including a user's custom length. Using only the
+			-- Blizzard base size here discards resizing and leaves a horizontal footprint behind.
+			local saved = DB().sizes[name];
+			local w = type(saved) == "table" and saved.w or f:GetWidth();
+			local h = type(saved) == "table" and saved.h or f:GetHeight();
+			w, h = h, w;
 			f:SetWidth(w); f:SetHeight(h); DB().sizes[name] = { w = w, h = h };
 		end
 	end
@@ -1807,20 +2134,23 @@ local function DetachExperienceBar()
 end
 
 local function ToggleBuildRowsAttached()
-	if ( not itemRow or not MainMenuBar ) then return; end
-	local rowName = "AZSMinorModsItemRowFrame";
+	if ( not itemRow or not spellRow or not MainMenuBar ) then return; end
 	if ( DB().buildRowsAttached ) then
-		SavePosition(rowName, itemRow);
-		local p = DB().places[rowName];
-		p.relative, p.point, p.relativePoint, p.dx, p.dy = nil, nil, nil, nil, nil;
+		for _, name in ipairs({ "AZSMinorModsSpellRowFrame", "AZSMinorModsItemRowFrame" }) do
+			local frame = getglobal(name);
+			SavePosition(name, frame);
+			local p = DB().places[name];
+			if ( p ) then p.relative, p.point, p.relativePoint, p.dx, p.dy = nil, nil, nil, nil, nil; end
+		end
 		DB().buildRowsAttached = false;
 	else
-		DB().places[rowName] = { relative = "MainMenuBar", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
+		DB().places.AZSMinorModsSpellRowFrame = { relative = "MainMenuBar", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
+		DB().places.AZSMinorModsItemRowFrame = { relative = "AZSMinorModsSpellRowFrame", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", dx = 0, dy = -4 };
 		DB().buildRowsAttached = true;
 	end
 	PlaceAll();
 	if ( sizeMenu and sizeMenu.attachButton ) then
-		sizeMenu.attachButton:SetText(DB().buildRowsAttached and "Detach item row" or "Attach item row");
+		sizeMenu.attachButton:SetText(DB().buildRowsAttached and "Detach build rows" or "Attach build rows");
 	end
 end
 
@@ -1870,7 +2200,9 @@ local function OpenSizeMenu(name, label)
 			if ( scaleRatio <= 0 ) then scaleRatio = 1; end
 			if ( axis == "w" ) then
 				local minWidth = sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "horizontal" and 280 or 40;
-				if ( sizeTarget == "AZSMinorModsItemRowFrame" ) then minWidth = 76; end
+				if ( sizeTarget == "AZSMinorModsItemRowFrame" ) then minWidth = CurrentOrientation(sizeTarget) == "vertical" and 36 or 76; end
+				if ( sizeTarget == "AZSMinorModsSpellRowFrame" ) then minWidth = CurrentOrientation(sizeTarget) == "vertical" and 36 or 92; end
+				if ( sizeTarget == "GameTooltip" ) then minWidth = 160; end
 				w = math.max(minWidth, math.min((UIParent:GetWidth() or 1920) / scaleRatio, w + delta));
 			else
 				local minHeight = sizeTarget == "AZSMinorModsBossFrames" and CurrentOrientation(sizeTarget) == "vertical" and 60
@@ -1880,6 +2212,12 @@ local function OpenSizeMenu(name, label)
 					minHeight = CurrentOrientation(sizeTarget) == "vertical" and math.max(60, 52 + (pad * 3)) or math.max(36, 36 + (pad * 4));
 				elseif ( sizeTarget == "AZSMinorModsClockFrame" and CurrentOrientation(sizeTarget) == "vertical" ) then
 					minHeight = 36 + (FramePadding(sizeTarget) * 3);
+				elseif ( sizeTarget == "AZSMinorModsItemRowFrame" and CurrentOrientation(sizeTarget) == "vertical" ) then
+					minHeight = 60;
+				elseif ( sizeTarget == "AZSMinorModsSpellRowFrame" and CurrentOrientation(sizeTarget) == "vertical" ) then
+					minHeight = 92;
+				elseif ( sizeTarget == "GameTooltip" ) then
+					minHeight = 80;
 				end
 				h = math.max(minHeight, math.min((UIParent:GetHeight() or 1080) / scaleRatio, h + delta));
 			end
@@ -2015,7 +2353,7 @@ local function OpenSizeMenu(name, label)
 	local scale = DB().scales[name] or 1;
 	sizeMenuScale:SetText("Scale: " .. math.floor(scale * 100 + 0.5) .. "%");
 	if ( sizeMenu.layoutButton ) then
-		local canOrient = name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsClockFrame" or name == "AZSMinorModsBossFrames" or name == "MainMenuBar" or name == "MainMenuExpBar" or name == "BuffFrame" or name == "PartyMemberFrame1" or (name == "CastingBarFrame" and CastingBarFrame and CastingBarFrame.SetOrientation);
+		local canOrient = name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsClockFrame" or name == "AZSMinorModsBossFrames" or name == "AZSMinorModsSpellRowFrame" or name == "AZSMinorModsItemRowFrame" or name == "MainMenuBar" or name == "MainMenuExpBar" or name == "BuffFrame" or name == "PartyMemberFrame1" or (name == "CastingBarFrame" and CastingBarFrame and CastingBarFrame.SetOrientation);
 		if ( canOrient ) then
 			sizeMenu.layoutButton:Show();
 			sizeMenu.layoutButton:SetWidth(name == "BuffFrame" and 116 or 138);
@@ -2030,9 +2368,9 @@ local function OpenSizeMenu(name, label)
 				sizeMenu.growthButton:SetText("Grow " .. BuffGrowthDirection());
 			else sizeMenu.growthButton:Hide(); end
 		end
-		if ( name == "MainMenuBar" or name == "AZSMinorModsItemRowFrame" ) then
+		if ( name == "MainMenuBar" or name == "AZSMinorModsItemRowFrame" or name == "AZSMinorModsSpellRowFrame" ) then
 			sizeMenu.attachButton:Show();
-			sizeMenu.attachButton:SetText(DB().buildRowsAttached and "Detach item row" or "Attach item row");
+			sizeMenu.attachButton:SetText(DB().buildRowsAttached and "Detach build rows" or "Attach build rows");
 		else sizeMenu.attachButton:Hide(); end
 		local canPad = name == "AZSMinorModsClockFrame" or name == "AZSMinorModsBossFrames" or name == "AZSMinorModsTallyFrame" or name == "AZSMinorModsAnnouncementFrame" or name == "BuffFrame";
 		if ( canPad ) then
@@ -2063,19 +2401,83 @@ end
 local function ShowLockPanel()
 	if ( not lockPanel ) then
 		lockPanel = CreateFrame("Frame", "AZSMinorModsMovePanel", UIParent);
-		lockPanel:SetWidth(250);
-		lockPanel:SetHeight(76);
-		lockPanel:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 18, -78);
+		lockPanel:SetWidth(374);
+		lockPanel:SetHeight(164);
 		lockPanel:SetFrameStrata("DIALOG");
+		lockPanel:SetMovable(true);
+		if ( lockPanel.SetClampedToScreen ) then lockPanel:SetClampedToScreen(true); end
 		lockPanel:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 		                       tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
 		lockPanel:SetBackdropColor(0.04, 0.035, 0.07, 0.97);
 		lockPanel:SetBackdropBorderColor(0.85, 0.65, 0.2, 1);
+		local header = CreateFrame("Frame", nil, lockPanel);
+		header:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 4, -3);
+		header:SetPoint("TOPRIGHT", lockPanel, "TOPRIGHT", -4, -3);
+		header:SetHeight(22);
+		header:EnableMouse(true);
+		header:RegisterForDrag("LeftButton");
+		local title = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+		title:SetPoint("LEFT", header, "LEFT", 7, 0);
+		title:SetText("Move UI settings — drag this header to move");
+		header:SetScript("OnDragStart", function() lockPanel:StartMoving(); end);
+		header:SetScript("OnDragStop", function()
+			lockPanel:StopMovingOrSizing(); lockPanel.dragging = nil;
+			local left, top = lockPanel:GetLeft(), lockPanel:GetTop();
+			if ( left and top ) then DB().lockPanelPosition = { x = left, y = UIParent:GetHeight() - top }; end
+		end);
 		local note = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
-		note:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 10, -8);
+		note:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 10, -30);
 		note:SetText("Drag to move. Right-click for size, scale, layout and hide options. Shift-left-click also hides/shows.");
+		local gridCheck = CreateFrame("CheckButton", nil, lockPanel, "UICheckButtonTemplate");
+		gridCheck:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 6, -52); gridCheck:SetWidth(22); gridCheck:SetHeight(22);
+		gridCheck:SetScript("OnShow", function() this:SetChecked(DB().showEditGrid and 1 or nil); end);
+		gridCheck:SetScript("OnClick", function() DB().showEditGrid = this:GetChecked() and true or false; if ( DB().unlocked ) then ShowEditGrid(); end end);
+		local gridLabel = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		gridLabel:SetPoint("LEFT", gridCheck, "RIGHT", 0, 0); gridLabel:SetText("Grid");
+		local gridSizes = {32, 64, 128, 256};
+		lockPanel.gridButtons = {};
+		for i = 1, table.getn(gridSizes) do
+			local pixels = gridSizes[i];
+			local button = K.Button(lockPanel, tostring(pixels), 48, function()
+				DB().gridDivisions = pixels;
+				for j = 1, table.getn(lockPanel.gridButtons) do lockPanel.gridButtons[j]:UnlockHighlight(); end
+				this:LockHighlight();
+				if ( DB().unlocked ) then ShowEditGrid(); end
+			end);
+			button:SetPoint("LEFT", gridLabel, "RIGHT", 5 + (i - 1) * 52, 0);
+			table.insert(lockPanel.gridButtons, button);
+		end
+		local function AddGridLineToggle(x, key, labelText)
+			local cb = CreateFrame("CheckButton", nil, lockPanel, "UICheckButtonTemplate");
+			cb:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", x, -82); cb:SetWidth(22); cb:SetHeight(22);
+			cb:SetScript("OnShow", function() this:SetChecked(DB()[key] and 1 or nil); end);
+			cb:SetScript("OnClick", function() DB()[key] = this:GetChecked() and true or false; if ( DB().unlocked ) then ShowEditGrid(); end end);
+			local label = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+			label:SetPoint("LEFT", cb, "RIGHT", 0, 0); label:SetText(labelText);
+		end
+		AddGridLineToggle(8, "gridCenterVertical", "Vertical red center line");
+		AddGridLineToggle(184, "gridCenterHorizontal", "Horizontal red center line");
+		local snap = CreateFrame("CheckButton", nil, lockPanel, "UICheckButtonTemplate");
+		snap:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 6, -111); snap:SetWidth(22); snap:SetHeight(22);
+		snap:SetScript("OnShow", function() this:SetChecked(DB().anchorSnap and 1 or nil); end);
+		snap:SetScript("OnClick", function() SetAnchorSnap(this:GetChecked() and true or false); end);
+		local snapLabel = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		snapLabel:SetPoint("LEFT", snap, "RIGHT", 0, 0); snapLabel:SetText("Snap nearby frames together");
 		local button = K.Button(lockPanel, "Done", 76, function() AZSMinorMods_SetUnlocked(false); end);
-		button:SetPoint("BOTTOMRIGHT", lockPanel, "BOTTOMRIGHT", -8, 6);
+		button:SetPoint("BOTTOMRIGHT", lockPanel, "BOTTOMRIGHT", -8, 7);
+		lockPanel.doneButton = button;
+	end
+	local saved = DB().lockPanelPosition;
+	lockPanel:ClearAllPoints();
+	if ( type(saved.x) == "number" and type(saved.y) == "number" ) then
+		lockPanel:SetPoint("TOPLEFT", UIParent, "TOPLEFT", saved.x, -saved.y);
+	else
+		lockPanel:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 18, -78);
+	end
+	for i = 1, table.getn(lockPanel.gridButtons or {}) do
+		local pixels = ({32, 64, 128, 256})[i];
+		if ( tonumber(DB().gridDivisions) == pixels ) then lockPanel.gridButtons[i]:LockHighlight();
+		else lockPanel.gridButtons[i]:UnlockHighlight(); end
 	end
 	lockPanel:Show();
 end
@@ -2084,28 +2486,41 @@ local function HideEditGrid()
 	if ( editGrid ) then editGrid:Hide(); end
 end
 
-local function ShowEditGrid()
+ShowEditGrid = function()
 	HideEditGrid();
-	local spacing = tonumber(DB().gridSpacing) or 128;
 	if ( not DB().showEditGrid or not DB().unlocked ) then return; end
 	if ( not editGrid ) then
 		editGrid = CreateFrame("Frame", "AZSMinorModsEditGrid", UIParent);
 		editGrid:SetAllPoints(UIParent);
 		editGrid:SetFrameStrata("HIGH");
 		editGrid:EnableMouse(false);
+		editGrid:SetScript("OnSizeChanged", function()
+			if ( DB().showEditGrid and DB().unlocked ) then ShowEditGrid(); end
+		end);
 	end
 	local width, height = UIParent:GetWidth(), UIParent:GetHeight();
 	local count, i = 1, 1;
-	local function Line(x, y, w, h)
+	local function Line(x, y, w, h, color)
 		local tex = editGridLines[count];
 		if ( not tex ) then tex = editGrid:CreateTexture(nil, "OVERLAY"); editGridLines[count] = tex; end
 		count = count + 1;
 		tex:ClearAllPoints(); tex:SetPoint("TOPLEFT", editGrid, "TOPLEFT", x, -y); tex:SetWidth(w); tex:SetHeight(h);
-		tex:SetTexture(0.95, 0.76, 0.3, 0.26); tex:Show();
+		local c = color or { 0.95, 0.76, 0.3, 0.26 };
+		tex:SetTexture(c[1], c[2], c[3], c[4]); tex:Show();
 	end
-	while ( i < width ) do Line(i, 0, 1, height); i = i + spacing; end
-	i = 1;
-	while ( i < height ) do Line(0, i, width, 1); i = i + spacing; end
+	local divisions = tonumber(DB().gridDivisions) or 128;
+	-- The chosen count is exact on the shorter edge. The other axis gets the nearest
+	-- matching count so cells stay square-like, and every edge is a full grid boundary.
+	local shorter = math.min(width, height);
+	local longerCount = math.max(divisions, math.floor((math.max(width, height) / shorter) * divisions + 0.5));
+	local columns, rows = width <= height and divisions or longerCount, height <= width and divisions or longerCount;
+	local edge = { 0.95, 0.76, 0.3, 0.34 };
+	Line(0, 0, 1, height, edge); Line(math.max(0, width - 1), 0, 1, height, edge);
+	Line(0, 0, width, 1, edge); Line(0, math.max(0, height - 1), width, 1, edge);
+	for i = 1, columns - 1 do Line(math.floor(i * width / columns + 0.5), 0, 1, height); end
+	for i = 1, rows - 1 do Line(0, math.floor(i * height / rows + 0.5), width, 1); end
+	if ( DB().gridCenterVertical ) then Line(math.floor(width / 2), 0, 2, height, { 1, 0.12, 0.12, 0.92 }); end
+	if ( DB().gridCenterHorizontal ) then Line(0, math.floor(height / 2), width, 2, { 1, 0.12, 0.12, 0.92 }); end
 	for i = count, table.getn(editGridLines) do editGridLines[i]:Hide(); end
 	editGrid:Show();
 end
@@ -2272,7 +2687,8 @@ function AZSMinorMods_SetUnlocked(on, quiet)
 	if ( on ) then pcall(PrepareChatWindow); end
 	if ( not on and sizeMenu ) then sizeMenu:Hide(); end
 	if ( on ) then
-		if ( win and win:IsShown() ) then win:Hide(); end
+		-- Leave the settings/menu window before presenting the in-world mover and its Done control.
+		if ( win ) then win:Hide(); end
 		ShowLockPanel();
 	elseif ( lockPanel ) then
 		lockPanel:Hide();
@@ -2289,24 +2705,42 @@ function AZSMinorMods_SetUnlocked(on, quiet)
 		if ( DB().muted[name] ) then pcall(ApplyFeatureMute, name); end
 	end
 	pcall(UpdateLevelButton);
+	pcall(UpdateMeter);
 	if ( not quiet ) then K.Print(NAME, on and "drag a handle to move it; right-click for size, scale, layout or hide. Shift-left-click hides/shows a feature. Use Lock UI when done." or "the UI is locked."); end
 end
 
+local function SetMeterReplacement(on)
+	DB().moveMeter = on and true or false;
+	pcall(UpdateMeter);
+end
+
 local tooltipOwnerOriginal;
+local tooltipShowOriginal;
 local function HookTooltipOwner()
 	if ( not GameTooltip or tooltipOwnerOriginal or not GameTooltip.SetOwner ) then return; end
 	tooltipOwnerOriginal = GameTooltip.SetOwner;
 	GameTooltip.SetOwner = function(self, owner, anchor, x, y)
 		tooltipOwnerOriginal(self, owner, anchor, x, y);
+		local size = DB().sizes.GameTooltip;
+		if ( type(size) ~= "table" ) then size = { w = 260, h = 140 }; DB().sizes.GameTooltip = size; end
+		self:SetWidth(size.w); self:SetHeight(size.h);
 		local p = DB().places.GameTooltip;
 		if ( DB().unlocked and type(p) == "table" and type(p.x) == "number" and type(p.y) == "number" ) then
 			self:ClearAllPoints();
 			self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", p.x, p.y);
 		end
 	end;
+	if ( GameTooltip.Show and not tooltipShowOriginal ) then
+		tooltipShowOriginal = GameTooltip.Show;
+		GameTooltip.Show = function(self)
+			tooltipShowOriginal(self);
+			local size = DB().sizes.GameTooltip;
+			if ( type(size) == "table" and size.w and size.h ) then self:SetWidth(size.w); self:SetHeight(size.h); end
+		end;
+	end
 end
 
-local function SetAnchorSnap(on)
+SetAnchorSnap = function(on)
 	DB().anchorSnap = on and true or false;
 	if ( not on ) then
 		for i = 1, table.getn(MOVABLE) do
@@ -2510,33 +2944,12 @@ local function WinBuild()
 	local function CheckboxRows()
 		AddRows(uiChild, {
 			{"Toggle UI Settings (drag, resize and scale)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end},
-			{"Anchor moved frames to nearby frames", function() return DB().anchorSnap; end, function(v) SetAnchorSnap(v); end},
+			{"Replace native spell / jewelry rows with movable rows", function() return DB().replaceBuildRows; end, function(v) DB().replaceBuildRows = v; ApplyBuildRowReplacement(); end},
+			{"Replace native damage meter with movable version", function() return DB().moveMeter; end, function(v) SetMeterReplacement(v); end},
 			{"Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end},
 			{"Show empty slots in Action Bar 1", function() return DB().showEmptyActionSlots; end, function(v) DB().showEmptyActionSlots = v; ApplyActionSlotGrid(); end}
 		}, -8);
-		uiChild:SetHeight(232);
-		local gridTitle = uiChild:CreateFontString(nil, "OVERLAY", "GameFontNormal");
-		gridTitle:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10, -124); gridTitle:SetText("Grid spacing in pixels (smaller values make smaller squares)");
-		local gridCheck = CreateFrame("CheckButton", nil, uiChild, "UICheckButtonTemplate");
-		gridCheck:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 8, -148); gridCheck:SetWidth(24); gridCheck:SetHeight(24);
-		gridCheck:SetScript("OnShow", function() this:SetChecked(DB().showEditGrid and 1 or nil); end);
-		gridCheck:SetScript("OnClick", function() DB().showEditGrid = this:GetChecked() and true or false; if ( DB().unlocked ) then ShowEditGrid(); end end);
-		local gridLabel = uiChild:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
-		gridLabel:SetPoint("LEFT", gridCheck, "RIGHT", 2, 0); gridLabel:SetText("Show sizing grid");
-		local gridSizes = {256, 128, 64, 32};
-		local gridButtons = {};
-		for i = 1, table.getn(gridSizes) do
-			local pixels = gridSizes[i];
-			local button = K.Button(uiChild, tostring(pixels) .. " px", 58, function()
-				DB().gridSpacing = pixels;
-				for j = 1, table.getn(gridButtons) do gridButtons[j]:UnlockHighlight(); end
-				this:LockHighlight();
-				if ( DB().unlocked ) then ShowEditGrid(); end
-			end);
-			button:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10 + (i - 1) * 64, -184);
-			table.insert(gridButtons, button);
-			if ( (tonumber(DB().gridSpacing) or 128) == pixels ) then button:LockHighlight(); end
-		end
+		uiChild:SetHeight(174);
 	end
 	local function BuildOther()
 		AddRows(otherChild, {
@@ -2580,8 +2993,24 @@ local function WinBuild()
 		win.reloadButton = reload;
 	end
 	CheckboxRows(); BuildOther(); BuildAddonManager();
-	local reset = K.Button(win, "Reset positions", 140, function() AZSMinorMods_ResetPlaces(); end);
-	reset:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -24, 17);
+	local tooltipTitle = uiChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+	tooltipTitle:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10, -158);
+	tooltipTitle:SetText("Tooltip size");
+	local function AdjustTooltipSize(delta)
+		local size = DB().sizes.GameTooltip;
+		if ( type(size) ~= "table" ) then size = { w = 260, h = 140 }; DB().sizes.GameTooltip = size; end
+		size.w = math.max(160, math.min(600, size.w + delta));
+		size.h = math.max(80, math.min(500, size.h + delta));
+		if ( GameTooltip ) then GameTooltip:SetWidth(size.w); GameTooltip:SetHeight(size.h); end
+		PlaceAll();
+	end
+	local tooltipSmaller = K.Button(uiChild, "Smaller", 82, function() AdjustTooltipSize(-20); end);
+	tooltipSmaller:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10, -176);
+	local tooltipLarger = K.Button(uiChild, "Larger", 82, function() AdjustTooltipSize(20); end);
+	tooltipLarger:SetPoint("LEFT", tooltipSmaller, "RIGHT", 6, 0);
+	local reset = K.Button(uiChild, "Reset positions", 140, function() AZSMinorMods_ResetPlaces(); end);
+	reset:SetPoint("TOPLEFT", uiChild, "TOPLEFT", 10, -210);
+	uiChild:SetHeight(244);
 	local function SelectPage(which)
 		uiScroll:Hide(); otherScroll:Hide(); addonsScroll:Hide();
 		if ( win.reloadButton ) then win.reloadButton:Hide(); end
@@ -2654,6 +3083,7 @@ loader:SetScript("OnEvent", function()
 	pcall(ApplyActionSlotGrid);
 	pcall(HookTooltipOwner);
 	pcall(PlaceAll);
+	pcall(UpdateMeter);
 	if ( event == "PLAYER_ENTERING_WORLD" and DB().unlocked ) then pcall(AZSMinorMods_SetUnlocked, true, true); end
 end);
 local buffLayoutUpdater = CreateFrame("Frame");

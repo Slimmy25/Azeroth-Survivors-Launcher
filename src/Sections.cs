@@ -982,8 +982,8 @@ namespace AzerothLauncher
             TextRenderer.DrawText(g, Lang.T("Lost?"), Theme.F(11, FontStyle.Bold), new Rectangle(12, y, width, Theme.Px(20)), Theme.Gold,
                                   TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
             y += Theme.Px(26);
-            DrawLostHelpSection(g, "Click a breadcrumb to go back. Hover ▼ to choose another page.", PathExamplePart(true), ref y, width);
-            DrawLostHelpSection(g, "Click the star in the section header to save this location. Wiki pages let you save your current reading spot or the page top. Click a favorite to open it, hold left-click and drag to move it, or right-click to remove it.", PathExamplePart(false), ref y, width);
+            DrawLostHelpSection(g, "Click the star on a page to save it to Favorites. On Wiki pages, choose your current reading spot or the top of the page.", null, ref y, width);
+            DrawLostHelpSection(g, "Click a Favorites tab to open it. Hold left-click and drag to reorder tabs. Right-click a tab to remove it.", PathExamplePart(false), ref y, width);
             if(scroll!=null) scroll.AutoScrollMinSize=new Size(0,y+Theme.Px(8));
         }
 
@@ -2366,14 +2366,15 @@ namespace AzerothLauncher
                     forgeMark.Image = watermark;
                     forgeMark.SizeMode = PictureBoxSizeMode.Zoom;
                     forgeMark.BackColor = listbg;
-                    int groupWidth = Theme.Px(16) + (badge == null ? 0 : badge.Width + Theme.Px(4));
+                    int logoBadgeGap = Theme.Px(2);
+                    int groupWidth = Theme.Px(16) + (badge == null ? 0 : badge.Width + logoBadgeGap);
                     int groupLeft = cw - Theme.Px(7) - groupWidth;
                     forgeMark.Bounds = new Rectangle(groupLeft, ty, Theme.Px(16), Theme.Px(16));
                     forgeMark.Disposed += delegate { try { watermark.Dispose(); } catch (Exception) { } };
                     inner.Controls.Add(forgeMark);
                     if (badge != null)
                     {
-                        badge.Location = new Point(forgeMark.Right + Theme.Px(4), ty + Math.Max(0, (forgeMark.Height - badge.Height) / 2));
+                        badge.Location = new Point(forgeMark.Right + logoBadgeGap, ty + Math.Max(0, (forgeMark.Height - badge.Height) / 2));
                         inner.Controls.Add(badge);
                     }
                 }
@@ -2418,6 +2419,14 @@ namespace AzerothLauncher
                     d.Location = new Point(7, ty);
                     inner.Controls.Add(d);
                     ty += d.Height;
+                }
+                if (!string.IsNullOrWhiteSpace(it.Note))
+                {
+                    var note = UI.Text(it.Note, 7.5f, FontStyle.Bold, Theme.Gold, listbg, textW, false);
+                    note.Size = VStack.Measure(note);
+                    note.Location = new Point(7, ty + Theme.Px(3));
+                    inner.Controls.Add(note);
+                    ty += note.Height + Theme.Px(3);
                 }
                 if (haveIt)
                 {

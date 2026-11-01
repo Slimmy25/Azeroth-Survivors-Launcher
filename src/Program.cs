@@ -13,9 +13,9 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("Azeroth Survivors")]
 [assembly: AssemblyProduct("Azeroth Survivors Launcher")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 Azeroth Survivors")]
-[assembly: AssemblyVersion("3.16.0.0")]
-[assembly: AssemblyFileVersion("3.16.0.0")]
-[assembly: AssemblyInformationalVersion("3.16")]
+[assembly: AssemblyVersion("3.17.0.0")]
+[assembly: AssemblyFileVersion("3.17.0.0")]
+[assembly: AssemblyInformationalVersion("3.17")]
 [assembly: ComVisible(false)]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName = ".NET Framework 4.8")]
 

@@ -10,11 +10,15 @@ Local package: `dist/AZSMinorMods-LevelUp-Movable-LocalTest.zip`.
 
 ## Six-spell / four-item build rows
 
-**Status: local implementation in progress; not verified in-game.** The six spell squares remain the game's existing `ActionButton1`–`ActionButton6` row, whose spell cooldown data is read from `AZS_SPELLS`. The four-item companion row is populated independently by polling the player's worn equipment slots 11–14 (two rings and two trinkets) and responding to inventory-change events. A bundled catalog generated from `assets/items.txt` supplies display names where an inventory link is unavailable; the actual equipped texture and native inventory tooltip come from the game.
+**Status: implemented locally; not verified in-game.** The replacement has separate movable six-spell and four-jewelry rows. The spell row reads the six learned entries from `AZS_SPELLS` (the racial entry is last), resolves their canonical spell IDs against the 1.12 spellbook for icons/tooltips, and refreshes on the API message plus a polling fallback. The item row independently polls worn equipment slots 11–14 (two rings and two trinkets) and responds to inventory-change events. A bundled catalog generated from `assets/items.txt` supplies display names where an inventory link is unavailable; actual equipped textures and native inventory tooltips come from the game.
 
-The item row records each item's first observed equipped order in SavedVariables, so reloading or moving the same item between ring/trinket slots retains its place. On a fresh profile, already-worn items are ordered by the first slot scan (11 through 14); the game/API does not expose when the player originally acquired those items. The rows start attached with a small gap, can be detached from either row's right-click menu, then moved and sized independently. Each row can also be hidden through its own movable-feature controls.
+The item row records each item's first observed equipped order in SavedVariables, so reloading or moving the same item between ring/trinket slots retains its place. On a fresh profile, already-worn items are ordered by the first slot scan (11 through 14); the game/API does not expose when the player originally acquired those items. The rows start attached with a small gap, can be detached from either row's right-click menu, then moved, resized, scaled, snapped and oriented independently. The right-click layout control can make either row vertical without forcing the other to change. A setting replaces the native combined spell/jewelry rows through the documented `AZS_SetHudShown("build", shown)` API and can restore the user's prior visibility state. Each custom row can be hidden through its own movable-feature controls.
 
-The provided Aethus API documentation exposes `AZS_SetHudShown("build", shown)` for the native spell and jewelry build rows together, plus `AZS_SPELLS` for spell data. It does not document separate visibility controls or an item-acquisition history. This implementation does not claim to hide/replace the native jewelry row or provide an acquisition timestamp. In-game checks are still needed for the game's inventory texture/link APIs and for avoiding duplication with its own jewelry UI.
+The provided Aethus API documentation exposes `AZS_SetHudShown("build", shown)` for the native spell and jewelry build rows together, plus `AZS_SPELLS` for spell data. It does not document separate native visibility controls or an item-acquisition history. In-game checks are still needed for the game's spellbook ID/icon mapping and inventory texture/link APIs.
+
+## Encounter bar targeting and tooltip size
+
+Encounter rows now accept clicks and call the game's exact-name target command for the displayed boss, guardian or elite. They do not use a nearest-enemy fallback. The row tooltip shows the unit role and current health. The shared game tooltip uses a consistent 260×140 default; the UI settings page and the in-world right-click controls can resize it. Neither behavior has been verified in-game yet.
 
 ## Buff layout direction
 
@@ -34,7 +38,15 @@ Local package: `dist/AZSMinorMods-UI-controls-local-2026-11-01.zip`.
 
 ## Tooltip
 
-The tooltip is already in the movable list. While UI settings are unlocked, its transparent handle follows a visible `GameTooltip`; left-drag moves it and right-click opens its size/scale controls. The tooltip remains game-owned and keeps its own content. This implementation is local and still needs in-game confirmation with multiple tooltip types.
+The tooltip is in the movable list and now has one 260×140 default size applied after it is shown, preventing content changes from making it expand unpredictably. The UI settings page offers paired smaller/larger controls, and the in-world right-click controls still allow independent width, height and scale changes. It remains game-owned and keeps its own content. Verify with several tooltip types in-game because fixed height can clip unusually long descriptions until the player resizes it.
+
+## Movable damage meter and layout controls
+
+Slim Suite now has a separate movable damage-meter panel that reads `AZS_GetMeter()`'s documented line tuple (`name, damage, DPS, share, proc`) plus run total and DPS. It also accepts keyed rows. It hides and restores the native meter through `AZS_SetHudShown("meter", ...)`, rather than trying to move an undocumented native frame. Its Unlock UI handle provides move, resize, scale and global snap behavior. The draggable Done/control panel now contains grid visibility, 32/64/128/256 divisions, vertical and horizontal red center-line toggles, and global snapping; the main Slim Suite settings window closes when UI editing starts. These changes are local and still need in-game verification.
+
+## 0.138.0 world-anchored combat text API review
+
+Slim Suite currently does not draw floating combat-number text, so the new `AZS_GetCombatTextEvents()`, `AZS_ProjectCombatTextAnchors()` and `AZS_RegisterCombatTextFrameHandler()` APIs do not change an existing Slim Suite feature. They could support a future custom damage-number display that stays attached to the enemy or death location through camera movement, including targets without nameplates. The movable event-announcement banner is a different feature and remains unchanged.
 
 ## Screen-edge placement and hiding a feature
 

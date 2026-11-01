@@ -376,7 +376,7 @@ namespace AzerothLauncher
             if (next != null)
             {
                 FetchTitle(next);
-                int previewW = Math.Min(Theme.Px(170), Math.Max(Theme.Px(112), PW / 3));
+                int previewW = Math.Min(Theme.Px(145), Math.Max(Theme.Px(96), PW / 4));
                 int previewH = previewW * 9 / 16;
                 int previewX = PW - previewW - Theme.Px(18);
                 Color previewText = Theme.Mix(Theme.Text, Theme.Card, .42);
