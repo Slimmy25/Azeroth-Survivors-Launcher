@@ -756,7 +756,7 @@ local function EncounterRow(index)
 	row.name:SetHeight(22);
 	row.name:SetJustifyH("LEFT");
 	row.name:SetJustifyV("TOP");
-	row.name:SetWordWrap(true);
+	row.name:SetNonSpaceWrap(true);
 	SetEncounterFont(row.name, 10);
 	row.name:SetTextColor(1, 0.26, 0.16);
 	row.bar = CreateFrame("StatusBar", nil, row);
@@ -936,7 +936,7 @@ local function CreateAnnouncementFrame()
 	announcementFrame.text:SetHeight(60);
 	announcementFrame.text:SetJustifyH("CENTER");
 	announcementFrame.text:SetJustifyV("MIDDLE");
-	announcementFrame.text:SetWordWrap(true);
+	announcementFrame.text:SetNonSpaceWrap(true);
 	SetEncounterFont(announcementFrame.text, 22);
 	announcementFrame.text:SetTextColor(0.96, 0.82, 0.52);
 	local savedOriginal = DB().bannerNativeOriginal;
