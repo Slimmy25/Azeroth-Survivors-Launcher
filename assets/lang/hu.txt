@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Játékidő mutatása a kezdőképernyőn
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Útmutató új játékosoknak
 {#0} of {#1} topics read
 = {#1} témából {#0} elolvasva
@@ -1484,7 +1484,7 @@ Most level-up saves in a run
 = Legtöbb szintlépéses megmenekülés egy futásban
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Minden statisztikád a játékban (/azs) és a STATISZTIKA oldalon: futások, rekordok, képességek, kasztok, játékidő, a Nemezised és a co-op a barátokkal.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Az indító teljes Kezdő útmutatója a játékban (/handbook): minden téma és oldal, minden kaszt varázslatai az ikonjaikkal és az őket módosító tehetségekkel, és az összes tehetségfa.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Apró változtatások, mindegyik külön be- vagy kikapcsolható (/azsmods vagy a minitérkép-gombja): nincsenek szintlépés-, statbónusz- vagy új varázslat-sorok a csevegésben, főellenség-jelölők (Koponya, Kereszt, Gyémánt), minifőellenség-jelölők (Csillag, Háromszög, Gyémánt), villogó jelölő minden elesett barát felett, egyszerű akciósáv csak a hat négyzettel, a felület mozgatása és zárolása, a célpontkeret elrejtése és a kamera 50-en.

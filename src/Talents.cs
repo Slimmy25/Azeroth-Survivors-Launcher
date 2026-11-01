@@ -1,5 +1,5 @@
 // The talent trees of every class, as the game has them (assets/talents.txt, read from the game at wow.aethus.pl by
-// tools/game_talents.py), and the pieces the New Player Guide's class pages draw them with:
+// tools/game_talents.py), and the pieces the New Player Handbook's class pages draw them with:
 //   * TalentTreeView: one spec's tree, its talents' icons on the game's grid (7 rows, 4 columns) with their ranks,
 //     the 10, 20 and 30 point milestones marked; pointing at a talent shows its text and the spells it changes
 //   * SpellRow: one spell of the class, its icon, the guide's line about it, and the talents that change it, and the spells that name it

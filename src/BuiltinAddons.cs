@@ -143,7 +143,7 @@ namespace AzerothLauncher
         {
             if (cached != null) return cached;
             var s = new StringBuilder();
-            s.Append("-- AZS Handbook: the launcher's New Player Guide and talent trees, written by the launcher when it installs or\n");
+            s.Append("-- AZS Handbook: the launcher's New Player Handbook and talent trees, written by the launcher when it installs or\n");
             s.Append("-- updates the addon (so the guide in game is always the launcher's). Do not edit: the launcher writes it again.\n");
             s.Append("AZSHANDBOOK_DATA = {\n");
             s.Append("topics = {\n");

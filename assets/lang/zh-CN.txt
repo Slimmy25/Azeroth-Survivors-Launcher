@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = 在主界面显示游戏时长
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = 新手指南
 {#0} of {#1} topics read
 = 已读 {#0}/{#1} 个主题
@@ -1484,7 +1484,7 @@ Most level-up saves in a run
 = 单局最多升级救命
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = 你在游戏内（/azs）和统计页面的全部数据：对局、纪录、技能、职业、游戏时间、你的宿敌以及与好友的合作。
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = 在游戏内查看启动器完整的新手指南（/handbook）：每个主题和页面，各职业的法术及其图标和改变它们的天赋，以及所有天赋树。
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = 一些小改动，每项可单独开关（/azsmods 或其小地图按钮）：聊天中不显示升级、属性加成和新法术的行，首领标记（骷髅、叉、菱形），小首领标记（星星、三角、菱形），每位倒下的队友头上各自闪烁的标记，只有六个格子的简洁动作条，移动并锁定界面，隐藏目标框体，镜头距离50。

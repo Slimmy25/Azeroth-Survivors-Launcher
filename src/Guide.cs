@@ -1,4 +1,5 @@
-// The Guide (assets\guide.txt), in two groups (New Player and Gameplay), with Theorycrafting as a submenu in Gameplay: topic cards (every topic open at any time, nothing tracked), topics made of pages, and
+// Guide (assets\guide.txt) has the New Player Handbook and Wiki destinations; Theorycrafting is a separate major menu.
+// It uses topic cards (every topic open at any time, nothing tracked), topics made of pages, and
 // article pages with headings, bullets, tip boxes and video cards.
 //
 // Videos: put a line "@video Title | address" anywhere in a topic or page of guide.txt; the video card shows up
@@ -238,18 +239,21 @@ namespace AzerothLauncher
         // to the first group. "Talent Tree Builder" is not a topic of guide.txt: it is the class picker for the talent
         // trees and their test builds.
         public const string TalentBuilder = "Talent Tree Builder";
+        public const string CombinedBuilder = "Gear and Talent Builder";
+        const int WikiTab = -5, BuildVideosTab = -6, CombinedBuilderTab = -8;
         static readonly string[][] GuideGroups =
         {
-            new[] { "NEW PLAYER", "Getting Started", "Controls", "Your First Run", "Tips for New Players", "Pickups, Caches & Guardians",
-                    "Zones & Bosses", "Heroic & Endless", "Talents", "Gear & the Armory", "Addons", "Achievements & Rewards", "Level-Ups & Cards", "Co-op" },
-            new[] { "GAMEPLAY", "Classes", "Races", "Items", "Transmog", "Build Guides" },
-            new[] { "THEORYCRAFTING", TalentBuilder, GearPlanner },
+            new[] { "New Player Handbook", "Getting Started", "Controls", "Your First Run", "Tips for New Players", "Pickups, Caches & Guardians",
+                    "Zones & Bosses", "Heroic & Endless", "Talents", "Gear & the Armory", "Addons", "Achievements & Rewards", "Level-Ups & Cards", "Co-op", "Races" },
+            new[] { "Wiki", "Classes", "Items", "Transmog" },
+            new[] { "THEORYCRAFTING", CombinedBuilder, "Build Guides", "Build Videos" },
         };
         int guideGroup;                                       // the group whose tabs are shown
-        bool guideMain = true;                                // the main page: choose New Player or Gameplay
+        bool guideMain = true;                                // the landing page for the current guide destination
         bool gBuilder;                                        // the Talent Tree Builder is open
         int guideGroupPage = -1;                              // -1 chooser; otherwise the selected category (or Theorycrafting submenu)
         bool guideWikiIndex;
+        bool guideBuildVideos;
 
         static int GroupOf(string title)
         {
@@ -388,6 +392,13 @@ namespace AzerothLauncher
                 RestoreGuideFavoriteLocation(favorite);
                 return;
             }
+            if (favorite.Kind == "buildVideos")
+            {
+                if (current != "Guide" || !side.Visible) ShowSection("Guide");
+                OpenGuideTab(BuildVideosTab);
+                RestoreGuideFavoriteLocation(favorite);
+                return;
+            }
             if (favorite.Kind == "builderClass" || favorite.Kind == "plannerClass")
             {
                 if (current != "Guide" || !side.Visible) ShowSection("Guide");
@@ -430,6 +441,7 @@ namespace AzerothLauncher
                 if (current != "Guide" || !side.Visible) ShowSection("Guide");
                 int videoPage = favorite.Page.Length == 0 ? -1 : parent.Pages.FindIndex(delegate(GuidePage p) { return p.Title == favorite.Page; });
                 SetGuideView(videoTopic, videoPage);
+                guideBuildVideos = string.Equals(parent.Title, "Build Guides", StringComparison.OrdinalIgnoreCase);
                 gVideo = video;
                 BuildPanel("Guide");
                 return;
@@ -535,30 +547,40 @@ namespace AzerothLauncher
             var list = new List<int>();
             for (int i = 1; i < GuideGroups[group].Length; i++)
             {
+                if (GuideGroups[group][i] == CombinedBuilder) { list.Add(CombinedBuilderTab); continue; }
+                if (GuideGroups[group][i] == "Build Videos") { list.Add(BuildVideosTab); continue; }
                 if (GuideGroups[group][i] == TalentBuilder) { list.Add(-2); continue; }
                 if (GuideGroups[group][i] == GearPlanner) { list.Add(-3); continue; }
                 for (int t = 0; t < topics.Count; t++)
                     if (string.Equals(topics[t].Title, GuideGroups[group][i], StringComparison.OrdinalIgnoreCase)) { list.Add(t); break; }
             }
-            if (group == 1) list.Add(-4);                     // Gameplay › Theorycrafting: the theorycrafting tools live in Gameplay
-            if (group == 1) list.Add(-5);                     // Gameplay › Wiki: class-guide quick picker
+            if (group == 1) list.Add(WikiTab);                // Wiki intro / class-guide tree
             if (group == 0)                                   // topics no group names
                 for (int t = 0; t < topics.Count; t++)
                 {
                     bool named = false;
                     foreach (var grp in GuideGroups)
                         for (int i = 1; i < grp.Length; i++) if (string.Equals(grp[i], topics[t].Title, StringComparison.OrdinalIgnoreCase)) named = true;
-                    if (!named) list.Add(t);
+                    if (!named && !string.Equals(topics[t].Title, "Archive", StringComparison.OrdinalIgnoreCase)) list.Add(t);
                 }
             return list;
         }
 
         void OpenGuideTab(int tab)
         {
-            if (tab == -4) { GuideGroupPage(2); return; }    // Theorycrafting (inside Gameplay)
-            if (tab == -5)
+            if (tab == CombinedBuilderTab) { OpenGuideTab(-3); return; }
+            if (tab == BuildVideosTab)
+            {
+                guideQuery = guideFindQuery = ""; guideGroupPage = 2; guideMain = false; guideWikiIndex = false;
+                guideBuildVideos = true; gTopic = gPage = -1; gVideo = null; gTalents = null; gBuilder = gPlanner = false;
+                if (current != "Guide" || !side.Visible) ShowSection("Guide");
+                foreach (var item in nav) item.Value.Active = item.Key == "Theorycrafting";
+                BuildPanel("Guide"); return;
+            }
+            if (tab == WikiTab)
             {
                 guideQuery = ""; guideFindQuery = ""; guideGroupPage = 1; guideMain = false; guideWikiIndex = true;
+                guideBuildVideos = false;
                 gTopic = -1; gPage = -1; gVideo = null; gTalents = null; gBuilder = gPlanner = false;
                 if (current != "Guide" || !side.Visible) ShowSection("Guide");
                 foreach (var item in nav) item.Value.Active = item.Key == "Guide";
@@ -568,6 +590,7 @@ namespace AzerothLauncher
             guideQuery = "";
             guideFindQuery = "";
             guideGroupPage = -1;
+            guideBuildVideos = false;
             if (tab == -2)
             {
                 gVideo = null;
@@ -812,11 +835,22 @@ namespace AzerothLauncher
             return char.ToUpperInvariant(n[0]) + n.Substring(1).Replace("player", "Player");
         }
 
-        void GuideMainPage() { guideWikiIndex = false; guideQuery = ""; guideFindQuery = ""; GuideGroupPage(-1); }
+        void GuideMainPage() { guideWikiIndex = false; guideBuildVideos = false; guideQuery = ""; guideFindQuery = ""; GuideGroupPage(-1); }
 
         // Guide locations are saved from the page star so the reading position is retained.
         // Other sections continue to use their breadcrumb favorite controls.
-        void SetGuideTrail(List<object> trail, params GuideFavoriteRoute[] routes) { SetCrumbs(trail.ToArray()); }
+        void SetGuideTrail(List<object> trail, params GuideFavoriteRoute[] routes)
+        {
+            SetCrumbs(trail.ToArray());
+            int crumb = 0;
+            for (int i = 0; i + 1 < trail.Count; i += 2, crumb++)
+            {
+                if (crumb >= routes.Length || routes[crumb] == null) continue;
+                GuideFavoriteRoute route = routes[crumb];
+                int target = crumb;
+                sideHead.SetCrumbFavorite(target, delegate { AddGuideFavorite(route); });
+            }
+        }
 
         static string GuideClassKey(string topic, string page)
         {
@@ -826,93 +860,96 @@ namespace AzerothLauncher
             return "";
         }
 
-        // the main page, or one group's page (Guide › Gameplay › Theorycrafting): its topics and tools as cards
+        // the Guide landing, the Handbook/Wiki lists, or the independent Theorycrafting destination
         public void GuideGroupPage(int group)
         {
-            if (group == 2)
-            {
-                // ShowSection initializes Guide to Wiki, so open the tool after that initialization.
-                if (current != "Guide" || !side.Visible) ShowSection("Guide");
-                guideWikiIndex = false;
-                gTopic = gPage = -1;
-                OpenGuideTab(-3);
-                foreach (var item in nav) item.Value.Active = item.Key == "Theorycrafting";
-                return;
-            }
             if (current != "Guide" || !side.Visible) ShowSection("Guide");
+            if (group == 1) { OpenGuideTab(WikiTab); return; }
             guideWikiIndex = false;
+            guideBuildVideos = false;
             if (gPlanner) ResetPlannerState();
             gTopic = -1; gPage = -1; guideQuery = guideFindQuery = ""; gBuilder = false; gPlanner = false; gTalents = null; gVideo = null; guideMain = true;
             guideGroupPage = group;
             BuildPanel("Guide");
             foreach (var item in nav)
-                item.Value.Active = item.Key == (group == 0 ? "New Player Guide" : group == 2 ? "Theorycrafting" : "Guide");
+                item.Value.Active = item.Key == (group == 0 ? "New Player Handbook" : group == 2 ? "Theorycrafting" : "Guide");
         }
 
-        // the trail in the title bar: Guide › Gameplay › Classes › Priest, each step a way back. Theorycrafting lives in
-        // Gameplay: Guide › Gameplay › Theorycrafting › Talent Tree Builder › Priest
+        // Keep the visible route aligned with the major navigation: Guide > Handbook/Wiki, or Theorycrafting.
         void GuideTrail()
         {
             var topics = Data.Guide;
-            Action home = guideWikiIndex ? (Action)delegate { OpenGuideTab(-5); } : GuideMainPage;
-            Action builder = delegate { OpenGuideTab(-2); };    // the class question again
+            Action guideHome = GuideMainPage;
+            Action handbook = delegate { GuideGroupPage(0); };
+            Action wiki = delegate { OpenGuideTab(WikiTab); };
             Action theory = delegate { GuideGroupPage(2); };
-            Action gameplay = delegate { GuideGroupPage(1); };
-            string gp = GroupName(1), th = GroupName(2);
+            Action combined = delegate { OpenGuideTab(CombinedBuilderTab); };
+            Action buildVideos = delegate { OpenGuideTab(BuildVideosTab); };
+            string th = GroupName(2);
             if (gVideo != null)
             {
-                var videoTrail = new List<object> { "Guide", home, gVideo.Title.Length > 0 ? gVideo.Title : "Video", null };
+                bool theoryVideo = guideBuildVideos || (gTopic >= 0 && gTopic < topics.Count &&
+                    string.Equals(topics[gTopic].Title, "Build Guides", StringComparison.OrdinalIgnoreCase));
+                var videoTrail = theoryVideo
+                    ? new List<object> { "Theorycrafting", theory, "Build Videos", buildVideos, gVideo.Title.Length > 0 ? gVideo.Title : "Video", null }
+                    : new List<object> { "Guide", guideHome, gVideo.Title.Length > 0 ? gVideo.Title : "Video", null };
                 GuideFavoriteRoute video = null;
                 if (gTopic >= 0 && gTopic < topics.Count)
                 {
                     string page = gPage >= 0 && gPage < topics[gTopic].Pages.Count ? topics[gTopic].Pages[gPage].Title : "";
                     video = new GuideFavoriteRoute("video", topics[gTopic].Title, page, "", gVideo.Url);
                 }
-                SetGuideTrail(videoTrail, null, video);
+                SetGuideTrail(videoTrail, theoryVideo
+                    ? new[] { new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("buildVideos", "Build Videos", ""), video }
+                    : new[] { (GuideFavoriteRoute)null, video });
                 return;
             }
             if (gTalents != null && gBuilder)
             {
-                var builderClassTrail = new List<object> { "Guide", home, gp, gameplay, th, theory, TalentBuilder, builder, gTalents, null };
-                SetGuideTrail(builderClassTrail, null, null, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("builder", "", ""),
+                var builderClassTrail = new List<object> { "Theorycrafting", theory, CombinedBuilder, combined, gTalents, null };
+                SetGuideTrail(builderClassTrail, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("builder", "", ""),
                     new GuideFavoriteRoute("builderClass", "", "", gTalents, ""));
                 return;
             }
             if (gBuilder)
             {
-                var builderTrail = new List<object> { "Guide", home, gp, gameplay, th, theory, TalentBuilder, null };
-                SetGuideTrail(builderTrail, null, null, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("builder", "", ""));
+                var builderTrail = new List<object> { "Theorycrafting", theory, CombinedBuilder, null };
+                SetGuideTrail(builderTrail, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("builder", "", ""));
                 return;
             }
-            Action planner = delegate { ResetPlannerState(); plannerClass = null; OpenGuideTab(-3); };
             if (gPlanner && plannerClass != null)
             {
-                var plannerClassTrail = new List<object> { "Guide", home, gp, gameplay, th, theory, GearPlanner, planner, plannerClass, null };
-                SetGuideTrail(plannerClassTrail, null, null, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("planner", "", ""),
+                var plannerClassTrail = new List<object> { "Theorycrafting", theory, CombinedBuilder, combined, plannerClass, null };
+                SetGuideTrail(plannerClassTrail, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("planner", "", ""),
                     new GuideFavoriteRoute("plannerClass", "", "", plannerClass, ""));
                 return;
             }
             if (gPlanner)
             {
-                var plannerTrail = new List<object> { "Guide", home, gp, gameplay, th, theory, GearPlanner, null };
-                SetGuideTrail(plannerTrail, null, null, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("planner", "", ""));
+                var plannerTrail = new List<object> { "Theorycrafting", theory, CombinedBuilder, null };
+                SetGuideTrail(plannerTrail, new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("planner", "", ""));
                 return;
             }
-            if (guideQuery.Trim().Length > 0) { SetCrumbs("Guide", home, "Search", null); return; }
-            if (guideWikiIndex && (gTopic < 0 || gTopic >= topics.Count)) { SetCrumbs("Guide", home, "Wiki", null); return; }
-            if ((gTopic < 0 || gTopic >= topics.Count) && guideGroupPage == 2)
+            if (guideQuery.Trim().Length > 0) { SetCrumbs("Guide", guideHome, "Search", null); return; }
+            if (guideBuildVideos && gVideo == null)
             {
-                SetGuideTrail(new List<object> { "Guide", home, gp, gameplay, th, null }, null, null, new GuideFavoriteRoute("group", th, ""));
+                SetGuideTrail(new List<object> { "Theorycrafting", theory, "Build Videos", null },
+                    new GuideFavoriteRoute("group", th, ""), new GuideFavoriteRoute("buildVideos", "Build Videos", ""));
                 return;
             }
-            if ((gTopic < 0 || gTopic >= topics.Count) && guideGroupPage >= 0) { SetCrumbs("Guide", home, GroupName(guideGroupPage), null); return; }
+            if (guideWikiIndex && (gTopic < 0 || gTopic >= topics.Count))
+            { SetGuideTrail(new List<object> { "Guide", guideHome, "Wiki", null }, null, new GuideFavoriteRoute("wiki", "", "")); return; }
+            if ((gTopic < 0 || gTopic >= topics.Count) && guideGroupPage == 0)
+            { SetGuideTrail(new List<object> { "Guide", guideHome, GroupName(0), null }, null, new GuideFavoriteRoute("group", GroupName(0), "")); return; }
+            if ((gTopic < 0 || gTopic >= topics.Count) && guideGroupPage == 2)
+            { SetGuideTrail(new List<object> { "Theorycrafting", null }, new GuideFavoriteRoute("group", th, "")); return; }
             if (gTopic < 0 || gTopic >= topics.Count) { SetCrumbs("Guide", null); return; }
             int t = gTopic, pg = gPage;
             GuideTopic topic = topics[t];
             int gi = GroupOf(topic.Title);
-            var trail = new List<object> { "Guide", (Action)GuideMainPage };
-            if (gi == 2) { trail.Add(gp); trail.Add(gameplay); }      // a Theorycrafting topic: inside Gameplay
-            trail.Add(GroupName(gi)); trail.Add((Action)delegate { GuideGroupPage(gi); });   // the group's step opens its page
+            var trail = gi == 2
+                ? new List<object> { "Theorycrafting", theory, topic.Title, (Action)delegate { GuideGroupPage(2); } }
+                : new List<object> { "Guide", guideHome, GroupName(gi), gi == 0 ? handbook : wiki };
             Action toTopic = delegate { SetGuideView(t, -1); };
             bool onPage = pg >= 0 && pg < topic.Pages.Count;
             if (gTalents != null)
@@ -925,8 +962,9 @@ namespace AzerothLauncher
             else { trail.Add(topic.Title); trail.Add(null); }
             var routes = new List<GuideFavoriteRoute>();
             for (int i = 0; i < trail.Count / 2; i++) routes.Add(null);
-            int topicStep = gi == 2 ? 3 : 2;
-            if (gi == 2) routes[2] = new GuideFavoriteRoute("group", th, "");
+            int topicStep = gi == 2 ? 1 : 2;
+            if (gi == 2) routes[0] = new GuideFavoriteRoute("group", th, "");
+            else routes[1] = new GuideFavoriteRoute("group", GroupName(gi), "");
             routes[topicStep] = new GuideFavoriteRoute("guide", topic.Title, "");
             if (onPage)
             {
@@ -939,7 +977,7 @@ namespace AzerothLauncher
             SetGuideTrail(trail, routes.ToArray());
         }
 
-        static readonly string[] BuilderClasses = { "Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Shaman", "Mage", "Warlock", "Druid" };
+        static readonly string[] BuilderClasses = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" };
 
         // ---- the Talent Tree Builder: pick a class, then try out a build on its three trees (empty again each time it opens)
         void GuideBuilderHome()
@@ -1070,6 +1108,7 @@ namespace AzerothLauncher
         {
             if (topic <= -2) { if (current != "Guide" || !side.Visible) ShowSection("Guide"); OpenGuideTab(topic); return; }   // a tool's link
             guideWikiIndex = false;
+            guideBuildVideos = false;
             if (gPlanner) ResetPlannerState();
             guideGroupPage = -1;
             gVideo = null;
@@ -1086,6 +1125,53 @@ namespace AzerothLauncher
             int n = t.Videos.Count;
             foreach (var p in t.Pages) n += p.Videos.Count;
             return n;
+        }
+
+        static int BuildVideoCount(List<GuideTopic> topics, string selectedClass)
+        {
+            GuideTopic build = topics.Find(delegate(GuideTopic t) { return string.Equals(t.Title, "Build Guides", StringComparison.OrdinalIgnoreCase); });
+            if (build == null) return 0;
+            string cls = string.IsNullOrEmpty(selectedClass) ? "Warrior" : selectedClass;
+            int count = 0;
+            foreach (GuidePage page in build.Pages)
+                if (string.Equals(BuildGuideClass(page), cls, StringComparison.OrdinalIgnoreCase)) count += page.Videos.Count;
+            return count;
+        }
+
+        void GuideBuildVideosPage()
+        {
+            var topics = Data.Guide;
+            int topicIndex = topics.FindIndex(delegate(GuideTopic t) { return string.Equals(t.Title, "Build Guides", StringComparison.OrdinalIgnoreCase); });
+            GuideHeader("Build Videos", topics);
+            var sp = MakeThinScroll(panel, new Rectangle(20, GuideTop, PW - 40, PH - 12 - GuideTop), Theme.Panel, Theme.Bronze,
+                                    Theme.GoldDim, Theme.Gold);
+            guideArticleScroll = sp;
+            if (topicIndex < 0) return;
+            GuideTopic topic = topics[topicIndex];
+            string selectedClass = string.IsNullOrEmpty(theorycraftClass) ? "Warrior" : theorycraftClass;
+            int w = sp.ClientSize.Width - 8, y = 6, cardIndex = 0;
+            for (int p = 0; p < topic.Pages.Count; p++)
+            {
+                GuidePage page = topic.Pages[p];
+                if (!string.Equals(BuildGuideClass(page), selectedClass, StringComparison.OrdinalIgnoreCase)) continue;
+                if (page.Videos.Count == 0) continue;
+                var heading = UI.Text(page.Title, 11, FontStyle.Bold, Theme.Gold, sp.BackColor, w - 8, false);
+                heading.Size = VStack.Measure(heading); heading.Location = new Point(6, y); sp.Controls.Add(heading); y = heading.Bottom + 4;
+                int pageIndex = p;
+                foreach (GuideVideo video in page.Videos)
+                {
+                    var card = new GuideCard("", video.Title, Lang.F("Build video · {0}", page.Title), ++cardIndex, w - 8, (int)(80 * Theme.Zoom));
+                    card.Location = new Point(4, y); card.Videos = 1;
+                    card.Pressed += delegate { guideBuildVideos = true; gTopic = topicIndex; gPage = pageIndex; gVideo = video; BuildPanel("Guide"); };
+                    sp.Controls.Add(card); y = card.Bottom + 7;
+                }
+                y += 4;
+            }
+            if (cardIndex == 0)
+            {
+                var empty = UI.Text("No build videos are available for " + Lang.T(selectedClass) + " yet.", 11, FontStyle.Italic, Theme.GoldDim, sp.BackColor, w - 16, false);
+                empty.Size = VStack.Measure(empty); empty.Location = new Point(8, 8); sp.Controls.Add(empty);
+            }
         }
 
         void PanelGuide()
@@ -1124,7 +1210,7 @@ namespace AzerothLauncher
             Func<List<KeyValuePair<string, Action>>> groups = delegate
             {
                 var l = new List<KeyValuePair<string, Action>>();
-                for (int g = 0; g < 2; g++) { int gg = g; l.Add(new KeyValuePair<string, Action>(GroupName(g), delegate { GuideGroupPage(gg); })); }   // (Theorycrafting is in Gameplay)
+                for (int g = 0; g < 2; g++) { int gg = g; l.Add(new KeyValuePair<string, Action>(GroupName(g), delegate { GuideGroupPage(gg); })); }
                 return l;
             };
             Func<int, List<KeyValuePair<string, Action>>> tabsOf = delegate(int g)
@@ -1133,7 +1219,8 @@ namespace AzerothLauncher
                 foreach (int tab in GroupTabs(g, topics))
                 {
                     int tt = tab;
-                    string name = tab == -2 ? TalentBuilder : tab == -3 ? GearPlanner : tab == -4 ? GroupName(2) : tab == -5 ? "Wiki" :
+                    string name = tab == CombinedBuilderTab ? CombinedBuilder : tab == BuildVideosTab ? "Build Videos" :
+                                  tab == -2 ? TalentBuilder : tab == -3 ? GearPlanner : tab == WikiTab ? "Wiki" :
                                   tab >= 0 && tab < topics.Count ? topics[tab].Title : "";
                     if (name.Length == 0) continue;
                     l.Add(new KeyValuePair<string, Action>(name, delegate { if (tt < 0) OpenGuideTab(tt); else SetGuideView(tt, -1); }));
@@ -1146,28 +1233,41 @@ namespace AzerothLauncher
                 foreach (string c in BuilderClasses) { string cc = c; l.Add(new KeyValuePair<string, Action>(c, delegate { pick(cc); })); }
                 return l;
             };
-            if (gVideo != null || guideQuery.Trim().Length > 0) return;
-            if (gBuilder || gPlanner)                         // Guide › Gameplay › Theorycrafting › tool › class
+            if (guideQuery.Trim().Length > 0) return;
+            if (gVideo != null)
             {
-                SetCrumbMenu(1, groups());
-                SetCrumbMenu(2, tabsOf(1));
-                SetCrumbMenu(3, tabsOf(2));
+                bool theoryVideo = guideBuildVideos || (gTopic >= 0 && gTopic < topics.Count &&
+                    string.Equals(topics[gTopic].Title, "Build Guides", StringComparison.OrdinalIgnoreCase));
+                if (theoryVideo) { SetCrumbMenu(0, tabsOf(2)); SetCrumbMenu(1, tabsOf(2)); }
+                return;
+            }
+            if (gBuilder || gPlanner)                         // Theorycrafting › Gear and Talent Builder › class
+            {
+                SetCrumbMenu(0, tabsOf(2));
                 if (gBuilder && gTalents != null)
-                    SetCrumbMenu(4, classes(delegate(string c) { PlannerClass(c); gTalents = c; BuildPanel("Guide"); }));
+                    SetCrumbMenu(2, classes(delegate(string c) { PlannerClass(c); gTalents = c; BuildPanel("Guide"); }));
                 if (gPlanner && plannerClass != null)
-                    SetCrumbMenu(4, classes(delegate(string c) { PlannerClass(c); BuildPanel("Guide"); }));
+                    SetCrumbMenu(2, classes(delegate(string c) { PlannerClass(c); BuildPanel("Guide"); }));
+                return;
+            }
+            if (guideBuildVideos)
+            {
+                SetCrumbMenu(0, tabsOf(2));
+                if (gVideo != null) SetCrumbMenu(1, tabsOf(2));
                 return;
             }
             if (gTopic < 0 || gTopic >= topics.Count)
             {
-                if (guideGroupPage >= 0) SetCrumbMenu(1, groups());
-                if (guideGroupPage == 2) SetCrumbMenu(2, tabsOf(1));
+                if (guideWikiIndex) SetCrumbMenu(0, groups());
+                else if (guideGroupPage < 0) SetCrumbMenu(0, groups());
+                else if (guideGroupPage == 0) { SetCrumbMenu(0, groups()); SetCrumbMenu(1, tabsOf(0)); }
+                else if (guideGroupPage == 2) SetCrumbMenu(0, tabsOf(2));
                 return;
             }
             int t = gTopic;
-            int gt = GroupOf(topics[t].Title), at = 2;         // at: the step of the topic's group's list
-            SetCrumbMenu(1, groups());
-            if (gt == 2) { SetCrumbMenu(2, tabsOf(1)); at = 3; }   // a Theorycrafting topic: Gameplay's list, then Theorycrafting's
+            int gt = GroupOf(topics[t].Title), at = gt == 2 ? 1 : 2;
+            if (gt == 2) SetCrumbMenu(0, tabsOf(2));
+            else { SetCrumbMenu(0, groups()); SetCrumbMenu(1, tabsOf(gt)); }
             SetCrumbMenu(at, tabsOf(gt));
             if (gPage >= 0 && topics[t].Pages.Count > 0)
             {
@@ -1199,6 +1299,7 @@ namespace AzerothLauncher
             if (gTalents != null && Talents.Of(gTalents).Count > 0) { GuideTalents(gTalents); AddGuideFavoriteStar(); return; }
             if (gBuilder) { GuideBuilderHome(); AddGuideFavoriteStar(); return; }
             if (gPlanner) { GuideGearPlanner(); AddGuideFavoriteStar(); return; }
+            if (guideBuildVideos && guideQuery.Trim().Length == 0) { GuideBuildVideosPage(); AddGuideFavoriteStar(); return; }
             GuideLinks.Reset();                              // rebuild links in case the optional captured-tooltip source changed
             var topics = Data.Guide;
             guideTabsBottom = 0;
@@ -1234,6 +1335,7 @@ namespace AzerothLauncher
                     GuideClassKey(Data.Guide[gTopic].Title, Data.Guide[gTopic].Pages[gPage].Title), "");
             if (guideQuery.Trim().Length > 0) return null;        // search result cards keep their own exact routes
             int scrollY = guideArticleScroll == null || guideArticleScroll.IsDisposed ? 0 : Math.Max(0, -guideArticleScroll.AutoScrollPosition.Y);
+            if (guideBuildVideos) return new GuideFavoriteRoute("buildVideos", "Build Videos", "", "", "", "", (int)Math.Round(scrollY/Theme.DisplayScale), 0);
             if (guideWikiIndex) return new GuideFavoriteRoute("wiki", "", "", "", "", "", (int)Math.Round(scrollY/Theme.DisplayScale), 0);
             if (gTopic >= 0 && gTopic < Data.Guide.Count)
             {
@@ -1724,69 +1826,14 @@ namespace AzerothLauncher
             int x = PW - 4 - TheoryStatsWidth;
             var scroll = MakeThinScroll(panel, new Rectangle(x, 4, TheoryStatsWidth, PH - 14 - TheoryStatsHeight),
                 GuideCardBg, Theme.Bronze, Theme.GoldDim, Theme.Gold);
-            int width = Math.Max(30, scroll.ClientSize.Width - 10), y = 6;
-            var heading = UI.Text(Lang.T("Build Guides"), 9, FontStyle.Bold, Theme.Gold, scroll.BackColor, width);
-            heading.Location = new Point(5, y); scroll.Controls.Add(heading); y += heading.Height + 6;
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var topic in Data.Guide)
-            {
-                if (topic.Title != "Build Guides") continue;
-                foreach (var page in topic.Pages)
-                {
-                    if (!string.Equals(BuildGuideClass(page), cls, StringComparison.OrdinalIgnoreCase)) continue;
-                    foreach (var entry in page.Videos)
-                    {
-                        if (!seen.Add(entry.Url)) continue;
-                        GuideVideo video = entry;
-                        string title = Regex.Replace(video.Title ?? "", @"(?i)\(?Azeroth\s+Survivors\)?\s*[:|–—-]?\s*", "").Trim();
-                        if (title.Length == 0) title = page.Title;
-                        var row = new Panel { BackColor = scroll.BackColor, Width = width, Location = new Point(5, y), Cursor = Cursors.Hand, TabStop = true };
-                        int textWidth = Math.Max(24, width - 12);
-                        var link = UI.Text(title, 9, FontStyle.Regular, Theme.Text, row.BackColor, textWidth);
-                        link.Size = VStack.Measure(link); link.Location = new Point(6, 6);
-                        row.Controls.Add(link);
-                        int bottom = link.Bottom + 6;
-                        if (!string.IsNullOrWhiteSpace(video.Author))
-                        {
-                            var author = UI.Text(video.Author, 7.5f, FontStyle.Regular, Theme.GoldDim, row.BackColor, textWidth);
-                            author.Size = VStack.Measure(author); author.Location = new Point(6, bottom);
-                            row.Controls.Add(author); bottom = author.Bottom + 6;
-                        }
-                        var watch = UI.Text(Lang.T("Watch video") + " ›", 8, FontStyle.Underline, Theme.Gold, row.BackColor, textWidth);
-                        watch.Location = new Point(6, bottom); row.Controls.Add(watch);
-                        row.Height = watch.Bottom + 7;
-                        Action open = delegate { gVideo = video; BuildPanel("Guide"); };
-                        EventHandler highlight = delegate
-                        {
-                            row.BackColor = Theme.Hex("#252131");
-                            foreach (Control child in row.Controls) child.BackColor = row.BackColor;
-                            link.ForeColor = Theme.Gold;
-                        };
-                        EventHandler normal = delegate
-                        {
-                            if (row.ClientRectangle.Contains(row.PointToClient(Cursor.Position))) return;
-                            row.BackColor = scroll.BackColor;
-                            foreach (Control child in row.Controls) child.BackColor = row.BackColor;
-                            link.ForeColor = Theme.Text;
-                        };
-                        row.Click += delegate { open(); }; row.MouseEnter += highlight; row.MouseLeave += normal;
-                        row.KeyDown += delegate(object sender, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) { e.SuppressKeyPress = true; open(); } };
-                        foreach (Control child in row.Controls)
-                        {
-                            child.Cursor = Cursors.Hand; child.Click += delegate { open(); };
-                            child.MouseEnter += highlight; child.MouseLeave += normal;
-                        }
-                        scroll.Controls.Add(row); y += row.Height + 6;
-                        var separator = UI.Line(Theme.CardEdge, width, 1);
-                        separator.Location = new Point(5, y); scroll.Controls.Add(separator); y += 7;
-                    }
-                }
-            }
-            if (seen.Count == 0)
-            {
-                var empty = UI.Text(Lang.T("No class videos listed yet."), 8.5f, FontStyle.Regular, Theme.GoldDim, scroll.BackColor, width);
-                empty.Location = new Point(5, y); scroll.Controls.Add(empty);
-            }
+            int width = Math.Max(30, scroll.ClientSize.Width - 10);
+            var heading = UI.Text(Lang.T("Written Guides"), 9, FontStyle.Bold, Theme.Gold, scroll.BackColor, width);
+            heading.Location = new Point(5, 6); scroll.Controls.Add(heading);
+            var placeholder = UI.Text("Space to be used when future partnerships with ASBuilder are underway", 8.5f,
+                FontStyle.Italic, Theme.GoldDim, scroll.BackColor, width);
+            placeholder.Size = VStack.Measure(placeholder);
+            placeholder.Location = new Point(5, heading.Bottom + 8);
+            scroll.Controls.Add(placeholder);
         }
 
         // ---- first page: a card for every topic, all open at any time
@@ -1841,32 +1888,32 @@ namespace AzerothLauncher
                 else if (guideWikiIndex && guideQuery.Trim().Length == 0) GuideWikiIntro(sp, topics, w);
                 else if (guideQuery.Trim().Length == 0 && guideGroupPage < 0)
                 {
-                    // The Guide button opens a choice of its two major categories.
+                    // Guide's own directory: the New Player Handbook and Wiki.
                     int gap = (int)(16 * Theme.Zoom), cardH = (int)(230 * Theme.Zoom);
                     int cardW = (w - gap) / 2;
                     string[] descriptions =
                     {
                         Lang.T("Start here: learn the controls, your first run, and the systems that help you get going."),
-                        Lang.T("Explore classes, zones, builds, and the systems that shape harder runs.")
+                        Lang.T("Browse class, item, and transmog references in the Wiki.")
                     };
-                    for (int g = 0; g < 2; g++)
+                    int[] guideChoices = { 0, 1 };
+                    for (int i = 0; i < guideChoices.Length; i++)
                     {
-                        int group = g;
-                        var card = new GuideCard("", GroupName(g), descriptions[g], 0, cardW, cardH);
-                        card.Location = new Point(4 + g * (cardW + gap), 18);
+                        int group = guideChoices[i];
+                        var card = new GuideCard("", GroupName(group), descriptions[i], 0, cardW, cardH);
+                        card.Location = new Point(4 + i * (cardW + gap), 18);
                         card.Pressed += delegate { GuideGroupPage(group); };
                         sp.Controls.Add(card);
                     }
                 }
                 else if (guideQuery.Trim().Length == 0)
                 {
-                    // A category page lists its topics; Theorycrafting remains a submenu within Gameplay.
+                    // Each major category lists its own destinations.
                     const int gap = 10;
                     int ch = (int)(108 * Theme.Zoom);
                     for (int g = 0; g < GuideGroups.Length; g++)
                     {
                         if (guideGroupPage >= 0 && g != guideGroupPage) continue;
-                        if (guideGroupPage < 0 && g == 2) continue;    // Theorycrafting is a card in Gameplay
                         var tabs = GroupTabs(g, topics);
                         if (tabs.Count == 0) continue;
                         var head = UI.Text(Lang.T(GuideGroups[g][0]), 11, FontStyle.Bold, Theme.Gold, sp.BackColor, 0);
@@ -1889,16 +1936,22 @@ namespace AzerothLauncher
                                 c.Desc = Lang.T("Put gear and jewelry on a character sheet like the game's and see what they add.");
                                 EnableGuideCardFavorite(c, new GuideFavoriteRoute("planner", "", ""));
                             }
-                            else if (t == -4)
-                            {
-                                c.Title = GroupName(2);
-                                c.Desc = Lang.T("The Talent Tree Builder, the Gear Planner and the build guides.");
-                                EnableGuideCardFavorite(c, new GuideFavoriteRoute("group", GroupName(2), ""));
-                            }
-                            else if (t == -5)
+                            else if (t == WikiTab)
                             {
                                 c.Title = "Wiki";
                                 c.Desc = "Choose a class to open its guide and contents tree.";
+                            }
+                            else if (t == CombinedBuilderTab)
+                            {
+                                c.Title = CombinedBuilder;
+                                c.Desc = Lang.T("Build a talent setup, plan gear, and switch between both tools while keeping the selected class.");
+                                EnableGuideCardFavorite(c, new GuideFavoriteRoute("planner", "", ""));
+                            }
+                            else if (t == BuildVideosTab)
+                            {
+                                c.Title = "Build Videos";
+                                c.Desc = Lang.T("Browse class build videos already featured in the guide.");
+                                c.Videos = BuildVideoCount(topics, theorycraftClass);
                             }
                             else
                             {
@@ -1909,7 +1962,7 @@ namespace AzerothLauncher
                                 // Every non-root topic card can be saved, including categories that open another page list.
                                 EnableGuideCardFavorite(c, new GuideFavoriteRoute("guide", topics[t].Title, ""));
                             }
-                            c.Pressed += delegate { OpenGuideTab(t); };
+                            c.Pressed += delegate { if (t == WikiTab) OpenGuideTab(WikiTab); else OpenGuideTab(t); };
                         });
                         y += ((tabs.Count + 1) / 2) * (ch + gap);
                     }
@@ -1935,6 +1988,13 @@ namespace AzerothLauncher
                         GuideTrailMenus();
                         return;
                     }
+                    if (guideBuildVideos)
+                    {
+                        fill();
+                        GuideTrail();
+                        GuideTrailMenus();
+                        return;
+                    }
                     SetGuideView(guideLastTopic, -1);
                     return;
                 }
@@ -1951,6 +2011,7 @@ namespace AzerothLauncher
             bool canRefreshInPlace = guideWikiIndex && wikiPassageRefresh != null &&
                                      guideArticleScroll != null && !guideArticleScroll.IsDisposed;
             guideWikiIndex = true;
+            guideBuildVideos = false;
             guideQuery = guideFindQuery = "";
             guideGroupPage = 1;
             guideMain = false;
@@ -2458,9 +2519,7 @@ namespace AzerothLauncher
                            string.Equals(key, "Talents", StringComparison.OrdinalIgnoreCase) ||
                            string.Equals(key, "Gear", StringComparison.OrdinalIgnoreCase) ||
                            string.Equals(key, "Items", StringComparison.OrdinalIgnoreCase) ||
-                           string.Equals(key, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase) ||
-                           string.Equals(key, "Additional resources", StringComparison.OrdinalIgnoreCase) ||
-                           string.Equals(key, className + " Build Guides", StringComparison.OrdinalIgnoreCase))));
+                           string.Equals(key, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase))));
                     if (activeBranch) classNavActiveBranch.Add(key);
                     Font font = sidebarRegular;
                     Font bold = sidebarBold;
@@ -2572,19 +2631,7 @@ namespace AzerothLauncher
                     Label gearLink = add("Gear", "Gear", 3, selectedClass, delegate { jump("Gear"); });
                     gearLink.Text = "▾ " + gearLink.Text;
                     add("Items", "Items", 4, "Gear", delegate { jump("Items"); });
-                    add("Codex (Necklaces)", "Codex (Necklaces)", 4, "Gear", delegate { jump("Codex (Necklaces)"); });
-                    y += 4;
-                    Font resourceFont = Theme.F(7.0f, FontStyle.Bold);
-                    Label resources = add("Additional resources", "Additional resources", 3, selectedClass, null);
-                    resources.ForeColor = Theme.Gold;
-                    resources.Font = resourceFont;
-                    resources.Text = "▾ " + resources.Text;
-                    string buildGuidesLabel = Lang.F("{0} {1}", Lang.T(className), Lang.T("Build Guides"));
-                    add(className + " Build Guides", buildGuidesLabel, 4, "Additional resources", delegate
-                    {
-                        int t = topics.FindIndex(delegate(GuideTopic g) { return string.Equals(g.Title, "Build Guides", StringComparison.OrdinalIgnoreCase); });
-                        if (t >= 0) SetGuideView(t, -1);
-                    });
+                    add("Codex (Necklaces)", "Codex", 4, "Gear", delegate { jump("Codex (Necklaces)"); });
                     }
                     y += 3;
                     Label itemsLink = add("ItemsCatalog", "Items", 1, "WikiRoot", delegate
@@ -2667,6 +2714,12 @@ namespace AzerothLauncher
                     !classSpellTargets.TryGetValue(ClassSpellKey(link.Term), out row)) row = null;
                 if (row != null && !row.IsDisposed)
                 { NavigateClassArticleToControl(row); row.Flash(); return true; }
+                // Codex jewelry routes point to their owning class page. If the reader is
+                // already there, keep them in that article and jump to the exact Codex row.
+                Control codexTarget;
+                if (TryGetClassLinkedTarget(classCodexItemTargets, link, out codexTarget) ||
+                    TryGetClassLinkedTarget(classCodexSpellTargets, link, out codexTarget))
+                { NavigateClassArticleToControl(codexTarget); return true; }
             }
 
             int directoryTopic = Data.Guide.FindIndex(delegate(GuideTopic t) { return string.Equals(t.Title, "Archive", StringComparison.OrdinalIgnoreCase); });
@@ -2943,7 +2996,7 @@ namespace AzerothLauncher
                     if (!effect.StartsWith("Legendary amulet - remakes ")) effects.Add(effect);
                 lines.Add("- " + jewel.Spell + ": " + jewel.Name + " — " + string.Join(" ", effects.ToArray()));
             }
-            return new GuidePage { Title = "Codex (Necklaces)", Desc = "This class's Codex neck pieces, shown beside its gear.",
+            return new GuidePage { Title = "Codex", Desc = "Codex entries for this class.",
                                    Body = string.Join("\n", lines.ToArray()) };
         }
 
@@ -3090,7 +3143,8 @@ namespace AzerothLauncher
                             continue;
                         }
                     }
-                    if (string.Equals(page.Title, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(page.Title, "Codex", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(page.Title, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase))
                     {
                         string entry = line.Substring(2).Trim();
                         Jewel codex = null;

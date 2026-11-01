@@ -977,8 +977,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Tampilkan waktu bermain di layar utama
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Panduan Pemain Baru
 {#0} of {#1} topics read
 = {#0} dari {#1} topik dibaca
@@ -1483,7 +1483,7 @@ Most level-up saves in a run
 = Selamat berkat naik level terbanyak dalam satu run
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Semua statistikmu di dalam game (/azs) dan di halaman STATISTIK: run, rekor, kemampuan, kelas, waktu bermain, Nemesis-mu, dan co-op bersama teman.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Seluruh Panduan Pemain Baru dari launcher di dalam game (/handbook): setiap topik dan halaman, mantra tiap kelas dengan ikonnya dan talenta yang mengubahnya, serta semua pohon talenta.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Perubahan kecil, masing-masing bisa nyala atau mati (/azsmods atau tombol minimap-nya): tanpa baris naik level, bonus stat, atau mantra baru di chat, penanda bos (Tengkorak, Silang, Berlian), penanda bos mini (Bintang, Segitiga, Berlian), penanda berkedip di atas setiap teman yang tumbang, bilah aksi polos dengan enam kotak saja, pindahkan dan kunci UI, sembunyikan bingkai target, dan kamera di 50.

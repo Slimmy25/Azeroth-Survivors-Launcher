@@ -9,6 +9,19 @@ namespace AzerothLauncher
     // One source for the relationship between physical pixels, monitor DPI and user density.
     public sealed class DisplayLayout
     {
+        public const float WindowAspectRatio = 1100f / 690f;
+        public static Rectangle MaximizedWindowBounds(Rectangle workArea, int frameWidth, int frameHeight)
+        {
+            frameWidth = Math.Max(0, frameWidth);
+            frameHeight = Math.Max(0, frameHeight);
+            int maxClientWidth = Math.Max(1, workArea.Width - frameWidth);
+            int maxClientHeight = Math.Max(1, workArea.Height - frameHeight);
+            int clientWidth = Math.Min(maxClientWidth, (int)Math.Floor(maxClientHeight * WindowAspectRatio));
+            int clientHeight = Math.Min(maxClientHeight, (int)Math.Floor(clientWidth / WindowAspectRatio));
+            int outerWidth = clientWidth + frameWidth, outerHeight = clientHeight + frameHeight;
+            return new Rectangle(workArea.Left + (workArea.Width - outerWidth) / 2,
+                workArea.Top + (workArea.Height - outerHeight) / 2, outerWidth, outerHeight);
+        }
         public readonly Rectangle WorkArea;
         public readonly int Dpi;
         public readonly float Scale, RequestedScale;
@@ -27,8 +40,19 @@ namespace AzerothLauncher
         public int Px(float value) { return Math.Max(1, (int)Math.Round(value * Scale)); }
         public Size InitialClientSize
         {
-            get { return new Size(Math.Min(Px(1100), Math.Max(400, WorkArea.Width - Px(24))),
-                                  Math.Min(Px(690), Math.Max(350, WorkArea.Height - Px(65)))); }
+            get
+            {
+                int availableWidth = Math.Max(1, WorkArea.Width - Px(24));
+                int availableHeight = Math.Max(1, WorkArea.Height - Px(65));
+                int width = Math.Min(Px(1100), availableWidth);
+                int height = (int)Math.Round(width / WindowAspectRatio);
+                if (height > Math.Min(Px(690), availableHeight))
+                {
+                    height = Math.Min(Px(690), availableHeight);
+                    width = (int)Math.Round(height * WindowAspectRatio);
+                }
+                return new Size(Math.Max(1, width), Math.Max(1, height));
+            }
         }
         public Rectangle Clamp(Rectangle rectangle)
         {
@@ -119,7 +143,7 @@ namespace AzerothLauncher
         {
             FormBorderStyle = FormBorderStyle.Sizable;
             MaximizeBox = true;
-            MinimumSize = new Size(Math.Min(U(760), displayLayout.WorkArea.Width), Math.Min(U(540), displayLayout.WorkArea.Height));
+            MinimumSize = MinimumWindowSize();
             displayReady = true;
             LayoutResponsiveDisplay(false);
             displayResizeTimer = new Timer { Interval = 130 };
@@ -145,6 +169,23 @@ namespace AzerothLauncher
             Bounds = displayLayout.Clamp(new Rectangle(displayLayout.WorkArea.Left + (displayLayout.WorkArea.Width-Width)/2,
                 displayLayout.WorkArea.Top + (displayLayout.WorkArea.Height-Height)/2, Width, Height));
             FormClosed += delegate { displayResizeTimer.Dispose(); };
+        }
+
+        Size MinimumWindowSize()
+        {
+            // Keep a small but usable minimum while preserving the same design ratio as
+            // the normal window. MinimumSize includes native title-bar/frame dimensions.
+            int frameWidth = Math.Max(0, Width - ClientSize.Width);
+            int frameHeight = Math.Max(0, Height - ClientSize.Height);
+            int clientWidth = Math.Min(U(760), Math.Max(1, displayLayout.WorkArea.Width - frameWidth));
+            int clientHeight = (int)Math.Round(clientWidth / DisplayLayout.WindowAspectRatio);
+            int maxClientHeight = Math.Max(1, displayLayout.WorkArea.Height - frameHeight);
+            if (clientHeight > maxClientHeight)
+            {
+                clientHeight = maxClientHeight;
+                clientWidth = Math.Max(1, (int)Math.Round(clientHeight * DisplayLayout.WindowAspectRatio));
+            }
+            return new Size(clientWidth + frameWidth, clientHeight + frameHeight);
         }
 
         void LayoutResponsiveDisplay(bool rebuild)
@@ -213,7 +254,7 @@ namespace AzerothLauncher
             {
                 displayLayout = next;
                 Theme.DisplayScale = next.Scale; Theme.DisplayDpi = next.Dpi; Theme.Zoom = next.Scale;
-                MinimumSize = new Size(Math.Min(U(760), workArea.Width), Math.Min(U(540), workArea.Height));
+                MinimumSize = MinimumWindowSize();
                 if (WindowState == FormWindowState.Normal)
                 {
                     // Setting MinimumSize can resize the native window immediately. Scale the
@@ -244,6 +285,18 @@ namespace AzerothLauncher
 
         protected override void WndProc(ref Message message)
         {
+            if (message.Msg == 0x0214 && displayReady) // WM_SIZING: resize around the design ratio
+            {
+                ConstrainSizingRectangle(message.WParam.ToInt32(), message.LParam);
+                message.Result = new IntPtr(1);
+                return;
+            }
+            if (message.Msg == 0x0024 && displayReady) // WM_GETMINMAXINFO: ratio-fit the maximized window
+            {
+                base.WndProc(ref message);
+                ConstrainMaximizedWindow(message.LParam, message.HWnd);
+                return;
+            }
             if (message.Msg == 0x02E0 && displayReady && !PreviewMode) // WM_DPICHANGED
             {
                 int dpi = message.WParam.ToInt32() & 0xffff;
@@ -256,6 +309,58 @@ namespace AzerothLauncher
                 return; // AutoScaleMode.None: never let a second scaler resize native child controls.
             }
             base.WndProc(ref message);
+        }
+
+        void ConstrainSizingRectangle(int edge, IntPtr pointer)
+        {
+            if (pointer == IntPtr.Zero || IsDisposed) return;
+            // WM_SIZING supplies an outer-window RECT. Derive its nonclient frame from
+            // the live form, then constrain the client area (where the launcher is laid out).
+            int frameWidth = Math.Max(0, Width - ClientSize.Width);
+            int frameHeight = Math.Max(0, Height - ClientSize.Height);
+            Rectangle r = ParseSuggestedDisplayBounds(pointer);
+            int minWidth = Math.Max(MinimumSize.Width, 1);
+            int minHeight = Math.Max(MinimumSize.Height, 1);
+            bool horizontalEdge = edge == 1 || edge == 2 || edge == 4 || edge == 5 || edge == 7 || edge == 8;
+            bool verticalEdge = edge == 3 || edge == 4 || edge == 5 || edge == 6 || edge == 7 || edge == 8;
+            bool corner = horizontalEdge && verticalEdge;
+            int width = Math.Max(minWidth, r.Width);
+            int height = Math.Max(minHeight, r.Height);
+            double aspect = DisplayLayout.WindowAspectRatio;
+            double byWidth = (width - frameWidth) / aspect + frameHeight;
+            double byHeight = (height - frameHeight) * aspect + frameWidth;
+            bool widthDrives = !verticalEdge || (corner && Math.Abs(byWidth - height) <= Math.Abs(byHeight - width));
+            if (widthDrives) height = Math.Max(minHeight, (int)Math.Round(byWidth));
+            else width = Math.Max(minWidth, (int)Math.Round(byHeight));
+
+            int left = r.Left, right = r.Right, top = r.Top, bottom = r.Bottom;
+            if (edge == 1 || edge == 4 || edge == 7) left = right - width;
+            else if (edge == 2 || edge == 5 || edge == 8) right = left + width;
+            else { int centerX = left + r.Width / 2; left = centerX - width / 2; right = left + width; }
+            if (edge == 3 || edge == 4 || edge == 5) top = bottom - height;
+            else if (edge == 6 || edge == 7 || edge == 8) bottom = top + height;
+            else { int centerY = top + r.Height / 2; top = centerY - height / 2; bottom = top + height; }
+            r = Rectangle.FromLTRB(left, top, right, bottom);
+            Marshal.WriteInt32(pointer, r.Left);
+            Marshal.WriteInt32(pointer, 4, r.Top);
+            Marshal.WriteInt32(pointer, 8, r.Right);
+            Marshal.WriteInt32(pointer, 12, r.Bottom);
+        }
+
+        void ConstrainMaximizedWindow(IntPtr pointer, IntPtr window)
+        {
+            if (pointer == IntPtr.Zero || IsDisposed) return;
+            Screen screen;
+            try { screen = Screen.FromHandle(window); }
+            catch (InvalidOperationException) { return; }
+            Rectangle work = screen.WorkingArea, monitor = screen.Bounds;
+            int frameWidth = Math.Max(0, Width - ClientSize.Width);
+            int frameHeight = Math.Max(0, Height - ClientSize.Height);
+            Rectangle bounds = DisplayLayout.MaximizedWindowBounds(work, frameWidth, frameHeight);
+            Marshal.WriteInt32(pointer, 8, bounds.Width);    // MINMAXINFO.ptMaxSize
+            Marshal.WriteInt32(pointer, 12, bounds.Height);
+            Marshal.WriteInt32(pointer, 16, bounds.Left - monitor.Left); // ptMaxPosition is monitor-relative
+            Marshal.WriteInt32(pointer, 20, bounds.Top - monitor.Top);
         }
 
         void DrawResponsiveLauncher(Graphics graphics)
@@ -311,6 +416,11 @@ namespace AzerothLauncher
                     {
                         graphics.DrawString(Lang.T("News"), Theme.F(11), gold, discordIcon.Right + U(6), HeaderBottom + U(6));
                         graphics.DrawString(Lang.T("Launcher"), Theme.F(11), gold, ResponsiveNewsRect.Left, FooterTop - NavHeight - U(3));
+                        // Divider under the heart/Discord/News and Changelog header row.
+                        // Keep it just above the scrolling patch-note area at every scale.
+                        using (var divider = new Pen(Theme.GoldDim, Math.Max(1, U(1))))
+                            graphics.DrawLine(divider, ResponsiveNewsRect.Left, HeaderBottom + U(34),
+                                              ResponsiveNewsRect.Right, HeaderBottom + U(34));
                     }
                     graphics.DrawString(Lang.T("Game version") + ": " + Data.GameVersion, Theme.F(9), gold, U(10), H - U(23));
                 }

@@ -68,13 +68,13 @@ namespace AzerothLauncher
             }, 144, 26, 8);
             importCode.Location = new Point(170, top);
             if (SHOW_TEMPORARY_BUILD_MENUS) panel.Controls.Add(importCode);
-            // Keep equipment readable. On a short screen the character sheet scrolls independently
-            // of its item picker, class selector and saved-build controls.
+            // The complete character sheet fits the available height; only the item picker has its
+            // own scrollbar when its list is longer than the visible slot.
             int mainWidth = w - TheoryStatsWidth - 6;
             int header = Theme.Px(36);
-            var viewport = MakeThinScroll(panel, new Rectangle(inset,header+inset,mainWidth,Math.Max(40,PH-header-inset*2)),
-                Theme.Panel,Theme.GoldDim,Theme.GoldDim,Theme.Gold);
-            int h=Math.Max(viewport.ClientSize.Height-2,Theme.Px(350));
+            var viewport = new Panel { BackColor = Theme.Panel, Bounds = new Rectangle(inset,header+inset,mainWidth,Math.Max(40,PH-header-inset*2)) };
+            panel.Controls.Add(viewport);
+            int h=Math.Max(40,viewport.ClientSize.Height-2);
             var sheet = new GearSheet(plannerClass, plannerSlots, GearIcons(), h) { MainOnly=true };
             sheet.Bounds=new Rectangle(0,0,Math.Max(50,viewport.ClientSize.Width-2),h);
             viewport.Controls.Add(sheet);
@@ -394,7 +394,7 @@ namespace AzerothLauncher
 
         public void Wheel(int delta)
         {
-            if(MainOnly) { var scroll=Parent as IWheel; if(scroll!=null) scroll.Wheel(delta); return; }
+            if(MainOnly) return;
             if (StatsOnly || tierMode || !itemScroll.Visible) return;
             int limit = Math.Max(0, itemScroll.Maximum - itemScroll.LargeChange + 1);
             itemScroll.Value = Math.Max(0, Math.Min(limit, itemScroll.Value - Math.Sign(delta) * 2));
@@ -482,9 +482,9 @@ namespace AzerothLauncher
             : this(cls, slots, gearIcons)
         {
             int fixedH = Theme.Px(40);
-            int row = Math.Max(8, (height - fixedH) / 9);    // reserve the shared stats footer before sizing the slots
-            slotSize = Math.Max(Theme.Px(26), Math.Min(Theme.Px(32), row - 2));
-            slotGap = Math.Max(2, row - slotSize);
+            int row = Math.Max(1, (height - fixedH) / 9);    // reserve the shared stats footer before sizing the slots
+            slotSize = Math.Max(10, Math.Min(Theme.Px(32), row - 2));
+            slotGap = Math.Max(0, row - slotSize);
         }
 
         public GearSheet(string cls, Dictionary<string, object> slots, Dictionary<string, string> gearIcons)
@@ -676,9 +676,10 @@ namespace AzerothLauncher
 
             // under the totals, in the middle of the sheet (where the explanation was): every set worn, its 4-piece and
             // 8-piece bonuses (bright when reached), so two sets of four show and count both, and an 8-piece shows its 4-piece too
-            int statHeight = Theme.Px(29) + 6 * (Theme.F(7.5f).Height + Theme.Px(2));
-            var statBounds = new Rectangle(mid.X, top, Math.Max(30, mid.Width), statHeight);
-            DrawStatColumns(g, statBounds);
+            int fullStatHeight = Theme.Px(29) + 6 * (Theme.F(7.5f).Height + Theme.Px(2));
+            int statHeight = Math.Min(mid.Height, Math.Min(fullStatHeight, mid.Height * 3 / 4));
+            var statBounds = new Rectangle(mid.X, top, Math.Max(30, mid.Width), Math.Max(1, statHeight));
+            DrawStatColumns(g, statBounds, fullStatHeight <= 0 ? 1f : statHeight / (float)fullStatHeight);
             int setsTop = statBounds.Bottom + Theme.Px(6);
             DrawSets(g, new Rectangle(mid.X, setsTop, mid.Width, by - 8 - setsTop));   // above the weapons
 
@@ -689,7 +690,7 @@ namespace AzerothLauncher
         public bool StatsOnly, SelectorOnly, MainOnly;
         public Action StatsChanged;
 
-        void DrawStatColumns(Graphics g, Rectangle mid)
+        void DrawStatColumns(Graphics g, Rectangle mid, float scale = 1f)
         {
             int health, unknown;
             var t = Totals(out health, out unknown);
@@ -704,23 +705,39 @@ namespace AzerothLauncher
                 new[] { "Area", Val(t, "area", "%") }, new[] { "Targets", Val(t, "targets", "") }, new[] { "Echo", Val(t, "echo", "%") },
                 new[] { "Speed", Val(t, "speed", "%") }, new[] { "Regen", Val(t, "regen", "") }, new[] { "Pickup", Val(t, "pickup", "%") }
             };
-            Font font = Theme.F(7.5f, FontStyle.Bold);
-            int gap = Theme.Px(6), half = (mid.Width - 1 - gap) / 2;
-            for (int column = 0; column < 2; column++)
+            Font baseFont = Theme.F(7.5f, FontStyle.Bold);
+            float compact = Math.Max(0.35f, Math.Min(1f, scale));
+            using (var font = new Font(baseFont.FontFamily, Math.Max(5f, baseFont.Size * compact), FontStyle.Bold, GraphicsUnit.Pixel))
             {
-                var box = new Rectangle(mid.X + column * (half + gap), mid.Y, column == 0 ? half : mid.Width - 1 - (half + gap), mid.Height - 1);
-                using (var edge = new Pen(SlotEdge)) g.DrawRectangle(edge, box);
-                var heading = new Rectangle(box.X + Theme.Px(3), box.Y + Theme.Px(3), box.Width - Theme.Px(6), Theme.Px(18));
-                TextRenderer.DrawText(g, Lang.T(column == 0 ? "Main Stats" : "Secondary Stats"), font, heading, Gold,
-                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
-                int y = box.Y + Theme.Px(25), lh = font.Height + Theme.Px(2);
-                foreach (var row in column == 0 ? main : misc)
+                int gap = Math.Max(1, (int)Math.Round(Theme.Px(6) * compact));
+                int half = (mid.Width - 1 - gap) / 2;
+                int pad = Math.Max(1, (int)Math.Round(Theme.Px(3) * compact));
+                int headingHeight = Math.Max(font.Height + 1, (int)Math.Round(Theme.Px(18) * compact));
+                int headingTop = (int)Math.Round(Theme.Px(3) * compact);
+                int rowTop = (int)Math.Round(Theme.Px(25) * compact);
+                int lh = Math.Max(font.Height, font.Height + (int)Math.Round(Theme.Px(2) * compact));
+                var state = g.Save();
+                try
                 {
-                    var line = new Rectangle(box.X + Theme.Px(5), y, box.Width - Theme.Px(10), lh);
-                    TextRenderer.DrawText(g, Lang.T(row[0]), font, line, Gold, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
-                    TextRenderer.DrawText(g, row[1], font, line, Bright, TextFormatFlags.Right | TextFormatFlags.NoPrefix);
-                    y += lh;
+                    g.SetClip(mid);
+                    for (int column = 0; column < 2; column++)
+                    {
+                        var box = new Rectangle(mid.X + column * (half + gap), mid.Y, column == 0 ? half : mid.Width - 1 - (half + gap), mid.Height - 1);
+                        using (var edge = new Pen(SlotEdge)) g.DrawRectangle(edge, box);
+                        var heading = new Rectangle(box.X + pad, box.Y + headingTop, box.Width - pad * 2, headingHeight);
+                        TextRenderer.DrawText(g, Lang.T(column == 0 ? "Main Stats" : "Secondary Stats"), font, heading, Gold,
+                            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
+                        int y = box.Y + rowTop;
+                        foreach (var row in column == 0 ? main : misc)
+                        {
+                            var line = new Rectangle(box.X + pad + 2, y, box.Width - (pad + 2) * 2, lh);
+                            TextRenderer.DrawText(g, Lang.T(row[0]), font, line, Gold, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
+                            TextRenderer.DrawText(g, row[1], font, line, Bright, TextFormatFlags.Right | TextFormatFlags.NoPrefix);
+                            y += lh;
+                        }
+                    }
                 }
+                finally { g.Restore(state); }
             }
         }
 

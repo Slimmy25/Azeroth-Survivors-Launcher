@@ -635,10 +635,13 @@ namespace AzerothLauncher
                 get
                 {
                     if (Kind == "wiki") return "Wiki";
+                    if (Kind == "buildVideos") return "Build Videos";
                     if (Kind == "guide" || Kind == "guideTalents")
                     {
                         string label = Page.Length > 0 ? Page : Topic;
-                        return Anchor.Length > 0 ? label + " · " + Lang.T(Anchor) : label;
+                        if (string.Equals(label, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase)) label = "Codex";
+                        string anchorLabel = string.Equals(Anchor, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase) ? "Codex" : Lang.T(Anchor);
+                        return Anchor.Length > 0 ? label + " · " + anchorLabel : label;
                     }
                     if (Kind == "group" || Kind == "section") return Topic;
                     if (Kind == "builderClass" || Kind == "plannerClass") return ClassKey;
@@ -1153,7 +1156,7 @@ namespace AzerothLauncher
                                   TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
             y += Theme.Px(26);
             DrawLostHelpSection(g, "Click a breadcrumb to go back. Hover ▼ to choose another page.", PathExamplePart(true), ref y, width);
-            DrawLostHelpSection(g, "On a guide page, click the star to save your reading position. Click a favorite to open it, drag to move it, or right-click to remove it.", PathExamplePart(false), ref y, width);
+            DrawLostHelpSection(g, "Hover a guide or settings name in the path and click the star above it to save that location. A guide favorite keeps your reading position. Click a favorite to open it, hold left-click and drag to move it, or right-click to remove it.", PathExamplePart(false), ref y, width);
             if(scroll!=null) scroll.AutoScrollMinSize=new Size(0,y+Theme.Px(8));
         }
 
@@ -1298,7 +1301,7 @@ namespace AzerothLauncher
                 if (gPlanner) ResetPlannerState();
                 guideGroupPage = 1;
                 gTopic = -1; gPage = -1; guideQuery = ""; gBuilder = false; gPlanner = false; gTalents = null; gVideo = null;
-                guideMain = false; guideWikiIndex = true;
+                guideMain = false; guideWikiIndex = true; guideBuildVideos = false;
                 BuildPanel("Guide");
                 return;
             }
@@ -1308,7 +1311,7 @@ namespace AzerothLauncher
             foreach (var kv in nav) kv.Value.Active = kv.Key == name;
             RefreshStrip();
             if (name == "Changelog") clView = ClList;          // the list of every patch note to pick from
-            if (name == "Guide") { gTopic = -1; gPage = -1; guideQuery = ""; guideLastTopic = 0; gBuilder = false; gPlanner = false; gTalents = null; guideGroup = 1; guideGroupPage = 1; guideMain = false; guideWikiIndex = true; }   // the Guide button opens the Wiki introduction
+            if (name == "Guide") { gTopic = -1; gPage = -1; guideQuery = ""; guideLastTopic = 0; gBuilder = false; gPlanner = false; gTalents = null; guideGroup = 1; guideGroupPage = 1; guideMain = false; guideWikiIndex = true; guideBuildVideos = false; }   // the Guide button opens the Wiki introduction
             if (name == "About Launcher") aboutLog = false;
             if (name == "Home")
             {
@@ -1613,9 +1616,9 @@ namespace AzerothLauncher
 
         void BindCrumbFavorites(List<KeyValuePair<string, Action>> trail)
         {
-            // These sections are utility destinations, not favoriteable link-tree locations.
-            if (current == "Community" || current == "Guide" || current == "Addons" ||
-                current == "Options" || current == "Stats") return;
+            // Community, Addons and Stats are utility destinations. Guide paths use their explicit
+            // per-crumb routes in SetGuideTrail; settings subpages are favoriteable below.
+            if (current == "Community" || current == "Guide" || current == "Addons" || current == "Stats") return;
             for (int i = 0; i < trail.Count; i++)
             {
                 GuideFavoriteRoute route = CrumbFavoriteRoute(trail[i].Key, i);
@@ -1628,7 +1631,7 @@ namespace AzerothLauncher
         GuideFavoriteRoute CrumbFavoriteRoute(string label, int step)
         {
             if (current == "Community" || label == "Community") return null;
-            if (step == 0) return new GuideFavoriteRoute("section", label, "");
+            if (step == 0) return null; // major roots stay out of Quick Access
 
             if (current == "Guide")
             {

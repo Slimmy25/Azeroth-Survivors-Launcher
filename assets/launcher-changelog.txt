@@ -407,7 +407,7 @@ the launcher is to use.
 ## Addons
 - New in Download More under UI: AetherHUD by Rehabrocket, a complete interface (run clock with the boss timeline, boss
   bars, enemy plates, unit frames, skill bar, combat meter, ring minimap). Like the other interfaces it is pick-one:
-  switching it on switches Survivor UI, SurvivorsDragonUi, Keijin UI, Bordo UI or BlackwellUI off.
+  switching it on switches Survivor UI, SurvivorsDragonUi, Keijin UI or BlackwellUI off.
 
 ## First-time setup (Major Update)
 - Setup no longer opens with "Welcome, Adventurer": each page sits at the top of the window like every other section,

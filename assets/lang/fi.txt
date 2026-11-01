@@ -977,8 +977,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Näytä peliaika aloitusnäytössä
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Uuden pelaajan opas
 {#0} of {#1} topics read
 = {#0}/{#1} aihetta luettu
@@ -1483,7 +1483,7 @@ Most level-up saves in a run
 = Eniten tasonnousupelastuksia yhdessä juoksussa
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Kaikki tilastosi pelissä (/azs) ja TILASTOT-sivulla: juoksut, ennätykset, kyvyt, luokat, peliaika, Nemesiksesi ja co-op ystävien kanssa.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Käynnistimen koko Uuden pelaajan opas pelin sisällä (/handbook): jokainen aihe ja sivu, jokaisen luokan loitsut kuvakkeineen ja niitä muuttavat kyvyt, ja kaikki kykypuut.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Pieniä muutoksia, kukin päälle tai pois (/azsmods tai sen minikarttapainike): ei tason nousun, ominaisuusbonuksen tai uuden loitsun rivejä chatissa, pomojen merkit (kallo, risti, timantti), minipomojen merkit (tähti, kolmio, timantti), vilkkuva merkki jokaisen kaatuneen ystävän yllä, pelkistetty toimintopalkki vain kuudella ruudulla, käyttöliittymän siirto ja lukitus, kohdekehyksen piilotus ja kamera 50:ssä.

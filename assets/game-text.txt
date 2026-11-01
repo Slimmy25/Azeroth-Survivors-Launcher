@@ -1,4 +1,4 @@
-Hover texts for the New Player Guide: what the game itself says about a talent, a race, a racial, a class or a zone.
+Hover texts for the New Player Handbook: what the game itself says about a talent, a race, a racial, a class or a zone.
 Taken from the game at https://wow.aethus.pl/ (version 0.116.0), and from nowhere else.
 One entry per line:   Name | text
 "X" stands for a number that grows with each talent rank. Lines starting with # and everything above the first

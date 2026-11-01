@@ -1,4 +1,4 @@
-// The New Player Guide's links and hover texts. Every name the guide knows (its topics and pages, the classes,
+// The New Player Handbook's links and hover texts. Every name the guide knows (its topics and pages, the classes,
 // every spell in a class's spell pool, the talents, the races and their racials, the zones) is found in the
 // guide's text: click it to go to the page about it, point at it to read what it does.
 //

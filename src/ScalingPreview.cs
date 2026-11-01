@@ -80,8 +80,12 @@ namespace AzerothLauncher
                 var negativeMonitor=new DisplayLayout(new Rectangle(-3840,-2160,3840,2120),192,0);
                 check(negativeMonitor.WorkArea.Contains(negativeMonitor.Clamp(new Rectangle(500,500,2200,1400))),"negative monitor coordinates clamp correctly");
                 app.RunScalingInteractions(check);
+                app.ValidateCommunitySkipQueue(check);
+                check(!ShouldShowSetupAddonHandoff(true, true), "existing-client setup never shows the game-download handoff");
+                check(ShouldShowSetupAddonHandoff(false, false), "new-client setup keeps the download handoff");
+                check(!ShouldShowSetupAddonHandoff(false, true), "an already-present game skips the download handoff");
                 if(Array.IndexOf(args,"--stress")>=0) app.RunScalingStress(check);
-                app.GuideGroupPage(2);
+                app.OpenGuideTab(-3);
                 capture("gear-warrior");
                 foreach (string cls in full ? Items.Classes : new[] {"Warrior", "Priest"})
                 {
@@ -127,6 +131,7 @@ namespace AzerothLauncher
                     {
                         int page=Data.Guide[classes].Pages.FindIndex(delegate(GuidePage value){return value.Title==cls;});
                         app.current="Guide";app.SetGuideView(classes,page);capture("class-"+cls.ToLowerInvariant());
+                        CheckClassArticleLinkTargets(app,classes,page,cls,check);
                     }
                     app.current="Guide"; app.SetGuideView(classes,paladin); capture("class-paladin");
                     foreach(var pair in app.classNavLinks)
@@ -156,7 +161,7 @@ namespace AzerothLauncher
                 for(int i=0;i<GuideFavoriteCount;i++) app.guideFavorites[i]=new GuideFavoriteRoute("guide","Classes",Items.Classes[i%Items.Classes.Length]);
                 app.RefreshStrip(); app.LayoutStrip(); capture("ten-favorites");
                 check(app.favoriteBtns[9].Bottom<=app.strip.ClientSize.Height,"all ten favorite buttons remain reachable");
-                app.GuideGroupPage(2); app.PlannerClass("Warrior"); GearSheet.FillSet("Warrior","Legendary",8,app.plannerSlots);
+                app.OpenGuideTab(-3); app.PlannerClass("Warrior"); GearSheet.FillSet("Warrior","Legendary",8,app.plannerSlots);
                 app.BuildPanel("Guide"); capture("gear-set-bonuses");
                 app.ShowTheoryCodeOverlay("Warrior",true); capture("export-overlay"); CheckScalingControls(app.panel,check);
                 app.BuildPanel("Guide"); app.ShowTheoryCodeOverlay("Warrior",false); capture("import-overlay"); CheckScalingControls(app.panel,check);
@@ -217,9 +222,85 @@ namespace AzerothLauncher
             }
         }
 
+        void ValidateCommunitySkipQueue(Action<bool,string> check)
+        {
+            var oldQueue = new List<GuideVideo>(communityQueue);
+            int oldFilter = communityQueueFilter, oldCommunityFilter = communityFilter;
+            GuideVideo oldCurrent = communityCurrent, oldChoice = communityChoice;
+            DateTime oldPicked = communityPicked;
+            try
+            {
+                var first = new GuideVideo { Url = "https://www.youtube.com/watch?v=queue-first" };
+                var second = new GuideVideo { Url = "https://www.youtube.com/watch?v=queue-second" };
+                var third = new GuideVideo { Url = "https://www.youtube.com/watch?v=queue-third" };
+                var candidates = new List<GuideVideo> { first, second, third };
+                communityFilter = communityQueueFilter = 1;
+                communityQueue.Clear();
+                communityQueue.Add(second);
+                communityQueue.Add(third);
+                communityCurrent = first;
+                communityPicked = DateTime.Now;
+
+                PrepareCommunityQueue(candidates);
+                ReturnCommunityVideoToQueue(first, candidates);
+                check(communityQueue.Count == 3 && communityQueue[0] == second && communityQueue[2] == first,
+                    "skipped community video returns behind the other videos in its active queue");
+
+                RemoveCommunityVideoFromQueue(second);
+                communityCurrent = second;
+                ReturnCommunityVideoToQueue(second, candidates);
+                check(communityQueue.Count == 3 && communityQueue[0] == third && communityQueue[2] == second,
+                    "skipping again advances to another video and keeps the skipped one available later");
+
+                communityFilter = 2;
+                PrepareCommunityQueue(new List<GuideVideo> { third });
+                check(communityQueueFilter == 2 && communityCurrent == null && communityQueue.Count == 1 && communityQueue[0] == third,
+                    "community filter changes start a separate queue");
+            }
+            finally
+            {
+                communityQueue.Clear(); communityQueue.AddRange(oldQueue);
+                communityQueueFilter = oldFilter; communityFilter = oldCommunityFilter;
+                communityCurrent = oldCurrent; communityChoice = oldChoice; communityPicked = oldPicked;
+            }
+        }
+
         void RunScalingInteractions(Action<bool,string> check)
         {
-            GuideGroupPage(2); PlannerClass("Warrior");
+            OpenGuideTab(-3); PlannerClass("Warrior");
+            int routeCount;
+            bool routesValid = ValidateGuideLinkRoutes(out routeCount);
+            check(routesValid,"all guide hyperlinks resolve to a valid page or intentional hover-only target ("+routeCount+" routes)");
+            Rectangle monitorBounds=Rectangle.FromLTRB(-1920,0,0,1080);
+            Rectangle workingBounds=Rectangle.FromLTRB(-1920,32,0,1040);
+            int nativeFrameWidth=Math.Max(0,Width-ClientSize.Width),nativeFrameHeight=Math.Max(0,Height-ClientSize.Height);
+            Rectangle maximized=DisplayLayout.MaximizedWindowBounds(workingBounds,nativeFrameWidth,nativeFrameHeight);
+            double maximizedRatio=(double)(maximized.Width-nativeFrameWidth)/(maximized.Height-nativeFrameHeight);
+            check(workingBounds.Contains(maximized)&&Math.Abs(maximizedRatio-DisplayLayout.WindowAspectRatio)<.01,
+                "maximize fits the aspect ratio within a negative-origin monitor work area");
+            check(Math.Abs((maximized.Left-workingBounds.Left)-(workingBounds.Right-maximized.Right))<=1 &&
+                  Math.Abs((maximized.Top-workingBounds.Top)-(workingBounds.Bottom-maximized.Bottom))<=1,
+                "ratio-fitted maximize is centered in the monitor work area");
+            IntPtr sizingRect=System.Runtime.InteropServices.Marshal.AllocHGlobal(16);
+            try
+            {
+                Rectangle initial=Rectangle.FromLTRB(120,140,1020,760);
+                WriteScalingRect(sizingRect,initial);
+                ConstrainSizingRectangle(8,sizingRect); // bottom-right corner
+                Rectangle corner=ParseSuggestedDisplayBounds(sizingRect);
+                int frameWidth=Math.Max(0,Width-ClientSize.Width),frameHeight=Math.Max(0,Height-ClientSize.Height);
+                double clientRatio=(double)(corner.Width-frameWidth)/(corner.Height-frameHeight);
+                check(Math.Abs(clientRatio-DisplayLayout.WindowAspectRatio)<.01,"interactive corner resize preserves the launcher design ratio");
+                WriteScalingRect(sizingRect,initial);
+                ConstrainSizingRectangle(1,sizingRect); // left edge: right side stays fixed
+                Rectangle leftEdge=ParseSuggestedDisplayBounds(sizingRect);
+                check(leftEdge.Right==initial.Right,"horizontal resize keeps the opposite edge anchored");
+                WriteScalingRect(sizingRect,initial);
+                ConstrainSizingRectangle(6,sizingRect); // bottom edge: top stays fixed
+                Rectangle bottomEdge=ParseSuggestedDisplayBounds(sizingRect);
+                check(bottomEdge.Top==initial.Top,"vertical resize keeps the opposite edge anchored");
+            }
+            finally{System.Runtime.InteropServices.Marshal.FreeHGlobal(sizingRect);}
             GearSheet.FillSet("Warrior","Legendary",8,plannerSlots);
             var jewel=Items.Jewelry.Find(delegate(Jewel value){ return value.Kind=="Amulet"&&!value.IsCodex; });
             if(jewel!=null) plannerSlots["Neck"]=jewel;
@@ -292,6 +373,74 @@ namespace AzerothLauncher
             MinimumSize=Size.Empty; ClientSize=originalClient; changingDisplay=false;
             LayoutResponsiveDisplay(true);
             RunScalingVideoLayout(check);
+        }
+
+        static bool ValidateGuideLinkRoutes(out int routeCount)
+        {
+            GuideLinks.Reset();
+            GuideLinks.Matching("shadow", Int32.MaxValue); // force the same route table used by live guide search
+            var field = typeof(GuideLinks).GetField("links", BindingFlags.NonPublic | BindingFlags.Static);
+            var routes = field == null ? null : field.GetValue(null) as System.Collections.IDictionary;
+            routeCount = 0;
+            if (routes == null) return false;
+            var seen = new HashSet<GuideLink>();
+            bool valid = true;
+            List<GuideTopic> topics = Data.Guide;
+            foreach (System.Collections.DictionaryEntry entry in routes)
+            {
+                GuideLink link = entry.Value as GuideLink;
+                if (link == null || !seen.Add(link)) continue;
+                routeCount++;
+                if (link.Topic == -2 || link.Topic == -3) continue; // the two builder destinations
+                if (link.Topic == -1 && link.Class == null) continue; // hover-only terms intentionally have no route
+                if (link.Topic < 0 || link.Topic >= topics.Count) { valid = false; continue; }
+                GuideTopic topic = topics[link.Topic];
+                if (string.Equals(topic.Title, "Archive", StringComparison.OrdinalIgnoreCase)) valid = false;
+                if (link.Page >= topic.Pages.Count) valid = false;
+                if (link.Page < -1) valid = false;
+            }
+            return valid;
+        }
+
+        static void CheckClassArticleLinkTargets(LauncherApp app,int classTopic,int page,string cls,Action<bool,string> check)
+        {
+            if(app.classSpellTargets.Count>0)
+            {
+                string spell=null;
+                foreach(string name in app.classSpellTargets.Keys){spell=name;break;}
+                GuideLink link=new GuideLink{Term=spell,FindText=spell,Topic=classTopic,Page=page};
+                check(app.NavigateClassInline(link),cls+" spell link lands on its in-article spell row");
+            }
+            Talent talent=null;
+            foreach(var tree in Talents.Of(cls)) if(tree.Talents.Count>0){talent=tree.Talents[0];break;}
+            if(talent!=null)
+            {
+                GuideLink link=new GuideLink{Term=talent.Name,FindText=talent.Name,Class=cls,Topic=classTopic,Page=page};
+                check(app.NavigateClassInline(link),cls+" talent link lands on its in-article talent description");
+            }
+            Jewel codex=Items.Jewelry.Find(delegate(Jewel item){return item.IsCodex&&string.Equals(item.Class,cls,StringComparison.OrdinalIgnoreCase);});
+            if(codex!=null)
+            {
+                GuideLink link=new GuideLink{Term=codex.Name,FindText=codex.Spell,Topic=classTopic,Page=page};
+                check(app.NavigateClassInline(link),cls+" Codex link lands on its in-article Codex entry");
+            }
+            GearPiece gear=Items.Gear.Find(delegate(GearPiece item){return string.Equals(item.Class,cls,StringComparison.OrdinalIgnoreCase);});
+            int itemsTopic=Data.Guide.FindIndex(delegate(GuideTopic topic){return string.Equals(topic.Title,"Items",StringComparison.OrdinalIgnoreCase);});
+            int gearPage=itemsTopic<0?-1:Data.Guide[itemsTopic].Pages.FindIndex(delegate(GuidePage value){return string.Equals(value.Title,cls+" Gear",StringComparison.OrdinalIgnoreCase);});
+            if(gear!=null&&itemsTopic>=0&&gearPage>=0)
+            {
+                GuideLink link=new GuideLink{Term=gear.Name,FindText=gear.Name,Topic=itemsTopic,Page=gearPage};
+                check(app.NavigateClassInline(link),cls+" gear link lands on its in-article item section");
+            }
+            if(app.classArticleScroll!=null)app.classArticleScroll.ScrollTo(0);
+        }
+
+        static void WriteScalingRect(IntPtr pointer,Rectangle rectangle)
+        {
+            System.Runtime.InteropServices.Marshal.WriteInt32(pointer,rectangle.Left);
+            System.Runtime.InteropServices.Marshal.WriteInt32(pointer,4,rectangle.Top);
+            System.Runtime.InteropServices.Marshal.WriteInt32(pointer,8,rectangle.Right);
+            System.Runtime.InteropServices.Marshal.WriteInt32(pointer,12,rectangle.Bottom);
         }
 
         void RunScalingVideoLayout(Action<bool,string> check)

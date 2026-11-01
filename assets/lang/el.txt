@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Εμφάνιση χρόνου παιχνιδιού στην αρχική οθόνη
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Οδηγός νέων παικτών
 {#0} of {#1} topics read
 = {#0} από {#1} θέματα διαβάστηκαν
@@ -1484,7 +1484,7 @@ Most level-up saves in a run
 = Οι περισσότερες σωτηρίες με άνοδο σε έναν γύρο
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Όλα τα στατιστικά σου στο παιχνίδι (/azs) και στη σελίδα ΣΤΑΤΙΣΤΙΚΑ: γύροι, ρεκόρ, ικανότητες, κλάσεις, χρόνος παιχνιδιού, η Νέμεσή σου και το co-op με φίλους.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Όλος ο Οδηγός νέου παίκτη του launcher μέσα στο παιχνίδι (/handbook): κάθε θέμα και σελίδα, τα ξόρκια κάθε κλάσης με τα εικονίδιά τους και τα ταλέντα που τα αλλάζουν, και όλα τα δέντρα ταλέντων.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Μικρές αλλαγές, η καθεμία ανοιχτή ή κλειστή (/azsmods ή το κουμπί του στον μικρό χάρτη): χωρίς γραμμές για νέο επίπεδο, μπόνους χαρακτηριστικών ή νέο ξόρκι στη συνομιλία, σημάδια αρχηγών (Κρανίο, Σταυρός, Διαμάντι), σημάδια μικρών αρχηγών (Αστέρι, Τρίγωνο, Διαμάντι), ένα σημάδι που αναβοσβήνει πάνω από κάθε φίλο που πέφτει, απλή μπάρα ενεργειών μόνο με τα έξι τετράγωνα, μετακίνηση και κλείδωμα του UI, απόκρυψη του πλαισίου στόχου και η κάμερα στο 50.

@@ -72,7 +72,7 @@ namespace AzerothLauncher
                 }
                 if (topClass == null) break;
             }
-            // the New Player Guide: topic cards, a topic made of pages, and pages with video cards
+            // the New Player Handbook: topic cards, a topic made of pages, and pages with video cards
             {
                 var topics = Data.Guide;
                 int classes = 0;

@@ -1,8 +1,8 @@
 Player-facing guide content used by the launcher's Guide and the AZS Handbook addon.
-The Guide navigation is built in src/Guide.cs: New Player, Gameplay, and Theorycrafting are separate menus.
-Gameplay's Build Guides topic is shown under class headings when a class can be identified from a page's title,
+The Guide contains the New Player Handbook and Wiki; Theorycrafting is a separate major menu, built in src/Guide.cs.
+Theorycrafting's Build Guides topic is shown under class headings when a class can be identified from a page's title,
 description, or body; pages with no clear class remain under Uncategorized. Build guide videos also feed Community.
-Class article contents, spell/talent/item links, Archive behavior and section scrolling are built in src/Guide.cs.
+Class article contents, spell/talent/item/Codex links, Archive behavior and section scrolling are built in src/Guide.cs.
 Format:
   @topic Title | short description        a topic on the guide's first page
   @page Title | short description         a page inside the topic above (a topic with pages shows a list of them)

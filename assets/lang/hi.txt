@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = होम स्क्रीन पर खेलने का समय दिखाएँ
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = नए खिलाड़ी गाइड
 {#0} of {#1} topics read
 = {#1} में से {#0} विषय पढ़े
@@ -1484,7 +1484,7 @@ Most level-up saves in a run
 = एक रन में सबसे ज़्यादा लेवल-अप बचाव
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = गेम में (/azs) और आँकड़े पेज पर आपके सारे आँकड़े: रन, रिकॉर्ड, क्षमताएँ, क्लास, खेलने का समय, आपका नेमेसिस और दोस्तों के साथ को-ऑप।
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = लॉन्चर की पूरी नए खिलाड़ी गाइड गेम के अंदर (/handbook): हर विषय और पेज, हर क्लास के मंत्र उनके आइकन और उन्हें बदलने वाली प्रतिभाओं के साथ, और सभी प्रतिभा वृक्ष।
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = छोटे बदलाव, हर एक अलग से चालू या बंद (/azsmods या उसका मिनीमैप बटन): चैट में लेवल-अप, स्टैट बोनस या नए मंत्र की पंक्तियाँ नहीं, बॉस निशान (खोपड़ी, क्रॉस, हीरा), मिनी-बॉस निशान (तारा, त्रिकोण, हीरा), हर गिरे हुए दोस्त के ऊपर टिमटिमाता निशान, सिर्फ़ छह खानों वाला सादा ऐक्शन बार, UI को हिलाना और लॉक करना, टारगेट फ़्रेम छिपाना और कैमरा 50 पर।

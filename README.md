@@ -15,6 +15,7 @@ These projects deserve a place up front:
 - **[ASBuilder](https://github.com/cadoky/ASBuilder)** by **Cadoky** — the talent and gear build-sharing project behind our work on compatible import/export codes for [ASBuilds](https://asbuilds.app/).
 - **[Azeroth Stats](https://github.com/Maidenquinn/AzerothStats)** by **Maidenhead** — the in-game run and build tracker supporting our work on launcher statistics.
 - **[ASDataSync](https://github.com/KeijinDE/ASDataSync)** by **Keijin** — the original cloud-save sync framework that this launcher's cloud saving is built on, used with his blessing.
+- **[SurvivorsForge](https://rezondes.github.io/SurvivorsForge/) and [SurvivorsForge Addon Forge](https://forge.rezondes.net/)** — Slimjim is partnering with this project to source addon picture data only; it will not be used to download addon files. The integration is not implemented yet. API terms and usage rules will be reviewed before code is written.
 
 ## Inside the launcher
 
@@ -22,6 +23,7 @@ These projects deserve a place up front:
 - **Addons:** browse community addons and manage your installed collection.
 - **Guide:** beginner help, class guides, items, and links between related topics.
 - **Theorycrafting:** explore talent trees and compare gear and set bonuses.
+- **Display:** resize the window while preserving its proportions, or maximize it in a centered, ratio-fitted size. Adjust interface size under Options > Launcher without changing Windows scaling.
 - **Saves:** import/export game saves and optionally sync through your own cloud folder.
 - **Community:** videos, creator guides, and the developer's patch notes.
 

@@ -117,7 +117,6 @@ marked as built-ins are maintained in this repository and installed from the lau
 | Azeroth Stats | Maidenhead | <https://github.com/Maidenquinn/AzerothStats> |
 | Big Cursor | JamieeLee | <https://github.com/JamieeLee/BigCursor> |
 | BlackwellUI (BUI) | Blackwell | <https://github.com/Blackwellcode/BlackwellUI> |
-| Bordo UI | BordoBereli | <https://github.com/threenox/BordoUI> (GPL-3.0) |
 | Cursor Reticle | Muffla | <https://github.com/Muffla/CursorReticle> |
 | Damage Meter (AZS Spell Meter) | Kexo | <https://github.com/kex0/AZSSpellMeter> |
 | Keijin UI | KeijinDE | <https://github.com/KeijinDE/KeijinUI_modern-as-ui> |

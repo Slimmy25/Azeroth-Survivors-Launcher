@@ -61,7 +61,7 @@ namespace AzerothLauncher
         readonly HeartIcon supportHeart;
         readonly Dictionary<string, WowButton> nav = new Dictionary<string, WowButton>();
         // the buttons under "Launcher": Guide and its Theorycrafting group, Addons, Stats, Options (Cloud Save is in Options)
-        readonly string[] navNames = { "Guide", "New Player Guide", "Theorycrafting", "Addons", "Changelog", "Stats", "Options" };   // Changelog: on the News line   // order under "Launcher" (Discord before Options)
+        readonly string[] navNames = { "Guide", "New Player Handbook", "Theorycrafting", "Addons", "Changelog", "Stats", "Options" };   // Changelog: on the News line   // order under "Launcher" (Discord before Options)
         // Options > Language
         public void SetLanguage(string code)
         {
@@ -103,8 +103,8 @@ namespace AzerothLauncher
 
             Text = "Azeroth Survivors Launcher" + (Program.DisplayPreviewBuild ? " - Display Preview" : "");
             Icon = Theme.AppIcon;
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MaximizeBox = false;
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MaximizeBox = true;
             ClientSize = displayLayout.InitialClientSize;
             BackColor = Theme.BgBottom;
             DoubleBuffered = true;
@@ -118,7 +118,7 @@ namespace AzerothLauncher
                 string n = name;
                 if (n == "Changelog") continue;              // on the News line (below)
                 Action open = n == "Theorycrafting" ? (Action)delegate { GuideGroupPage(2); } :
-                              n == "New Player Guide" ? (Action)delegate { GuideGroupPage(0); } : delegate { OpenMain(n); };   // dedicated guide destinations
+                              n == "New Player Handbook" ? (Action)delegate { GuideGroupPage(0); } : delegate { OpenMain(n); };   // dedicated guide destinations
                 nav[n] = Place(new WowButton(n.ToUpperInvariant(), open, 128, 27, 8.5f), 693, 480);
                 nav[n].Skin = Retro.Button;
             }
@@ -282,8 +282,11 @@ namespace AzerothLauncher
             }
         }
 
-        // false while the temporary "install the game with this launcher first" rule is blocking
-        public bool GateOpen() { return !RequireLauncherInstall || ClientPresent() || (Installing && setupBrowseWhileInstalling); }
+        // Setup can open Download More immediately before it starts the game download. The
+        // handoff flag is set for that short transition and remains set while the download runs.
+        // Requiring Installing here creates a race: SetupLeave opens Addons just before
+        // InstallClient sets Installing, so the catalog is rejected and the user lands home.
+        public bool GateOpen() { return !RequireLauncherInstall || ClientPresent() || setupBrowseWhileInstalling; }
 
         public bool CloudEnabled() { return Cfg.Bool("cloud_enabled", Cfg.Str("cloud_dir").Trim().Length > 0); }
 
@@ -515,11 +518,10 @@ namespace AzerothLauncher
             if (cloudNote.Length > 0) SetStatus(cloudNote);
         }
 
-        // a section button is hidden while its feature is off: Cloud Save (cloud saving) and Stats (Options)
+        // Cloud Save is opened from Options; Stats stays visible and is gated separately when unavailable.
         bool NavShown(string name)
         {
             if (name == "Cloud Save") return false;         // opened from Options > CLOUD SAVE
-            if (name == "Stats") return StatsEnabled();
             return true;
         }
 
@@ -544,7 +546,7 @@ namespace AzerothLauncher
                             entry.Click += delegate
                             {
                                 if (destination == "Theorycrafting") GuideGroupPage(2);
-                                else if (destination == "New Player Guide") GuideGroupPage(0);
+                                else if (destination == "New Player Handbook") GuideGroupPage(0);
                                 else OpenMain(destination);
                             };
                             menu.Items.Add(entry);

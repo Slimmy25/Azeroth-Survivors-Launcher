@@ -977,8 +977,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Spielzeit auf dem Startbildschirm zeigen
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Anleitung für Neulinge
 {#0} of {#1} topics read
 = {#0} von {#1} Themen gelesen
@@ -1483,7 +1483,7 @@ Most level-up saves in a run
 = Meiste Rettungen durch Stufenaufstieg in einem Lauf
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Alle deine Statistiken im Spiel (/azs) und auf der STATISTIK-Seite: Läufe, Rekorde, Fähigkeiten, Klassen, Spielzeit, dein Erzfeind und Koop mit Freunden.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Der ganze Einsteiger-Leitfaden des Launchers im Spiel (/handbook): jedes Thema und jede Seite, die Zauber jeder Klasse mit Symbolen und den Talenten, die sie verändern, und alle Talentbäume.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Kleine Änderungen, jede einzeln an oder aus (/azsmods oder ihr Minikarten-Knopf): keine Zeilen zu Stufenaufstieg, Werte-Bonus oder neuem Zauber im Chat, Boss-Markierungen (Totenkopf, Kreuz, Diamant), Miniboss-Markierungen (Stern, Dreieck, Diamant), eine blinkende Markierung über jedem gefallenen Freund, eine schlichte Aktionsleiste mit nur den sechs Feldern, die Oberfläche verschieben und sperren, das Zielfenster ausblenden und die Kamera auf 50.

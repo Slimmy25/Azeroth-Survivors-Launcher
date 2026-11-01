@@ -10,6 +10,12 @@ This is a fan project. It is not made by Aethus, and it is not affiliated with o
 The launcher does not contain or host the game: it downloads it from the game's own download hosts. See
 [CREDITS.md](../CREDITS.md) for where everything comes from.
 
+### Window size
+Resize the launcher by dragging a window edge or corner; it keeps the same overall proportions as its original layout.
+Maximize fits that design inside the monitor's work area and centers it, so the interface does not stretch into an
+ultrawide shape. For a larger or smaller interface, choose **Options > Launcher > Interface size**; Auto follows the
+display, and the percentage choices adjust the launcher without changing Windows display scaling.
+
 **[Download the launcher](https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/latest)**: one file,
 `Azeroth Survivors Launcher.exe`. Put it beside your game, or in the folder where you want the game installed.
 It runs on .NET Framework 4.8.
@@ -65,23 +71,24 @@ The STATS screenshot uses made-up sample data. The other screenshots show the lo
 - Addons from Download More are installed only when chosen. First-time setup offers Maidenhead's Azeroth Stats; you can decline it.
 
 ### The Guide
-The Guide has **New Player** and **Gameplay** sections. **Theorycrafting** is a Gameplay menu:
-- **New Player**: getting started, controls, a first run, beginner tips, pickups, caches and guardians, talents, gear
-  and the Armory, addons, achievements and rewards, level-ups and cards, and co-op.
-- **Gameplay**: heroics and endless mode, all nine class guides, races, zones and bosses, **Items**, **Archive**,
-  **Transmog**, and player-made **Build Guides**. Class guides share a linked passage for spells, talent descriptions,
-  gear, Codex entries and class-specific resources.
+The launcher separates the **Guide** and **Theorycrafting** destinations:
+- **Guide > New Player Handbook**: getting started, controls, a first run, beginner tips, pickups, caches and guardians,
+  zones and bosses, heroics and endless mode, talents, gear and the Armory, addons, achievements and rewards,
+  level-ups and cards, co-op, and races.
+- **Guide > Wiki**: all nine class guides, **Items**, and **Transmog**. Class articles share a linked passage for spells,
+  talent descriptions, gear, and Codex entries. Their contents tree lists Spells, Talents, Gear, Items, and Codex.
+- **Theorycrafting**: one **Gear and Talent Builder** workspace with a peel control to switch tools, plus **Build Guides**
+  and **Build Videos**. Build Videos follows the shared class selection and reuses that class's existing guide-video entries; the home-screen
+  video toggle and More Videos catalog remain separate.
 - **Items** contains every class's gear and set bonuses, plus shared rings, trinkets and ordinary amulets. **Archive**
-  preserves the flat alphabetical Codex record for reference; Archive is omitted from search, and links lead to the
-  relevant entry in the class guide instead.
-- **Gameplay > Theorycrafting**: the **Talent Tree Builder** and **Gear Planner**.
+  preserves the flat alphabetical Codex record for reference; it is omitted from search and navigation, and links lead
+  to the relevant entry in the class guide instead.
 
-Search covers player-facing guide pages, not Archive. Spell, talent, gear and Codex links keep their surrounding text
-and lead to the matching passage or class-guide location. The class contents tree stays beside the passage; scrolling
-it jumps between sections and the passage follows. Spell and talent hovers show their details; item hovers also show a
-Wowhead Classic 3D model preview when an item match is available, including in the Gear Planner.
-Short how-to videos play inside the launcher. The same guide is in the game with **AZS Handbook** (`/handbook`).
-
+Search covers player-facing pages, not Archive. Spell, talent, gear and Codex links keep their surrounding text and lead
+to the matching passage or class-guide location. The class contents tree stays beside the passage; scrolling it jumps
+ between sections and the passage follows. Spell and talent hovers show their details; item hovers also show a Wowhead
+ Classic 3D model preview when an item match is available, including in the builder. Short how-to videos play inside the
+ launcher. The same New Player Handbook is in game with **AZS Handbook** (`/handbook`).
 ### Tools to theorycraft
 - **Talent Tree Builder**: all three trees of every class, as in the game. Click to add a point and right-click to
   take one back. Each row opens with 5 points per row above it in its own tree, up to 51 points. The build is
@@ -185,7 +192,7 @@ use their pinned checks; the official-site fallback is accepted only as a real g
 
 ## License
 
-The launcher's code and the AZS addons are under the [MIT License](LICENSE). Everything that comes from someone else
+The launcher's code and the AZS addons are under the [MIT License](../LICENSE). Everything that comes from someone else
 keeps its own license and owner: see [CREDITS.md](../CREDITS.md). The game's name and its logo (the "AS" icon the
 launcher uses for its shortcut, `assets/AzerothSurvivors.ico` and `assets/portrait.png`) belong to Aethus and are not
 covered by the MIT License. The emblem beside the title (`assets/logo.png`, the cat heroes) is Slimjim's own art.

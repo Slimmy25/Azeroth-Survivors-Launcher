@@ -1,6 +1,6 @@
 # Display scaling overhaul plan
 
-Status: implementation and local QA are on `feature/display-scaling-overhaul`. Public main/release are unchanged. The implementation and simulated display/DPI acceptance suite are complete; physical mixed-monitor acceptance is still required before merging or release. See `scaling-overhaul-results.md` for measured results and limits.
+Status: implementation and local QA are on `feature/display-scaling-overhaul`. Public main/release are unchanged. The launcher now keeps a 1100:690 design ratio while resizing and fits that shape into the monitor work area when maximized. Simulated display/DPI and navigation checks pass; physical mixed-monitor acceptance is still required before merging or release. See `scaling-overhaul-results.md` for measured results and limits.
 
 ## Goal
 
@@ -8,22 +8,20 @@ Readable UI on small laptops, 1080p, 1440p, ultrawide and 4K monitors without re
 
 ## Findings in the current source
 
-- src/Launcher.cs creates a fixed-size window with FormBorderStyle.FixedSingle and ClientSize based on W/H.
+- Before this overhaul, src/Launcher.cs created a fixed-size window. The current branch is resizable, ratio-constrained, and lays out controls against the responsive client area.
 - src/Controls.cs uses a fixed Theme.SectionZoom of 0.72 in secondary sections.
 - Baseline behavior before this overhaul relied on Windows bitmap scaling because the UI mixed custom GDI+ drawing, native controls and fixed coordinates. The current branch instead opts into native per-monitor awareness before creating windows and leaves automatic WinForms rescaling disabled.
 - Gear, talent, guide and popup layouts use several independently calculated pixel rectangles. Some fonts and custom controls capture zoom during construction.
 - Simply enabling DPI awareness or enlarging the window will not resolve these independently computed layouts. The previous graphics branch demonstrated clipping and mismatched font/control sizes.
 
-## Implementation sequence
+## Work completed on this branch
 
-1. Preserve the current release as the baseline. Begin implementation on an isolated scaling branch, with a separate local build and no automatic production update. Capture baseline views and interaction coordinates before changing the manifest.
-2. Introduce one layout context per window: monitor DPI, monitor working area, desired readable UI scale, user preference and available content rectangle. All fonts, artwork, spacing and hit targets consume that context. Remove scattered scaling assumptions incrementally.
-3. Coordinate DPI awareness with native WinForms controls and custom drawing. Draw at the target resolution rather than stretching the whole window bitmap. Rebuild size-dependent fonts and cached images when DPI changes. Check startup, monitor changes, minimize/restore and returning from a video.
-4. Make the window resizable and responsive. Base the secondary panel, news, favorites and Play footer on their actual parent bounds. Keep minimum readable text sizes; when space is insufficient, reflow or scroll content instead of shrinking everything.
-5. Convert the paired talent/gear tools first. Use one shared main/sidebar split, consistent padding, responsive talent grids, correct icon sizes, scrollable equipment/set descriptions and shared save controls. Ensure both views use the same class selector and peel position.
-6. Apply the same layout rules to the Wiki, New Player Guide, setup slides, addon manager, stats, options and community/video panels. Keep action rows accessible on small screens. Update screenshots only after visual acceptance.
-7. Rework tooltip/menu positioning from the same coordinates. Clamp them to their owning launcher pane or window as appropriate; hide them on deactivation. Verify that visual positions and clickable positions agree at every scale.
-8. Add Auto plus optional user scale adjustment after automatic layout works. Auto should make sensible choices on both 4K at 100% and ordinary monitors, respect the working area, and remember manual overrides. Decide how to combine resolution and DPI from measured results, not a blanket 4K multiplier.
+- Work stayed on an isolated scaling branch with a separate local preview package and no public updates.
+- DisplayLayout owns DPI, working area, automatic density and the saved interface-scale preference. Native per-monitor-v2 awareness is enabled before windows are created; `AutoScaleMode.None` avoids double scaling.
+- Main-window edge/corner resizing preserves the 1100:690 client ratio. Maximize centers the same design shape inside the monitor work area. The compact layout, independent content scrolling and user-selected interface scale still handle smaller displays.
+- The same responsive layout rules cover Guide/Wiki, New Player Handbook, setup, addons, stats, options, Community, changelog, Gear and Talent tools, and nested dialogs. Existing drafts, navigation state and live video hosts are retained during rebuilds.
+- The community “What's Next” video preview is visually subdued and brightens on hover; it does not start playback until selected.
+- The isolated preview harness checks all 1,071 current guide-link routes, class-specific spell/talent/gear/Codex destinations, in-article Back and favorite scroll restoration, plus the scaled UI matrix. The results file describes exactly what is simulated versus physically verified.
 
 ## Acceptance checks
 
@@ -39,6 +37,6 @@ Readable UI on small laptops, 1080p, 1440p, ultrawide and 4K monitors without re
 
 Approve each converted area in the isolated build before converting the next. A successful compile does not establish visual correctness. Keep production on the current layout until the acceptance checks pass. Release the scaling work only after explicit approval to merge/publish. The existing pre-overhaul main commit is def8301; the published feature baseline is 2f7ef9b. A local backup/before-tool-overhaul-20261031 tag preserves the earlier baseline.
 
-## Decisions to defer until prototypes
+## Remaining hardware check
 
-Minimum window size, compact-mode breakpoint, automatic 4K sizing and the precise range of manual scale choices require screenshots on representative displays. Do not promise support for every possible display configuration before validating those limits.
+The current minimum size, compact-mode breakpoint, automatic density and manual scale choices passed the simulated matrix. This machine has one physical monitor, so physically dragging the open launcher between two monitors with different Windows scaling remains unverified. Video playback continuity also requires a live-provider check.
