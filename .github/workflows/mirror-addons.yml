@@ -108,7 +108,7 @@ jobs:
           done < list.txt
           ls mirror/*.zip >/dev/null 2>&1 && gh release upload addons mirror/*.zip --clobber
           # addons taken off the list: their old copies go too (named one by one)
-          for old in DoomWithin-by-tna0y-vladvis.zip AS-Time-Tracker-by-Slimjim.zip DBM-by-Gabriellus.zip Death-Recap-by-Fotze.zip Chest-GPS-by-Fotze.zip; do
+          for old in DoomWithin-by-tna0y-vladvis.zip AS-Time-Tracker-by-Slimjim.zip DBM-by-Gabriellus.zip Death-Recap-by-Fotze.zip Chest-GPS-by-Fotze.zip Bordo-UI-by-BordoBereli.zip; do
             if [ ! -f "mirror/$old" ] && gh release view addons --json assets --jq '.assets[].name' | grep -qx "$old"; then
               echo "Removing $old"; gh release delete-asset addons "$old" -y
             fi
