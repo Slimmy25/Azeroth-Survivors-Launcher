@@ -4,6 +4,8 @@ A community-made Windows launcher by **Slimjim** for [Azeroth Survivors](https:/
 
 Install the game, manage addons, read the guide, and plan your next build—all from one place.
 
+**Official Verified Launcher:** This launcher was officially verified when launchers were allowed on October 28, 2026. In the days that followed, I prepared it for launch and plan to release it as soon as possible.
+
 **[Download the launcher](https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/latest)**
 
 Download `Azeroth Survivors Launcher.exe` and put it beside your game, or in the folder where you want to install it. First-time setup walks you through the rest. Requires Windows with .NET Framework 4.8.

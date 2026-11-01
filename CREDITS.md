@@ -6,7 +6,7 @@ does not contain.
 
 ## Thanks: the people who peer reviewed this work
 
-- **Keijin** has been there since the beginning, and is the main reason I wanted to get into this.
+- **Keijin** has been there since the beginning, and is the main reason I wanted to get into this. His work also helped me learn about more nuanced addon settings and work through some confusing questions along the way. Genuinely, a big thanks to him.
 - **Kraatos** spent a little time helping me launch into open source; I'm grateful for his insight on problems still to come.
 - **Maidenhead** has been an exceptional advisor, spending extensive time helping me clarify and realize my vision for this project. His insight and support have been invaluable.
 - **The Azeroth Survivors Discord Mod team** has supported the project's transparency and made room for addon review. Thank you for the time and feedback.

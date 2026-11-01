@@ -11,8 +11,12 @@
 --   * In co-op, a friend who falls gets a marker over their head, blinking on and off 16 times. Each friend has their
 --     own (Square, Moon, Circle), so several can be down at once. Those three are kept for this alone.
 --   * Play the included sound once when you or a teammate dies (off until enabled).
---   * Move the UI: unlock it, drag the player, target and party frames, the minimap, buffs, cast bar, action bars and
---     where you want them, then lock it again. The places are kept (Reset puts them back).
+--   * Move and resize the UI: left-click a green handle to move it; right-click for width and height controls.
+--     Bar 2 and Right bar are intentionally not included. Optional anchoring latches nearby movable frames together.
+--     Positions and custom sizes are kept (Reset puts positions back; each size menu can reset its own frame).
+--   * The kills, gold and next-cache cost use the documented AZS_RUN values in a movable replacement for the tally.
+--   * The run clock and next-boss countdown stay together in one movable replacement for the game's clock.
+--   * Active boss, guardian and elite bars grow in a separate movable stack below the clock, ordered by API kind.
 --   * Hide the target frame: this game picks its own targets, so the frame can go.
 --   * Plain action bar: the gryphons and the bar's art go, and only the six spell squares are left, with the bar
 --     no wider than they are (and the two page arrows), so it leaves no empty space.
@@ -64,6 +68,8 @@ local function DB()
 	if ( d.miniMarks == nil ) then d.miniMarks = true; end
 	if ( d.hideTarget == nil ) then d.hideTarget = false; end
 	if ( type(d.places) ~= "table" ) then d.places = {}; end
+	if ( type(d.sizes) ~= "table" ) then d.sizes = {}; end
+	if ( d.anchorSnap == nil ) then d.anchorSnap = false; end
 	if ( type(d.words) ~= "table" ) then d.words = {}; end
 	return d;
 end
@@ -177,7 +183,7 @@ local FINAL_ICONS = { 8, 7 };                            -- Skull, Cross (with m
 local MINI_ICONS = { 1, 4, 3 };                          -- Star, Triangle, Diamond
 local DEATH_ICONS = { 6, 5, 2 };                         -- Square, Moon, Circle: one for each friend who falls
 local DEATH_BLINKS = 16;                                 -- on and off this many times
-local DEATH_SOUND = "Interface\\AddOns\\AZSMinorMods\\dragon-studio-baby-crying-463213.mp3";
+local DEATH_SOUND = "Interface\\AddOns\\AZSMinorMods\\Baby Crying.mp3";
 local function PlayDeathSound()
 	if ( not DB().deathSound or not PlaySoundFile ) then return; end
 	pcall(PlaySoundFile, DEATH_SOUND);
@@ -352,19 +358,525 @@ end);
 -- follows. Locked, the handles go and the frames stay where they were put; the places are put back at every login.
 local MOVABLE = { { "PlayerFrame", "Player" }, { "TargetFrame", "Target" }, { "PartyMemberFrame1", "Party" },
                   { "MinimapCluster", "Minimap" }, { "BuffFrame", "Buffs" }, { "CastingBarFrame", "Cast bar" },
-                  { "MainMenuBar", "Action bars" }, { "MultiBarBottomLeft", "Bar 2" }, { "MultiBarRight", "Right bar" } };
+                  { "MainMenuBar", "Action bars" }, { "AZSMinorModsClockFrame", "Run clock / Next boss" },
+                  { "AZSMinorModsBossFrames", "Encounter bars" },
+                  { "AZSMinorModsTallyFrame", "Kills / Gold / Cache" } };
 local handles = {};
+local baseSizes = {};
+local sizeMenu, sizeMenuText, sizeMenuWidth, sizeMenuHeight;
+local sizeTarget;
+local lockPanel;
+local tallyFrame;
+local tallyNativeWasShown;
+local tallyNativeOverridden = false;
+local clockFrame;
+local clockNativeWasShown;
+local clockNativeOverridden = false;
+local bossFrame;
+local bossNativeWasShown;
+local bossNativeOverridden = false;
+local encounterRows = {};
 
-local function Place(name)
+local function SetNativeTallyHidden(on)
+	if ( type(AZS_SetHudShown) ~= "function" or tallyNativeWasShown ~= true ) then return; end
+	if ( on ) then
+		local shown = true;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "tally");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown ) then
+			DB().tallyNativeOriginal = tallyNativeWasShown;
+			pcall(AZS_SetHudShown, "tally", false);
+			tallyNativeOverridden = true;
+		end
+	elseif ( tallyNativeOverridden ) then
+		pcall(AZS_SetHudShown, "tally", tallyNativeWasShown);
+		tallyNativeOverridden = false;
+		DB().tallyNativeOriginal = nil;
+	end
+end
+
+local function TallyValue(value)
+	if ( type(value) ~= "number" ) then return "-"; end
+	return tostring(math.floor(value));
+end
+
+local function UpdateTally()
+	if ( not tallyFrame ) then return; end
+	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
+	local active = phase and phase ~= "ready";
+	local run = type(AZS_RUN) == "table" and AZS_RUN or nil;
+	if ( active and run and (tallyNativeWasShown or DB().unlocked) ) then
+		tallyFrame.text:SetText("Kills " .. TallyValue(run.kills) .. "    Gold " .. TallyValue(run.gold) .. "    Cache " .. TallyValue(run.chest));
+		tallyFrame:Show();
+		SetNativeTallyHidden(true);
+	elseif ( DB().unlocked ) then
+		tallyFrame.text:SetText("Kills -    Gold -    Cache -");
+		tallyFrame:Show();
+		SetNativeTallyHidden(false);
+	else
+		tallyFrame:Hide();
+		SetNativeTallyHidden(false);
+	end
+end
+
+local function CreateTallyFrame()
+	tallyFrame = CreateFrame("Frame", "AZSMinorModsTallyFrame", UIParent);
+	tallyFrame:SetWidth(252);
+	tallyFrame:SetHeight(28);
+	tallyFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 12, 24);
+	tallyFrame:SetFrameStrata("HIGH");
+	tallyFrame:EnableMouse(false);
+	tallyFrame.text = tallyFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+	tallyFrame.text:SetPoint("LEFT", tallyFrame, "LEFT", 4, 0);
+	tallyFrame.text:SetPoint("RIGHT", tallyFrame, "RIGHT", -4, 0);
+	tallyFrame.text:SetJustifyH("LEFT");
+	local savedOriginal = DB().tallyNativeOriginal;
+	if ( savedOriginal ~= nil ) then
+		tallyNativeWasShown = savedOriginal and true or false;
+		if ( type(AZS_SetHudShown) == "function" ) then pcall(AZS_SetHudShown, "tally", tallyNativeWasShown); end
+		DB().tallyNativeOriginal = nil;
+	else
+		local shown;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "tally");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown == nil and GetCVar ) then shown = GetCVar("hudTally") ~= "0"; end
+		if ( shown == nil ) then shown = true; end
+		tallyNativeWasShown = shown;
+	end
+	tallyFrame:Hide();
+end
+
+CreateTallyFrame();
+
+local function SetNativeClockHidden(on)
+	if ( type(AZS_SetHudShown) ~= "function" or clockNativeWasShown ~= true ) then return; end
+	if ( on ) then
+		local shown = true;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "clock");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown ) then
+			DB().clockNativeOriginal = clockNativeWasShown;
+			pcall(AZS_SetHudShown, "clock", false);
+			clockNativeOverridden = true;
+		end
+	elseif ( clockNativeOverridden ) then
+		pcall(AZS_SetHudShown, "clock", clockNativeWasShown);
+		clockNativeOverridden = false;
+		DB().clockNativeOriginal = nil;
+	end
+end
+
+local function SetNativeBossesHidden(on)
+	if ( type(AZS_SetHudShown) ~= "function" or bossNativeWasShown ~= true ) then return; end
+	if ( on ) then
+		local shown = true;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "bosses");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown ) then
+			DB().bossNativeOriginal = bossNativeWasShown;
+			pcall(AZS_SetHudShown, "bosses", false);
+			bossNativeOverridden = true;
+		end
+	elseif ( bossNativeOverridden ) then
+		pcall(AZS_SetHudShown, "bosses", bossNativeWasShown);
+		bossNativeOverridden = false;
+		DB().bossNativeOriginal = nil;
+	end
+end
+
+local function ClockText(seconds)
+	if ( type(seconds) ~= "number" or seconds < 0 ) then return "--:--"; end
+	seconds = math.floor(seconds);
+	return string.format("%02d:%02d", math.floor(seconds / 60), math.mod(seconds, 60));
+end
+
+local function CreateClockFrame()
+	clockFrame = CreateFrame("Frame", "AZSMinorModsClockFrame", UIParent);
+	clockFrame:SetWidth(220);
+	clockFrame:SetHeight(54);
+	clockFrame:SetPoint("TOP", UIParent, "TOP", 0, -6);
+	clockFrame:SetFrameStrata("MEDIUM");
+	clockFrame:EnableMouse(false);
+	clockFrame.time = clockFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge");
+	clockFrame.time:SetPoint("TOP", clockFrame, "TOP", 0, 0);
+	clockFrame.time:SetWidth(220);
+	clockFrame.time:SetJustifyH("CENTER");
+	clockFrame.time:SetTextColor(1, 0.82, 0.28);
+	clockFrame.next = clockFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+	clockFrame.next:SetPoint("TOP", clockFrame.time, "BOTTOM", 0, -2);
+	clockFrame.next:SetWidth(220);
+	clockFrame.next:SetJustifyH("CENTER");
+	clockFrame.next:SetTextColor(0.74, 0.72, 0.66);
+	-- Both lines share one parent and one movement handle; they cannot be separated while repositioning.
+	local savedOriginal = DB().clockNativeOriginal;
+	if ( savedOriginal ~= nil ) then
+		clockNativeWasShown = savedOriginal and true or false;
+		if ( type(AZS_SetHudShown) == "function" ) then pcall(AZS_SetHudShown, "clock", clockNativeWasShown); end
+		DB().clockNativeOriginal = nil;
+	else
+		local shown;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "clock");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown == nil and GetCVar ) then shown = GetCVar("hudClock") ~= "0"; end
+		if ( shown == nil ) then shown = true; end
+		clockNativeWasShown = shown;
+	end
+	local savedBossOriginal = DB().bossNativeOriginal;
+	if ( savedBossOriginal ~= nil ) then
+		bossNativeWasShown = savedBossOriginal and true or false;
+		if ( type(AZS_SetHudShown) == "function" ) then pcall(AZS_SetHudShown, "bosses", bossNativeWasShown); end
+		DB().bossNativeOriginal = nil;
+	else
+		local shown;
+		if ( type(AZS_IsHudShown) == "function" ) then
+			local ok, value = pcall(AZS_IsHudShown, "bosses");
+			if ( ok and value ~= nil ) then shown = value and true or false; end
+		end
+		if ( shown == nil and GetCVar ) then shown = GetCVar("hudBosses") ~= "0"; end
+		if ( shown == nil ) then shown = true; end
+		bossNativeWasShown = shown;
+	end
+	clockFrame:Hide();
+end
+
+local function BossPriority(unit)
+	if ( unit.kind == "final" ) then return 1; end
+	if ( unit.kind == "boss" ) then return 2; end
+	if ( unit.kind == "guardian" ) then return 3; end
+	if ( unit.kind == "elite" ) then return 4; end
+	return nil;
+end
+
+local function EncounterList()
+	local units = type(AZS_UNITS) == "table" and AZS_UNITS or {};
+	local list = {};
+	for i = 1, table.getn(units) do
+		local unit = units[i];
+		local priority = type(unit) == "table" and BossPriority(unit) or nil;
+		local awake = type(unit) == "table" and (unit.kind ~= "guardian" or unit.state == 1);
+		if ( priority and awake and type(unit.id) == "number" and type(unit.name) == "string"
+				and type(unit.hp) == "number" and type(unit.hpm) == "number" and unit.hp > 0 and unit.hpm > 0 ) then
+			table.insert(list, { id = unit.id, name = unit.name, hp = unit.hp, hpm = unit.hpm, priority = priority, order = i });
+		end
+	end
+	table.sort(list, function(a, b)
+		if ( a.priority ~= b.priority ) then return a.priority < b.priority; end
+		return a.order < b.order;
+	end);
+	return list;
+end
+
+local function EncounterRow(index)
+	if ( encounterRows[index] ) then return encounterRows[index]; end
+	local row = CreateFrame("Frame", nil, bossFrame);
+	row:SetWidth(440);
+	row:SetHeight(36);
+	row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+	row.name:SetPoint("TOP", row, "TOP", 0, 0);
+	row.name:SetWidth(440);
+	row.name:SetJustifyH("CENTER");
+	row.name:SetTextColor(1, 0.26, 0.16);
+	row.bar = CreateFrame("StatusBar", nil, row);
+	row.bar:SetWidth(420);
+	row.bar:SetHeight(12);
+	row.bar:SetPoint("TOP", row, "TOP", 0, -18);
+	row.bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar");
+	row.bar:SetStatusBarColor(0.82, 0.035, 0.02, 1);
+	row.bar:SetMinMaxValues(0, 1);
+	row.bar:SetValue(1);
+	row.bar.background = row.bar:CreateTexture(nil, "BACKGROUND");
+	row.bar.background:SetTexture("Interface\\TargetingFrame\\UI-StatusBar");
+	row.bar.background:SetAllPoints(row.bar);
+	row.bar.background:SetVertexColor(0.05, 0.035, 0.025, 1);
+	row:EnableMouse(false);
+	encounterRows[index] = row;
+	return row;
+end
+
+local function UpdateEncounterRows(list)
+	local width = bossFrame:GetWidth() or 440;
+	for i = 1, table.getn(list) do
+		local unit = list[i];
+		local row = EncounterRow(i);
+		row:SetWidth(width);
+		row.name:SetWidth(width);
+		row.bar:SetWidth(math.max(40, width - 20));
+		row:ClearAllPoints();
+		row:SetPoint("TOP", bossFrame, "TOP", 0, -((i - 1) * 40));
+		row.name:SetText(unit.name);
+		row.bar:SetMinMaxValues(0, unit.hpm);
+		row.bar:SetValue(unit.hp);
+		row:Show();
+	end
+	for i = table.getn(list) + 1, table.getn(encounterRows) do encounterRows[i]:Hide(); end
+	return table.getn(list) * 40;
+end
+
+local function UpdateClock()
+	if ( not clockFrame ) then return; end
+	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
+	local live = phase == "ready" or phase == "playing" or phase == "choosing" or phase == "paused";
+	local showClock = clockNativeWasShown == true and live;
+	local preview = DB().unlocked and not showClock;
+	if ( showClock ) then
+		local elapsed = type(AZS_GetRunTime) == "function" and AZS_GetRunTime() or nil;
+		if ( phase == "ready" and type(elapsed) ~= "number" ) then elapsed = 0; end
+		clockFrame.time:SetText(ClockText(elapsed));
+		local upcoming = {};
+		if ( type(AZS_GetUpcomingBosses) == "function" ) then
+			local ok, value = pcall(AZS_GetUpcomingBosses);
+			if ( ok and type(value) == "table" ) then upcoming = value; end
+		end
+		local left = type(upcoming[1]) == "table" and upcoming[1].left or nil;
+		local run = type(AZS_RUN) == "table" and AZS_RUN or nil;
+		if ( type(left) ~= "number" and run and type(run.nb) == "number" and run.nb >= 0 ) then left = run.nb; end
+		if ( type(left) == "number" and left >= 0 ) then
+			clockFrame.next:SetText("next boss in " .. ClockText(math.ceil(left)));
+		else
+			clockFrame.next:SetText("next boss in --:--");
+		end
+		SetNativeClockHidden(true);
+		clockFrame.time:Show();
+		clockFrame.next:Show();
+	else
+		SetNativeClockHidden(false);
+		if ( preview ) then
+			clockFrame.time:SetText("00:00");
+			clockFrame.next:SetText("next boss in --:--");
+			clockFrame.time:Show();
+			clockFrame.next:Show();
+		else
+			clockFrame.time:Hide();
+			clockFrame.next:Hide();
+		end
+	end
+	if ( showClock or preview ) then clockFrame:Show(); else clockFrame:Hide(); end
+end
+
+local function UpdateBossFrames()
+	if ( not bossFrame ) then return; end
+	local phase = type(AZS_GetPhase) == "function" and AZS_GetPhase() or nil;
+	local live = phase == "playing" or phase == "choosing" or phase == "paused";
+	if ( bossNativeWasShown == true and live ) then
+		local list = EncounterList();
+		local height = UpdateEncounterRows(list);
+		if ( height > 0 ) then
+			bossFrame:SetHeight(height);
+			SetNativeBossesHidden(true);
+			bossFrame:Show();
+		else
+			SetNativeBossesHidden(false);
+			bossFrame:Hide();
+		end
+	elseif ( DB().unlocked ) then
+		for i = 1, table.getn(encounterRows) do encounterRows[i]:Hide(); end
+		bossFrame:SetHeight(30);
+		SetNativeBossesHidden(false);
+		bossFrame:Show();
+	else
+		for i = 1, table.getn(encounterRows) do encounterRows[i]:Hide(); end
+		SetNativeBossesHidden(false);
+		bossFrame:Hide();
+	end
+end
+
+CreateClockFrame();
+bossFrame = CreateFrame("Frame", "AZSMinorModsBossFrames", UIParent);
+bossFrame:SetWidth(440);
+bossFrame:SetHeight(30);
+bossFrame:SetPoint("TOP", UIParent, "TOP", 0, -64);
+bossFrame:SetFrameStrata("MEDIUM");
+bossFrame:EnableMouse(false);
+bossFrame:Hide();
+local tallyTicker = CreateFrame("Frame");
+tallyTicker.elapsed = 0;
+tallyTicker:SetScript("OnUpdate", function()
+	this.elapsed = this.elapsed + (arg1 or 0);
+	if ( this.elapsed >= 0.25 ) then
+		this.elapsed = 0;
+		pcall(UpdateTally);
+		pcall(UpdateClock);
+		pcall(UpdateBossFrames);
+	end
+end);
+
+local function SavePosition(name, f)
+	local p = DB().places[name];
+	if ( type(p) ~= "table" ) then p = {}; DB().places[name] = p; end
+	p.x, p.y = f:GetLeft(), f:GetBottom();
+end
+
+local function ApplySize(name, f)
+	local s = DB().sizes[name];
+	if ( type(s) == "table" and s.w and s.h and s.w > 0 and s.h > 0 ) then
+		f:SetWidth(s.w);
+		f:SetHeight(s.h);
+	end
+end
+
+local function Place(name, ignoreAnchor)
 	local f = getglobal(name);
 	local p = DB().places[name];
-	if ( not f or type(p) ~= "table" or not p.x or not p.y ) then return; end
-	f:ClearAllPoints();
-	f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", K.Num(p.x), K.Num(p.y));
+	if ( not f ) then return; end
+	local w, h = f:GetWidth(), f:GetHeight();
+	if ( w and h and w > 0 and h > 0 and not baseSizes[name] ) then baseSizes[name] = { w = w, h = h }; end
+	ApplySize(name, f);
+	if ( type(p) ~= "table" ) then return; end
+	local relative = not ignoreAnchor and p.relative and getglobal(p.relative) or nil;
+	if ( relative and p.point and p.relativePoint ) then
+		f:ClearAllPoints();
+		f:SetPoint(p.point, relative, p.relativePoint, K.Num(p.dx), K.Num(p.dy));
+	elseif ( p.x and p.y ) then
+		f:ClearAllPoints();
+		f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", K.Num(p.x), K.Num(p.y));
+	end
 end
 
 local function PlaceAll()
-	for i = 1, table.getn(MOVABLE) do pcall(Place, MOVABLE[i][1]); end
+	for i = 1, table.getn(MOVABLE) do pcall(Place, MOVABLE[i][1], true); end
+	-- Reapply saved frame-to-frame anchors after every movable frame has its stored size and base position.
+	for pass = 1, table.getn(MOVABLE) do
+		for i = 1, table.getn(MOVABLE) do pcall(Place, MOVABLE[i][1], false); end
+	end
+end
+
+local function OpenSizeMenu(name, label)
+	local f = getglobal(name);
+	if ( not f ) then return; end
+	if ( not sizeMenu ) then
+		sizeMenu = CreateFrame("Frame", nil, UIParent);
+		sizeMenu:SetWidth(206);
+		sizeMenu:SetHeight(112);
+		sizeMenu:SetFrameStrata("DIALOG");
+		sizeMenu:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		                      tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
+		sizeMenu:SetBackdropColor(0.04, 0.035, 0.07, 0.97);
+		sizeMenu:SetBackdropBorderColor(0.85, 0.65, 0.2, 1);
+		sizeMenuText = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+		sizeMenuText:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 12, -10);
+		sizeMenuWidth = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		sizeMenuWidth:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 12, -34);
+		sizeMenuHeight = sizeMenu:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		sizeMenuHeight:SetPoint("TOPLEFT", sizeMenu, "TOPLEFT", 12, -63);
+		local function ResizeBy(axis, delta)
+			if ( not sizeTarget ) then return; end
+			local t = getglobal(sizeTarget);
+			if ( not t ) then return; end
+			local w, h = t:GetWidth(), t:GetHeight();
+			if ( axis == "w" ) then w = math.max(40, math.min((UIParent:GetWidth() or 1920), w + delta));
+			else h = math.max(24, math.min((UIParent:GetHeight() or 1080), h + delta)); end
+			t:SetWidth(w); t:SetHeight(h);
+			DB().sizes[sizeTarget] = { w = w, h = h };
+			PlaceAll();
+			sizeMenuWidth:SetText("Width: " .. math.floor(w + 0.5));
+			sizeMenuHeight:SetText("Height: " .. math.floor(h + 0.5));
+		end
+		local narrower = K.Button(sizeMenu, "-", 30, function() ResizeBy("w", -20); end);
+		narrower:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -72, -26);
+		local wider = K.Button(sizeMenu, "+", 30, function() ResizeBy("w", 20); end);
+		wider:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -32, -26);
+		local shorter = K.Button(sizeMenu, "-", 30, function() ResizeBy("h", -20); end);
+		shorter:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -72, -55);
+		local taller = K.Button(sizeMenu, "+", 30, function() ResizeBy("h", 20); end);
+		taller:SetPoint("TOPRIGHT", sizeMenu, "TOPRIGHT", -32, -55);
+		local reset = K.Button(sizeMenu, "Reset", 62, function()
+			local t = sizeTarget and getglobal(sizeTarget);
+			local s = sizeTarget and baseSizes[sizeTarget];
+			if ( t and s ) then
+				t:SetWidth(s.w); t:SetHeight(s.h); DB().sizes[sizeTarget] = nil; PlaceAll();
+				OpenSizeMenu(sizeTarget, sizeTarget);
+			else
+				K.Print(NAME, "the original size is not available yet; try again after the frame appears.");
+			end
+		end);
+		reset:SetPoint("BOTTOMLEFT", sizeMenu, "BOTTOMLEFT", 10, 8);
+		local close = K.Button(sizeMenu, "Done", 62, function() sizeMenu:Hide(); end);
+		close:SetPoint("BOTTOMRIGHT", sizeMenu, "BOTTOMRIGHT", -10, 8);
+	end
+	sizeTarget = name;
+	local w, h = f:GetWidth() or 0, f:GetHeight() or 0;
+	sizeMenuText:SetText("Resize " .. (label or name));
+	sizeMenuWidth:SetText("Width: " .. math.floor(w + 0.5));
+	sizeMenuHeight:SetText("Height: " .. math.floor(h + 0.5));
+	sizeMenu:ClearAllPoints();
+	local scale = UIParent:GetEffectiveScale() or 1;
+	local x, y = GetCursorPosition(); x, y = x / scale, y / scale;
+	local sw, sh = UIParent:GetWidth(), UIParent:GetHeight();
+	x = math.max(0, math.min(sw - 206, x + 8));
+	y = math.max(0, math.min(sh - 112, y + 8));
+	sizeMenu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y);
+	sizeMenu:Show();
+end
+
+local function ShowLockPanel()
+	if ( not lockPanel ) then
+		lockPanel = CreateFrame("Frame", "AZSMinorModsMovePanel", UIParent);
+		lockPanel:SetWidth(250);
+		lockPanel:SetHeight(58);
+		lockPanel:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 18, -78);
+		lockPanel:SetFrameStrata("DIALOG");
+		lockPanel:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		                       tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } });
+		lockPanel:SetBackdropColor(0.04, 0.035, 0.07, 0.97);
+		lockPanel:SetBackdropBorderColor(0.85, 0.65, 0.2, 1);
+		local note = lockPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall");
+		note:SetPoint("TOPLEFT", lockPanel, "TOPLEFT", 10, -8);
+		note:SetText("Left-click a green handle to move; right-click to resize.");
+		local button = K.Button(lockPanel, "Lock UI", 76, function() AZSMinorMods_SetUnlocked(false); end);
+		button:SetPoint("BOTTOMRIGHT", lockPanel, "BOTTOMRIGHT", -8, 6);
+	end
+	lockPanel:Show();
+end
+
+local function SnapPosition(name, f)
+	local left, right, bottom, top = f:GetLeft(), f:GetRight(), f:GetBottom(), f:GetTop();
+	if ( not left or not right or not bottom or not top ) then SavePosition(name, f); return; end
+	local best, bestDistance;
+	local threshold = 18;
+	for i = 1, table.getn(MOVABLE) do
+		local otherName = MOVABLE[i][1];
+		local other = otherName ~= name and getglobal(otherName) or nil;
+		if ( other ) then
+			local ol, oright, ob, ot = other:GetLeft(), other:GetRight(), other:GetBottom(), other:GetTop();
+			if ( ol and oright and ob and ot ) then
+				local overlapX = math.min(right, oright) - math.max(left, ol);
+				local overlapY = math.min(top, ot) - math.max(bottom, ob);
+				local candidates = {};
+				if ( overlapX > 24 ) then
+					table.insert(candidates, { math.abs(top - ob), "TOPLEFT", "BOTTOMLEFT", left - ol, top - ob });
+					table.insert(candidates, { math.abs(bottom - ot), "BOTTOMLEFT", "TOPLEFT", left - ol, bottom - ot });
+				end
+				if ( overlapY > 24 ) then
+					table.insert(candidates, { math.abs(left - oright), "BOTTOMLEFT", "BOTTOMRIGHT", left - oright, bottom - ob });
+					table.insert(candidates, { math.abs(right - ol), "BOTTOMRIGHT", "BOTTOMLEFT", right - ol, bottom - ob });
+				end
+				for j = 1, table.getn(candidates) do
+					local c = candidates[j];
+					if ( c[1] <= threshold and (not bestDistance or c[1] < bestDistance) ) then
+						bestDistance = c[1]; best = { relative = otherName, point = c[2], relativePoint = c[3], dx = c[4], dy = c[5] };
+					end
+				end
+			end
+		end
+	end
+	local p = {};
+	if ( best ) then
+		for k, v in pairs(best) do p[k] = v; end
+	else
+		p.x, p.y = left, bottom;
+	end
+	DB().places[name] = p;
+	PlaceAll();
 end
 
 local function Handle(name, label)
@@ -383,6 +895,11 @@ local function Handle(name, label)
 		h.text:SetPoint("CENTER", h, "CENTER", 0, 0);
 		h.text:SetText(label);
 		h:SetScript("OnMouseDown", function()
+			if ( arg1 == "RightButton" ) then
+				OpenSizeMenu(name, label);
+				return;
+			end
+			if ( arg1 ~= "LeftButton" ) then return; end
 			local t = getglobal(name);
 			if ( not t ) then return; end
 			t:SetMovable(true);
@@ -391,12 +908,12 @@ local function Handle(name, label)
 			this.moving = true;
 		end);
 		h:SetScript("OnMouseUp", function()
+			if ( arg1 ~= "LeftButton" ) then return; end
 			local t = getglobal(name);
 			if ( not t or not this.moving ) then return; end
 			this.moving = nil;
 			t:StopMovingOrSizing();
-			DB().places[name] = { x = t:GetLeft(), y = t:GetBottom() };
-			Place(name);
+			if ( DB().anchorSnap ) then SnapPosition(name, t); else SavePosition(name, t); DB().places[name].relative = nil; Place(name); end
 		end);
 		h:SetScript("OnUpdate", function()
 			local t = getglobal(name);
@@ -407,15 +924,19 @@ local function Handle(name, label)
 		end);
 		handles[name] = h;
 	end
-	local w, ht = f:GetWidth(), f:GetHeight();
-	if ( not w or w < 20 ) then f:SetWidth(math.max(w or 0, 120)); end
-	if ( not ht or ht < 16 ) then f:SetHeight(math.max(ht or 0, 24)); end
 	return h;
 end
 
 -- unlocked: the handles show (the frames are shown too, so even an empty party frame can be placed)
 function AZSMinorMods_SetUnlocked(on)
 	DB().unlocked = on and true or false;
+	if ( not on and sizeMenu ) then sizeMenu:Hide(); end
+	if ( on ) then
+		if ( win and win:IsShown() ) then win:Hide(); end
+		ShowLockPanel();
+	elseif ( lockPanel ) then
+		lockPanel:Hide();
+	end
 	for i = 1, table.getn(MOVABLE) do
 		local name = MOVABLE[i][1];
 		if ( on ) then
@@ -425,7 +946,24 @@ function AZSMinorMods_SetUnlocked(on)
 			handles[name]:Hide();
 		end
 	end
-	K.Print(NAME, on and "the UI is unlocked: drag the green handles, then lock it in /azsmods." or "the UI is locked.");
+	K.Print(NAME, on and "left-click a green handle to move it; right-click one to resize. Use the Lock UI button when done." or "the UI is locked.");
+end
+
+local function SetAnchorSnap(on)
+	DB().anchorSnap = on and true or false;
+	if ( not on ) then
+		for i = 1, table.getn(MOVABLE) do
+			local name = MOVABLE[i][1];
+			local p = DB().places[name];
+			local f = getglobal(name);
+			if ( type(p) == "table" and p.relative and f ) then
+				SavePosition(name, f);
+				p.relative, p.point, p.relativePoint, p.dx, p.dy = nil, nil, nil, nil, nil;
+			end
+		end
+		PlaceAll();
+	end
+	K.Print(NAME, on and "nearby frames will latch together when you move them." or "frames will move independently now.");
 end
 
 function AZSMinorMods_ResetPlaces()
@@ -605,14 +1143,15 @@ local function WinBuild()
 	Row("Hide the target frame", function() return DB().hideTarget; end, function(v) DB().hideTarget = v; TargetFrameHidden(v); end);
 	Row("Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end);
 	Row("Cooldown numbers on the spell squares", function() return DB().cooldowns; end, function(v) DB().cooldowns = v; end);
-	Row("Unlock the UI to move it (untick to lock)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end);
+	Row("Unlock UI (left-click moves; right-click resizes)", function() return DB().unlocked; end, function(v) AZSMinorMods_SetUnlocked(v); end);
+	Row("Anchor moved frames to nearby frames", function() return DB().anchorSnap; end, function(v) SetAnchorSnap(v); end);
 	Row("Minimap button", function() local m = DB().minimap; return not (m and m.hide); end,
 	    function(v) if ( AZSMinorMods_Mini ) then local m = DB().minimap; if ( (m and m.hide and true or false) == v ) then AZSMinorMods_Mini.Toggle(); end end end);
 	local note = win:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall");
 	note:SetPoint("TOPLEFT", win, "TOPLEFT", 30, y - 4);
 	note:SetWidth(360);
 	note:SetJustifyH("LEFT");
-	note:SetText("Unlocked, drag the green handles; lock it again when done.");
+	note:SetText("Left-click a green handle to move it; right-click to resize. Anchoring is optional.");
 	local reset = K.Button(win, "Reset positions", 150, function() AZSMinorMods_ResetPlaces(); end);
 	reset:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -24, 20);
 end
