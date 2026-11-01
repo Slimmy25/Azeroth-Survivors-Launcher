@@ -8,7 +8,7 @@
 --   * Boss markers: every boss alive gets a raid marker, the first a Skull, the second a Cross, the third a Diamond.
 --   * Miniboss markers: the zone's bosses before its final boss (the Guide's Zones & Bosses list) get a Star, a
 --     Triangle and a Diamond instead, so the Skull and Cross are left for the final boss.
---   * In co-op, a friend who falls gets a marker over their head, blinking on and off 15 times. Each friend has their
+--   * In co-op, a friend who falls gets a marker over their head, blinking on and off 16 times. Each friend has their
 --     own (Square, Moon, Circle), so several can be down at once. Those three are kept for this alone.
 --   * Play the included sound once when you or a teammate dies (off until enabled).
 --   * Move the UI: unlock it, drag the player, target and party frames, the minimap, buffs, cast bar, action bars and
@@ -176,7 +176,7 @@ local BOSS_ICONS = { 8, 7, 3 };                          -- Skull, Cross, Diamon
 local FINAL_ICONS = { 8, 7 };                            -- Skull, Cross (with miniboss markers on)
 local MINI_ICONS = { 1, 4, 3 };                          -- Star, Triangle, Diamond
 local DEATH_ICONS = { 6, 5, 2 };                         -- Square, Moon, Circle: one for each friend who falls
-local DEATH_BLINKS = 15;                                 -- on and off this many times
+local DEATH_BLINKS = 16;                                 -- on and off this many times
 local DEATH_SOUND = "Interface\\AddOns\\AZSMinorMods\\dragon-studio-baby-crying-463213.mp3";
 local function PlayDeathSound()
 	if ( not DB().deathSound or not PlaySoundFile ) then return; end
@@ -285,7 +285,7 @@ local function BossMarks()
 	for id in pairs(tries) do if ( not alive[id] ) then tries[id] = nil; end end
 end
 
--- a friend down in co-op: their own marker over their head, on and off 15 times. The first three friends have their
+-- a friend down in co-op: their own marker over their head, on and off 16 times. The first three friends have their
 -- own (Square, Moon, Circle); a fourth (a party of 5) takes whichever of the three is free, or waits for one.
 local function DeathIcon(u, i)
 	local used = {};
@@ -600,7 +600,7 @@ local function WinBuild()
 	    function(v) DB().camera = v; Camera(v); end);
 	Row("Mark bosses: Skull, Cross, Diamond", function() return DB().bossMarks; end, function(v) DB().bossMarks = v; end);
 	Row("Mark minibosses: Star, Triangle, Diamond", function() return DB().miniMarks; end, function(v) DB().miniMarks = v; end);
-	Row("Blink a marker over a friend who falls (15 times)", function() return DB().deathMarks; end, function(v) DB().deathMarks = v; end);
+	Row("Blink a marker over a friend who falls (16 times)", function() return DB().deathMarks; end, function(v) DB().deathMarks = v; end);
 	Row("Play a sound when you or a teammate dies", function() return DB().deathSound; end, function(v) DB().deathSound = v; end);
 	Row("Hide the target frame", function() return DB().hideTarget; end, function(v) DB().hideTarget = v; TargetFrameHidden(v); end);
 	Row("Plain action bar: no gryphons, just the 6 squares", function() return DB().plainBar; end, function(v) DB().plainBar = v; PlainBar(v); end);
