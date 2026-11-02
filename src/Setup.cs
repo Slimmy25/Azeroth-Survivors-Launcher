@@ -818,9 +818,12 @@ namespace AzerothLauncher
                 Cfg.Set("setup_folder", Util.LauncherDir);       // the folder this setup was for (a copy elsewhere sets up again)
                 Cfg.Save();
                 try { Util.CompleteSetupForThisInstall(); } catch (Exception) { }
+                string shortcutError = null;
+                try { Util.CreateLauncherDesktopShortcut(); }
+                catch (Exception e) { shortcutError = e.Message; }
                 if (launcherRelease != null) After(500, ForceLauncherUpdate);
                 RefreshPlayLabel();                           // PLAY is no longer grayed out
-                SetStatus("Setup saved.");
+                SetStatus(shortcutError == null ? "Setup saved." : "Setup saved, but Windows could not create the desktop shortcut: " + shortcutError);
                 ApplyCloudVisibility();
                     if (trackStats.HasValue)                      // install Azeroth Stats only when the player opts in
                 {

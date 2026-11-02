@@ -70,6 +70,7 @@ The STATS screenshot uses made-up sample data. The other screenshots show the lo
   - **My Addons** lists the addon .zip files you keep on your own PC.
 - Addons from Download More are installed only when chosen. First-time setup offers Maidenhead's Azeroth Stats; you can decline it.
 - Addon cards show available SurvivorsForge pictures: hover a listing name for a small preview, or click it for a centered gallery. Missing source artwork remains unavailable rather than being replaced with a made-up addon image.
+- Azeroth Stats, SurvivorsDragonUi, Keijin UI, Azeroth FieldKit, ASTinyPlates, ASBuilder and Azeroth Hub resolve the selected add-on's current upstream GitHub release at install/update time and verify the exact ZIP with GitHub's published SHA-256. Projects that publish only pre-releases use their newest published release containing the expected ZIP. The launcher does not use a stale mirrored package for these entries.
 - AZSSpellMeter and AZS Max Hit cannot be enabled together. Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive. The launcher switches off an incompatible addon when you enable another one, and resolves conflicts when a saved profile is loaded or Toggle All is used.
 
 ### The Guide
@@ -127,7 +128,13 @@ YouTube in a launcher-managed video window and are not saved as video files. Eac
 ### The AZS addons
 | Addon | What it does |
 | --- | --- |
-| **Azeroth Stats** (`/azstats`) | Maidenhead's optional tracker. The launcher reads its local SavedVariables for run totals, history, combat samples and observed build changes. |
+| **Azeroth Stats** (`/azstats`) | Maidenhead's optional tracker. The launcher reads its local SavedVariables for run totals, history, combat samples and observed build changes. Download More resolves Maidenhead's current release and checks GitHub's published SHA-256 before installing. If there is no stable release, it uses the newest published versioned ZIP. |
+| **SurvivorsDragonUi** | Mxgwyn's UI replacement. The launcher resolves the current release ZIP and verifies GitHub's published SHA-256. |
+| **Keijin UI** | Keijin's UI replacement. The launcher resolves the current release ZIP and verifies GitHub's published SHA-256. |
+| **Azeroth FieldKit** | Maidenhead's in-game helper. The launcher resolves the newest published release with its versioned ZIP and verifies GitHub's published SHA-256. |
+| **ASTinyPlates** | Valorless's nameplate addon. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
+| **ASBuilder** | Cadoky's build-sharing tool. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
+| **Azeroth Hub** | Maidenhead's in-game addon hub. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
 | **AZS Handbook** (`/handbook`) | The launcher's whole Guide, inside the game. |
 | **Slim Suite** (`/azsmods`) | Movable UI frames, grid alignment, frame sizing and scale, gameplay helpers, and optional interface features. The settings are split between “Modifying the User Interface” and “New/Unique, but Minor Features.” |
 

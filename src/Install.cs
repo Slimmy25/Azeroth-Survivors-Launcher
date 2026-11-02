@@ -458,7 +458,7 @@ namespace AzerothLauncher
                 else actualSha256 = Net.Download(url, tmp, false, "addon", null, null, 0);
                 if (!string.IsNullOrWhiteSpace(expectedSha256) &&
                     !string.Equals(actualSha256, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
-                    throw new UserError("The downloaded addon does not match the SHA-256 published for this exact SurvivorsForge version. Nothing was installed.");
+                    throw new UserError("The downloaded addon does not match the SHA-256 published for this exact addon release. Nothing was installed.");
                 if (Kind(tmp) != "zip")
                     throw new UserError("The link did not give a .zip file. It must be a direct download link " +
                                         "(share pages such as LimeWire do not work).");

@@ -2,6 +2,14 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.139.0
+-------
+Engine update: the game now runs on a newer version of the client it is built on. Everything should play as it did before. Addons can now tell a proc's hit from the spell it borrows.
+
+Under-the-hood engine improvements from the client the game is built on.
+For addon authors: combat text events now say which damage meter line each hit counts toward, as meterSource (the line's name) and meterSourceKey (its sourceKey in AZS_GetMeterSnapshot). A Shadow Weaving strike that floats as Shadow Word: Pain says Shadow Weaving, and a pet's or a summon's swing says whose it is.
+===
+
 0.138.0
 -------
 Addons that draw their own combat numbers can now keep them fixed in the world: a number stays over the spot where an enemy died as you turn or move, and hides when that spot leaves your view. The game's own numbers are unchanged.

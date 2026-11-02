@@ -1031,20 +1031,37 @@ namespace AzerothLauncher
             catch (Exception e) { SyncLog("  Addons for the synced settings not checked: " + e.Message, Level.Warn); return done; }
             foreach (var entry in missing)
             {
+                string releaseIdentity = null;
                 try
                 {
                     Directory.CreateDirectory(ss.AddonsDir);
                     List<string> names;
                     BuiltinAddon builtin = BuiltinAddons.Find(entry.Url);
                     if (builtin != null) { BuiltinAddons.Install(ss.AddonsDir, builtin); names = new List<string> { builtin.Folder }; }
-                    else names = Archive.InstallAddonZip(entry.Url, ss.AddonsDir);
+                    else
+                    {
+                        string installUrl = entry.Url, expectedSha = null;
+                        if (IsDynamicGitHubAddonUrl(entry.Url))
+                        {
+                            GitHubAddonRelease release = ResolveGitHubAddonRelease(entry.Url);
+                            if (release == null || !IsSha256(release.Sha256))
+                                throw new UserError("The latest GitHub release for " + entry.Name + " has no usable SHA-256 digest. Nothing was installed.");
+                            installUrl = release.Url;
+                            expectedSha = release.Sha256;
+                            releaseIdentity = release.Identity;
+                        }
+                        names = Archive.InstallAddonZip(installUrl, ss.AddonsDir, null, expectedSha);
+                        AddonArchive.Tidy(entry.Name);
+                    }
                     string name = entry.Name;
+                    string savedReleaseIdentity = releaseIdentity;
                     var rec = new List<object>();
                     foreach (string n in names) rec.Add(n);
                     Ui(delegate
                     {
                         AddonInstalls()[name] = rec;
                         AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+                        if (!string.IsNullOrEmpty(savedReleaseIdentity)) AddonInstalledRelease()[name] = savedReleaseIdentity;
                         Cfg.Save();
                     });
                     SyncLog(name + " installed: its settings came from the cloud.", Level.Good);

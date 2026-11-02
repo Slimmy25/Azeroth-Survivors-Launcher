@@ -766,7 +766,7 @@ namespace AzerothLauncher
         }
     }
 
-    public class GuideHover : Control
+    public class GuideHover : Control, IMessageFilter
     {
         static GuideHover box;
         static Form hoverHost;
@@ -823,6 +823,9 @@ namespace AzerothLauncher
         int galleryWidth;
         Rectangle galleryPrevious, galleryNext, galleryClose;
         bool galleryMode, galleryExpanded, galleryPinned;
+        Rectangle galleryImageViewport;
+        bool galleryZoomed, galleryPanning;
+        Point galleryPan, galleryPanStart, galleryMouseStart;
         static int W { get { return box != null && box.galleryExpanded && box.galleryWidth > 0 ? box.galleryWidth : Theme.Px(300); } }
         static int ModelH { get { return Theme.Px(230); } }
         Font titleFont, bodyFont;
@@ -883,6 +886,7 @@ namespace AzerothLauncher
             box.galleryMode = true;
             box.galleryExpanded = expanded;
             box.galleryPinned = expanded;
+            if (expanded) Application.AddMessageFilter(box);
             box.picture = null;
             box.galleryIndex = 0;
             ShowCore(owner, title, body, null, null, false);
@@ -1093,19 +1097,56 @@ namespace AzerothLauncher
 
         void ClearGallery()
         {
+            Application.RemoveMessageFilter(this);
             galleryMode = false;
             galleryExpanded = false;
             galleryPinned = false;
+            galleryZoomed = galleryPanning = false;
+            galleryPan = Point.Empty;
             galleryIndex = 0;
             galleryHeight = 0;
             galleryWidth = 0;
-            galleryPrevious = galleryNext = galleryClose = Rectangle.Empty;
+            galleryPrevious = galleryNext = galleryClose = galleryImageViewport = Rectangle.Empty;
             foreach (Image image in galleryImages) try { image.Dispose(); } catch (Exception) { }
             galleryImages.Clear();
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            if (galleryMode && galleryExpanded)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (galleryZoomed) { galleryZoomed = false; galleryPan = Point.Empty; Invalidate(); }
+                    else Hide();
+                    return;
+                }
+                if (e.Button == MouseButtons.Left && galleryClose.Contains(e.Location)) { Hide(); return; }
+                if (e.Button == MouseButtons.Left && galleryPrevious.Contains(e.Location) && galleryImages.Count > 1)
+                {
+                    galleryIndex = (galleryIndex + galleryImages.Count - 1) % galleryImages.Count;
+                    galleryZoomed = galleryPanning = false; galleryPan = Point.Empty; Invalidate(); return;
+                }
+                if (e.Button == MouseButtons.Left && galleryNext.Contains(e.Location) && galleryImages.Count > 1)
+                {
+                    galleryIndex = (galleryIndex + 1) % galleryImages.Count;
+                    galleryZoomed = galleryPanning = false; galleryPan = Point.Empty; Invalidate(); return;
+                }
+                if (e.Button == MouseButtons.Left && galleryImageViewport.Contains(e.Location))
+                {
+                    if (e.Clicks > 1) { galleryZoomed = galleryPanning = false; galleryPan = Point.Empty; }
+                    else if (galleryZoomed)
+                    {
+                        galleryPanning = true; galleryMouseStart = e.Location; galleryPanStart = galleryPan; Capture = true;
+                    }
+                    else
+                    {
+                        galleryZoomed = true; SetGalleryZoomFocus(e.Location);
+                    }
+                    Invalidate(); return;
+                }
+                if (e.Button == MouseButtons.Left) { Hide(); return; }
+            }
             if (e.Button == MouseButtons.Left && galleryExpanded && galleryClose.Contains(e.Location))
             {
                 Hide();
@@ -1122,9 +1163,53 @@ namespace AzerothLauncher
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (galleryPanning)
+            {
+                galleryPan = new Point(galleryPanStart.X + e.X - galleryMouseStart.X, galleryPanStart.Y + e.Y - galleryMouseStart.Y);
+                ClampGalleryPan(); Invalidate(); return;
+            }
             Cursor = galleryMode && (galleryPrevious.Contains(e.Location) || galleryNext.Contains(e.Location) || galleryClose.Contains(e.Location))
-                ? Cursors.Hand : Cursors.Default;
+                ? Cursors.Hand : galleryZoomed && galleryImageViewport.Contains(e.Location) ? Cursors.SizeAll : Cursors.Default;
             base.OnMouseMove(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            if (galleryPanning && e.Button == MouseButtons.Left) { galleryPanning = false; Capture = false; }
+            base.OnMouseUp(e);
+        }
+
+        bool IMessageFilter.PreFilterMessage(ref Message m)
+        {
+            if (!galleryMode || !galleryExpanded || !Visible || (m.Msg != 0x0201 && m.Msg != 0x0204)) return false;
+            Point screen = Control.MousePosition;
+            if (!RectangleToScreen(ClientRectangle).Contains(screen)) Hide();
+            return false;
+        }
+
+        void SetGalleryZoomFocus(Point pointer)
+        {
+            if (galleryImages.Count == 0 || galleryImageViewport.IsEmpty) return;
+            Image image = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
+            float fit = Math.Min((float)galleryImageViewport.Width / Math.Max(1, image.Width), (float)galleryImageViewport.Height / Math.Max(1, image.Height));
+            float fitW = image.Width * fit, fitH = image.Height * fit;
+            float fitCenterX = galleryImageViewport.X + (galleryImageViewport.Width - fitW) / 2f + fitW / 2f;
+            float fitCenterY = galleryImageViewport.Y + (galleryImageViewport.Height - fitH) / 2f + fitH / 2f;
+            float viewCenterX = galleryImageViewport.Left + galleryImageViewport.Width / 2f;
+            float viewCenterY = galleryImageViewport.Top + galleryImageViewport.Height / 2f;
+            galleryPan = new Point((int)Math.Round(pointer.X - viewCenterX - 2f * (pointer.X - fitCenterX)),
+                                   (int)Math.Round(pointer.Y - viewCenterY - 2f * (pointer.Y - fitCenterY)));
+            ClampGalleryPan();
+        }
+
+        void ClampGalleryPan()
+        {
+            if (galleryImages.Count == 0 || galleryImageViewport.IsEmpty) return;
+            Image image = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
+            float fit = Math.Min((float)galleryImageViewport.Width / Math.Max(1, image.Width), (float)galleryImageViewport.Height / Math.Max(1, image.Height));
+            float extraX = Math.Max(0, image.Width * fit * 2f - galleryImageViewport.Width) / 2f;
+            float extraY = Math.Max(0, image.Height * fit * 2f - galleryImageViewport.Height) / 2f;
+            galleryPan = new Point((int)Math.Max(-extraX, Math.Min(extraX, galleryPan.X)), (int)Math.Max(-extraY, Math.Min(extraY, galleryPan.Y)));
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -1203,12 +1288,19 @@ namespace AzerothLauncher
                 int bodyHeight = Flow(g, bf, false);
                 int top = Math.Min(Height - galleryHeight - Theme.Px(galleryExpanded ? 42 : 24) - 8, 10 + th + bodyHeight + 8);
                 var imageRect = new Rectangle(10, top, Width - 20, galleryHeight);
+                galleryImageViewport = imageRect;
                 using (var b = new SolidBrush(Theme.Hex("#0b0910"))) g.FillRectangle(b, imageRect);
                 Image current = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
                 float k = Math.Min((float)imageRect.Width / Math.Max(1, current.Width), (float)imageRect.Height / Math.Max(1, current.Height));
-                int iw = Math.Max(1, (int)(current.Width * k)), ih = Math.Max(1, (int)(current.Height * k));
+                float zoom = galleryZoomed ? 2f : 1f;
+                int iw = Math.Max(1, (int)(current.Width * k * zoom)), ih = Math.Max(1, (int)(current.Height * k * zoom));
+                int imageX = imageRect.X + (imageRect.Width - iw) / 2 + (galleryZoomed ? galleryPan.X : 0);
+                int imageY = imageRect.Y + (imageRect.Height - ih) / 2 + (galleryZoomed ? galleryPan.Y : 0);
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.DrawImage(current, new Rectangle(imageRect.X + (imageRect.Width - iw) / 2, imageRect.Y + (imageRect.Height - ih) / 2, iw, ih));
+                System.Drawing.Drawing2D.GraphicsState galleryState = g.Save();
+                g.SetClip(imageRect);
+                g.DrawImage(current, new Rectangle(imageX, imageY, iw, ih));
+                g.Restore(galleryState);
                 using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, imageRect);
                 int footerY = imageRect.Bottom + 3, footerH = Theme.Px(galleryExpanded ? 26 : 18), arrowW = Theme.Px(galleryExpanded ? 48 : 30);
                 galleryPrevious = new Rectangle(10, footerY, arrowW, footerH);

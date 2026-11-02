@@ -225,6 +225,21 @@ namespace AzerothLauncher
             BuildPanel("Community");
         }
 
+        void ChooseNextCommunityVideo(GuideVideo currentVideo, GuideVideo chosenVideo, List<GuideVideo> all)
+        {
+            List<GuideVideo> candidates = CommunityCandidates(all);
+            if (chosenVideo == null || !candidates.Contains(chosenVideo)) return;
+            PrepareCommunityQueue(candidates);
+
+            // Treat Up Next as a queue choice: return the declined current video to the tail,
+            // consume the previewed choice, and let the next preview come from this same filter.
+            ReturnCommunityVideoToQueue(currentVideo, candidates);
+            RemoveCommunityVideoFromQueue(chosenVideo);
+            communityChoice = null;
+            communityCurrent = chosenVideo;
+            communityPicked = DateTime.Now;
+        }
+
         // fills in a video's missing title and channel from YouTube's oEmbed, then redraws Community
         static readonly HashSet<string> titleAsked = new HashSet<string>();
 
@@ -395,7 +410,7 @@ namespace AzerothLauncher
                 nextPoster.Location = new Point(4, posterTop);
                 Action chooseNext = delegate
                 {
-                    communityChoice = next;
+                    ChooseNextCommunityVideo(v, next, BuildVideos(out ti));
                     BuildPanel("Community");
                 };
                 preview.Click += delegate { chooseNext(); };

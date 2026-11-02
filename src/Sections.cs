@@ -1999,6 +1999,7 @@ namespace AzerothLauncher
             if (string.IsNullOrEmpty(legacy)) return;
             AddonInstalls().Remove(legacy);
             AddonInstalledAt().Remove(legacy);
+            AddonInstalledRelease().Remove(legacy);
             AddonPins().Remove(legacy);
         }
 
@@ -2026,9 +2027,9 @@ namespace AzerothLauncher
             return Addons.FoldersOf(AddonsDir(), name, recorded);
         }
 
-        // ---- addon updates: when each Download More addon was installed (UTC), against when its copy on GitHub
-        // was last uploaded (the release's asset dates, asked once a session). Newer on GitHub: UPDATE.
+        // ---- addon updates: standard mirror assets use upload dates; direct GitHub entries track upstream tag and digest.
         Dictionary<string, object> AddonInstalledAt() { return Cfg.Section("addon_installed_at"); }
+        Dictionary<string, object> AddonInstalledRelease() { return Cfg.Section("addon_installed_release"); }
         Dictionary<string, object> AddonPins() { return Cfg.Section("addon_pins"); }   // addon name -> the kept copy rolled back to
 
         // ---- ROLLBACK (Addons › Advanced): an older kept copy replaces the addon's folders. Its saved settings are not in
@@ -2144,6 +2145,146 @@ namespace AzerothLauncher
         }
         static Dictionary<string, DateTime> mirrorDates;     // zip file name -> uploaded (UTC); null: not asked yet
         static bool mirrorAsking;
+        const string AzerothStatsLatestUrl = "https://github.com/Maidenquinn/AzerothStats/releases/latest";
+        const string SurvivorsDragonUiLatestUrl = "https://github.com/migwynkriid13/SurvivorsDragonUi/releases/latest";
+        const string KeijinUiLatestUrl = "https://github.com/KeijinDE/KeijinUI_modern-as-ui/releases/latest";
+        const string AzerothFieldKitLatestUrl = "https://github.com/Maidenquinn/azeroth-fieldkit/releases/latest";
+        const string AstinyPlatesLatestUrl = "https://github.com/Valorless/ASTinyPlates/releases/latest";
+        const string AsBuilderLatestUrl = "https://github.com/cadoky/ASBuilder/releases/latest";
+        const string AzerothHubLatestUrl = "https://github.com/Maidenquinn/AzerothHub/releases/latest";
+        static readonly Dictionary<string, GitHubAddonRelease> dynamicAddonReleases = new Dictionary<string, GitHubAddonRelease>(StringComparer.OrdinalIgnoreCase);
+        static readonly HashSet<string> dynamicAddonReleaseChecked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        sealed class GitHubAddonRelease
+        {
+            public string Tag, Url, Sha256;
+            public DateTime PublishedAt;
+            public string Identity { get { return (Tag ?? "") + "|" + (Sha256 ?? ""); } }
+        }
+
+        static bool IsDynamicGitHubAddonUrl(string url)
+        {
+            string normalized = (url ?? "").TrimEnd('/');
+            return string.Equals(normalized, AzerothStatsLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, SurvivorsDragonUiLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, KeijinUiLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AstinyPlatesLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AsBuilderLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase);
+        }
+
+        sealed class GitHubAddonSource
+        {
+            public string Url, Repo, AssetPrefix;
+            public bool FixedAssetName;
+        }
+
+        static GitHubAddonSource GitHubAddonSourceFor(string url)
+        {
+            string normalized = (url ?? "").TrimEnd('/');
+            if (string.Equals(normalized, AzerothStatsLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AzerothStatsLatestUrl, Repo = "Maidenquinn/AzerothStats", AssetPrefix = "AzerothStats-" };
+            if (string.Equals(normalized, SurvivorsDragonUiLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = SurvivorsDragonUiLatestUrl, Repo = "migwynkriid13/SurvivorsDragonUi", AssetPrefix = "SurvivorsDragonUi.zip", FixedAssetName = true };
+            if (string.Equals(normalized, KeijinUiLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = KeijinUiLatestUrl, Repo = "KeijinDE/KeijinUI_modern-as-ui", AssetPrefix = "KeijinUI-" };
+            if (string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AzerothFieldKitLatestUrl, Repo = "Maidenquinn/azeroth-fieldkit", AssetPrefix = "AzerothFieldKit-" };
+            if (string.Equals(normalized, AstinyPlatesLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AstinyPlatesLatestUrl, Repo = "Valorless/ASTinyPlates", AssetPrefix = "ASTinyPlates-" };
+            if (string.Equals(normalized, AsBuilderLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AsBuilderLatestUrl, Repo = "cadoky/ASBuilder", AssetPrefix = "ASBuilder-" };
+            if (string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AzerothHubLatestUrl, Repo = "Maidenquinn/AzerothHub", AssetPrefix = "AzerothHub-" };
+            return null;
+        }
+
+        static bool IsSha256(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length != 64) return false;
+            foreach (char c in value) if (!Uri.IsHexDigit(c)) return false;
+            return true;
+        }
+
+        static Dictionary<string, object> ReadGitHubRelease(string apiUrl)
+        {
+            string text;
+            using (var resp = Net.Open(apiUrl, 15000, true, "GitHub", "application/vnd.github+json"))
+            using (var rd = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8)) text = rd.ReadToEnd();
+            return Json.AsDict(Json.Parse(text));
+        }
+
+        static GitHubAddonRelease ParseGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
+        {
+            if (release == null || string.Equals(Json.Str(release, "draft"), "True", StringComparison.OrdinalIgnoreCase)) return null;
+            string tag = Json.Str(release, "tag_name");
+            if (tag.Length == 0) return null;
+            string version = tag.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? tag.Substring(1) : tag;
+            string assetName = source.FixedAssetName ? source.AssetPrefix : source.AssetPrefix + version + ".zip";
+            string assetUrl = "", digest = "";
+            foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
+            {
+                Dictionary<string, object> asset = Json.AsDict(value);
+                string name = Json.Str(asset, "name");
+                if (!string.Equals(name, assetName, StringComparison.OrdinalIgnoreCase) ||
+                    !name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) continue;
+                assetUrl = Json.Str(asset, "browser_download_url");
+                digest = Json.Str(asset, "digest");
+                break;
+            }
+            if (assetUrl.Length == 0) return null;
+            string sha = digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest.Substring(7) : "";
+            if (!IsSha256(sha)) sha = "";
+            DateTime published;
+            if (!DateTime.TryParse(Json.Str(release, "published_at"), CultureInfo.InvariantCulture,
+                                   DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out published))
+                published = DateTime.MinValue;
+            return new GitHubAddonRelease { Tag = tag, Url = assetUrl, Sha256 = sha, PublishedAt = published };
+        }
+
+        static GitHubAddonRelease ResolveGitHubAddonRelease(string url)
+        {
+            GitHubAddonSource source = GitHubAddonSourceFor(url);
+            if (source == null) throw new UserError("This add-on is not configured for direct GitHub release updates.");
+            // Use /releases/latest for stable releases. If a project publishes only pre-releases (or its
+            // latest stable release has no matching package), choose the newest published release that
+            // contains this add-on's expected ZIP. The asset's GitHub-published digest is required.
+            try
+            {
+                GitHubAddonRelease stable = ParseGitHubAddonRelease(ReadGitHubRelease(
+                    "https://api.github.com/repos/" + source.Repo + "/releases/latest"), source);
+                if (stable != null)
+                {
+                    if (!IsSha256(stable.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
+                    return stable;
+                }
+            }
+            catch (UserError e)
+            {
+                if (e.Message.IndexOf("error 404", StringComparison.OrdinalIgnoreCase) < 0) throw;
+            }
+
+            string text;
+            using (var resp = Net.Open("https://api.github.com/repos/" + source.Repo + "/releases?per_page=100",
+                                       15000, true, "GitHub", "application/vnd.github+json"))
+            using (var rd = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8)) text = rd.ReadToEnd();
+            GitHubAddonRelease newest = null;
+            foreach (object value in Json.AsList(Json.Parse(text)) ?? new List<object>())
+            {
+                GitHubAddonRelease candidate = ParseGitHubAddonRelease(Json.AsDict(value), source);
+                if (candidate != null && (newest == null || candidate.PublishedAt > newest.PublishedAt)) newest = candidate;
+            }
+            if (newest == null) throw new UserError("GitHub has no published " + source.Repo + " release ZIP matching " + source.AssetPrefix + ".");
+            if (!IsSha256(newest.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
+            return newest;
+        }
+
+        GitHubAddonRelease DynamicGitHubRelease(string url)
+        {
+            GitHubAddonRelease release;
+            return dynamicAddonReleases.TryGetValue((url ?? "").TrimEnd('/'), out release) ? release : null;
+        }
 
         void AskMirrorDates()
         {
@@ -2169,9 +2310,21 @@ namespace AzerothLauncher
                     }
                 }
                 catch (Exception) { }
+                var liveReleases = new Dictionary<string, GitHubAddonRelease>(StringComparer.OrdinalIgnoreCase);
+                foreach (string sourceUrl in new[] { AzerothStatsLatestUrl, SurvivorsDragonUiLatestUrl, KeijinUiLatestUrl, AzerothFieldKitLatestUrl,
+                                                      AstinyPlatesLatestUrl, AsBuilderLatestUrl, AzerothHubLatestUrl })
+                {
+                    try { liveReleases[sourceUrl] = ResolveGitHubAddonRelease(sourceUrl); }
+                    catch (Exception) { liveReleases[sourceUrl] = null; }
+                }
                 Ui(delegate
                 {
                     mirrorDates = dates;
+                    foreach (var release in liveReleases)
+                    {
+                        dynamicAddonReleases[release.Key] = release.Value;
+                        dynamicAddonReleaseChecked.Add(release.Key);
+                    }
                     mirrorAsking = false;
                     if (current == "Addons" && addonMode == "download") BuildPanel("Addons");
                     AutoUpdateAddons();                       // newer copies on GitHub: installed right away
@@ -2194,7 +2347,8 @@ namespace AzerothLauncher
             try
             {
                 foreach (var e in Data.Addons)
-                    if (AddonFoldersOf(e.Name).Count > 0 && AddonHasUpdate(e)) todo.Add(e);
+                    if (AddonFoldersOf(e.Name).Count > 0 &&
+                        (!IsDynamicGitHubAddonUrl(e.Url) || DynamicGitHubRelease(e.Url) != null) && AddonHasUpdate(e)) todo.Add(e);
             }
             catch (Exception) { return; }
             if (todo.Count == 0) return;
@@ -2221,6 +2375,16 @@ namespace AzerothLauncher
         {
             if (mirrorDates == null || it.Category == Data.MyAddonsCategory || !Net.IsWebAddress(it.Url)) return false;
             if (AddonSetting(AddonPins(), it.Name) != null) return false;   // rolled back on purpose: left as it is
+            if (IsDynamicGitHubAddonUrl(it.Url))
+            {
+                string sourceUrl = (it.Url ?? "").TrimEnd('/');
+                if (!dynamicAddonReleaseChecked.Contains(sourceUrl)) return false;
+                GitHubAddonRelease currentRelease = DynamicGitHubRelease(it.Url);
+                if (currentRelease == null) return true;  // keep a manual UPDATE available if the startup check failed
+                string installedRelease = Convert.ToString(AddonSetting(AddonInstalledRelease(), it.Name), CultureInfo.InvariantCulture);
+                // An older mirrored install has no release identity yet, so move it to the current upstream asset once.
+                return !string.Equals(installedRelease, currentRelease.Identity, StringComparison.OrdinalIgnoreCase);
+            }
             string file = Uri.UnescapeDataString(it.Url.Substring(it.Url.LastIndexOf('/') + 1));
             DateTime up;
             if (!mirrorDates.TryGetValue(file, out up)) return false;
@@ -2346,9 +2510,11 @@ namespace AzerothLauncher
                 // decision in the shipped catalog; do not infer it from rolling API status.
                 Image watermark = it.ForgeVerified ? SurvivorsForge.LoadWatermark(forge) : null;
                 bool verified = it.ForgeVerified;
-                var btn = update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
+                var btn = it.WorkInProgress ? new WowButton("Work in Progress", delegate { }, bw, 30, 9)
+                        : update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
+                if (it.WorkInProgress) btn.Enabled = false;
                 if (update) btn.Selected = true;
                 if (btn.Width > cw - 14) btn.Width = cw - 14;  // never wider than its block
                 int ty = 6;
@@ -2456,6 +2622,29 @@ namespace AzerothLauncher
                     foreach (Control c in inner.Controls)
                         if ((c.Tag as string) == "installed" && b != null) c.Location = new Point(7, b.Top - c.Height - 2);
                     sp.Controls.Add(card);
+                    if (items[i].WorkInProgress)
+                    {
+                        var tape = new Panel();
+                        tape.Bounds = new Rectangle(0, Math.Max(8, h / 2 - Theme.Px(13)), cw - 2, Theme.Px(26));
+                        tape.Cursor = Cursors.No;
+                        tape.AccessibleName = "Work in Progress";
+                        tape.Paint += delegate(object sender, PaintEventArgs e)
+                        {
+                            Rectangle rct = ((Control)sender).ClientRectangle;
+                            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                            using (var gold = new SolidBrush(Color.FromArgb(238, 194, 119, 34))) e.Graphics.FillRectangle(gold, rct);
+                            using (var dark = new Pen(Color.FromArgb(235, 30, 21, 15), Theme.Px(7)))
+                                for (int x = -rct.Height; x < rct.Width + rct.Height; x += Theme.Px(20))
+                                    e.Graphics.DrawLine(dark, x, rct.Height, x + rct.Height, 0);
+                            Rectangle label = new Rectangle(Theme.Px(4), Theme.Px(3), Math.Max(0, rct.Width - Theme.Px(8)), Math.Max(0, rct.Height - Theme.Px(6)));
+                            using (var backing = new SolidBrush(Color.FromArgb(238, 20, 15, 12))) e.Graphics.FillRectangle(backing, label);
+                            TextRenderer.DrawText(e.Graphics, "Work in Progress", Theme.F(8.5f, FontStyle.Bold), label,
+                                Theme.Gold, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+                        };
+                        inner.Controls.Add(tape);
+                        tape.BringToFront();
+                        addonTips.SetToolTip(tape, "Temporarily unavailable while work is in progress.");
+                    }
                 }
                 y += h + gap;
             }
@@ -2490,7 +2679,12 @@ namespace AzerothLauncher
                     if (!string.IsNullOrWhiteSpace(candidate.ForgeId)) forgeEntry = candidate;
                     break;
                 }
-            if (forgeEntry != null)
+            if (catalogEntry != null && catalogEntry.WorkInProgress)
+            {
+                SetStatus(name + " is temporarily unavailable: work in progress.");
+                return;
+            }
+            if (forgeEntry != null && !IsDynamicGitHubAddonUrl(url))
             {
                 string forgeError;
                 if (!SurvivorsForge.CanInstall(forgeEntry, out expectedForgeSha, out askForge, out forgeError))
@@ -2531,13 +2725,27 @@ namespace AzerothLauncher
             {
                 List<string> names = null;
                 string err = null;
+                string installedRelease = null;
+                GitHubAddonRelease resolvedRelease = null;
                 BuiltinAddon builtin = BuiltinAddons.Find(url);
                 try
                 {
                     if (builtin != null) { BuiltinAddons.Install(dir, builtin); names = new List<string> { builtin.Folder }; }
                     else
                     {
-                        names = Archive.InstallAddonZip(url, dir, Net.IsWebAddress(url) ? AddonArchive.NewPath(name) : null, expectedForgeSha);
+                        string downloadUrl = url;
+                        string expectedSha = expectedForgeSha;
+                        if (IsDynamicGitHubAddonUrl(url))
+                        {
+                            GitHubAddonRelease release = ResolveGitHubAddonRelease(url);
+                            if (release == null || !IsSha256(release.Sha256))
+                                throw new UserError("The latest GitHub release for " + name + " has no usable SHA-256 digest. Nothing was installed.");
+                            downloadUrl = release.Url;
+                            expectedSha = release.Sha256;
+                            installedRelease = release.Identity;
+                            resolvedRelease = release;
+                        }
+                        names = Archive.InstallAddonZip(downloadUrl, dir, Net.IsWebAddress(downloadUrl) ? AddonArchive.NewPath(name) : null, expectedSha);
                         AddonArchive.Tidy(name);              // kept for ROLLBACK (Addons › Advanced)
                     }
                 }
@@ -2569,6 +2777,13 @@ namespace AzerothLauncher
                         foreach (string n in names) rec.Add(n);
                         AddonInstalls()[name] = rec;
                         AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
+                        if (!string.IsNullOrEmpty(installedRelease)) AddonInstalledRelease()[name] = installedRelease;
+                        if (resolvedRelease != null)
+                        {
+                            string releaseUrl = (url ?? "").TrimEnd('/');
+                            dynamicAddonReleases[releaseUrl] = resolvedRelease;
+                            dynamicAddonReleaseChecked.Add(releaseUrl);
+                        }
                         AddonPins().Remove(name);            // the newest copy: no longer [Outdated]
                         ClearLegacyAddonSettings(name);
                         Cfg.Save();
@@ -2618,6 +2833,7 @@ namespace AzerothLauncher
             }
             AddonInstalls().Remove(name);
             AddonInstalledAt().Remove(name);
+            AddonInstalledRelease().Remove(name);
             ClearLegacyAddonSettings(name);
             Cfg.Save();
             SetStatus(removed.Count > 0 ? name + " uninstalled." : name + " was not installed.");
@@ -2649,7 +2865,7 @@ namespace AzerothLauncher
             foreach (var kv in new List<KeyValuePair<string, object>>(AddonInstalls()))
             {
                 var l = Json.AsList(kv.Value);
-                if (l != null && (l.Contains(folder) || all.Exists(delegate(string x) { return l.Contains(x); }))) { AddonInstalls().Remove(kv.Key); AddonInstalledAt().Remove(kv.Key); }
+                if (l != null && (l.Contains(folder) || all.Exists(delegate(string x) { return l.Contains(x); }))) { AddonInstalls().Remove(kv.Key); AddonInstalledAt().Remove(kv.Key); AddonInstalledRelease().Remove(kv.Key); }
             }
             Cfg.Save();
             SetStatus(folder + " uninstalled.");

@@ -5,4 +5,5 @@
 ## SavedVariables: AZSMinorModsDB
 AZSKit.lua
 AZSMinorModsItems.lua
+AZSMinorModsMeter.lua
 AZSMinorMods.lua

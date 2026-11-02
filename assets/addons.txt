@@ -10,20 +10,20 @@ GAMEPLAY | AZS Max Hit By ghoulcompiler | https://github.com/Slimmy25/Azeroth-Su
 MISC | Big Cursor By JamieeLee | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/BigCursor-by-JamieeLee.zip | BigCursor | Enlarges. | forge-id=bigcursor
 MISC | Move UI By Jamie | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/MoveAnything-by-JamieeLee.zip | MoveUI | Moves. | forge-id=moveui
 MISC | MoveAnything By kodfod | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/AZSMoveAnything-by-kodfod.zip | MoveAnything | Repositions. | forge-id=azsmoveanything | forge-verified=true
-UI | SurvivorsDragonUi By Mxgwyn | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/SurvivorsDragonUi-by-Mxgwyn.zip | SurvivorsDragonUi | Replaces. | forge-id=survivorsdragonui | forge-verified=true
+UI | SurvivorsDragonUi By Mxgwyn | https://github.com/migwynkriid13/SurvivorsDragonUi/releases/latest | SurvivorsDragonUi | Replaces. | forge-id=survivorsdragonui | forge-verified=true
 MISC | Azeroth Cursor By Maidenhead | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/AzerothCursor-by-Maidenhead.zip | AzerothCursor | Highlights.
 UI | Survivor UI + Classic By morderous | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/Survivor-UI-by-morderous.zip | SurvivorUI,SurvivorPlates,SurvivorUIClassic | Replaces. | forge-id=survivor-ui,survivorui-classic | forge-verified=true
-UI | Keijin UI By Keijin | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/Keijin-UI-by-Keijin.zip | KeijinUI | Replaces. | forge-id=keijinui | forge-verified=true
+UI | Keijin UI By Keijin | https://github.com/KeijinDE/KeijinUI_modern-as-ui/releases/latest | KeijinUI | Replaces. | forge-id=keijinui | forge-verified=true
 UI | AetherHUD By Rehabrocket | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/AetherHUD-by-Rehabrocket.zip | AetherHUD | Replaces. | forge-id=aetherhud | forge-verified=true
-UI | ASTinyPlates By Valorless | https://github.com/Valorless/ASTinyPlates/releases/download/v1.3.4/ASTinyPlates-v1.3.4.zip | ASTinyPlates | Resizes. | forge-id=astinyplates | forge-verified=true
+UI | ASTinyPlates By Valorless | https://github.com/Valorless/ASTinyPlates/releases/latest | ASTinyPlates | Resizes. | forge-id=astinyplates | forge-verified=true
 UI | BlackwellUI (BUI) By Blackwell | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/BlackwellUI-by-Blackwell.zip | BlackwellUI | Overhauls. | forge-id=blackwellui | forge-verified=true
-GAMEPLAY | Azeroth FieldKit By Maidenhead | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/Azeroth-FieldKit-by-Maidenhead.zip | AzerothFieldKit | Assists. | forge-id=azerothfieldkit | forge-verified=true
-MISC | Azeroth Stats By Maidenhead | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/Azeroth-Stats-by-Maidenhead.zip | AzerothStats | Tracks. | forge-id=azerothstats | forge-verified=true
+GAMEPLAY | Azeroth FieldKit By Maidenhead | https://github.com/Maidenquinn/azeroth-fieldkit/releases/latest | AzerothFieldKit | Assists. | forge-id=azerothfieldkit | forge-verified=true
+MISC | Azeroth Stats By Maidenhead | https://github.com/Maidenquinn/AzerothStats/releases/latest | AzerothStats | Tracks. | forge-id=azerothstats | forge-verified=true
 MISC | LocalClock By JamieeLee | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/LocalClock-by-JamieeLee.zip | LocalClock | Displays. | forge-id=localclock-addon
 MISC | Cursor Reticle By Muffla | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/CursorReticle-by-Muffla.zip | CursorReticle | Highlights.
-MISC | ASBuilder By Cadoky | https://github.com/cadoky/ASBuilder/releases/download/v1.10.0/ASBuilder-v1.10.0.zip | ASBuilder | Plans. | forge-id=asbuilder | forge-verified=true
-MISC | Azeroth Hub By Maidenquinn | https://github.com/Maidenquinn/AzerothHub/releases/download/v0.7.5/AzerothHub-0.7.5.zip | AzerothHub | Configures. | gallery-id=azerothhub | note=A full collection of addons featured in Survivorsforge - INGAME!
-MISC | AZS Handbook By Slimjim | builtin:AZSHandbook | AZSHandbook | Guides.
-GAMEPLAY | Slim Suite By Slimjim | builtin:AZSMinorMods | AZSMinorMods | Helps.
+MISC | ASBuilder By Cadoky | https://github.com/cadoky/ASBuilder/releases/latest | ASBuilder | Plans. | forge-id=asbuilder | forge-verified=true
+MISC | Azeroth Hub By Maidenquinn | https://github.com/Maidenquinn/AzerothHub/releases/latest | AzerothHub | Configures. | gallery-id=azerothhub | note=A full collection of addons featured in Survivorsforge - INGAME!
+MISC | AZS Handbook By Slimjim | builtin:AZSHandbook | AZSHandbook | Guides. | wip=true
+GAMEPLAY | Slim Suite By Slimjim | builtin:AZSMinorMods | AZSMinorMods | Helps. | wip=true
 WOW 1.12 ADDONS | MinimapButtonBag By Tunhadil & LaYt | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/MinimapButtonBag-by-Tunhadil-LaYt.zip | MBB | Consolidates.
 WOW 1.12 ADDONS | BugSack By Fritti & Rabbit | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/BugSack-by-Fritti-Rabbit.zip | !BugGrabber,BugSack | Displays.
