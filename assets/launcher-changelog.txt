@@ -1,3 +1,7 @@
+# v3.18 (2026-11-02)
+
+- Fixed ASTinyPlates downloads to match the creator's release ZIP filename, including its v prefix. SHA-256 verification remains enabled.
+
 # v3.17 (2026-11-01)
 
 - Added Azeroth Hub to Download More with the note “A full collection of addons featured in Survivorsforge - INGAME!”.

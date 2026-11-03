@@ -2192,7 +2192,7 @@ namespace AzerothLauncher
             if (string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = AzerothFieldKitLatestUrl, Repo = "Maidenquinn/azeroth-fieldkit", AssetPrefix = "AzerothFieldKit-" };
             if (string.Equals(normalized, AstinyPlatesLatestUrl, StringComparison.OrdinalIgnoreCase))
-                return new GitHubAddonSource { Url = AstinyPlatesLatestUrl, Repo = "Valorless/ASTinyPlates", AssetPrefix = "ASTinyPlates-" };
+                return new GitHubAddonSource { Url = AstinyPlatesLatestUrl, Repo = "Valorless/ASTinyPlates", AssetPrefix = "ASTinyPlates-v" };
             if (string.Equals(normalized, AsBuilderLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = AsBuilderLatestUrl, Repo = "cadoky/ASBuilder", AssetPrefix = "ASBuilder-" };
             if (string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase))
