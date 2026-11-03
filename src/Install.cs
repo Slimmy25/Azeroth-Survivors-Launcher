@@ -439,9 +439,45 @@ namespace AzerothLauncher
             return InstallAddonZip(url, addonDir, keepAs, null);
         }
 
-        // expectedSha256 is supplied only when an exact SurvivorsForge release-asset match was found.
+        // Resolve mirrors against their own hosting repository, not an upstream project's
+        // different ZIP or SurvivorsForge metadata. Fetch afresh so re-uploaded assets do
+        // not inherit an old digest. Locally supplied/rollback ZIPs have no release URL.
+        internal static string GitHubAssetSha256(string url)
+        {
+            Uri uri;
+            if (!Uri.TryCreate(url, UriKind.Absolute, out uri) ||
+                !string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase)) return null;
+            string[] parts = uri.AbsolutePath.Trim('/').Split('/');
+            if (uri.Scheme != "https" || parts.Length != 6 || parts[2] != "releases" || parts[3] != "download")
+                throw new UserError("This GitHub addon link must identify an exact release ZIP before it can be verified.");
+            string api = "https://api.github.com/repos/" + parts[0] + "/" + parts[1] +
+                         "/releases/tags/" + Uri.EscapeDataString(Uri.UnescapeDataString(parts[4]));
+            Dictionary<string, object> release;
+            using (var response = Net.Open(api, 15000, true, "GitHub", "application/vnd.github+json"))
+            using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                release = Json.AsDict(Json.Parse(reader.ReadToEnd()));
+            foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
+            {
+                var asset = Json.AsDict(value);
+                Uri assetUri;
+                if (!Uri.TryCreate(Json.Str(asset, "browser_download_url"), UriKind.Absolute, out assetUri) ||
+                    !string.Equals(uri.AbsoluteUri, assetUri.AbsoluteUri, StringComparison.Ordinal)) continue;
+                string digest = Json.Str(asset, "digest");
+                string sha = digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest.Substring(7) : "";
+                bool valid = sha.Length == 64;
+                foreach (char c in sha) if (!Uri.IsHexDigit(c)) valid = false;
+                if (valid) return sha;
+                throw new UserError("GitHub has no SHA-256 digest for this exact addon ZIP. Nothing was installed.");
+            }
+            throw new UserError("The configured addon ZIP is not listed in its GitHub release. Nothing was installed.");
+        }
+
+        // Callers resolving /releases/latest supply the digest from that same release asset.
+        // Direct GitHub asset URLs (including mirrored bundles) resolve their digest here.
         public static List<string> InstallAddonZip(string url, string addonDir, string keepAs, string expectedSha256)
         {
+            if (!File.Exists(url) && string.IsNullOrWhiteSpace(expectedSha256))
+                expectedSha256 = GitHubAssetSha256(url);
             Directory.CreateDirectory(addonDir);
             Directory.CreateDirectory(Util.TempDir);
             string tmp = Path.Combine(Util.TempDir, "addon_" + Guid.NewGuid().ToString("N") + ".zip");

@@ -2192,7 +2192,7 @@ namespace AzerothLauncher
             if (string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = AzerothFieldKitLatestUrl, Repo = "Maidenquinn/azeroth-fieldkit", AssetPrefix = "AzerothFieldKit-" };
             if (string.Equals(normalized, AstinyPlatesLatestUrl, StringComparison.OrdinalIgnoreCase))
-                return new GitHubAddonSource { Url = AstinyPlatesLatestUrl, Repo = "Valorless/ASTinyPlates", AssetPrefix = "ASTinyPlates-v" };
+                return new GitHubAddonSource { Url = AstinyPlatesLatestUrl, Repo = "Valorless/ASTinyPlates", AssetPrefix = "ASTinyPlates-" };
             if (string.Equals(normalized, AsBuilderLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = AsBuilderLatestUrl, Repo = "cadoky/ASBuilder", AssetPrefix = "ASBuilder-" };
             if (string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase))
@@ -2222,12 +2222,14 @@ namespace AzerothLauncher
             if (tag.Length == 0) return null;
             string version = tag.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? tag.Substring(1) : tag;
             string assetName = source.FixedAssetName ? source.AssetPrefix : source.AssetPrefix + version + ".zip";
+            string taggedAssetName = source.FixedAssetName ? assetName : source.AssetPrefix + tag + ".zip";
             string assetUrl = "", digest = "";
             foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
             {
                 Dictionary<string, object> asset = Json.AsDict(value);
                 string name = Json.Str(asset, "name");
-                if (!string.Equals(name, assetName, StringComparison.OrdinalIgnoreCase) ||
+                if ((!string.Equals(name, assetName, StringComparison.OrdinalIgnoreCase) &&
+                     !string.Equals(name, taggedAssetName, StringComparison.OrdinalIgnoreCase)) ||
                     !name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) continue;
                 assetUrl = Json.Str(asset, "browser_download_url");
                 digest = Json.Str(asset, "digest");
