@@ -1,5 +1,6 @@
 # v3.18 (2026-11-02)
 
+- SurvivorsForge provides artwork and trust/Verified labels only; addon installation no longer uses its release hashes or approval gates. Configured repository downloads and GitHub digest checks remain in place.
 - Fixed ASTinyPlates downloads to match the creator's release ZIP filename, including its v prefix. SHA-256 verification remains enabled.
 
 # v3.17 (2026-11-01)

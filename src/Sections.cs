@@ -2668,33 +2668,17 @@ namespace AzerothLauncher
         void DownloadAddon(string name, string url, Action after = null, bool quiet = false)
         {
             if (AddonsLocked()) return;
-            string expectedForgeSha = null;
-            bool askForge = false;
-            AddonEntry forgeEntry = null;
             AddonEntry catalogEntry = null;
             foreach (AddonEntry candidate in Data.Addons)
                 if (string.Equals(candidate.Name, name, StringComparison.Ordinal) && string.Equals(candidate.Url, url, StringComparison.Ordinal))
                 {
                     catalogEntry = candidate;
-                    if (!string.IsNullOrWhiteSpace(candidate.ForgeId)) forgeEntry = candidate;
                     break;
                 }
             if (catalogEntry != null && catalogEntry.WorkInProgress)
             {
                 SetStatus(name + " is temporarily unavailable: work in progress.");
                 return;
-            }
-            if (forgeEntry != null && !IsDynamicGitHubAddonUrl(url))
-            {
-                string forgeError;
-                if (!SurvivorsForge.CanInstall(forgeEntry, out expectedForgeSha, out askForge, out forgeError))
-                {
-                    Msg.Show(this, forgeError, "Addon version", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                if (askForge && !quiet && Msg.Show(this,
-                    "SurvivorsForge has not marked this exact addon version Verified. Do you still want to install it?",
-                    "Addon version", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
             }
             var conflictingOn = new List<string>();
             if (catalogEntry != null)
@@ -2734,7 +2718,7 @@ namespace AzerothLauncher
                     else
                     {
                         string downloadUrl = url;
-                        string expectedSha = expectedForgeSha;
+                        string expectedSha = null;
                         if (IsDynamicGitHubAddonUrl(url))
                         {
                             GitHubAddonRelease release = ResolveGitHubAddonRelease(url);

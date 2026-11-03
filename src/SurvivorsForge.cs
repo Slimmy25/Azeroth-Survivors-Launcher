@@ -385,28 +385,7 @@ namespace AzerothLauncher
                 ? "Verified" : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(info.Trust.Replace('_', ' '));
         }
 
-        public static bool CanInstall(AddonEntry entry, out string expectedSha256, out bool askFirst, out string error)
-        {
-            expectedSha256 = null;
-            askFirst = false;
-            error = null;
-            ForgeAddonInfo info = GetInfo(entry);
-            if (info == null) return true;                 // not enrolled: preserve the launcher's existing source path
-            // The launcher remains an independent catalog/installer. A removed Forge listing removes
-            // enrichment only; it does not invalidate the launcher's own addon source.
-            if (info.Removed) return true;
-            if (string.IsNullOrWhiteSpace(info.AssetUrl)) return true; // same addon, but this catalog file is a different version/source
-            if (string.Equals(info.Trust, "blocked", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(info.Trust, "source_changed", StringComparison.OrdinalIgnoreCase))
-            { error = "SurvivorsForge does not allow installing this exact addon version."; return false; }
-            if (string.IsNullOrWhiteSpace(info.Sha256))
-            { error = "SurvivorsForge has not published a SHA-256 for this addon version, so it cannot be installed yet."; return false; }
-            expectedSha256 = info.Sha256;
-            askFirst = !entry.ForgeVerified &&
-                       (string.Equals(info.Trust, "flagged", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(info.Trust, "unscanned", StringComparison.OrdinalIgnoreCase));
-            return true;
-        }
+
 
         public static void PrepareDownloadPage(IList<AddonEntry> entries, Action completed)
         {
