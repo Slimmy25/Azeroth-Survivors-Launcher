@@ -21,7 +21,7 @@ These projects deserve a place up front:
 
 ## Inside the launcher
 
-- **Install and play:** guided setup, game downloads, and updates.
+- **Install and play:** guided setup, game downloads, updates, and a built-in ZIP/7z/RAR extractor. The extractor is bundled in the launcher, so game installation does not require a separate archive program.
 - **Addons:** browse community addons and manage your installed collection.
   - **Download More** shows available SurvivorsForge pictures and the launcher’s static Verified marks; it does not download addons from SurvivorsForge.
   - AZSSpellMeter and AZS Max Hit are alternatives; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.

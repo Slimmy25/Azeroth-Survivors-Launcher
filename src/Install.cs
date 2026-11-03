@@ -1,12 +1,14 @@
 // Downloads, unpacking archives, installing the game client and addons.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
 using System.Threading;
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 
 namespace AzerothLauncher
 {
@@ -242,84 +244,148 @@ namespace AzerothLauncher
             return tops;
         }
 
-        // Programs that can unpack a .rar / .7z here, in the order they are tried.
-        static List<string[]> Tools()
+        // Extracts game archives with bundled managed code. No executable or archive utility is
+        // searched for or started on the player's computer.
+        static void ExtractManaged(string path, string dest)
         {
-            var roots = new List<string>();
-            foreach (string k in new[] { "ProgramFiles", "ProgramFiles(x86)", "ProgramW6432" })
+            string root = Path.GetFullPath(dest);
+            string rootPrefix = root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            var entries = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            var written = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var parentDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            using (IArchive archive = ArchiveFactory.OpenArchive(path))
             {
-                string v = Environment.GetEnvironmentVariable(k);
-                if (!string.IsNullOrEmpty(v) && !roots.Contains(v)) roots.Add(v);
+                if (archive.IsEncrypted)
+                    throw new UserError("The game archive is password-protected. Please use an unencrypted game download.");
+                if (!archive.IsComplete)
+                    throw new UserError("The game archive is incomplete or needs another archive part. Nothing was installed.");
+
+                // Validate every path and link before writing any archive contents.
+                foreach (IArchiveEntry entry in archive.Entries)
+                {
+                    string relative = SafeArchivePath(entry.Key, entry.IsDirectory, entry.LinkTarget);
+                    if (entries.ContainsKey(relative))
+                        throw new UserError("The game archive contains duplicate or conflicting file paths. Nothing was installed.");
+                    string[] parts = relative.Split(Path.DirectorySeparatorChar);
+                    string parentPath = "";
+                    for (int i = 0; i < parts.Length - 1; i++)
+                    {
+                        parentPath = parentPath.Length == 0 ? parts[i] : Path.Combine(parentPath, parts[i]);
+                        bool parentIsDirectory;
+                        parentDirectories.Add(parentPath);
+                        if (entries.TryGetValue(parentPath, out parentIsDirectory) && !parentIsDirectory)
+                            throw new UserError("The game archive contains conflicting file paths. Nothing was installed.");
+                    }
+                    if (!entry.IsDirectory && parentDirectories.Contains(relative))
+                        throw new UserError("The game archive contains conflicting file paths. Nothing was installed.");
+                    string target = Path.GetFullPath(Path.Combine(root, relative));
+                    if (!target.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase))
+                        throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+                    entries.Add(relative, entry.IsDirectory);
+                }
+
+                // Non-solid archives expose independent entry streams; solid/7z archives
+                // must be read in sequence to avoid repeatedly decompressing earlier files.
+                if (!archive.IsSolid && archive.Type != ArchiveType.SevenZip)
+                {
+                    foreach (IArchiveEntry entry in archive.Entries)
+                    {
+                        string relative = SafeArchivePath(entry.Key, entry.IsDirectory, entry.LinkTarget);
+                        string target = Path.GetFullPath(Path.Combine(root, relative));
+                        if (!target.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase))
+                            throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+                        if (entry.IsDirectory) { Directory.CreateDirectory(target); continue; }
+                        Directory.CreateDirectory(Path.GetDirectoryName(target));
+                        using (Stream input = entry.OpenEntryStream())
+                        using (var output = new FileStream(target, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                            input.CopyTo(output);
+                    }
+                    return;
+                }
+
+                using (IReader reader = archive.ExtractAllEntries())
+                {
+                    int count = 0;
+                    while (reader.MoveToNextEntry())
+                    {
+                        if (count >= entries.Count)
+                            throw new UserError("The archive contents changed while extracting. Nothing was installed.");
+                        string readerPath = SafeArchivePath(reader.Entry.Key, reader.Entry.IsDirectory, reader.Entry.LinkTarget);
+                        bool isDirectory;
+                        if (!entries.TryGetValue(readerPath, out isDirectory) || !written.Add(readerPath) ||
+                            reader.Entry.IsDirectory != isDirectory)
+                            throw new UserError("The archive contents changed while extracting. Nothing was installed.");
+                        count++;
+                        string target = Path.GetFullPath(Path.Combine(root, readerPath));
+                        if (!target.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase))
+                            throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+
+                        if (isDirectory || reader.Entry.IsDirectory)
+                        {
+                            Directory.CreateDirectory(target);
+                            continue;
+                        }
+
+                        string parent = Path.GetDirectoryName(target);
+                        if (!string.IsNullOrEmpty(parent)) Directory.CreateDirectory(parent);
+                        using (var output = new FileStream(target, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                            reader.WriteEntryTo(output);
+                    }
+                    if (count != entries.Count)
+                        throw new UserError("The archive contents changed while extracting. Nothing was installed.");
+                }
             }
-            var list = new List<string[]>();      // { exe, kind }
-            foreach (string n in new[] { "7z.exe", "7za.exe", "7zr.exe" }) list.Add(new[] { Path.Combine(Util.LauncherDir, n), "7z" });
-            foreach (string r in roots) list.Add(new[] { Path.Combine(r, "7-Zip", "7z.exe"), "7z" });
-            foreach (string n in new[] { "UnRAR.exe" }) list.Add(new[] { Path.Combine(Util.LauncherDir, n), "unrar" });
-            foreach (string r in roots)
-            {
-                list.Add(new[] { Path.Combine(r, "WinRAR", "UnRAR.exe"), "unrar" });
-                list.Add(new[] { Path.Combine(r, "WinRAR", "WinRAR.exe"), "unrar" });
-            }
-            string sysroot = Environment.GetEnvironmentVariable("SystemRoot") ?? @"C:\Windows";
-            list.Add(new[] { Path.Combine(sysroot, "System32", "tar.exe"), "tar" });   // Windows 10/11's own tar reads many .rar files
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var outList = new List<string[]>();
-            foreach (var t in list)
-                if (seen.Add(t[0]) && File.Exists(t[0])) outList.Add(t);
-            return outList;
         }
 
-        static string Quote(string s) { return "\"" + s + "\""; }
+        static string SafeArchivePath(string key, bool isDirectory, string linkTarget)
+        {
+            if (string.IsNullOrEmpty(key) || linkTarget != null)
+                throw new UserError("The game archive contains an empty path or symbolic link. Nothing was installed.");
+
+            string path = key.Replace('\\', '/');
+            if (path.StartsWith("/", StringComparison.Ordinal) || path.IndexOf(':') >= 0)
+                throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+            if (path.EndsWith("/", StringComparison.Ordinal))
+            {
+                if (!isDirectory) throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+                path = path.Substring(0, path.Length - 1);
+            }
+
+            string[] parts = path.Split('/');
+            if (parts.Length == 0) throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+            char[] invalid = Path.GetInvalidFileNameChars();
+            for (int i = 0; i < parts.Length; i++)
+            {
+                string part = parts[i];
+                if (part.Length == 0 || part == "." || part == ".." || part.EndsWith(".", StringComparison.Ordinal) ||
+                    part.EndsWith(" ", StringComparison.Ordinal))
+                    throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+                foreach (char c in part)
+                    if (Array.IndexOf(invalid, c) >= 0)
+                        throw new UserError("The game archive contains an unsafe path. Nothing was installed.");
+
+                string device = part.Split('.')[0].TrimEnd(' ', '.').ToUpperInvariant();
+                if (device == "CON" || device == "PRN" || device == "AUX" || device == "NUL" ||
+                    (device.Length == 4 && (device.StartsWith("COM", StringComparison.Ordinal) || device.StartsWith("LPT", StringComparison.Ordinal)) &&
+                     device[3] >= '1' && device[3] <= '9'))
+                    throw new UserError("The game archive contains a reserved Windows file name. Nothing was installed.");
+            }
+            return string.Join(Path.DirectorySeparatorChar.ToString(), parts);
+        }
 
         public static void Extract(string path, string dest, string kind)
         {
             Directory.CreateDirectory(dest);
-            if (kind == "zip")
+            if (kind != "zip" && kind != "rar" && kind != "7z")
+                throw new UserError("The game archive format is not supported by the built-in extractor.");
+            try { ExtractManaged(path, dest); }
+            catch (UserError) { throw; }
+            catch (IOException) { throw; }
+            catch (Exception e)
             {
-                ExtractZip(path, dest);
-                return;
+                throw new UserError("The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.", e);
             }
-            var tools = Tools();
-            if (tools.Count == 0)
-                throw new UserError("The file is a ." + kind + " archive, and no program to unpack it was found.\n\n" +
-                                    "Install the free 7-Zip (7-zip.org) or WinRAR and try again.");
-            var problems = new List<string>();
-            foreach (var t in tools)
-            {
-                string args;
-                if (t[1] == "7z") args = "x -y " + Quote("-o" + dest) + " " + Quote(path);
-                else if (t[1] == "unrar") args = "x -y -o+ -ibck " + Quote(path) + " " + Quote(dest.TrimEnd('\\') + "\\");
-                else args = "-xf " + Quote(path) + " -C " + Quote(dest);
-                try
-                {
-                    var psi = new ProcessStartInfo(t[0], args);
-                    psi.UseShellExecute = false;
-                    psi.CreateNoWindow = true;
-                    psi.RedirectStandardOutput = true;
-                    psi.RedirectStandardError = true;
-                    using (Process p = Process.Start(psi))
-                    {
-                        // read both streams on their own threads so a chatty tool never blocks
-                        string err = "";
-                        var errThread = new Thread(delegate() { try { err = p.StandardError.ReadToEnd(); } catch (Exception) { } });
-                        errThread.IsBackground = true;
-                        errThread.Start();
-                        string output = p.StandardOutput.ReadToEnd();
-                        p.WaitForExit();
-                        errThread.Join(5000);
-                        if (p.ExitCode == 0) return;
-                        string msg = (err.Trim().Length > 0 ? err : output).Trim();
-                        if (msg.Length > 160) msg = msg.Substring(0, 160);
-                        problems.Add(Path.GetFileName(t[0]) + ": " + (msg.Length > 0 ? msg : "exit code " + p.ExitCode));
-                    }
-                }
-                catch (Exception e)
-                {
-                    problems.Add(Path.GetFileName(t[0]) + ": " + e.Message);
-                }
-            }
-            if (problems.Count > 4) problems.RemoveRange(4, problems.Count - 4);
-            throw new UserError("The archive could not be unpacked.\n\n" + string.Join("\n", problems));
         }
 
         // The newest recently downloaded .rar/.zip/.7z in the launcher's folder or Downloads

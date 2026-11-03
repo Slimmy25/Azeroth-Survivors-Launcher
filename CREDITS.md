@@ -82,6 +82,12 @@ The stone-and-night-sky window, metal trim and button surfaces are original laun
 
 ## Code
 
+### Built-in archive extraction: SharpCompress
+
+Game-client ZIP, 7z and RAR archives are unpacked using the managed **SharpCompress 0.50.7** library, embedded in the launcher executable with its required Microsoft .NET assemblies. The extractor checks archive paths before writing and rejects links and unsafe names. It does not launch 7-Zip, WinRAR, or another installed utility.
+
+SharpCompress source: <https://github.com/adamhathcock/sharpcompress> (MIT license; pinned source commit and notices are in `vendor/SharpCompress/THIRD-PARTY-NOTICES.md`). The launcher bundles `Microsoft.Bcl.AsyncInterfaces` 8.0.0, `System.Text.Encoding.CodePages` 8.0.0, `System.Threading.Tasks.Extensions` 4.5.4, `System.Memory` 4.5.5, `System.Runtime.CompilerServices.Unsafe` 6.0.0, `System.Buffers` 4.5.1 and `System.Numerics.Vectors` 4.5.0. Their source, package links and license notices are recorded alongside the bundled assemblies.
+
 ### Cloud sync: KeijinDE
 The launcher's cloud sync (`src/Sync.cs`) is built on the sync framework by **KeijinDE**, used with his blessing.
 Original project: <https://github.com/KeijinDE/ASDataSync>

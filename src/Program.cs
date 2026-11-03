@@ -49,6 +49,7 @@ namespace AzerothLauncher
         [STAThread]
         static void Main(string[] args)
         {
+            EmbeddedLibraries.Register();
             NativeDisplay.Enable();
             int scalingPreview = Array.IndexOf(args, "--preview-scaling");
             if (scalingPreview >= 0 && args.Length > scalingPreview + 1)
