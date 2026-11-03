@@ -1,3 +1,7 @@
+# v3.19 (2026-11-02)
+
+- Fixed addon installs incorrectly comparing launcher-hosted ZIPs against unrelated SurvivorsForge release hashes. SurvivorsForge remains an artwork and trust-label source only.
+
 # v3.18 (2026-11-02)
 
 - SurvivorsForge provides artwork and trust/Verified labels only; addon installation no longer uses its release hashes or approval gates. Configured repository downloads and GitHub digest checks remain in place.
