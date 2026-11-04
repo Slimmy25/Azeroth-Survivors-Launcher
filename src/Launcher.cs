@@ -117,7 +117,7 @@ namespace AzerothLauncher
                 if (n == "Changelog") continue;              // on the News line (below)
                 Action open = n == "Theorycrafting" ? (Action)delegate { GuideGroupPage(2); } :
                               n == "New Player Handbook" ? (Action)delegate { GuideGroupPage(0); } : delegate { if(n=="Addons" && addonUpdateCount>0) OpenAddonUpdates(); else OpenMain(n); };   // dedicated guide destinations
-                nav[n] = Place(n=="Addons" ? new AddonUpdateNavButton(n.ToUpperInvariant(),open,PaintAddonUpdateBadge) : new WowButton(n.ToUpperInvariant(), open, 128, 27, 8.5f), 693, 480);
+                nav[n] = Place(n=="Addons" ? new AddonUpdateNavButton(NavLabel(n),open,PaintAddonUpdateBadge) : new WowButton(NavLabel(n), open, 128, 27, 8.5f), 693, 480);
                 nav[n].Skin = Retro.Button;
             }
             // UPDATE LAUNCHER and ABOUT LAUNCHER live in Options > Launcher now; these two stay hidden and carry their state
@@ -576,7 +576,8 @@ namespace AzerothLauncher
             if (compactNavigation != null) compactNavigation.Visible = false;
             int left = CompactDisplay ? U(6) : ResponsiveNewsRect.Left;
             int width = CompactDisplay ? W - U(12) : W - left - U(10);
-            int top = FooterTop - NavHeight + U(20), gap = U(5);
+            // the buttons sit on the bottom border; the Navigation header rides above them
+            int top = FooterTop - NavHeight + U(24), gap = U(5);
             int buttonWidth = Math.Max(U(65), (width - gap * 2) / 3);
             int k = 0;
             foreach (string name in navNames)
@@ -590,6 +591,14 @@ namespace AzerothLauncher
             if (strip != null) LayoutStrip();
         }
 
+
+        // Display names only: the logic keeps its internal section names.
+        static string NavLabel(string name)
+        {
+            if (name == "Guide") return "WIKI";
+            if (name == "New Player Handbook") return "BEGINNER GUIDE";
+            return name.ToUpperInvariant();
+        }
 
         public void RefreshPlayLabel()
         {

@@ -100,7 +100,7 @@ namespace AzerothLauncher
         bool CompactDisplay { get { return W < U(980); } }
         int HeaderBottom { get { return CompactDisplay ? Math.Max(50, Math.Min(U(80), (int)(H * .15f))) : Math.Max(U(74), Math.Min(U(196), (int)(H * .26f))); } }
         int FooterTop { get { return H - Math.Min(U(108), (int)(H * .17f)); } }
-        int NavHeight { get { return CompactDisplay ? 0 : U(118); } }
+        int NavHeight { get { return CompactDisplay ? 0 : U(86); } }
         Rectangle ResponsiveSideRect
         {
             get
@@ -430,7 +430,7 @@ namespace AzerothLauncher
                     if (!CompactDisplay)
                     {
                         graphics.DrawString(Lang.T("News"), Theme.F(11), gold, discordIcon.Right + U(6), HeaderBottom + U(6));
-                        graphics.DrawString(Lang.T("Launcher"), Theme.F(11), gold, ResponsiveNewsRect.Left, FooterTop - NavHeight - U(3));
+                        graphics.DrawString(Lang.T("Navigation"), Theme.F(11), gold, ResponsiveNewsRect.Left, FooterTop - NavHeight + U(4));
                         // Divider under the heart/Discord/News and Changelog header row.
                         // Keep it just above the scrolling patch-note area at every scale.
                         using (var divider = new Pen(Theme.GoldDim, Math.Max(1, U(1))))
