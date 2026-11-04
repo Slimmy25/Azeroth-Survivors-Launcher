@@ -57,7 +57,7 @@ namespace AzerothLauncher
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "AZSMinorMods" },
                            Why = "both set raid marks on bosses and party members" },
             // The interfaces (Download More > UI) that replace the same parts of the game conflict. Survivor UI and
-            // SurvivorUI Classic are distributed and toggled as one bundle; their author provides the in-game chooser.
+            // SurvivorUI Classic are the one exception: they work together, so no pair below joins them.
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "SurvivorsDragonUi" },
                            Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "SurvivorUIClassic" }, Other = new[] { "SurvivorsDragonUi" },
