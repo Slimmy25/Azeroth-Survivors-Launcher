@@ -3889,6 +3889,7 @@ namespace AzerothLauncher
                                    20 + langBtn.Width + 12, y + 2, PW - 40 - langBtn.Width - 12, false);
             y = Math.Max(BottomOf(langBtn), BottomOf(langNote)) + 8;
             row("RUN SETUP AGAIN", delegate { RunSetup(); }, "The first-time setup's steps again, with your settings as they are.");
+            row("ERROR LOG", delegate { ShowErrorLogBubble(); }, "Shows what the launcher logged, in plain words, with a COPY button for sending it to others.");
             row(Lang.T("ABOUT LAUNCHER"), delegate { optionsAbout = true; optionsLang = false; BuildPanel("Options"); },
                 "What the launcher does and how its parts fit together.");
             return y;                                                     // play time: on the home screen, under the Launcher buttons
