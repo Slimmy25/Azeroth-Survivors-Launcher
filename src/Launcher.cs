@@ -132,6 +132,9 @@ namespace AzerothLauncher
             discordIcon.Bounds = new Rectangle(725, 203, 26, 20);
             nav["Changelog"] = Place(new WowButton("CHANGELOG", delegate { OpenMain("Changelog"); }, 110, 22, 8), 1085 - 110, 201);
             nav["Changelog"].Skin = Retro.Button;
+            var errorLogBtn = Place(new WowButton("ERROR LOG", delegate { ShowErrorLogBubble(); }, 110, 22, 8), 12, 640);
+            errorLogBtn.Skin = Retro.Button;
+            errorLogBtn.Tip = "Shows what the launcher logged, in plain words, with a copy button.";
             discordIcon.Click += delegate { Util.OpenInShell(DiscordUrl); };
             Controls.Add(discordIcon);
             // the enlarged support heart, followed immediately by the Discord icon
@@ -938,7 +941,7 @@ namespace AzerothLauncher
                 string logf = Path.Combine(Util.StateDir, "log.txt");
                 if (File.Exists(logf) && new FileInfo(logf).Length > 1000000)
                     Util.Replace(logf, Path.Combine(Util.StateDir, "log.old.txt"));
-                File.AppendAllText(logf, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ", CultureInfo.InvariantCulture) + msg + "\r\n",
+                File.AppendAllText(logf, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ", CultureInfo.InvariantCulture) + "[" + level + "] " + msg + "\r\n",
                                    Encoding.UTF8);
             }
             catch (Exception) { }
