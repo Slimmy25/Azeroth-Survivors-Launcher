@@ -580,6 +580,7 @@ namespace AzerothLauncher
             if (string.Equals(id, "azerothhub", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerothhub.png" : null;
             if (string.Equals(id, "creedui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "creedui.png" : null;
             if (string.Equals(id, "azerothcursor", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerothcursor.png" : null;
+            if (string.Equals(id, "bigcursor", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "bigcursor.png" : null;
             return null;
         }
 
