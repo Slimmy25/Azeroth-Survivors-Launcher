@@ -809,7 +809,7 @@ namespace AzerothLauncher
     // ------------------------------------------------------------------ built-in data
     public class AddonEntry
     {
-        public string Category, Name, Url, Description, ForgeId, GalleryId, Note;
+        public string Category, Name, Url, Description, ForgeId, GalleryId, Note, AssetPrefix;   // AssetPrefix: asset=<start of the ZIP name>, optional
         public bool ForgeVerified, WorkInProgress; // catalog review flag and temporary install availability
         public List<string> ForgeIds = new List<string>();
         public List<string> Folders = new List<string>();    // its folders in the AddOns folder (addons.txt's 4th field)
@@ -1017,6 +1017,7 @@ namespace AzerothLauncher
                     while (descriptionEnd > 4 && (f[descriptionEnd - 1].Trim().StartsWith("forge-", StringComparison.OrdinalIgnoreCase) ||
                                                    f[descriptionEnd - 1].Trim().StartsWith("gallery-", StringComparison.OrdinalIgnoreCase) ||
                                                    f[descriptionEnd - 1].Trim().StartsWith("note=", StringComparison.OrdinalIgnoreCase) ||
+                                                   f[descriptionEnd - 1].Trim().StartsWith("asset=", StringComparison.OrdinalIgnoreCase) ||
                                                    f[descriptionEnd - 1].Trim().StartsWith("wip=", StringComparison.OrdinalIgnoreCase)))
                     {
                         string meta = f[descriptionEnd - 1].Trim();
@@ -1036,6 +1037,8 @@ namespace AzerothLauncher
                             e.GalleryId = meta.Substring("gallery-id=".Length).Trim();
                         else if (meta.StartsWith("note=", StringComparison.OrdinalIgnoreCase))
                             e.Note = meta.Substring("note=".Length).Trim();
+                        else if (meta.StartsWith("asset=", StringComparison.OrdinalIgnoreCase))
+                            e.AssetPrefix = meta.Substring("asset=".Length).Trim();
                         else if (meta.StartsWith("wip=", StringComparison.OrdinalIgnoreCase))
                             e.WorkInProgress = string.Equals(meta.Substring("wip=".Length).Trim(), "true", StringComparison.OrdinalIgnoreCase);
                         else break;

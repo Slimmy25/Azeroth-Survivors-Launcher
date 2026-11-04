@@ -1,3 +1,10 @@
+# v3.22 (2026-11-03)
+
+- Addons: the launcher now checks the newest release of any addon's GitHub repository from the catalog and installs it after its SHA-256 digest checks out. Authors no longer need a launcher update for a new version.
+- Addons: 12 catalog entries now point at their author's release page (Azerloot, LuckyOdds, AZSSpellMeter, AZS Max Hit, Big Cursor, Move UI, MoveAnything, Azeroth Cursor, AetherHUD, BlackwellUI, LocalClock, Cursor Reticle).
+- Addons: a catalog line may set asset=<start of the ZIP name> when a release has several ZIPs.
+- Survivor UI + Classic stays on the launcher mirror until its two repositories are supported together.
+
 # v3.21 (2026-11-03)
 
 - Whisper box redesigned: your portrait sits in a circle in the header, with a lighter header strip and a smaller, denser text list.

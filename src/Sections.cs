@@ -2166,6 +2166,8 @@ namespace AzerothLauncher
         static bool IsDynamicGitHubAddonUrl(string url)
         {
             string normalized = (url ?? "").TrimEnd('/');
+            string anyRepo;
+            if (TryGitHubLatestRepo(normalized, out anyRepo)) return true;
             return string.Equals(normalized, AzerothStatsLatestUrl, StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(normalized, SurvivorsDragonUiLatestUrl, StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(normalized, KeijinUiLatestUrl, StringComparison.OrdinalIgnoreCase) ||
@@ -2179,6 +2181,32 @@ namespace AzerothLauncher
         {
             public string Url, Repo, AssetPrefix;
             public bool FixedAssetName;
+            public bool Generic;   // any repo's releases/latest from the catalog: the ZIP is chosen by rule
+        }
+
+        // https://github.com/<owner>/<repo>/releases/latest -> "owner/repo"
+        static bool TryGitHubLatestRepo(string url, out string repo)
+        {
+            repo = null;
+            string u = (url ?? "").TrimEnd('/');
+            const string prefix = "https://github.com/";
+            const string suffix = "/releases/latest";
+            if (!u.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) || !u.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) return false;
+            string middle = u.Substring(prefix.Length, u.Length - prefix.Length - suffix.Length);
+            string[] parts = middle.Split('/');
+            if (parts.Length != 2 || parts[0].Length == 0 || parts[1].Length == 0) return false;
+            repo = parts[0] + "/" + parts[1];
+            return true;
+        }
+
+        // asset=<start of the ZIP name> from the catalog line for this URL, or null
+        static string AssetPrefixFor(string url)
+        {
+            string normalized = (url ?? "").TrimEnd('/');
+            foreach (AddonEntry entry in Data.Addons)
+                if (string.Equals((entry.Url ?? "").TrimEnd('/'), normalized, StringComparison.OrdinalIgnoreCase))
+                    return string.IsNullOrEmpty(entry.AssetPrefix) ? null : entry.AssetPrefix;
+            return null;
         }
 
         static GitHubAddonSource GitHubAddonSourceFor(string url)
@@ -2198,6 +2226,9 @@ namespace AzerothLauncher
                 return new GitHubAddonSource { Url = AsBuilderLatestUrl, Repo = "cadoky/ASBuilder", AssetPrefix = "ASBuilder-" };
             if (string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = AzerothHubLatestUrl, Repo = "Maidenquinn/AzerothHub", AssetPrefix = "AzerothHub-" };
+            string anyRepo;
+            if (TryGitHubLatestRepo(normalized, out anyRepo))
+                return new GitHubAddonSource { Url = normalized, Repo = anyRepo, AssetPrefix = AssetPrefixFor(normalized), Generic = true };
             return null;
         }
 
@@ -2213,8 +2244,44 @@ namespace AzerothLauncher
             return Archive.ReadGitHubReleaseMetadata(apiUrl, refresh);
         }
 
+        // Any repo from the catalog: the newest release's only ZIP, or the ZIP named after the repo when there are several.
+        // A catalog asset= prefix limits the choice first. The digest is still required.
+        static GitHubAddonRelease ParseGenericGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
+        {
+            if (release == null || string.Equals(Json.Str(release, "draft"), "True", StringComparison.OrdinalIgnoreCase)) return null;
+            string tag = Json.Str(release, "tag_name");
+            if (tag.Length == 0) return null;
+            var zips = new List<Dictionary<string, object>>();
+            foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
+            {
+                Dictionary<string, object> asset = Json.AsDict(value);
+                string name = Json.Str(asset, "name");
+                if (!name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) continue;
+                if (source.AssetPrefix != null && !name.StartsWith(source.AssetPrefix, StringComparison.OrdinalIgnoreCase)) continue;
+                zips.Add(asset);
+            }
+            Dictionary<string, object> chosen = null;
+            if (zips.Count == 1) chosen = zips[0];
+            else
+            {
+                string repoName = source.Repo.Substring(source.Repo.IndexOf('/') + 1);
+                foreach (Dictionary<string, object> asset in zips)
+                    if (Json.Str(asset, "name").IndexOf(repoName, StringComparison.OrdinalIgnoreCase) >= 0) { chosen = asset; break; }
+            }
+            if (chosen == null) return null;
+            string sha = Json.Str(chosen, "digest");
+            sha = sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? sha.Substring(7) : "";
+            if (!IsSha256(sha)) sha = "";
+            DateTime published;
+            if (!DateTime.TryParse(Json.Str(release, "published_at"), CultureInfo.InvariantCulture,
+                                   DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out published))
+                published = DateTime.MinValue;
+            return new GitHubAddonRelease { Tag = tag, Url = Json.Str(chosen, "browser_download_url"), Sha256 = sha, PublishedAt = published };
+        }
+
         static GitHubAddonRelease ParseGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
         {
+            if (source.Generic) return ParseGenericGitHubAddonRelease(release, source);
             if (release == null || string.Equals(Json.Str(release, "draft"), "True", StringComparison.OrdinalIgnoreCase)) return null;
             string tag = Json.Str(release, "tag_name");
             if (tag.Length == 0) return null;
