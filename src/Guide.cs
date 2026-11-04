@@ -246,7 +246,7 @@ namespace AzerothLauncher
             new[] { "New Player Handbook", "Getting Started", "Controls", "Your First Run", "Tips for New Players", "Pickups, Caches & Guardians",
                     "Zones & Bosses", "Heroic & Endless", "Talents", "Gear & the Armory", "Addons", "Achievements & Rewards", "Level-Ups & Cards", "Co-op", "Races" },
             new[] { "Wiki", "Classes", "Items", "Transmog" },
-            new[] { "THEORYCRAFTING", CombinedBuilder, "Build Guides", "Build Videos" },
+            new[] { "THEORYCRAFTING", CombinedBuilder, "Build Guides" },
         };
         int guideGroup;                                       // the group whose tabs are shown
         bool guideMain = true;                                // the landing page for the current guide destination
