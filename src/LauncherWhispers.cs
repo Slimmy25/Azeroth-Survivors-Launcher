@@ -174,7 +174,8 @@ namespace AzerothLauncher
             get
             {
                 int top = Math.Min(HeaderBottom / 3, U(55)) + U(5);
-                return new Rectangle(NewsArea.Left, top, NewsTextW, Math.Max(0, FeedbackFieldBounds.Top - U(4) - top));
+                // runs to the end of the news column, so its right edge sits snug against the launcher's right side
+                return new Rectangle(NewsArea.Left, top, NewsArea.Width, Math.Max(0, FeedbackFieldBounds.Top - U(4) - top));
             }
         }
 
