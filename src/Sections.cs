@@ -133,24 +133,34 @@ namespace AzerothLauncher
             Invalidate();
         }
 
-        // Header order, right to left: Favorites star, then the universal close X, then "Lost?"
-        int TrailW { get { return FavoriteClicked != null ? Theme.Px(22) : 0; } }
-        Rectangle CloseBox { get { return closable ? new Rectangle(Width - Theme.Px(27) - TrailW, Theme.Px(9), Theme.Px(18), Theme.Px(18)) : Rectangle.Empty; } }
-        // "Lost?" beside the X: for anyone not sure how to get around (its width follows the word in the language)
-        int HelpW { get { return Theme.Px(26) + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
-        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? Theme.Px(32) : Theme.Px(9)) - TrailW - HelpW, Theme.Px(9), HelpW, Theme.Px(18)) : Rectangle.Empty; } }
-        public Point HelpScreenAnchor { get { Rectangle box = HelpBox; return box.IsEmpty ? PointToScreen(Point.Empty) : PointToScreen(new Point(box.Left + box.Width / 2, box.Bottom)); } }
-        public Rectangle HelpScreenBounds { get { Rectangle box = HelpBox; return box.IsEmpty ? Rectangle.Empty : RectangleToScreen(box); } }
-        Rectangle BackBox { get { return BackClicked != null ? new Rectangle(Theme.Px(44),Theme.Px(8),Theme.Px(30),Theme.Px(20)) : Rectangle.Empty; } }
+        // Header buttons, left to right: LOST, Favorites, Close. Each is a square at the top right of the bar.
+        const int HeaderButton = 22, HeaderGap = 4;
+        int HeaderRight { get { return Width - Theme.Px(10); } }
+        Rectangle CloseBox { get { return closable ? new Rectangle(HeaderRight - Theme.Px(HeaderButton), Theme.Px(8), Theme.Px(HeaderButton), Theme.Px(HeaderButton)) : Rectangle.Empty; } }
         Rectangle FavoriteBox
         {
             get
             {
                 if (FavoriteClicked == null) return Rectangle.Empty;
-                // Far right edge of every menu header, so the star always sits in the same spot
-                return new Rectangle(Width - Theme.Px(27), Theme.Px(8), Theme.Px(18), Theme.Px(20));
+                int right = (closable ? CloseBox.Left : HeaderRight) - Theme.Px(HeaderGap);
+                return new Rectangle(right - Theme.Px(HeaderButton), Theme.Px(8), Theme.Px(HeaderButton), Theme.Px(HeaderButton));
             }
         }
+        // "Lost?" beside the X: for anyone not sure how to get around (its width follows the word in the language)
+        int HelpW { get { return Theme.Px(26) + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
+        Rectangle HelpBox
+        {
+            get
+            {
+                if (HelpClicked == null || !helpShown) return Rectangle.Empty;
+                Rectangle next = !FavoriteBox.IsEmpty ? FavoriteBox : (closable ? CloseBox : Rectangle.Empty);
+                int right = (next.IsEmpty ? HeaderRight : next.Left) - Theme.Px(HeaderGap);
+                return new Rectangle(right - HelpW, Theme.Px(8), HelpW, Theme.Px(HeaderButton));
+            }
+        }
+        public Point HelpScreenAnchor { get { Rectangle box = HelpBox; return box.IsEmpty ? PointToScreen(Point.Empty) : PointToScreen(new Point(box.Left + box.Width / 2, box.Bottom)); } }
+        public Rectangle HelpScreenBounds { get { Rectangle box = HelpBox; return box.IsEmpty ? Rectangle.Empty : RectangleToScreen(box); } }
+        Rectangle BackBox { get { return BackClicked != null ? new Rectangle(Theme.Px(44),Theme.Px(8),Theme.Px(30),Theme.Px(20)) : Rectangle.Empty; } }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -254,8 +264,9 @@ namespace AzerothLauncher
             using (var p = new Pen(closeEnabled ? Theme.Hex("#d6a640") : Theme.Hex("#6f6658"), 2)) g.DrawRectangle(p, xb);
             using (var p = new Pen(closeEnabled ? Theme.Hex("#e53a22") : Theme.Hex("#79736b"), 3))
             {
-                g.DrawLine(p, xb.X + 5, xb.Y + 5, xb.X + 13, xb.Y + 13);
-                g.DrawLine(p, xb.X + 13, xb.Y + 5, xb.X + 5, xb.Y + 13);
+                int inset = Theme.Px(6);
+                g.DrawLine(p, xb.X + inset, xb.Y + inset, xb.Right - inset - 1, xb.Bottom - inset - 1);
+                g.DrawLine(p, xb.Right - inset - 1, xb.Y + inset, xb.X + inset, xb.Bottom - inset - 1);
             }
         }
 

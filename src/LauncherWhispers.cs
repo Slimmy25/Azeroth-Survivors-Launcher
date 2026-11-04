@@ -187,7 +187,7 @@ namespace AzerothLauncher
             whisperWheelRemainder += delta;
             int notches = whisperWheelRemainder / 120;
             whisperWheelRemainder -= notches * 120;
-            whisperScroll = Math.Max(0, Math.Min(whisperScrollLimit, whisperScroll - notches * U(30)));
+            whisperScroll = Math.Max(0, Math.Min(whisperScrollLimit, whisperScroll + notches * U(30)));
             Invalidate(WhisperArea);
             return true;
         }
@@ -195,10 +195,12 @@ namespace AzerothLauncher
         void DrawLauncherWhispers(Graphics graphics)
         {
             Rectangle area = WhisperArea;
-            var posts = ReadLauncherWhispers();
+            // oldest at the top, newest at the bottom; the posts grow upward from the bottom edge
+            var posts = new List<LauncherWhisper>(ReadLauncherWhispers());
+            posts.Sort((first, second) => first.At.CompareTo(second.At));
             if (CompactDisplay || posts.Count == 0 || area.Width < U(60) || area.Height < U(28)) return;
 
-            Font font = Theme.F(7);
+            Font font = Theme.F(6);
             int bodyWidth = Math.Max(20, area.Width - U(20));
             // No header strip any more: the portrait sits outside the box, so the text starts at the top.
             int headerHeight = Math.Min(U(2), area.Height / 2);
@@ -217,7 +219,6 @@ namespace AzerothLauncher
             }
             whisperScrollLimit = Math.Max(0, (int)Math.Ceiling(contentHeight) - bodyHeight);
             whisperScroll = Math.Min(whisperScroll, whisperScrollLimit);
-            area.Height = Math.Min(area.Height, headerHeight + (int)Math.Ceiling(contentHeight) + U(4));
 
             using (var purple = new SolidBrush(Theme.Hex("#e58bdf")))
             using (var gold = new SolidBrush(Theme.Gold))
@@ -237,7 +238,7 @@ namespace AzerothLauncher
                 Image avatar = whisperAvatar ?? (whisperAvatar = Theme.LoadImage("AS.slimjim-avatar.png"));
                 // Bigger, and set just outside the box's top-left corner so it overlaps the corner slightly.
                 int d = U(40);
-                var circle = new Rectangle(area.X - U(12), area.Y - U(14), d, d);
+                var circle = new Rectangle(area.X - U(16), area.Y - U(14), d, d);
                 graphics.FillEllipse(circleFill, circle);
                 if (avatar != null)
                 {
@@ -257,7 +258,7 @@ namespace AzerothLauncher
                 var body = new Rectangle(area.X + U(6), area.Y + headerHeight, bodyWidth, area.Height - headerHeight - U(4));
                 var state = graphics.Save();
                 graphics.SetClip(body, System.Drawing.Drawing2D.CombineMode.Intersect);
-                float y = body.Top - whisperScroll;
+                float y = body.Bottom - contentHeight + whisperScroll;
                 for (int i = 0; i < lines.Count && y < body.Bottom; i++)
                 {
                     if (y + heights[i] > body.Top)
@@ -269,7 +270,7 @@ namespace AzerothLauncher
                 if (whisperScrollLimit > 0)
                 {
                     int thumbHeight = Math.Min(body.Height, Math.Max(U(8), (int)(body.Height * body.Height / contentHeight)));
-                    int thumbTop = body.Top + (body.Height - thumbHeight) * whisperScroll / whisperScrollLimit;
+                    int thumbTop = body.Top + (body.Height - thumbHeight) * (whisperScrollLimit - whisperScroll) / whisperScrollLimit;
                     graphics.FillRectangle(track, area.Right - U(9), body.Top, U(5), body.Height);
                     graphics.FillRectangle(gold, area.Right - U(9), thumbTop, U(5), thumbHeight);
                 }
