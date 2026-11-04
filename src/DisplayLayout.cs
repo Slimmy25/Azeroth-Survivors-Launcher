@@ -101,6 +101,8 @@ namespace AzerothLauncher
         int HeaderBottom { get { return CompactDisplay ? Math.Max(50, Math.Min(U(80), (int)(H * .15f))) : Math.Max(U(74), Math.Min(U(196), (int)(H * .26f))); } }
         int FooterTop { get { return H - Math.Min(U(108), (int)(H * .17f)); } }
         int NavHeight { get { return CompactDisplay ? 0 : U(86); } }
+        // the status line, centred along the very bottom of the footer; clicking it opens the status log
+        Rectangle StatusTextBox { get { return new Rectangle(U(150), H - U(28), Math.Max(U(100), W - U(300)), U(23)); } }
         Rectangle ResponsiveSideRect
         {
             get
@@ -479,9 +481,8 @@ namespace AzerothLauncher
                     ? Lang.T("Downloading the game") + ": " + Math.Min(100, dlDone * 100 / dlTotal) + "% (" + Util.FmtSize(dlDone) + " / " + Util.FmtSize(dlTotal) + ")"
                     : Lang.T("Downloading the game") + ": " + Util.FmtSize(dlDone);
                 using (var color = new SolidBrush(Theme.Hex("#fff2b0")))
-                using (var format = new StringFormat { Alignment = StringAlignment.Far, Trimming = StringTrimming.EllipsisWord, FormatFlags=StringFormatFlags.NoWrap })
-                    graphics.DrawString(message, Theme.F(9, FontStyle.Italic), color,
-                        new RectangleF(dlActive?W/3+U(16):U(12), FooterTop + U(5), dlActive?W-W/3-U(28):W-U(24), U(25)), format);
+                using (var format = new StringFormat { Alignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisWord, FormatFlags=StringFormatFlags.NoWrap })
+                    graphics.DrawString(message, Theme.F(9, FontStyle.Italic), color, StatusTextBox, format);
             }
             finally { Theme.Zoom = oldZoom; }
         }

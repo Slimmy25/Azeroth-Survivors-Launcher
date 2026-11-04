@@ -591,7 +591,7 @@ namespace AzerothLauncher
         // addon; folder: one folder of the list (its X)
         string askUninstallName, askUninstallFolder;
 
-        static readonly string[] SectionNames = { "Guide", "Cloud Save", "Addons", "Changelog", "Stats", "Options", "About Launcher" };
+        static readonly string[] SectionNames = { "Guide", "Cloud Save", "Addons", "Changelog", "Stats", "Options", "About Launcher", "Status Log" };
         int gTopic = -1, gPage = -1;
         string gTalents;                                     // the Guide shows this class's talent trees (a test build)
         TalentBuild liveBuild;                               // the test build on those trees: kept only while they show
@@ -1226,6 +1226,7 @@ namespace AzerothLauncher
                 else if (name == "Guide") PanelGuide();
                 else if (name == "Stats") PanelStats();
                 else if (name == "About Launcher") PanelAbout();
+                else if (name == "Status Log") PanelStatusLog();
                 else if (name == "Community") PanelCommunity();
                 else if (name == "Setup") PanelSetup();          // first-time setup (Setup.cs)
                 RememberView(name);                              // the back arrow's way (History.cs)
@@ -1792,6 +1793,21 @@ namespace AzerothLauncher
         // The launcher's own changelog is kept up to date in assets\launcher-changelog.txt but not shipped for now
         // (build.bat leaves it out). Set to true, and put its resource back in build.bat, to show it again.
         const bool ShowLauncherChangelog = false;
+
+        void PanelStatusLog()
+        {
+            ClearPanel("Status Log");
+            var box = UI.Log(Theme.Panel, 11);
+            box.Bounds = new Rectangle(20, 8, PW - 34, PH - 26);
+            Put(box, box.Left, box.Top);
+            List<KeyValuePair<DateTime, string>> entries;
+            lock (statusLog) entries = new List<KeyValuePair<DateTime, string>>(statusLog);
+            if (entries.Count == 0) { UI.Append(box, Lang.T("No status messages yet.") + "\n", Theme.Text, Theme.F(11)); return; }
+            foreach (var entry in entries)
+                UI.Append(box, entry.Key.ToString("HH:mm:ss", CultureInfo.InvariantCulture) + "   " + entry.Value + "\n", Theme.Text, Theme.F(11));
+            box.SelectionStart = box.TextLength;
+            box.ScrollToCaret();
+        }
 
         void PanelAbout()
         {

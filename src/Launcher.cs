@@ -351,9 +351,7 @@ namespace AzerothLauncher
             else if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
                 lines.Add(new[] { Lang.T("Time played"), Duration(ps.Seconds) + "  ·  " + Lang.T("Last session") + " " + Duration(ps.LastSeconds) });
             if (lines.Count == 0) return;
-            // centred along the very bottom of the footer flair
-            float boxWidth = Math.Min(U(460), W - U(40));
-            var box = new RectangleF((W - boxWidth) / 2f, H - U(27), boxWidth, U(23));
+            var box = new RectangleF(ResponsiveNewsRect.Left, FooterTop - U(26), ResponsiveNewsRect.Width, U(23));
             using (var path = Armory.Round(box, 5))
             {
                 using (var b = new SolidBrush(Color.FromArgb(190, 14, 13, 20))) g.FillPath(b, path);
@@ -473,6 +471,11 @@ namespace AzerothLauncher
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left && !CompactDisplay && StatusTextBox.Contains(e.Location))
+            {
+                OpenMain("Status Log");
+                return;
+            }
             Rectangle t = NewsThumb();
             Rectangle bar = new Rectangle(NewsBar.X - 4, NewsBar.Y, NewsBar.Width + 8, NewsBar.Height);
             if (e.Button == MouseButtons.Left && !t.IsEmpty && bar.Contains(e.Location))
@@ -495,6 +498,7 @@ namespace AzerothLauncher
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (!CompactDisplay && StatusTextBox.Contains(e.Location)) Cursor = Cursors.Hand;
             if (newsDrag) DragNews(e.Y);
             bool over = new Rectangle(NewsBar.X - 4, NewsBar.Y, NewsBar.Width + 8, NewsBar.Height).Contains(e.Location) && !NewsThumb().IsEmpty;
             if (over != newsBarHover)
@@ -512,10 +516,22 @@ namespace AzerothLauncher
             base.OnMouseUp(e);
         }
 
+        // Every status message shown in the footer, newest last; the status log menu reads it (the last 250 are kept)
+        readonly List<KeyValuePair<DateTime, string>> statusLog = new List<KeyValuePair<DateTime, string>>();
+        const int StatusLogMax = 250;
+
         public void SetStatus(string msg)
         {
             status = msg ?? "";
             if (status == "Ready." && Util.SetupPendingForThisInstall) status = "First Time Setup";
+            lock (statusLog)
+            {
+                if (status.Length > 0 && (statusLog.Count == 0 || statusLog[statusLog.Count - 1].Value != status))
+                {
+                    statusLog.Add(new KeyValuePair<DateTime, string>(DateTime.Now, status));
+                    if (statusLog.Count > StatusLogMax) statusLog.RemoveRange(0, statusLog.Count - StatusLogMax);
+                }
+            }
             Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
         }
 
