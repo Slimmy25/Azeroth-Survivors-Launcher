@@ -1,3 +1,19 @@
+# v3.24 (2026-11-04)
+
+- Launcher: the footer status line is clickable and opens a Status Log of the last 250 messages.
+- Launcher: the status line is centred along the bottom edge and PLAY sits snug to the right edge.
+- Launcher: the big guide button reads WIKI and the new player guide reads BEGINNER GUIDE; the header is Navigation and the buttons sit on the bottom border, which gives the patch notes more room.
+- Launcher: ERROR LOG in Options > Launcher explains recent log lines in plain words, with a COPY button.
+- Launcher: the whisper box is slightly see-through, with its portrait outside the top-left corner and text running to the right edge of the news column.
+- Guide: the single favorites button in each secondary menu's title bar offers the current place, the top of the page, or the closest category header; the old per-page star is gone.
+- Guide: the Lost? button sits left of the close X.
+- Guide: Build Videos is no longer listed under Theorycrafting.
+- Addons: installed versions show beside each name, and the newest version shows on Download More cards.
+- Addons: Survivor UI and Survivor UI (Classic) are separate entries; they may run together.
+- Addons: UPDATE ALL checks every addon's latest release and installs any newer one, then stays on the installed list.
+- Addons: catalog descriptions, author names and gallery screenshots were corrected; BlackwellUI is removed.
+- Addons: Vulchan's Combat Text and ASDrops are available; Slim Suite stays a work in progress with no download.
+
 # v3.23 (2026-11-03)
 
 - Addons: the Addons button checks each addon's own GitHub repository live and installs any newer release it finds, with no separate updates sub-menu.
