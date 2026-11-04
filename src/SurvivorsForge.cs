@@ -578,6 +578,7 @@ namespace AzerothLauncher
             if (string.Equals(id, "aetherhud", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "aetherhud.webp" : null;
             if (string.Equals(id, "azerloot", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerloot.png" : null;
             if (string.Equals(id, "azerothhub", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerothhub.png" : null;
+            if (string.Equals(id, "creedui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "creedui.png" : null;
             return null;
         }
 
