@@ -3,7 +3,8 @@
 - Addons: the launcher now checks the newest release of any addon's GitHub repository from the catalog and installs it after its SHA-256 digest checks out. Authors no longer need a launcher update for a new version.
 - Addons: 12 catalog entries now point at their author's release page (Azerloot, LuckyOdds, AZSSpellMeter, AZS Max Hit, Big Cursor, Move UI, MoveAnything, Azeroth Cursor, AetherHUD, BlackwellUI, LocalClock, Cursor Reticle).
 - Addons: a catalog line may set asset=<start of the ZIP name> when a release has several ZIPs.
-- Download More: addon descriptions are replaced with the full descriptions from the addon list.
+- Download More: addon descriptions are the full descriptions from the addon list (no longer one-word).
+- Download More: Azerloot is by Kindagrey; Survivor UI + Classic is by Kraatos; Cursor Reticle is by Mufflan; Azeroth Hub is by Maidenhead.
 - Survivor UI + Classic stays on the launcher mirror until its two repositories are supported together.
 
 # v3.21 (2026-11-03)
