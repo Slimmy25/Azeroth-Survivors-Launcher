@@ -1,3 +1,2 @@
 # Timestamp (ISO 8601 with offset) | Author | Message. Newest first; preserve historical timestamps.
-2026-11-03T21:49:08-05:00 | Slimjim | Dev Updates Now show on launcher
-2026-11-03T21:11:41-05:00 | Slimjim | The launcher now extracts the game client automatically, using its built-in extractor.
+2026-11-04T01:07:54-05:00 | Slimjim | Two updates: Downloads should now work + UI Small changes. Minor: Added clickable status W/ log so you can see what the status update is trying to tell you. (formerly above the play button).
