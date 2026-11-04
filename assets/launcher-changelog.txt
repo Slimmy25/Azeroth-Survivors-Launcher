@@ -1,3 +1,7 @@
+# v3.26 (2026-11-04)
+
+- Addons: Survivor UI takes the SurvivorUI-v ZIP from its latest release, the same name as its release downloads.
+
 # v3.25 (2026-11-04)
 
 - Launcher: the header buttons read LOST, Favorites, Close from left to right; the close X is larger and the star is centred.
