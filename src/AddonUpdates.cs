@@ -44,7 +44,11 @@ namespace AzerothLauncher
         }
         // Download and verify before touching an installed folder. Keep a rollback copy until all
         // incoming folders are in place, including disabled folders and multi-folder bundles.
-        internal static List<string> InstallAddonUpdateSafely(string url,string dir,string archiveCopy,string digest,List<string> oldFolders,bool disabled,Func<bool> canCommit = null)
+        // expectedFolders: the catalog's folders, so a file without the addon in it is passed over. alternatives: the
+        // release's other files (and its source archive), tried in order when the first holds no addon or fails to download.
+        // A digest that does not match stops everything: that file is never installed and nothing is tried in its place.
+        internal static List<string> InstallAddonUpdateSafely(string url,string dir,string archiveCopy,string digest,List<string> oldFolders,bool disabled,Func<bool> canCommit = null,
+                                                             IList<string> expectedFolders = null,IList<KeyValuePair<string,string>> alternatives = null)
         {
             Directory.CreateDirectory(dir);
             string work=Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dir)),".launcher-addon-"+Guid.NewGuid().ToString("N"));
@@ -53,7 +57,24 @@ namespace AzerothLauncher
             try
             {
                 Directory.CreateDirectory(stage); Directory.CreateDirectory(backup);
-                var names=Archive.InstallAddonZip(url,stage,archiveCopy,digest);
+                var attempts=new List<KeyValuePair<string,string>>{new KeyValuePair<string,string>(url,digest)};
+                if(alternatives!=null) attempts.AddRange(alternatives);
+                List<string> names=null; Exception failed=null;
+                foreach(var attempt in attempts)
+                {
+                    Util.DeleteTreeQuiet(stage); Directory.CreateDirectory(stage);
+                    try { names=Archive.InstallAddonZip(attempt.Key,stage,archiveCopy,attempt.Value,expectedFolders); break; }
+                    catch(DigestMismatchError) { throw; }
+                    catch(CancelledError) { throw; }
+                    catch(NoAddonInPackageError) { }                  // no addon in this file: the next one
+                    catch(Exception e) { if(failed==null) failed=e; }
+                }
+                if(names==null)
+                {
+                    if(failed!=null) throw failed is UserError ? failed : new UserError(failed.Message,failed);
+                    string wanted=expectedFolders!=null && expectedFolders.Count>0 ? string.Join(", ",new List<string>(expectedFolders).ToArray()) : "an addon";
+                    throw new UserError("None of the files in this release hold "+wanted+" (a folder with its .toc file), not even its source code. Nothing was installed.");
+                }
                 if(canCommit!=null && !canCommit()) throw new UserError("The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.");
                 var folders=new HashSet<string>(names,StringComparer.OrdinalIgnoreCase);
                 foreach(string folder in oldFolders) folders.Add(folder.EndsWith(Addons.DisabledSuffix)?folder.Substring(0,folder.Length-Addons.DisabledSuffix.Length):folder);
@@ -61,27 +82,40 @@ namespace AzerothLauncher
                     foreach(string suffix in new[]{"",Addons.DisabledSuffix})
                     {
                         string original=Path.Combine(dir,folder+suffix);
-                        if(!Directory.Exists(original)) continue;
-                        string kept=Path.Combine(backup,folder+suffix); Directory.Move(original,kept);
+                        if(!Directory.Exists(original) && !File.Exists(original)) continue;   // loose files at the ZIP's top level too
+                        string kept=Path.Combine(backup,folder+suffix); MovePath(original,kept);
                         moved.Add(new KeyValuePair<string,string>(kept,original));
                     }
                 foreach(string folder in names)
                 {
-                    string target=Path.Combine(dir,folder+(disabled?Addons.DisabledSuffix:""));
-                    Directory.Move(Path.Combine(stage,folder),target); installed.Add(target);
+                    string from=Path.Combine(stage,folder);
+                    bool isFolder=Directory.Exists(from);
+                    string target=Path.Combine(dir,folder+(disabled && isFolder?Addons.DisabledSuffix:""));
+                    MovePath(from,target); installed.Add(target);
                 }
                 return names;
             }
             catch(Exception problem)
             {
-                foreach(string target in installed) Util.DeleteTreeQuiet(target);
+                foreach(string target in installed)
+                {
+                    if(File.Exists(target)) { try { File.Delete(target); } catch(Exception) { } }
+                    else Util.DeleteTreeQuiet(target);
+                }
                 foreach(var pair in moved)
-                    try { Directory.Move(pair.Key,pair.Value); }
+                    try { MovePath(pair.Key,pair.Value); }
                     catch(Exception) { preserve=true; }
                 if(preserve) throw new UserError("The addon update failed. Its previous files were kept for recovery in "+backup+". "+problem.Message,problem);
                 throw;
             }
             finally { if(!preserve) Util.DeleteTreeQuiet(work); }
+        }
+
+        // A ZIP's top level can hold loose files (a readme) as well as folders.
+        static void MovePath(string from,string to)
+        {
+            if(Directory.Exists(from)) Directory.Move(from,to);
+            else File.Move(from,to);
         }
 
         void AskMirrorDates(Action after = null, bool refresh = false, AddonEntry only = null)

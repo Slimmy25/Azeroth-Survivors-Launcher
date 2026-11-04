@@ -1,3 +1,13 @@
+# v3.28 (2026-11-05)
+
+- Addons: downloads no longer depend on how a creator names their ZIP. The launcher opens each file of the latest release in turn and installs the first that holds the addon's folder (its .toc file); when none does, it uses the release's source code.
+- Addons: an addon packed inside an extra folder, or with its files loose at the top of the ZIP, installs into the folder the game needs. Where a download holds two copies of an addon, the newer version is kept.
+- Addons: readmes and other loose files beside an addon are no longer copied into the AddOns folder, so updates no longer fail with "Cannot create a file when that file already exists".
+- Addons: when GitHub's hourly request limit is reached, the launcher uses its last saved copy of the release, or reads the release's own web page, instead of stopping.
+- Addons: a release file without a published SHA-256 digest (older uploads, source code) installs over https; a file whose digest does not match is still never installed.
+- Addons: if the AddOns folder was picked where the benilla-config folder belongs, addons go to that AddOns folder instead of a second AddOns folder inside it.
+- Addons: addons that earlier landed in AddOns\AddOns are moved up into the AddOns folder the game reads, once, when the launcher starts.
+
 # v3.27 (2026-11-04)
 
 - Addons: Survivor UI (Classic) takes the SurvivorUIClassic- ZIP from its latest release.

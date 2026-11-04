@@ -29,6 +29,18 @@ namespace AzerothLauncher
         public CancelledError() : base("Cancelled.") { }
     }
 
+    // The download is not the file its release published: never install it, and try nothing else in its place.
+    public class DigestMismatchError : UserError
+    {
+        public DigestMismatchError(string message) : base(message) { }
+    }
+
+    // The download holds no addon (no folder with a .toc file): the next file of the release can be tried.
+    public class NoAddonInPackageError : UserError
+    {
+        public NoAddonInPackageError(string message) : base(message) { }
+    }
+
     // ------------------------------------------------------------------ web requests
     public static class Net
     {
@@ -224,7 +236,7 @@ namespace AzerothLauncher
                             !string.Equals(target.TrimEnd('\\') + "\\", root, StringComparison.OrdinalIgnoreCase))
                             throw new UserError("The .zip contains an unsafe path; nothing was installed.");
                         string top = e.FullName.Replace('\\', '/').Split('/')[0];
-                        if (top.Length > 0 && !tops.Contains(top)) tops.Add(top);
+                        if (top.Length > 0 && !tops.Exists(t => string.Equals(t, top, StringComparison.OrdinalIgnoreCase))) tops.Add(top);
                     }
                     foreach (ZipArchiveEntry e in z.Entries)
                     {
@@ -515,6 +527,12 @@ namespace AzerothLauncher
 
         // Share one short-lived response across startup checks and installs, including
         // launcher restarts. Each cached response belongs to exactly one API URL.
+        // GitHub allows 60 API requests an hour without signing in. When it says no (or is down), the answer comes from
+        // the last saved copy, however old, and failing that from the release's public web page; only a 404 (no such
+        // release) is passed on as it is, because callers act on it.
+        static readonly Dictionary<string, KeyValuePair<DateTime, Dictionary<string, object>>> githubReleasePages =
+            new Dictionary<string, KeyValuePair<DateTime, Dictionary<string, object>>>(StringComparer.OrdinalIgnoreCase);
+
         internal static Dictionary<string, object> ReadGitHubReleaseMetadata(string api, bool refresh = false)
         {
             lock (githubReleaseGate)
@@ -523,19 +541,46 @@ namespace AzerothLauncher
                 using (var sha = System.Security.Cryptography.SHA256.Create())
                     key = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(api))).Replace("-", "");
                 string cache = Path.Combine(Util.TempDir, "github-releases", key + ".json");
+                TimeSpan fresh = refresh ? TimeSpan.FromMinutes(2) : TimeSpan.FromMinutes(20);
                 try
                 {
                     TimeSpan age = DateTime.UtcNow - File.GetLastWriteTimeUtc(cache);
-                    if (!refresh && File.Exists(cache) && age >= TimeSpan.Zero && age < TimeSpan.FromMinutes(10))
+                    if (File.Exists(cache) && age >= TimeSpan.Zero && age < fresh)
                     {
                         var saved = Json.AsDict(Json.Parse(File.ReadAllText(cache)));
                         if (saved != null) return saved;
                     }
                 }
                 catch (Exception) { } // A missing/unreadable cache always falls back to GitHub.
+                KeyValuePair<DateTime, Dictionary<string, object>> page;
+                if (githubReleasePages.TryGetValue(api, out page) && DateTime.UtcNow - page.Key < fresh) return page.Value;
                 string text;
-                using (var response = Net.Open(api, 15000, true, "GitHub", "application/vnd.github+json"))
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8)) text = reader.ReadToEnd();
+                try
+                {
+                    using (var response = Net.Open(api, 15000, true, "GitHub", "application/vnd.github+json"))
+                    using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8)) text = reader.ReadToEnd();
+                }
+                catch (UserError e)
+                {
+                    if (e.Message.IndexOf("error 404", StringComparison.OrdinalIgnoreCase) >= 0) throw;
+                    try
+                    {
+                        if (File.Exists(cache))
+                        {
+                            var saved = Json.AsDict(Json.Parse(File.ReadAllText(cache)));
+                            if (saved != null) return saved;
+                        }
+                    }
+                    catch (Exception) { }
+                    Dictionary<string, object> fromPage = null;
+                    try { fromPage = ReadGitHubReleasePage(api); } catch (Exception) { }
+                    if (fromPage != null)
+                    {
+                        githubReleasePages[api] = new KeyValuePair<DateTime, Dictionary<string, object>>(DateTime.UtcNow, fromPage);
+                        return fromPage;
+                    }
+                    throw;
+                }
                 var release = Json.AsDict(Json.Parse(text));
                 if (release == null) throw new UserError("GitHub returned invalid release information. Nothing was installed.");
                 try
@@ -548,6 +593,59 @@ namespace AzerothLauncher
             }
         }
 
+        // The same release read from github.com's own pages, which the API's hourly limit does not cover:
+        // /releases/latest leads to /releases/tag/<tag>, and /releases/expanded_assets/<tag> lists its files
+        // (with their sha256 digests where GitHub shows them). Null when the page cannot be read.
+        internal static Dictionary<string, object> ReadGitHubReleasePage(string api)
+        {
+            const string prefix = "https://api.github.com/repos/";
+            if (!api.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return null;
+            string[] parts = api.Substring(prefix.Length).Split('/');
+            if (parts.Length < 4 || !string.Equals(parts[2], "releases", StringComparison.OrdinalIgnoreCase)) return null;
+            string repo = parts[0] + "/" + parts[1];
+            string tag;
+            if (parts.Length == 4 && string.Equals(parts[3], "latest", StringComparison.OrdinalIgnoreCase))
+            {
+                using (var response = Net.Open("https://github.com/" + repo + "/releases/latest", 15000, true, "GitHub", "text/html"))
+                {
+                    string path = response.ResponseUri.AbsolutePath;
+                    int at = path.IndexOf("/releases/tag/", StringComparison.OrdinalIgnoreCase);
+                    if (at < 0) return null;                    // no release at all: GitHub shows the release list instead
+                    tag = Uri.UnescapeDataString(path.Substring(at + "/releases/tag/".Length).TrimEnd('/'));
+                }
+            }
+            else if (parts.Length >= 5 && string.Equals(parts[3], "tags", StringComparison.OrdinalIgnoreCase))
+                tag = Uri.UnescapeDataString(string.Join("/", parts, 4, parts.Length - 4));
+            else return null;
+            if (tag.Length == 0) return null;
+            string html;
+            using (var response = Net.Open("https://github.com/" + repo + "/releases/expanded_assets/" + Uri.EscapeDataString(tag),
+                                           15000, true, "GitHub", "text/html"))
+            using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8)) html = reader.ReadToEnd();
+            var assets = new List<object>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (string block in html.Split(new[] { "<li" }, StringSplitOptions.None))
+            {
+                var link = System.Text.RegularExpressions.Regex.Match(block, "href=\"(/[^/\"]+/[^/\"]+/releases/download/[^\"]+)\"",
+                                                                      System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (!link.Success) continue;
+                string href = WebUtility.HtmlDecode(link.Groups[1].Value);
+                string name = Uri.UnescapeDataString(href.Substring(href.LastIndexOf('/') + 1));
+                if (name.Length == 0 || !seen.Add(name)) continue;
+                var digest = System.Text.RegularExpressions.Regex.Match(block, "sha256:([0-9a-fA-F]{64})");
+                var asset = new Dictionary<string, object>();
+                asset["name"] = name;
+                asset["browser_download_url"] = "https://github.com" + href;
+                asset["digest"] = digest.Success ? "sha256:" + digest.Groups[1].Value.ToLowerInvariant() : "";
+                assets.Add(asset);
+            }
+            var release = new Dictionary<string, object>();
+            release["tag_name"] = tag;
+            release["draft"] = false;
+            release["assets"] = assets;
+            return release;
+        }
+
         internal static string GitHubAssetSha256(string url)
         {
             Uri uri;
@@ -555,10 +653,12 @@ namespace AzerothLauncher
                 !string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase)) return null;
             string[] parts = uri.AbsolutePath.Trim('/').Split('/');
             if (uri.Scheme != "https" || parts.Length != 6 || parts[2] != "releases" || parts[3] != "download")
-                throw new UserError("This GitHub addon link must identify an exact release ZIP before it can be verified.");
+                return null;                                   // not a release file (a source archive): nothing to compare
             string api = "https://api.github.com/repos/" + parts[0] + "/" + parts[1] +
                          "/releases/tags/" + Uri.EscapeDataString(Uri.UnescapeDataString(parts[4]));
-            Dictionary<string, object> release = ReadGitHubReleaseMetadata(api);
+            Dictionary<string, object> release;
+            try { release = ReadGitHubReleaseMetadata(api); }
+            catch (UserError) { return null; }                 // GitHub busy: the https download itself still goes ahead
             foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
             {
                 var asset = Json.AsDict(value);
@@ -569,17 +669,28 @@ namespace AzerothLauncher
                 string sha = digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest.Substring(7) : "";
                 bool valid = sha.Length == 64;
                 foreach (char c in sha) if (!Uri.IsHexDigit(c)) valid = false;
-                if (valid) return sha;
-                throw new UserError("GitHub has no SHA-256 digest for this exact addon ZIP. Nothing was installed.");
+                return valid ? sha : null;                     // older uploads have no digest: install without one
             }
-            throw new UserError("The configured addon ZIP is not listed in its GitHub release. Nothing was installed.");
+            return null;
         }
 
         // Callers resolving /releases/latest supply the digest from that same release asset.
         // Direct GitHub asset URLs (including mirrored bundles) resolve their digest here.
         public static List<string> InstallAddonZip(string url, string addonDir, string keepAs, string expectedSha256)
         {
-            if (!File.Exists(url) && string.IsNullOrWhiteSpace(expectedSha256))
+            return InstallAddonZip(url, addonDir, keepAs, expectedSha256, null);
+        }
+
+        // expectedSha256: the published digest, null to look it up on GitHub, or NoDigest when none exists (a source archive).
+        // expectedFolders: the catalog's folders for this addon. With them, a download without any addon in it throws
+        // NoAddonInPackageError so the caller can try the release's next file; without them (a ZIP on this PC) a ZIP
+        // with no .toc anywhere is unpacked as it is, as before.
+        public const string NoDigest = "none";
+
+        public static List<string> InstallAddonZip(string url, string addonDir, string keepAs, string expectedSha256, IList<string> expectedFolders)
+        {
+            if (string.Equals(expectedSha256, NoDigest, StringComparison.OrdinalIgnoreCase)) expectedSha256 = null;
+            else if (!File.Exists(url) && string.IsNullOrWhiteSpace(expectedSha256))
                 expectedSha256 = GitHubAssetSha256(url);
             Directory.CreateDirectory(addonDir);
             Directory.CreateDirectory(Util.TempDir);
@@ -597,11 +708,17 @@ namespace AzerothLauncher
                 else actualSha256 = Net.Download(url, tmp, false, "addon", null, null, 0);
                 if (!string.IsNullOrWhiteSpace(expectedSha256) &&
                     !string.Equals(actualSha256, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
-                    throw new UserError("The downloaded addon does not match the SHA-256 published for this exact addon release. Nothing was installed.");
+                    throw new DigestMismatchError("The downloaded addon does not match the SHA-256 published for this exact addon release. Nothing was installed.");
                 if (Kind(tmp) != "zip")
                     throw new UserError("The link did not give a .zip file. It must be a direct download link " +
                                         "(share pages such as LimeWire do not work).");
-                var tops = ExtractZip(tmp, addonDir);
+                bool catalog = expectedFolders != null && expectedFolders.Count > 0;
+                var tops = ExtractAddonPackage(tmp, addonDir, expectedFolders);
+                if (tops == null)
+                {
+                    if (catalog) throw new NoAddonInPackageError("The download has no addon folder in it (no .toc file).");
+                    tops = ExtractZip(tmp, addonDir);
+                }
                 if (keepAs != null) try { File.Copy(tmp, keepAs, true); } catch (Exception) { }
                 return tops;
             }
@@ -615,6 +732,201 @@ namespace AzerothLauncher
             finally
             {
                 try { File.Delete(tmp); } catch (Exception) { }
+            }
+        }
+
+        // ---------------------------------------------------------- addon packages
+        // A folder of the ZIP holding .toc files: an addon (or a wrapper around one, as GitHub's source archives are).
+        sealed class TocFolder
+        {
+            public string Path;              // inside the ZIP, '/' separated, no trailing '/'; "" for the ZIP's root
+            public string Segment;           // the folder's own name ("" for the root)
+            public List<string> Tocs = new List<string>();   // .toc names without ".toc"
+            public string Name;              // the AddOns folder it installs as
+            public bool Proper;              // its own name is one of its .toc names: an addon exactly as the game wants it
+            public int Depth;
+            public List<int> Version;        // "## Version:" of its own .toc, or null
+            public string Parent { get { int at = Path.LastIndexOf('/'); return at < 0 ? (Path.Length == 0 ? null : "") : Path.Substring(0, at); } }
+        }
+
+        static bool SkippedPath(string path)
+        {
+            foreach (string part in path.Split('/'))
+                if (part == "__MACOSX" || (part.Length > 1 && part[0] == '.')) return true;
+            return false;
+        }
+
+        static List<int> TocVersion(ZipArchiveEntry entry)
+        {
+            try
+            {
+                string text;
+                using (var reader = new StreamReader(entry.Open(), Encoding.UTF8)) text = reader.ReadToEnd();
+                var m = System.Text.RegularExpressions.Regex.Match(text, @"^\s*##\s*Version\s*:\s*(.+)$",
+                    System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (!m.Success) return null;
+                var parts = new List<int>();
+                foreach (System.Text.RegularExpressions.Match d in System.Text.RegularExpressions.Regex.Matches(m.Groups[1].Value, @"\d+"))
+                {
+                    int n;
+                    if (int.TryParse(d.Value, out n)) parts.Add(n);
+                }
+                return parts.Count > 0 ? parts : null;
+            }
+            catch (Exception) { return null; }
+        }
+
+        // >0 when a is the better copy of the same addon: the newer version, then the one named as the game wants, then the shallower
+        static int CompareTocFolders(TocFolder a, TocFolder b)
+        {
+            if (a.Version != null && b.Version != null)
+            {
+                for (int i = 0; i < Math.Max(a.Version.Count, b.Version.Count); i++)
+                {
+                    int x = i < a.Version.Count ? a.Version[i] : 0, y = i < b.Version.Count ? b.Version[i] : 0;
+                    if (x != y) return x > y ? 1 : -1;
+                }
+            }
+            if (a.Proper != b.Proper) return a.Proper ? 1 : -1;
+            if (a.Depth != b.Depth) return a.Depth < b.Depth ? 1 : -1;
+            return 0;
+        }
+
+        static bool Inside(string path, string folder)
+        {
+            return folder.Length == 0 ? path.Length > 0 : path.StartsWith(folder + "/", StringComparison.Ordinal);
+        }
+
+        // Unpacks only the addons found in a ZIP, each into its own folder of addonDir, whatever the ZIP's layout:
+        // the folder itself, a folder inside a wrapper (GitHub's source archives), or the addon's files at the ZIP's root.
+        // Loose files beside the addons (readmes, installers) are left out. Where a ZIP holds the same addon twice,
+        // the newer "## Version:" wins. Returns the folders made, or null when the ZIP holds no .toc at all.
+        public static List<string> ExtractAddonPackage(string zipPath, string addonDir, IList<string> expectedFolders)
+        {
+            var expected = new List<string>();
+            if (expectedFolders != null)
+                foreach (string f in expectedFolders)
+                {
+                    string bare = (f ?? "").Trim();
+                    if (bare.EndsWith(Addons.DisabledSuffix, StringComparison.OrdinalIgnoreCase)) bare = bare.Substring(0, bare.Length - Addons.DisabledSuffix.Length);
+                    if (bare.Length > 0) expected.Add(bare);
+                }
+            Func<string, bool> isExpected = delegate(string n)
+            {
+                foreach (string e in expected) if (string.Equals(e, n, StringComparison.OrdinalIgnoreCase)) return true;
+                return false;
+            };
+            try
+            {
+                using (ZipArchive z = ZipFile.OpenRead(zipPath))
+                {
+                    var folders = new Dictionary<string, TocFolder>(StringComparer.Ordinal);
+                    foreach (ZipArchiveEntry e in z.Entries)
+                    {
+                        string path = e.FullName.Replace('\\', '/').TrimStart('/');
+                        if (path.EndsWith("/") || !path.EndsWith(".toc", StringComparison.OrdinalIgnoreCase) || SkippedPath(path)) continue;
+                        int slash = path.LastIndexOf('/');
+                        string dir = slash < 0 ? "" : path.Substring(0, slash);
+                        string toc = System.IO.Path.GetFileNameWithoutExtension(path.Substring(slash + 1));
+                        if (toc.Length == 0) continue;
+                        TocFolder folder;
+                        if (!folders.TryGetValue(dir, out folder))
+                        {
+                            folder = new TocFolder { Path = dir, Segment = dir.Substring(dir.LastIndexOf('/') + 1), Depth = dir.Length == 0 ? 0 : dir.Split('/').Length };
+                            folders[dir] = folder;
+                        }
+                        folder.Tocs.Add(toc);
+                    }
+                    if (folders.Count == 0) return null;
+
+                    foreach (TocFolder f in folders.Values)
+                    {
+                        string own = null, wanted = null;
+                        foreach (string t in f.Tocs)
+                        {
+                            if (f.Segment.Length > 0 && string.Equals(t, f.Segment, StringComparison.OrdinalIgnoreCase)) own = f.Segment;
+                            if (wanted == null && isExpected(t)) wanted = t;
+                        }
+                        f.Proper = own != null;
+                        if (own != null) f.Name = own;
+                        else if (wanted != null) f.Name = wanted;                        // "CreedUI-1.2/CreedUI.toc" installs as CreedUI
+                        else if (f.Segment.Length > 0 && isExpected(f.Segment)) f.Name = f.Segment;
+                        else if (f.Tocs.Count == 1 || f.Segment.Length == 0) f.Name = f.Tocs[0];
+                        else f.Name = f.Segment;
+                        foreach (char c in System.IO.Path.GetInvalidFileNameChars()) if (f.Name != null && f.Name.IndexOf(c) >= 0) f.Name = null;
+                        if (f.Name == "." || f.Name == "..") f.Name = null;
+                        string versionToc = (f.Path.Length == 0 ? "" : f.Path + "/") + f.Name + ".toc";
+                        foreach (ZipArchiveEntry e in z.Entries)
+                            if (f.Name != null && string.Equals(e.FullName.Replace('\\', '/').TrimStart('/'), versionToc, StringComparison.OrdinalIgnoreCase))
+                            { f.Version = TocVersion(e); break; }
+                    }
+
+                    // the best copy of each addon
+                    var best = new Dictionary<string, TocFolder>(StringComparer.OrdinalIgnoreCase);
+                    foreach (TocFolder f in folders.Values)
+                    {
+                        if (f.Name == null) continue;
+                        TocFolder held;
+                        if (!best.TryGetValue(f.Name, out held) || CompareTocFolders(f, held) > 0) best[f.Name] = f;
+                    }
+
+                    var chosen = new List<TocFolder>();
+                    foreach (TocFolder f in best.Values) if (isExpected(f.Name)) chosen.Add(f);
+                    if (chosen.Count > 0)
+                    {
+                        // addons packed beside the expected ones (a bundle's second folder) come too
+                        var parents = new List<string>();
+                        foreach (TocFolder f in chosen) parents.Add(f.Parent);
+                        foreach (TocFolder f in best.Values)
+                            if (!chosen.Contains(f) && f.Proper && parents.Contains(f.Parent)) chosen.Add(f);
+                    }
+                    else
+                    {
+                        // nothing by the expected names (renamed, or a ZIP from this PC): the outermost addons in it
+                        int top = int.MaxValue;
+                        foreach (TocFolder f in best.Values) top = Math.Min(top, f.Depth);
+                        foreach (TocFolder f in best.Values) if (f.Depth == top) chosen.Add(f);
+                    }
+                    // an addon found inside another chosen one travels with it
+                    var kept = new List<TocFolder>();
+                    foreach (TocFolder f in chosen)
+                    {
+                        bool nested = false;
+                        foreach (TocFolder g in chosen) if (g != f && Inside(f.Path, g.Path)) nested = true;
+                        if (!nested) kept.Add(f);
+                    }
+                    if (kept.Count == 0) return null;
+
+                    string root = System.IO.Path.GetFullPath(addonDir).TrimEnd('\\') + "\\";
+                    var names = new List<string>();
+                    foreach (TocFolder f in kept)
+                    {
+                        string folderRoot = System.IO.Path.GetFullPath(System.IO.Path.Combine(root, f.Name)).TrimEnd('\\') + "\\";
+                        if (!folderRoot.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+                            throw new UserError("The .zip contains an unsafe path; nothing was installed.");
+                        Directory.CreateDirectory(folderRoot);
+                        foreach (ZipArchiveEntry e in z.Entries)
+                        {
+                            string path = e.FullName.Replace('\\', '/').TrimStart('/');
+                            if (f.Path.Length > 0 && !Inside(path, f.Path)) continue;
+                            string rel = f.Path.Length == 0 ? path : path.Substring(f.Path.Length + 1);
+                            if (rel.Length == 0 || SkippedPath(rel)) continue;
+                            string target = System.IO.Path.GetFullPath(System.IO.Path.Combine(folderRoot, rel.Replace('/', '\\')));
+                            if (!target.StartsWith(folderRoot, StringComparison.OrdinalIgnoreCase))
+                                throw new UserError("The .zip contains an unsafe path; nothing was installed.");
+                            if (rel.EndsWith("/")) { Directory.CreateDirectory(target); continue; }
+                            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(target));
+                            if (File.Exists(target)) File.SetAttributes(target, FileAttributes.Normal);
+                            e.ExtractToFile(target, true);
+                        }
+                        names.Add(f.Name);
+                    }
+                    return names;
+                }
+            }
+            catch (InvalidDataException)
+            {
+                throw new UserError("The file is damaged or incomplete.");
             }
         }
     }

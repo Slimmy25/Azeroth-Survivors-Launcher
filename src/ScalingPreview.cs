@@ -608,6 +608,22 @@ namespace AzerothLauncher
             bool rejected=false;
             try {InstallAddonUpdateSafely(zip,fixture,null,new string('0',64),new List<string>{"FixtureAddon"},true);} catch(UserError) {rejected=true;}
             check(rejected && File.ReadAllText(Path.Combine(disabled,"version.txt"))=="new","digest failure preserves installed addon");
+            // a GitHub source archive: the addon inside a wrapper, an older copy at the wrapper's root, a readme beside it
+            string wrapped=Path.Combine(Path.GetFullPath(output),"wrapped"), wrapper=Path.Combine(wrapped,"Repo-1.2");
+            Directory.CreateDirectory(Path.Combine(wrapper,"FixtureAddon"));
+            File.WriteAllText(Path.Combine(wrapper,"FixtureAddon.toc"),"## Interface: 11200\n## Version: 1.0\n");
+            File.WriteAllText(Path.Combine(Path.Combine(wrapper,"FixtureAddon"),"FixtureAddon.toc"),"## Interface: 11200\n## Version: 1.2\n");
+            File.WriteAllText(Path.Combine(wrapper,"README.md"),"readme");
+            string wrappedZip=Path.Combine(Path.GetFullPath(output),"fixture-source.zip");System.IO.Compression.ZipFile.CreateFromDirectory(wrapped,wrappedZip);
+            InstallAddonUpdateSafely(wrappedZip,fixture,null,Archive.NoDigest,new List<string>{"FixtureAddon"},true,null,new List<string>{"FixtureAddon"});
+            check(File.ReadAllText(Path.Combine(disabled,"FixtureAddon.toc")).Contains("1.2") && !File.Exists(Path.Combine(fixture,"README.md")) && !File.Exists(Path.Combine(disabled,"README.md")),
+                  "source archive installs the newest copy of the addon and no loose files");
+            // a release whose first file holds no addon (an installer): the next file is used
+            string junk=Path.Combine(Path.GetFullPath(output),"junk"); Directory.CreateDirectory(junk); File.WriteAllText(Path.Combine(junk,"readme.txt"),"x");
+            string junkZip=Path.Combine(Path.GetFullPath(output),"fixture-junk.zip");System.IO.Compression.ZipFile.CreateFromDirectory(junk,junkZip);
+            InstallAddonUpdateSafely(junkZip,fixture,null,Archive.NoDigest,new List<string>{"FixtureAddon"},true,null,new List<string>{"FixtureAddon"},
+                                     new List<KeyValuePair<string,string>>{new KeyValuePair<string,string>(zip,Archive.NoDigest)});
+            check(File.ReadAllText(Path.Combine(disabled,"version.txt"))=="new","a release file without the addon is passed over for the next one");
             int visited=0, successes=-1, failures=-1;
             RunAddonUpdateQueue(new List<AddonEntry>{tiny,keijin,dragon},delegate{return true;},
                 delegate(AddonEntry entry,Action<bool> done){visited++;done(visited>1);done(true);},

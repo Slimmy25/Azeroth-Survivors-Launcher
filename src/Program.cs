@@ -13,7 +13,7 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("Azeroth Survivors")]
 [assembly: AssemblyProduct("Azeroth Survivors Launcher")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 Azeroth Survivors")]
-[assembly: AssemblyVersion("3.27.0.0")]
+[assembly: AssemblyVersion("3.28.0.0")]
 [assembly: AssemblyFileVersion("3.20.0.0")]
 [assembly: AssemblyInformationalVersion("3.20")]
 [assembly: ComVisible(false)]

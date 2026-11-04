@@ -2184,9 +2184,13 @@ namespace AzerothLauncher
 
         sealed class GitHubAddonRelease
         {
-            public string Tag, Url, Sha256;
+            public string Tag, Url, Sha256;   // the most likely file of the release, and its digest ("" when GitHub has none)
             public DateTime PublishedAt;
+            // the release's other files, most likely first, ending with GitHub's source archive of the tag: each is tried
+            // in turn until one holds the addon. Value: the digest, or Archive.NoDigest.
+            public List<KeyValuePair<string, string>> Alternatives = new List<KeyValuePair<string, string>>();
             public string Identity { get { return (Tag ?? "") + "|" + (Sha256 ?? ""); } }
+            public string Digest { get { return IsSha256(Sha256) ? Sha256 : Archive.NoDigest; } }
         }
 
         static bool IsDynamicGitHubAddonUrl(string url)
@@ -2270,89 +2274,107 @@ namespace AzerothLauncher
             return Archive.ReadGitHubReleaseMetadata(apiUrl, refresh);
         }
 
-        // Any repo from the catalog: the newest release's only ZIP, or the ZIP named after the repo when there are several.
-        // A catalog asset= prefix limits the choice first. The digest is still required.
+        // The catalog's AddOns folders for this URL (addons.txt's 4th field)
+        static List<string> CatalogFoldersFor(string url)
+        {
+            string normalized = (url ?? "").TrimEnd('/');
+            foreach (AddonEntry entry in Data.Addons)
+                if (string.Equals((entry.Url ?? "").TrimEnd('/'), normalized, StringComparison.OrdinalIgnoreCase))
+                    return new List<string>(entry.Folders);
+            return new List<string>();
+        }
+
+        static string LettersAndDigits(string text)
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (char c in text ?? "") if (char.IsLetterOrDigit(c)) sb.Append(char.ToLowerInvariant(c));
+            return sb.ToString();
+        }
+
+        // How likely a release file is to be the addon: its catalog asset= start, the addon's folder name,
+        // the repo's name and the version in its name count for it; installers and sources count against it.
+        static int AddonAssetScore(string name, string tag, GitHubAddonSource source, List<string> folders)
+        {
+            int score = 0;
+            string flat = LettersAndDigits(name);
+            if (!string.IsNullOrEmpty(source.AssetPrefix) && name.StartsWith(source.AssetPrefix, StringComparison.OrdinalIgnoreCase)) score += 100;
+            foreach (string folder in folders)
+            {
+                string f = LettersAndDigits(folder);
+                if (f.Length > 0 && flat.Contains(f)) { score += 40; break; }
+            }
+            string repoName = LettersAndDigits(source.Repo.Substring(source.Repo.IndexOf('/') + 1));
+            if (repoName.Length > 0 && flat.Contains(repoName)) score += 20;
+            string version = LettersAndDigits((tag ?? "").TrimStart('v', 'V'));
+            if (version.Length > 0 && flat.Contains(version)) score += 10;
+            foreach (string bad in new[] { "installer", "setup", "source", "src", "debug", "symbols" })
+                if (flat.Contains(bad)) score -= 200;
+            return score;
+        }
+
+        // Every ZIP of a release, most likely first, then GitHub's source archive of the tag. No file name has to
+        // match: the install opens each in turn and takes the first that holds the addon's folder (its .toc).
+        // A GitHub digest is checked where GitHub published one. Null only for a draft or a release without a tag.
         static GitHubAddonRelease ParseGenericGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
         {
             if (release == null || string.Equals(Json.Str(release, "draft"), "True", StringComparison.OrdinalIgnoreCase)) return null;
             string tag = Json.Str(release, "tag_name");
             if (tag.Length == 0) return null;
-            var zips = new List<Dictionary<string, object>>();
+            List<string> folders = CatalogFoldersFor(source.Url);
+            var files = new List<KeyValuePair<int, KeyValuePair<string, string>>>();   // score, (url, digest)
             foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
             {
                 Dictionary<string, object> asset = Json.AsDict(value);
-                string name = Json.Str(asset, "name");
-                if (!name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) continue;
-                if (source.AssetPrefix != null && !name.StartsWith(source.AssetPrefix, StringComparison.OrdinalIgnoreCase)) continue;
-                zips.Add(asset);
+                string name = Json.Str(asset, "name"), link = Json.Str(asset, "browser_download_url");
+                if (!name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) || !Net.IsHttps(link)) continue;
+                string state = Json.Str(asset, "state");
+                if (state.Length > 0 && !string.Equals(state, "uploaded", StringComparison.OrdinalIgnoreCase)) continue;
+                string sha = Json.Str(asset, "digest");
+                sha = sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? sha.Substring(7).ToLowerInvariant() : "";
+                if (!IsSha256(sha)) sha = "";
+                files.Add(new KeyValuePair<int, KeyValuePair<string, string>>(AddonAssetScore(name, tag, source, folders),
+                          new KeyValuePair<string, string>(link, sha)));
             }
-            Dictionary<string, object> chosen = null;
-            if (zips.Count == 1) chosen = zips[0];
-            else
+            // highest score first; equal scores keep GitHub's order
+            var ordered = new List<KeyValuePair<string, string>>();
+            var used = new bool[files.Count];
+            for (int round = 0; round < files.Count; round++)
             {
-                string repoName = source.Repo.Substring(source.Repo.IndexOf('/') + 1);
-                foreach (Dictionary<string, object> asset in zips)
-                    if (Json.Str(asset, "name").IndexOf(repoName, StringComparison.OrdinalIgnoreCase) >= 0) { chosen = asset; break; }
+                int pick = -1;
+                for (int i = 0; i < files.Count; i++)
+                    if (!used[i] && (pick < 0 || files[i].Key > files[pick].Key)) pick = i;
+                used[pick] = true;
+                ordered.Add(files[pick].Value);
             }
-            if (chosen == null) return null;
-            string sha = Json.Str(chosen, "digest");
-            sha = sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? sha.Substring(7) : "";
-            if (!IsSha256(sha)) sha = "";
+            ordered.Add(new KeyValuePair<string, string>("https://github.com/" + source.Repo + "/archive/refs/tags/" +
+                                                         Uri.EscapeDataString(tag) + ".zip", ""));
+            var result = new GitHubAddonRelease { Tag = tag, Url = ordered[0].Key, Sha256 = ordered[0].Value };
+            for (int i = 1; i < ordered.Count; i++)
+                result.Alternatives.Add(new KeyValuePair<string, string>(ordered[i].Key, IsSha256(ordered[i].Value) ? ordered[i].Value : Archive.NoDigest));
             DateTime published;
             if (!DateTime.TryParse(Json.Str(release, "published_at"), CultureInfo.InvariantCulture,
                                    DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out published))
                 published = DateTime.MinValue;
-            return new GitHubAddonRelease { Tag = tag, Url = Json.Str(chosen, "browser_download_url"), Sha256 = sha, PublishedAt = published };
+            result.PublishedAt = published;
+            return result;
         }
 
         static GitHubAddonRelease ParseGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
         {
-            if (source.Generic) return ParseGenericGitHubAddonRelease(release, source);
-            if (release == null || string.Equals(Json.Str(release, "draft"), "True", StringComparison.OrdinalIgnoreCase)) return null;
-            string tag = Json.Str(release, "tag_name");
-            if (tag.Length == 0) return null;
-            string version = tag.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? tag.Substring(1) : tag;
-            string assetName = source.FixedAssetName ? source.AssetPrefix : source.AssetPrefix + version + ".zip";
-            string taggedAssetName = source.FixedAssetName ? assetName : source.AssetPrefix + tag + ".zip";
-            string assetUrl = "", digest = "";
-            foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
-            {
-                Dictionary<string, object> asset = Json.AsDict(value);
-                string name = Json.Str(asset, "name");
-                if ((!string.Equals(name, assetName, StringComparison.OrdinalIgnoreCase) &&
-                     !string.Equals(name, taggedAssetName, StringComparison.OrdinalIgnoreCase)) ||
-                    !name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) continue;
-                assetUrl = Json.Str(asset, "browser_download_url");
-                digest = Json.Str(asset, "digest");
-                break;
-            }
-            if (assetUrl.Length == 0) return null;
-            string sha = digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest.Substring(7) : "";
-            if (!IsSha256(sha)) sha = "";
-            DateTime published;
-            if (!DateTime.TryParse(Json.Str(release, "published_at"), CultureInfo.InvariantCulture,
-                                   DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out published))
-                published = DateTime.MinValue;
-            return new GitHubAddonRelease { Tag = tag, Url = assetUrl, Sha256 = sha, PublishedAt = published };
+            return ParseGenericGitHubAddonRelease(release, source);
         }
 
+        // /releases/latest; a project with only pre-releases (latest answers 404) gets its newest published release.
+        // GitHub busy or out of requests: Archive.ReadGitHubReleaseMetadata answers from its last copy or the release page.
         static GitHubAddonRelease ResolveGitHubAddonRelease(string url, bool refresh = false)
         {
             GitHubAddonSource source = GitHubAddonSourceFor(url);
             if (source == null) throw new UserError("This add-on is not configured for direct GitHub release updates.");
-            // Use /releases/latest for stable releases. If the project has no stable release,
-            // choose the newest published release that
-            // contains this add-on's expected ZIP. The asset's GitHub-published digest is required.
             try
             {
                 GitHubAddonRelease stable = ParseGitHubAddonRelease(ReadGitHubRelease(
                     "https://api.github.com/repos/" + source.Repo + "/releases/latest", refresh), source);
-                if (stable == null) throw new UserError("The latest " + source.Repo + " release has no matching addon ZIP. Its package name may have changed; no older release was substituted.");
-                if (stable != null)
-                {
-                    if (!IsSha256(stable.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
-                    return stable;
-                }
+                if (stable != null) return stable;
             }
             catch (UserError e)
             {
@@ -2369,8 +2391,7 @@ namespace AzerothLauncher
                 GitHubAddonRelease candidate = ParseGitHubAddonRelease(Json.AsDict(value), source);
                 if (candidate != null && (newest == null || candidate.PublishedAt > newest.PublishedAt)) newest = candidate;
             }
-            if (newest == null) throw new UserError("GitHub has no published " + source.Repo + " release ZIP matching " + source.AssetPrefix + ".");
-            if (!IsSha256(newest.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
+            if (newest == null) throw new UserError(source.Repo + " has no published release on GitHub yet.");
             return newest;
         }
 
@@ -2752,17 +2773,18 @@ namespace AzerothLauncher
                     {
                         string downloadUrl = url;
                         string expectedSha = null;
+                        List<KeyValuePair<string, string>> alternatives = null;
                         if (IsDynamicGitHubAddonUrl(url))
                         {
                             GitHubAddonRelease release = ResolveGitHubAddonRelease(url);
-                            if (release == null || !IsSha256(release.Sha256))
-                                throw new UserError("The latest GitHub release for " + name + " has no usable SHA-256 digest. Nothing was installed.");
                             downloadUrl = release.Url;
-                            expectedSha = release.Sha256;
+                            expectedSha = release.Digest;
+                            alternatives = release.Alternatives;
                             installedRelease = release.Identity;
                             resolvedRelease = release;
                         }
-                        names = InstallAddonUpdateSafely(downloadUrl, dir, Net.IsWebAddress(downloadUrl) ? AddonArchive.NewPath(name) : null, expectedSha, existingFolders, keepDisabled, delegate {return !GameRunningFlag && !Util.GameRunning() && !SyncBusy;});
+                        names = InstallAddonUpdateSafely(downloadUrl, dir, Net.IsWebAddress(downloadUrl) ? AddonArchive.NewPath(name) : null, expectedSha, existingFolders, keepDisabled, delegate {return !GameRunningFlag && !Util.GameRunning() && !SyncBusy;},
+                                                         catalogEntry != null ? catalogEntry.Folders : null, alternatives);
                         AddonArchive.Tidy(name);              // kept for ROLLBACK (Addons › Advanced)
                     }
                 }
@@ -3982,11 +4004,67 @@ namespace AzerothLauncher
             RebuildCurrent();
         }
 
+        // The AddOns or saved folder picked in place of benilla-config would put addons in AddOns\AddOns:
+        // the folder above it is the config folder.
+        internal static string ConfigFolderOf(string path)
+        {
+            string trimmed = (path ?? "").TrimEnd('\\', '/');
+            string name = Path.GetFileName(trimmed);
+            if (name.Equals("AddOns", StringComparison.OrdinalIgnoreCase) || name.Equals("saved", StringComparison.OrdinalIgnoreCase))
+            {
+                string parent = Path.GetDirectoryName(trimmed);
+                if (!string.IsNullOrEmpty(parent)) return parent;
+            }
+            return path;
+        }
+
+        // Earlier builds could put addons in benilla-config\AddOns\AddOns, where the game never looks.
+        // Save the outer folder and move what landed inside up into it. When both have the same addon,
+        // the newer copy stays and the older one goes to the launcher's temp folder.
+        void FixNestedAddonsFolder()
+        {
+            try
+            {
+                string saved = Cfg.Str("addons_dir");
+                if (saved.Length > 0 && !Util.SamePath(saved, AzerothLauncher.SyncSettings.OuterAddonsDir(saved)))
+                {
+                    Cfg.Set("addons_dir", AzerothLauncher.SyncSettings.OuterAddonsDir(saved));
+                    Cfg.Save();
+                }
+                string outer = SyncSettings().AddonsDir;
+                string inner = Path.Combine(outer, "AddOns");
+                if (!Directory.Exists(inner)) return;
+                string old = Path.Combine(Util.TempDir, "nested-addons-" + Guid.NewGuid().ToString("N"));
+                foreach (string from in Directory.GetFileSystemEntries(inner))
+                {
+                    try
+                    {
+                        string to = Path.Combine(outer, Path.GetFileName(from));
+                        bool fromIsFolder = Directory.Exists(from);
+                        bool toExists = Directory.Exists(to) || File.Exists(to);
+                        if (toExists)
+                        {
+                            DateTime fromAt = fromIsFolder ? Directory.GetLastWriteTimeUtc(from) : File.GetLastWriteTimeUtc(from);
+                            DateTime toAt = Directory.Exists(to) ? Directory.GetLastWriteTimeUtc(to) : File.GetLastWriteTimeUtc(to);
+                            if (fromAt <= toAt) continue;                 // the outer copy is newer: leave both
+                            Directory.CreateDirectory(old);
+                            string aside = Path.Combine(old, Path.GetFileName(to));
+                            if (Directory.Exists(to)) Directory.Move(to, aside); else File.Move(to, aside);
+                        }
+                        if (fromIsFolder) Directory.Move(from, to); else File.Move(from, to);
+                    }
+                    catch (Exception) { }                              // in use: tried again next start
+                }
+                if (Directory.GetFileSystemEntries(inner).Length == 0) Directory.Delete(inner);
+            }
+            catch (Exception) { }
+        }
+
         void ChooseConfigDir()
         {
             string d = AskFolder(side, "Select the game's benilla-config folder (contains AddOns and saved)", SyncSettings().ConfigDir);
             if (d == null) return;
-            Cfg.Set("config_dir", Path.GetFullPath(d));
+            Cfg.Set("config_dir", ConfigFolderOf(Path.GetFullPath(d)));
             Cfg.Remove("addons_dir");                        // AddOns and addon settings follow the config folder
             Cfg.Remove("saved_dir");
             Cfg.Save();

@@ -93,6 +93,7 @@ namespace AzerothLauncher
             WowDialog.Host = this;                           // questions and messages open inside the launcher
             Theme.PickFont();
             Cfg = Config.Load();
+            if (!PreviewMode) FixNestedAddonsFolder();
             InitializeDisplay();
             // Create the first-run marker beside this exe before Shown can start the automatic updater. It remains
             // pending until setup succeeds, including across an automatic updater restart.
@@ -300,6 +301,7 @@ namespace AzerothLauncher
             string game = GameDir();
             string config = Cfg.Str("config_dir");
             if (config.Length == 0 || !Directory.Exists(config)) config = Path.Combine(game, "benilla-config");
+            config = ConfigFolderOf(config);
             string save = Cfg.Str("save_dir");
             return new SyncSettings(Path.Combine(game, Util.GameExe), Cfg.Str("cloud_dir").Trim(),
                                     save.Length > 0 ? save : Util.DefaultSaveDir, config, Util.StateDir,
@@ -1071,16 +1073,17 @@ namespace AzerothLauncher
                     else
                     {
                         string installUrl = entry.Url, expectedSha = null;
+                        List<KeyValuePair<string, string>> alternatives = null;
                         if (IsDynamicGitHubAddonUrl(entry.Url))
                         {
                             GitHubAddonRelease release = ResolveGitHubAddonRelease(entry.Url);
-                            if (release == null || !IsSha256(release.Sha256))
-                                throw new UserError("The latest GitHub release for " + entry.Name + " has no usable SHA-256 digest. Nothing was installed.");
                             installUrl = release.Url;
-                            expectedSha = release.Sha256;
+                            expectedSha = release.Digest;
+                            alternatives = release.Alternatives;
                             releaseIdentity = release.Identity;
                         }
-                        names = Archive.InstallAddonZip(installUrl, ss.AddonsDir, null, expectedSha);
+                        names = InstallAddonUpdateSafely(installUrl, ss.AddonsDir, null, expectedSha, new List<string>(entry.Folders), false, null,
+                                                         entry.Folders, alternatives);
                         AddonArchive.Tidy(entry.Name);
                     }
                     string name = entry.Name;

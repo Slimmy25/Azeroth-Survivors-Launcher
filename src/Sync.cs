@@ -34,6 +34,18 @@ namespace AzerothLauncher
 
     public class SyncSettings
     {
+        // ...\AddOns\AddOns is never what the game reads: the outer AddOns folder is.
+        public static string OuterAddonsDir(string path)
+        {
+            string trimmed = (path ?? "").TrimEnd('\\', '/');
+            string parent = Path.GetDirectoryName(trimmed);
+            if (!string.IsNullOrEmpty(parent) &&
+                Path.GetFileName(trimmed).Equals("AddOns", StringComparison.OrdinalIgnoreCase) &&
+                Path.GetFileName(parent).Equals("AddOns", StringComparison.OrdinalIgnoreCase))
+                return parent;
+            return path;
+        }
+
         public string GameExe, CloudDir, SaveDir, ConfigDir, StateDir, AddonsDir, SavedDir;
 
         public SyncSettings(string gameExe, string cloudDir, string saveDir, string configDir, string stateDir,
@@ -46,6 +58,7 @@ namespace AzerothLauncher
             StateDir = stateDir;
             // AddOns / addon settings normally live inside the config folder; setup can point elsewhere
             AddonsDir = string.IsNullOrEmpty(addonsDir) ? Path.Combine(configDir ?? "", "AddOns") : addonsDir;
+            AddonsDir = OuterAddonsDir(AddonsDir);
             SavedDir = string.IsNullOrEmpty(savedDir) ? Path.Combine(configDir ?? "", "saved") : savedDir;
         }
     }
