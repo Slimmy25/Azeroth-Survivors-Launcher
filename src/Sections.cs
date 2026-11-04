@@ -133,10 +133,12 @@ namespace AzerothLauncher
             Invalidate();
         }
 
-        Rectangle CloseBox { get { return closable ? new Rectangle(Width - Theme.Px(27),Theme.Px(9),Theme.Px(18),Theme.Px(18)) : Rectangle.Empty; } }
+        // Header order, right to left: Favorites star, then the universal close X, then "Lost?"
+        int TrailW { get { return FavoriteClicked != null ? Theme.Px(22) : 0; } }
+        Rectangle CloseBox { get { return closable ? new Rectangle(Width - Theme.Px(27) - TrailW, Theme.Px(9), Theme.Px(18), Theme.Px(18)) : Rectangle.Empty; } }
         // "Lost?" beside the X: for anyone not sure how to get around (its width follows the word in the language)
         int HelpW { get { return Theme.Px(26) + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
-        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? Theme.Px(32) : Theme.Px(9)) - HelpW, Theme.Px(9), HelpW, Theme.Px(18)) : Rectangle.Empty; } }
+        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? Theme.Px(32) : Theme.Px(9)) - TrailW - HelpW, Theme.Px(9), HelpW, Theme.Px(18)) : Rectangle.Empty; } }
         public Point HelpScreenAnchor { get { Rectangle box = HelpBox; return box.IsEmpty ? PointToScreen(Point.Empty) : PointToScreen(new Point(box.Left + box.Width / 2, box.Bottom)); } }
         public Rectangle HelpScreenBounds { get { Rectangle box = HelpBox; return box.IsEmpty ? Rectangle.Empty : RectangleToScreen(box); } }
         Rectangle BackBox { get { return BackClicked != null ? new Rectangle(Theme.Px(44),Theme.Px(8),Theme.Px(30),Theme.Px(20)) : Rectangle.Empty; } }
@@ -145,9 +147,8 @@ namespace AzerothLauncher
             get
             {
                 if (FavoriteClicked == null) return Rectangle.Empty;
-                Rectangle help = HelpBox;
-                int right = !help.IsEmpty ? help.Left - Theme.Px(4) : (closable ? Width - Theme.Px(32) : Width - Theme.Px(8));
-                return new Rectangle(right - Theme.Px(20), Theme.Px(8), Theme.Px(18), Theme.Px(20));
+                // Far right edge of every menu header, so the star always sits in the same spot
+                return new Rectangle(Width - Theme.Px(27), Theme.Px(8), Theme.Px(18), Theme.Px(20));
             }
         }
 
