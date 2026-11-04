@@ -122,7 +122,8 @@ Video by Des (youtube.com/@Dessiq). All credit for the build and the video goes 
 - 1, 2, 3: pick a card when you level up. R: reroll the cards.
 - X: skip a level-up or cache hand when its Skip button is available. Change this under Key Bindings > Azeroth Survivors > Skip. Outside cards, X still makes your hero sit or stand.
 - Y: open your stored level-ups (when Store Level-Ups is on).
-- Escape: the menu (Back, Options, End Run).
+- Escape: the menu (Back, Options, End Run). Pressing Escape no longer opens the old WoW menu behind it, so Exit Game can't be clicked through.
+- Clicks and the mouse wheel stay on the menu or window in front of them; nothing behind it is clicked, and the camera doesn't zoom while you scroll over it.
 
 # Names and chat
 Hero and lobby names, lobby chat and in-run chat support Chinese, Japanese, Korean, Cyrillic and accented Latin letters. Chinese, Japanese and Korean input methods show your composition in every text box in both the game and browser. Enter confirms a character without sending the line or starting the run. Names and chat display across language settings, including writing from other languages.
@@ -137,7 +138,7 @@ You can set how far the camera sits from your hero, both from the main menu and 
 @video How do I change my camera distance in game? | https://cdn.jsdelivr.net/gh/Slimmy25/Azeroth-Survivors-Launcher@guide-videos/controls/how-do-i-change-my-camera-distance-in-game.mp4
 
 # Gamepad
-Gamepads are supported. On menus, the D-pad or left stick moves between buttons, A presses and B goes back. Y opens stored level-ups.
+Gamepads are supported. On menus, the D-pad or left stick moves between buttons, A presses and B goes back. Y opens stored level-ups. The gamepad Back button opens the character pane again.
 
 # Useful options
 - Controls > Store Level-Ups: level-ups no longer pause the fight. They are saved for later and a Level Up! button shows how many are waiting.
