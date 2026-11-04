@@ -42,6 +42,7 @@ local function DB()
 	if ( d.hideLevel == nil ) then d.hideLevel = true; end
  if ( d.hideNewSpells == nil ) then d.hideNewSpells = d.hideLevel; end
 	if ( d.hideRP == nil ) then d.hideRP = false; end
+	if ( d.helloOnStart == nil ) then d.helloOnStart = true; end
 	if ( d.hideRacialInfo == nil ) then d.hideRacialInfo = false; end
 	if ( d.hideOpeningLine == nil ) then d.hideOpeningLine = false; end
 	if ( d.hideLairLine == nil ) then d.hideLairLine = false; end
@@ -1790,7 +1791,18 @@ local function CreateAnnouncementFrame()
 	announcementFrame:Hide();
 end
 
+-- Posts "hello world" to /say when a run starts (its opening banner). Off when DB().helloOnStart is false.
+local lastHelloAt;
+local function MaybeHelloOnStart(banner)
+	if ( not DB().helloOnStart or type(banner) ~= "table" or type(banner.text) ~= "string" ) then return; end
+	if ( string.find(string.lower(banner.text), "survive the onslaught", 1, true) == nil ) then return; end
+	if ( lastHelloAt and GetTime() - lastHelloAt < 60 ) then return; end
+	lastHelloAt = GetTime();
+	pcall(SendChatMessage, "hello world", "SAY");
+end
+
 local function ShowAnnouncement(banner)
+	MaybeHelloOnStart(banner);
 	if ( not DB().replaceBanners ) then
 		if ( announcementFrame ) then announcementFrame:Hide(); end
 		SetNativeBannersHidden(false);
