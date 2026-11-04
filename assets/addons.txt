@@ -15,6 +15,8 @@ MISC | Azeroth Cursor By Maidenhead | https://github.com/Maidenquinn/AzerothCurs
 UI | Survivor UI + Classic By morderous | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/Survivor-UI-by-morderous.zip | SurvivorUI,SurvivorPlates,SurvivorUIClassic | Replaces. | forge-id=survivor-ui,survivorui-classic | forge-verified=true
 UI | Keijin UI By Keijin | https://github.com/KeijinDE/KeijinUI_modern-as-ui/releases/latest | KeijinUI | Replaces. | forge-id=keijinui | forge-verified=true
 UI | AetherHUD By Rehabrocket | https://github.com/NORehabRocket/AetherHUD/releases/latest | AetherHUD | Replaces. | forge-id=aetherhud | forge-verified=true
+UI | CreedUI By Creed | https://github.com/CreedASui/CreedUI-for-AS-/releases/latest | CreedUI | Replaces. | asset=CreedUi-
+UI | Vulchan's Combat Text By Vulchan | https://github.com/Vulchan/Vulchan-s-Combat-Text/releases/latest | VulchansCombatText | Condenses. | wip=true
 UI | ASTinyPlates By Valorless | https://github.com/Valorless/ASTinyPlates/releases/latest | ASTinyPlates | Resizes. | forge-id=astinyplates | forge-verified=true
 UI | BlackwellUI (BUI) By Blackwell | https://github.com/Blackwellcode/BlackwellUI/releases/latest | BlackwellUI | Overhauls. | forge-id=blackwellui | forge-verified=true
 GAMEPLAY | Azeroth FieldKit By Maidenhead | https://github.com/Maidenquinn/azeroth-fieldkit/releases/latest | AzerothFieldKit | Assists. | forge-id=azerothfieldkit | forge-verified=true
@@ -22,8 +24,9 @@ MISC | Azeroth Stats By Maidenhead | https://github.com/Maidenquinn/AzerothStats
 MISC | LocalClock By JamieeLee | https://github.com/JamieeLee/LocalClock-Addon/releases/latest | LocalClock | Displays. | forge-id=localclock-addon
 MISC | Cursor Reticle By Muffla | https://github.com/Muffla/CursorReticle/releases/latest | CursorReticle | Highlights.
 MISC | ASBuilder By Cadoky | https://github.com/cadoky/ASBuilder/releases/latest | ASBuilder | Plans. | forge-id=asbuilder | forge-verified=true
+MISC | ASDrops By Valorless | https://github.com/Valorless/ASDrops/releases/latest | ASDrops | Displays. | wip=true
 MISC | Azeroth Hub By Maidenquinn | https://github.com/Maidenquinn/AzerothHub/releases/latest | AzerothHub | Configures. | gallery-id=azerothhub | note=A full collection of addons featured in Survivorsforge - INGAME!
 MISC | AZS Handbook By Slimjim | builtin:AZSHandbook | AZSHandbook | Guides. | wip=true
-GAMEPLAY | Slim Suite By Slimjim | builtin:AZSMinorMods | AZSMinorMods | Helps. | wip=true
+GAMEPLAY | Slim Suite By Slimjim | builtin:AZSMinorMods | AZSMinorMods | Helps.
 WOW 1.12 ADDONS | MinimapButtonBag By Tunhadil & LaYt | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/MinimapButtonBag-by-Tunhadil-LaYt.zip | MBB | Consolidates.
 WOW 1.12 ADDONS | BugSack By Fritti & Rabbit | https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/BugSack-by-Fritti-Rabbit.zip | !BugGrabber,BugSack | Displays.
