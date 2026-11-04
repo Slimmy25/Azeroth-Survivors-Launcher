@@ -199,7 +199,8 @@ namespace AzerothLauncher
 
             Font font = Theme.F(7);
             int bodyWidth = Math.Max(20, area.Width - U(20));
-            int headerHeight = Math.Min(U(29), area.Height / 2);
+            // No header strip any more: the portrait sits outside the box, so the text starts at the top.
+            int headerHeight = Math.Min(U(6), area.Height / 2);
             int bodyHeight = area.Height - headerHeight - U(4);
             var lines = new List<string>();
             var heights = new List<float>();
@@ -219,7 +220,6 @@ namespace AzerothLauncher
 
             using (var purple = new SolidBrush(Theme.Hex("#e58bdf")))
             using (var gold = new SolidBrush(Theme.Gold))
-            using (var headerFill = new SolidBrush(Color.FromArgb(232, Theme.Card)))
             using (var track = new SolidBrush(Color.FromArgb(90, Theme.CardEdge)))
             using (var circleFill = new SolidBrush(Theme.Hex("#0b0a10")))
             using (var backdrop = new System.Drawing.Drawing2D.LinearGradientBrush(area, Theme.Card, Theme.Hex("#08070c"), 90f))
@@ -228,15 +228,14 @@ namespace AzerothLauncher
             using (var rule = new Pen(Color.FromArgb(150, Theme.Gold)))
             {
                 graphics.FillRectangle(backdrop, area);
-                graphics.FillRectangle(headerFill, area.X, area.Y, area.Width, headerHeight);
-                graphics.DrawLine(rule, area.X + U(4), area.Y + headerHeight - 1, area.Right - U(4), area.Y + headerHeight - 1);
                 graphics.DrawRectangle(bronze, area.X, area.Y, area.Width - 1, area.Height - 1);
                 graphics.DrawRectangle(innerGold, area.X + U(2), area.Y + U(2), area.Width - U(5), area.Height - U(5));
 
                 // Your portrait fills a circle; the image is cropped square and clipped to the circle.
                 Image avatar = whisperAvatar ?? (whisperAvatar = Theme.LoadImage("AS.slimjim-avatar.png"));
-                int d = Math.Min(U(26), headerHeight - U(4));
-                var circle = new Rectangle(area.X + U(6), area.Y + (headerHeight - d) / 2, d, d);
+                // Bigger, and set just outside the box's top-left corner so it overlaps the corner slightly.
+                int d = U(40);
+                var circle = new Rectangle(area.X - U(12), area.Y - U(14), d, d);
                 graphics.FillEllipse(circleFill, circle);
                 if (avatar != null)
                 {
