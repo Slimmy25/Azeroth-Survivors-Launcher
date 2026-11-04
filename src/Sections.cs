@@ -2477,6 +2477,7 @@ namespace AzerothLauncher
 
         void AddonCards(ScrollPanel sp, List<AddonEntry> items, int w, int y, Color listbg)
         {
+            EnsureCatalogVersions();
             int gap = Theme.Px(6), cols = Math.Max(1, Math.Min(4, w / Theme.Px(155)));
             int cw = (w - gap * (cols - 1)) / cols, textW = cw - 2 - 14;
             int bw = (int)((cw - 2 - 16) / Theme.Zoom);       // the block's button runs along its bottom
@@ -2550,6 +2551,16 @@ namespace AzerothLauncher
                         try { GuideHover.ShowGallery(name, it.Name, sourceText, gallery, true); }
                         finally { foreach (Image image in gallery) try { image.Dispose(); } catch (Exception) { } }
                     };
+                }
+                inner.Controls.Add(name);
+                // the newest release's version, right-aligned under the Verified badge (when the release is known)
+                string latestTag = LatestVersionLabel(it);
+                if (latestTag.Length > 0)
+                {
+                    var versionText = UI.Text(latestTag, 7.5f, FontStyle.Italic, Theme.GoldDim, listbg, Theme.Px(90), false);
+                    versionText.Size = VStack.Measure(versionText);
+                    versionText.Location = new Point(cw - Theme.Px(7) - versionText.Width, Theme.Px(20));
+                    inner.Controls.Add(versionText);
                 }
                 inner.Controls.Add(name);
                 ty += name.Height + 1;
@@ -3123,6 +3134,8 @@ namespace AzerothLauncher
                     y = Math.Max(rule.Bottom + 4, updateAll.Bottom + Theme.Px(3));
                 }
                 string label = shownName[name];
+                string installedTag = InstalledVersionLabel(name);
+                if (installedTag.Length > 0) label += "  " + installedTag;
                 if (pinnedFolders.Contains(name)) label += "  " + Lang.T("[Outdated]");   // rolled back on purpose (ROLLBACK)
                 var cb = UI.Check(label, a.Value, a.Value ? Theme.Text : Theme.GoldDim, listbg, 11, false);
                 cb.AutoSize = false;
