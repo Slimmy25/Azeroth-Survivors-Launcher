@@ -222,7 +222,7 @@ namespace AzerothLauncher
         bool guideFocusSearch;
         ScrollPanel classArticleScroll;
         ScrollPanel guideArticleScroll;
-        Label guideFavoriteStar;
+        List<KeyValuePair<string, Action>> favTrail;
         readonly Stack<int> classArticleBackPositions = new Stack<int>();
         readonly Dictionary<string, Control> classTalentTargets = new Dictionary<string, Control>(StringComparer.OrdinalIgnoreCase);
         readonly Dictionary<string, SpellRow> classSpellTargets = new Dictionary<string, SpellRow>(StringComparer.OrdinalIgnoreCase);
@@ -1283,27 +1283,26 @@ namespace AzerothLauncher
         void PanelGuideView()
         {
             guideArticleScroll = null;
-            guideFavoriteStar = null;
             if (VideoCard.Embed == null) VideoCard.Embed = delegate(GuideVideo v) { gVideo = v; BuildPanel("Guide"); return true; };
             if (Cfg.Data.ContainsKey("guide_read")) { Cfg.Remove("guide_read"); if (!PreviewMode) Cfg.Save(); }   // no longer tracked
-            if (gVideo != null) { GuideVideoPlayer(gVideo); AddGuideFavoriteStar(); return; }
-            if (gTalents != null && Talents.Of(gTalents).Count > 0) { GuideTalents(gTalents); AddGuideFavoriteStar(); return; }
-            if (gBuilder) { GuideBuilderHome(); AddGuideFavoriteStar(); return; }
-            if (gPlanner) { GuideGearPlanner(); AddGuideFavoriteStar(); return; }
-            if (guideBuildVideos && guideQuery.Trim().Length == 0) { GuideBuildVideosPage(); AddGuideFavoriteStar(); return; }
+            if (gVideo != null) { GuideVideoPlayer(gVideo); return; }
+            if (gTalents != null && Talents.Of(gTalents).Count > 0) { GuideTalents(gTalents); return; }
+            if (gBuilder) { GuideBuilderHome(); return; }
+            if (gPlanner) { GuideGearPlanner(); return; }
+            if (guideBuildVideos && guideQuery.Trim().Length == 0) { GuideBuildVideosPage(); return; }
             GuideLinks.Reset();                              // rebuild links in case the optional captured-tooltip source changed
             var topics = Data.Guide;
             guideTabsBottom = 0;
             if (gTopic >= topics.Count) { gTopic = -1; gPage = -1; }
-            if (guideWikiIndex) { GuideHome(topics); AddGuideFavoriteStar(); return; }
+            if (guideWikiIndex) { GuideHome(topics); return; }
             if (gTopic < 0 && guideQuery.Trim().Length == 0 && topics.Count > 0 && !guideMain && !guideWikiIndex) gTopic = Math.Min(guideLastTopic, topics.Count - 1);
-            if (gTopic < 0) { GuideHome(topics); AddGuideFavoriteStar(); return; }
+            if (gTopic < 0) { GuideHome(topics); return; }
             guideLastTopic = gTopic;
             GuideTopic topic = topics[gTopic];
             if (gPage >= topic.Pages.Count) gPage = -1;
-            if (gPage < 0 && topic.Pages.Count > 0) { GuideTopicPages(topic); AddGuideFavoriteStar(); return; }
+            if (gPage < 0 && topic.Pages.Count > 0) { GuideTopicPages(topic); return; }
             GuideArticle(topics, topic);
-            AddGuideFavoriteStar();
+           
         }
 
         GuideFavoriteRoute CurrentGuideFavoriteRoute()
@@ -1352,53 +1351,34 @@ namespace AzerothLauncher
             return new GuideFavoriteRoute("section", "Guide", "", "", "", "", (int)Math.Round(scrollY/Theme.DisplayScale), 0);
         }
 
-        void AddGuideFavoriteStar()
+        // One favorites button for every secondary menu (title bar). Asks where to save:
+        // the current place, the top of the page, or the closest category header above it.
+        void ChooseFavoriteLocation()
         {
-            if (guideQuery.Trim().Length > 0) return;
-            GuideFavoriteRoute currentLocation = CurrentGuideFavoriteRoute();
-            if (currentLocation == null) return;
-            int starSize = Math.Max(24, (int)(28 * Theme.Zoom));
-            // Keep the location favorite inside the secondary page area, aligned to its upper-right corner.
-            int x = Math.Max(4, PW - starSize - 8);
-            int y = Math.Max(2, GuideTop + 2);
-            var star = new Label { Text = "★", AutoSize = false, Bounds = new Rectangle(x, y, starSize, starSize),
-                Font = new Font("Segoe UI Symbol", 15 * Theme.Zoom * 96f / 72f, FontStyle.Regular, GraphicsUnit.Pixel),
-                ForeColor = Theme.Gold, BackColor = Color.Transparent, TextAlign = ContentAlignment.MiddleCenter,
-                Cursor = Cursors.Hand, AccessibleRole = AccessibleRole.PushButton,
-                AccessibleName = Lang.T("Save this guide location to Quick Access") };
-            star.Click += delegate
+            if (favTrail == null || favTrail.Count == 0) return;
+            int at = favTrail.Count - 1;
+            bool inGuide = current == "Guide";
+            GuideFavoriteRoute here, top;
+            if (inGuide)
             {
-                GuideFavoriteRoute favorite = CurrentGuideFavoriteRoute();
-                if (favorite == null) return;
-                bool wikiLocation = guideWikiIndex || (gTopic >= 0 && gTopic < Data.Guide.Count &&
-                    GroupOf(Data.Guide[gTopic].Title) == 1);
-                if (wikiLocation)
-                {
-                    using (var choose = new WikiFavoriteLocationDialog())
-                    {
-                        DialogResult result = choose.ShowModal(panel.FindForm());
-                        if (result == DialogResult.Yes) AddGuideFavorite(favorite);
-                        else if (result == DialogResult.No)
-                        {
-                            var top = new GuideFavoriteRoute(favorite.Kind, favorite.Topic, favorite.Page,
-                                favorite.ClassKey, favorite.Url, "", 0, 0);
-                            AddGuideFavorite(top);
-                        }
-                    }
-                }
-                else AddGuideFavorite(favorite);
-            };
-            star.MouseEnter += delegate
+                here = CurrentGuideFavoriteRoute();
+                if (here == null) return;
+                top = new GuideFavoriteRoute(here.Kind, here.Topic, here.Page, here.ClassKey, here.Url, "", 0, 0);
+            }
+            else
             {
-                star.ForeColor = Theme.Hex("#fff2b0");
-                GuideHover.ShowHelp(star, Lang.T("Save to Quick Access"),
-                    Lang.T("Save this page and your reading position to Quick Access."));
-            };
-            star.MouseLeave += delegate { star.ForeColor = Theme.Gold; GuideHover.Hide(); };
-            panel.Controls.Add(star);
-            star.BringToFront();
-            guideFavoriteStar = star;
-            if (gVideo != null) LayoutGuideVideo();
+                here = CrumbFavoriteRoute(favTrail[at].Key, at);
+                if (here == null) return;
+                top = here;
+            }
+            GuideFavoriteRoute closest = at > 0 ? CrumbFavoriteRoute(favTrail[at - 1].Key, at - 1) : null;
+            using (var choose = new FavoriteLocationDialog(closest != null))
+            {
+                choose.ShowModal(panel.FindForm());
+                if (choose.Choice == 1) AddGuideFavorite(here);
+                else if (choose.Choice == 2) AddGuideFavorite(top);
+                else if (choose.Choice == 3 && closest != null) AddGuideFavorite(closest);
+            }
         }
 
         // ---- a video streamed inside the section (the same address as the card: nothing is saved on the PC)
@@ -1417,19 +1397,6 @@ namespace AzerothLauncher
             int starSize = Math.Max(24, (int)Math.Round(28 * sectionZoom));
             int headerHeight = Math.Max(starSize, Theme.Px(24));
             int right = Math.Max(margin, PW - margin);
-            if (guideFavoriteStar != null && !guideFavoriteStar.IsDisposed)
-            {
-                var star = guideFavoriteStar;
-                star.Bounds = new Rectangle(Math.Max(margin, right - starSize), GuideTop + margin, starSize, starSize);
-                float fontSize = 15 * sectionZoom * 96f / 72f;
-                if (Math.Abs(star.Font.Size - fontSize) > .05f)
-                {
-                    Font previous = star.Font;
-                    star.Font = new Font("Segoe UI Symbol", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-                    previous.Dispose();
-                }
-                right = star.Left - gap;
-            }
             if (guideVideoOpen != null && !guideVideoOpen.IsDisposed)
             {
                 int buttonHeight = Theme.Px(24);
@@ -1461,19 +1428,24 @@ namespace AzerothLauncher
             LayoutGuideVideo();
         }
 
-        sealed class WikiFavoriteLocationDialog : WowDialog
+        sealed class FavoriteLocationDialog : WowDialog
         {
-            public WikiFavoriteLocationDialog() : base("Save Wiki favorite")
+            // 1 = current location, 2 = top of page, 3 = closest category header, 0 = cancelled
+            public int Choice;
+
+            public FavoriteLocationDialog(bool closestAvailable) : base("Save favorite")
             {
-                BackAction = delegate { DialogResult = DialogResult.Cancel; Close(); };
+                BackAction = delegate { Choice = 0; DialogResult = DialogResult.Cancel; Close(); };
                 Begin();
-                Heading("Save Wiki favorite", null, 24);
-                Para("Current Location, or top of page?", 11, FontStyle.Regular, Theme.Text, 24, 0, 8, 440);
-                var current = B("CURRENT LOCATION", delegate { DialogResult = DialogResult.Yes; Close(); }, 168, 36, 9);
-                var top = B("TOP OF PAGE", delegate { DialogResult = DialogResult.No; Close(); }, 146, 36, 9);
-                var cancel = B("CANCEL", delegate { DialogResult = DialogResult.Cancel; Close(); }, 110, 36, 9);
-                Body.MinWidth = 480;
-                Body.Add(new HRow(8, current, top, cancel), Align.Center, 12, 12, 12, 12);
+                Heading("Save favorite", null, 24);
+                Para("Save where? The current location, the top of this page, or the closest category header.", 11, FontStyle.Regular, Theme.Text, 24, 0, 8, 460);
+                var current = B("CURRENT LOCATION", delegate { Choice = 1; DialogResult = DialogResult.OK; Close(); }, 168, 36, 9);
+                var top = B("TOP OF PAGE", delegate { Choice = 2; DialogResult = DialogResult.OK; Close(); }, 146, 36, 9);
+                var closest = B("CLOSEST CATEGORY HEADER", delegate { Choice = 3; DialogResult = DialogResult.OK; Close(); }, 220, 36, 9);
+                closest.Enabled = closestAvailable;
+                var cancel = B("CANCEL", delegate { Choice = 0; DialogResult = DialogResult.Cancel; Close(); }, 110, 36, 9);
+                Body.MinWidth = 500;
+                Body.Add(new HRow(8, current, top, closest, cancel), Align.Center, 12, 12, 12, 12);
                 Finish();
             }
         }
@@ -1995,8 +1967,6 @@ namespace AzerothLauncher
             search.TextChanged += delegate
             {
                 guideQuery = search.Text;
-                if (guideFavoriteStar != null && !guideFavoriteStar.IsDisposed)
-                    guideFavoriteStar.Visible = guideQuery.Trim().Length == 0;
                 if (guideQuery.Trim().Length == 0)
                 {
                     guideQuery = "";

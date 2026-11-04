@@ -454,12 +454,12 @@ namespace AzerothLauncher
             guideVideoFrame=new Bordered(Theme.CardEdge,1);panel.Controls.Add(guideVideoFrame);
             guideVideoBrowser=new WebBrowser {Dock=DockStyle.Fill};guideVideoFrame.Controls.Add(guideVideoBrowser);
             guideVideoOpen=Put(new WowButton("OPEN IN BROWSER ›",delegate{},190,32,9),0,0);
-            AddGuideFavoriteStar();LayoutGuideVideo();
+            LayoutGuideVideo();
             var browser=guideVideoBrowser;Size previous=ClientSize;
             changingDisplay=true;ClientSize=new Size(Math.Max(650,previous.Width-200),Math.Max(450,previous.Height-80));changingDisplay=false;
             LayoutResponsiveDisplay(true);
             check(browser==guideVideoBrowser&&!browser.IsDisposed,"video resize keeps the same native browser instance");
-            check(panel.ClientRectangle.Contains(guideVideoOpen.Bounds)&&panel.ClientRectangle.Contains(guideFavoriteStar.Bounds),"video controls stay inside resized pane");
+            check(panel.ClientRectangle.Contains(guideVideoOpen.Bounds),"video controls stay inside resized pane");
             check(panel.ClientRectangle.Contains(guideVideoFrame.Bounds),"video viewport stays inside resized pane");
             changingDisplay=true;ClientSize=previous;changingDisplay=false;
             gVideo=null;BuildPanel("Guide");LayoutResponsiveDisplay(true);

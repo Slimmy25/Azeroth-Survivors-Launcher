@@ -1444,15 +1444,13 @@ namespace AzerothLauncher
 
         void BindCrumbFavorites(List<KeyValuePair<string, Action>> trail)
         {
-            // Guide pages have a dedicated star beside their search field, where Wiki pages can
-            // ask whether to save the exact reading point or the page top. Every other navigable
-            // section gets one stable star in the title bar for its current location.
+            // The title bar holds the one favorites button for every secondary menu. Its click asks
+            // where to save: here, the top of the page, or the closest category header above it.
             sideHead.FavoriteClicked = null;
-            if (trail == null || trail.Count == 0 || current == "Community" || current == "Guide" || current == "Setup") return;
-            int at = trail.Count - 1;
-            GuideFavoriteRoute route = CrumbFavoriteRoute(trail[at].Key, at);
-            if (route == null) return;
-            sideHead.FavoriteClicked = delegate { AddGuideFavorite(route); };
+            favTrail = null;
+            if (trail == null || trail.Count == 0 || current == "Community") return;
+            favTrail = trail;
+            sideHead.FavoriteClicked = delegate { ChooseFavoriteLocation(); };
             sideHead.Invalidate();
         }
 
