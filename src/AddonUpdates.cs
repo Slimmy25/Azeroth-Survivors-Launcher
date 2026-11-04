@@ -212,10 +212,12 @@ namespace AzerothLauncher
             };
             next();
         }
+        // The Addons button with updates waiting goes straight to the installed list and checks each addon's own
+        // repository live (no separate updates sub-menu). Nothing installs here: each row's UPDATE still does that.
         void OpenAddonUpdates()
         {
-            addonMode="updates"; OpenMain("Addons");
-            AskMirrorDates();
+            addonMode="installed"; OpenMain("Addons");
+            if(!mirrorAsking) AskMirrorDates(null,true);
         }
         void AddonUpdatesView()
         {
