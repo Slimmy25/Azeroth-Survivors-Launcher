@@ -177,6 +177,12 @@ namespace AzerothLauncher
                 GitHubAddonRelease latest=DynamicGitHubRelease(only.Url);
                 SetStatus(only.Name+" is up to date"+(latest!=null && latest.Tag!=null ? " ("+latest.Tag+")" : "")+".");
             }
+            if(todo.Count==0 && only==null)
+            {
+                SetStatus("Every addon is on its latest release.");
+                if(current=="Addons") BuildPanel("Addons");
+                return;
+            }
             autoAddonsBusy=true;
             RunAddonUpdateQueue(todo,delegate {return !GameRunningFlag && !Util.GameRunning() && !SyncBusy && !setupOpen;},
                 delegate(AddonEntry entry,Action<bool> done)
@@ -190,7 +196,8 @@ namespace AzerothLauncher
                 {
                     autoAddonsBusy=false; RefreshAddonUpdateBadge();
                     SetStatus("Addons updated: "+succeeded+". Failed: "+failed+". Check errors: "+addonUpdateProblems.Count+".");
-                    if(manual) { addonMode="updates"; if(current=="Addons") BuildPanel("Addons"); }
+                    // Update All / UPDATE stay on the installed list: no sub-menu
+                    if(current=="Addons") BuildPanel("Addons");
                     QueueAddonUpdateCheck();
                 });
         }

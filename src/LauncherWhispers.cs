@@ -223,7 +223,8 @@ namespace AzerothLauncher
             using (var gold = new SolidBrush(Theme.Gold))
             using (var track = new SolidBrush(Color.FromArgb(90, Theme.CardEdge)))
             using (var circleFill = new SolidBrush(Theme.Hex("#0b0a10")))
-            using (var backdrop = new System.Drawing.Drawing2D.LinearGradientBrush(area, Theme.Card, Theme.Hex("#08070c"), 90f))
+            // a very slight see-through: the launcher art shows faintly behind the box
+            using (var backdrop = new System.Drawing.Drawing2D.LinearGradientBrush(area, Color.FromArgb(225, Theme.Card), Color.FromArgb(225, Theme.Hex("#08070c")), 90f))
             using (var bronze = new Pen(Theme.Bronze))
             using (var innerGold = new Pen(Color.FromArgb(70, Theme.Gold)))
             using (var rule = new Pen(Color.FromArgb(150, Theme.Gold)))
