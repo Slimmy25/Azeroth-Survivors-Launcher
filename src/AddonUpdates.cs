@@ -171,6 +171,12 @@ namespace AzerothLauncher
             if(autoAddonsBusy || addonDlBusy) return;
             var todo=new List<AddonEntry>();
             foreach(var entry in InstalledManagedAddons()) if((only==null || entry.Name==only.Name) && AddonHasUpdate(entry)) todo.Add(entry);
+            // A single addon's UPDATE button: say what its own repo reported, so a click never looks like nothing happened.
+            if(only!=null && todo.Count==0 && !addonUpdateProblems.ContainsKey(only.Name) && IsDynamicGitHubAddonUrl(only.Url))
+            {
+                GitHubAddonRelease latest=DynamicGitHubRelease(only.Url);
+                SetStatus(only.Name+" is up to date"+(latest!=null && latest.Tag!=null ? " ("+latest.Tag+")" : "")+".");
+            }
             autoAddonsBusy=true;
             RunAddonUpdateQueue(todo,delegate {return !GameRunningFlag && !Util.GameRunning() && !SyncBusy && !setupOpen;},
                 delegate(AddonEntry entry,Action<bool> done)

@@ -2498,7 +2498,7 @@ namespace AzerothLauncher
                 Image watermark = it.ForgeVerified ? SurvivorsForge.LoadWatermark(forge) : null;
                 bool verified = it.ForgeVerified;
                 var btn = it.WorkInProgress ? new WowButton("Work in Progress", delegate { }, bw, 30, 9)
-                        : update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
+                        : update ? new WowButton("UPDATE", delegate { CheckAddonUpdates(it, true); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
                 if (it.WorkInProgress) btn.Enabled = false;
