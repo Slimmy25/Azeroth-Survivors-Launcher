@@ -200,7 +200,7 @@ namespace AzerothLauncher
             Font font = Theme.F(7);
             int bodyWidth = Math.Max(20, area.Width - U(20));
             // No header strip any more: the portrait sits outside the box, so the text starts at the top.
-            int headerHeight = Math.Min(U(6), area.Height / 2);
+            int headerHeight = Math.Min(U(2), area.Height / 2);
             int bodyHeight = area.Height - headerHeight - U(4);
             var lines = new List<string>();
             var heights = new List<float>();
