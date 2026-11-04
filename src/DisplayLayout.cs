@@ -225,6 +225,7 @@ namespace AzerothLauncher
                 change.Bounds = new Rectangle(W - U(126), HeaderBottom + U(5), U(110), U(24));
                 supportHeart.Visible = discordIcon.Visible = !CompactDisplay;
                 change.Visible = !CompactDisplay;
+                LayoutWhisperFeedback();
                 if (rebuild && edgeHost != null && !edgeHost.IsDisposed)
                 {
                     // A live video is reparented only once. Resize its existing host instead of restarting Edge.

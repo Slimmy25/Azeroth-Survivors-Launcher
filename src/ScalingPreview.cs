@@ -586,6 +586,18 @@ namespace AzerothLauncher
             addonMode="updates";BuildPanel("Addons");capture("addon-update-details");
             check(ReadLauncherWhispers().Count>0,"timestamped whisper posts load");
             var post=ReadLauncherWhispers()[0];check(post.Author=="Slimjim" && post.Message.Length>0,"whisper author and message retained");
+            if (!CompactDisplay)
+            {
+                check(feedbackField.Visible && feedbackField.Top >= WhisperArea.Bottom, "feedback field sits below whispers");
+                feedbackField.Text = "Sample feedback";
+                check(feedbackReplyPanel.Visible && feedbackReplyText.Text == FeedbackReply, "typing opens the requested feedback response");
+                var threadLink = feedbackReplyText.Links[0];
+                check(FeedbackReply.Substring(threadLink.Start, threadLink.Length) == "Discord Thread", "only Discord Thread is linked");
+                capture("whisper-feedback");
+                closeFeedback.PerformClick();
+                check(!feedbackReplyPanel.Visible && feedbackField.Text == "Sample feedback", "closing preserves the feedback draft");
+                feedbackField.Text = "";
+            }
             string package=Path.Combine(Path.GetFullPath(output),"package"), folderPath=Path.Combine(package,"FixtureAddon");
             Directory.CreateDirectory(folderPath);File.WriteAllText(Path.Combine(folderPath,"FixtureAddon.toc"),"## Interface: 11200\n");
             File.WriteAllText(Path.Combine(folderPath,"version.txt"),"new");

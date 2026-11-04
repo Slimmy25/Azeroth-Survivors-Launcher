@@ -189,6 +189,7 @@ namespace AzerothLauncher
             };
             Shown += delegate
             {
+                if (!PreviewMode) LoadPublishedWhispers();
                 if (!PreviewMode && !Program.LocalDevelopmentBuild) After(300, StartupUpdateCheck);
                 if (!PreviewMode && !Program.DisplayPreviewBuild) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
                 After(500, MaybeFirstRun);
