@@ -1,3 +1,10 @@
+# v3.23 (2026-11-03)
+
+- Addons: the Addons button checks each addon's own GitHub repository live and installs any newer release it finds, with no separate updates sub-menu.
+- Addons: each addon's UPDATE button checks its own repository and reports when it is already up to date.
+- Addons: the detail-card UPDATE checks first instead of installing the catalog copy directly.
+- Slim Suite posts "hello world" to /say when a run starts (on by default).
+
 # v3.22 (2026-11-03)
 
 - Addons: the launcher now checks the newest release of any addon's GitHub repository from the catalog and installs it after its SHA-256 digest checks out. Authors no longer need a launcher update for a new version.
