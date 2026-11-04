@@ -351,7 +351,9 @@ namespace AzerothLauncher
             else if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
                 lines.Add(new[] { Lang.T("Time played"), Duration(ps.Seconds) + "  ·  " + Lang.T("Last session") + " " + Duration(ps.LastSeconds) });
             if (lines.Count == 0) return;
-            var box = new RectangleF(ResponsiveNewsRect.Left, FooterTop - U(26), ResponsiveNewsRect.Width, U(23));
+            // centred along the very bottom of the footer flair
+            float boxWidth = Math.Min(U(460), W - U(40));
+            var box = new RectangleF((W - boxWidth) / 2f, H - U(27), boxWidth, U(23));
             using (var path = Armory.Round(box, 5))
             {
                 using (var b = new SolidBrush(Color.FromArgb(190, 14, 13, 20))) g.FillPath(b, path);

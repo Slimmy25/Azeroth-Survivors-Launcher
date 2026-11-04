@@ -219,7 +219,7 @@ namespace AzerothLauncher
                 discordIcon.Bounds = new Rectangle(supportHeart.Right + U(3), supportHeart.Top, U(26), U(22));
                 playBtn.SetDisplayZoom(Theme.DisplayScale);
                 int playHeight = Math.Max(24, Math.Min(U(49), H - FooterTop - U(32)));
-                playBtn.Bounds = new Rectangle(W - U(123), H - U(8) - playHeight, U(88), playHeight);
+                playBtn.Bounds = new Rectangle(W - U(88) - U(4), H - U(8) - playHeight, U(88), playHeight);   // snug to the right edge
                 var change = nav["Changelog"];
                 change.SetDisplayZoom(Theme.DisplayScale);
                 change.Bounds = new Rectangle(W - U(126), HeaderBottom + U(5), U(110), U(24));
