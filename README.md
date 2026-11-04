@@ -22,7 +22,7 @@ These projects deserve a place up front:
 ## Inside the launcher
 
 - **Install and play:** guided setup, game downloads, updates, and a built-in ZIP/7z/RAR extractor. The extractor is bundled in the launcher, so game installation does not require a separate archive program.
-- **Addons:** browse community addons and manage your installed collection.
+- **Addons:** browse community addons, check individual updates or Update All, and review source-specific update errors. A diagonal badge flags confirmed updates. See [how addon updates work](docs/addon-updates.md).
   - **Download More** shows available SurvivorsForge pictures and the launcher’s static Verified marks; it does not download addons from SurvivorsForge.
   - AZSSpellMeter and AZS Max Hit are alternatives; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.
   - **Slim Suite** (`/azsmods`) provides UI movement, sizing, scaling and gameplay helpers. Its settings are grouped into “Modifying the User Interface” and “New/Unique, but Minor Features.”
@@ -51,3 +51,5 @@ These screenshots were captured from the local WinForms preview with sample data
 - [Report an issue](https://github.com/Slimmy25/Azeroth-Survivors-Launcher/issues)
 
 The game is made by Aethus. This launcher is a separate community project and downloads the game from its download hosts. It is not affiliated with or endorsed by Blizzard Entertainment.
+
+Launcher announcements use a timestamped whisper box with Slimjim’s avatar. [Adding a post](docs/launcher-announcements.md).

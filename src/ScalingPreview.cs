@@ -74,6 +74,7 @@ namespace AzerothLauncher
                         bitmap.Save(Path.Combine(output, name + ".png"), ImageFormat.Png);
                     }
                 };
+                if(Array.IndexOf(args,"--addon-updates")>=0) { app.RenderAddonUpdateChecks(output,capture,check); app.Close(); return; }
                 check(app.ClientRectangle.Contains(app.side.Bounds),"secondary pane inside client");
                 check(app.ClientRectangle.Contains(app.playBtn.Bounds),"Play action inside client");
                 check(app.ResponsiveSideRect.Bottom<app.FooterTop,"secondary pane above footer");
@@ -524,6 +525,87 @@ namespace AzerothLauncher
             string line=new string(' ',depth*2)+control.GetType().Name+" handle="+control.IsHandleCreated+" created="+control.Created+" "+state+"\n";
             foreach(Control child in control.Controls)line+=ScalingControlSnapshot(child,depth+1);
             return line;
+        }
+
+        void RenderAddonUpdateChecks(string output,Action<string> capture,Action<bool,string> check)
+        {
+            setupOpen=false;
+            string fixture=Path.Combine(Path.GetFullPath(output),"addon-fixture"); Directory.CreateDirectory(fixture);
+            foreach(string folder in new[]{"ASTinyPlates","BlackwellUI","KeijinUI","SurvivorUI","SurvivorsDragonUi","UnknownAddon"})
+            {
+                string path=Path.Combine(fixture,folder); Directory.CreateDirectory(path);
+                File.WriteAllText(Path.Combine(path,folder+".toc"),"## Interface: 11200\n## Title: "+folder+"\n");
+            }
+            Cfg.Set("addons_dir",fixture); Cfg.Set("addons_advanced",false);
+            addonCheckedAt=DateTime.UtcNow; mirrorDates=new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase);
+            foreach(var entry in InstalledManagedAddons())
+            {
+                if(IsDynamicGitHubAddonUrl(entry.Url))
+                {
+                    var release=new GitHubAddonRelease {Tag="v-test",Sha256=new string('a',64),Url=entry.Url};
+                    dynamicAddonReleases[entry.Url]=release; dynamicAddonReleaseChecked.Add(entry.Url);
+                    if(entry.Folders.Contains("KeijinUI")) AddonInstalledRelease()[entry.Name]=release.Identity;
+                    if(entry.Folders.Contains("SurvivorsDragonUi")) AddonPins()[entry.Name]="kept.zip";
+                }
+                else
+                {
+                    string file=Uri.UnescapeDataString(entry.Url.Substring(entry.Url.LastIndexOf('/')+1));
+                    mirrorDates[file]=DateTime.UtcNow; mirrorIdentities[file]="fixture-mirror";
+                }
+                if(entry.Folders.Contains("BlackwellUI")) addonUpdateProblems[entry.Name]="Example: GitHub request limit reached. Try again later.";
+            }
+            var tiny=CatalogAddonForFolder("ASTinyPlates"); var keijin=CatalogAddonForFolder("KeijinUI"); var dragon=CatalogAddonForFolder("SurvivorsDragonUi");
+            check(AddonHasUpdate(tiny),"changed creator digest is detected");
+            check(!AddonHasUpdate(keijin),"unchanged creator digest is current");
+            check(!AddonHasUpdate(dragon),"pinned addon is excluded from automatic updates");
+            check(!AddonHasUpdate(CatalogAddonForFolder("BlackwellUI")),"failed checks are not claimed as confirmed updates");
+            RefreshAddonUpdateBadge(); check(addonUpdateCount>0,"confirmed updates activate badge");
+            current="Addons";addonMode="installed";BuildPanel("Addons");capture("addons-installed");
+            check(CatalogAddonForFolder("UnknownAddon")==null,"unmanaged addon has no invented release source");
+            foreach(Control parent in panel.Controls)
+                foreach(Control child in parent.Controls)
+                    if(child is ScrollPanel)
+                        foreach(Control row in child.Controls)
+                        {
+                            var checkbox=row as CheckBox;
+                            if(checkbox!=null)
+                            {
+                                int textWidth=Math.Max(1,checkbox.Width-(checkbox.Font.Height-2)-8);
+                                Size needed=TextRenderer.MeasureText(checkbox.Text,checkbox.Font,new Size(textWidth,int.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
+                                check(checkbox.Height>=needed.Height,"installed addon name wraps without clipping");
+                            }
+                            var update=row as WowButton;
+                            if(update==null || update.Label!="UPDATE") continue;
+                            foreach(Control other in child.Controls)
+                            {
+                                var remove=other as WowButton;
+                                if(remove!=null && remove.Label=="X" && Math.Abs(remove.Top-update.Top)<2)
+                                    check(update.Right<=remove.Left,"individual update and uninstall buttons do not overlap");
+                            }
+                        }
+            addonMode="updates";BuildPanel("Addons");capture("addon-update-details");
+            check(ReadLauncherWhispers().Count>0,"timestamped whisper posts load");
+            var post=ReadLauncherWhispers()[0];check(post.Author=="Slimjim" && post.Message.Length>0,"whisper author and message retained");
+            string package=Path.Combine(Path.GetFullPath(output),"package"), folderPath=Path.Combine(package,"FixtureAddon");
+            Directory.CreateDirectory(folderPath);File.WriteAllText(Path.Combine(folderPath,"FixtureAddon.toc"),"## Interface: 11200\n");
+            File.WriteAllText(Path.Combine(folderPath,"version.txt"),"new");
+            string zip=Path.Combine(Path.GetFullPath(output),"fixture-update.zip");System.IO.Compression.ZipFile.CreateFromDirectory(package,zip);
+            string disabled=Path.Combine(fixture,"FixtureAddon.disabled");Directory.CreateDirectory(disabled);File.WriteAllText(Path.Combine(disabled,"version.txt"),"old");
+            InstallAddonUpdateSafely(zip,fixture,null,null,new List<string>{"FixtureAddon"},true);
+            check(!Directory.Exists(Path.Combine(fixture,"FixtureAddon")) && File.ReadAllText(Path.Combine(disabled,"version.txt"))=="new","disabled addon updates without being enabled or colliding with its old folder");
+            bool rejected=false;
+            try {InstallAddonUpdateSafely(zip,fixture,null,new string('0',64),new List<string>{"FixtureAddon"},true);} catch(UserError) {rejected=true;}
+            check(rejected && File.ReadAllText(Path.Combine(disabled,"version.txt"))=="new","digest failure preserves installed addon");
+            int visited=0, successes=-1, failures=-1;
+            RunAddonUpdateQueue(new List<AddonEntry>{tiny,keijin,dragon},delegate{return true;},
+                delegate(AddonEntry entry,Action<bool> done){visited++;done(visited>1);done(true);},
+                delegate(int passed,int failed){successes=passed;failures=failed;});
+            check(visited==3 && successes==2 && failures==1,"batch continues after failure and counts each callback once");
+            visited=0;
+            RunAddonUpdateQueue(new List<AddonEntry>{tiny},delegate{return false;},
+                delegate(AddonEntry entry,Action<bool> done){visited++;done(true);},delegate(int passed,int failed){});
+            check(visited==0,"batch pauses before downloads when game/sync gate closes");
+            File.WriteAllText(Path.Combine(output,"success.txt"),"Addon update checks passed");
         }
 
         static void CheckScalingControls(Control parent,Action<bool,string> check)

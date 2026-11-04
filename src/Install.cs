@@ -91,7 +91,10 @@ namespace AzerothLauncher
                     if (r != null)
                     {
                         int code = (int)r.StatusCode;
+                        bool rateLimited = (code == 403 || code == 429) &&
+                            (r.Headers["X-RateLimit-Remaining"] == "0" || !string.IsNullOrEmpty(r.Headers["Retry-After"]));
                         r.Close();
+                        if (rateLimited) throw new UserError("GitHub's request limit has been reached. Please wait and try again. Nothing was installed.");
                         if (code >= 300 && code < 400) throw new UserError("The " + what + " server sent a broken redirect.");
                         throw new UserError("The " + what + " server answered with error " + code + ".");
                     }
@@ -508,6 +511,43 @@ namespace AzerothLauncher
         // Resolve mirrors against their own hosting repository, not an upstream project's
         // different ZIP or SurvivorsForge metadata. Fetch afresh so re-uploaded assets do
         // not inherit an old digest. Locally supplied/rollback ZIPs have no release URL.
+        static readonly object githubReleaseGate = new object();
+
+        // Share one short-lived response across startup checks and installs, including
+        // launcher restarts. Each cached response belongs to exactly one API URL.
+        internal static Dictionary<string, object> ReadGitHubReleaseMetadata(string api, bool refresh = false)
+        {
+            lock (githubReleaseGate)
+            {
+                string key;
+                using (var sha = System.Security.Cryptography.SHA256.Create())
+                    key = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(api))).Replace("-", "");
+                string cache = Path.Combine(Util.TempDir, "github-releases", key + ".json");
+                try
+                {
+                    TimeSpan age = DateTime.UtcNow - File.GetLastWriteTimeUtc(cache);
+                    if (!refresh && File.Exists(cache) && age >= TimeSpan.Zero && age < TimeSpan.FromMinutes(10))
+                    {
+                        var saved = Json.AsDict(Json.Parse(File.ReadAllText(cache)));
+                        if (saved != null) return saved;
+                    }
+                }
+                catch (Exception) { } // A missing/unreadable cache always falls back to GitHub.
+                string text;
+                using (var response = Net.Open(api, 15000, true, "GitHub", "application/vnd.github+json"))
+                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8)) text = reader.ReadToEnd();
+                var release = Json.AsDict(Json.Parse(text));
+                if (release == null) throw new UserError("GitHub returned invalid release information. Nothing was installed.");
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(cache));
+                    File.WriteAllText(cache, text, Encoding.UTF8);
+                }
+                catch (Exception) { } // Verification can still use the freshly fetched response.
+                return release;
+            }
+        }
+
         internal static string GitHubAssetSha256(string url)
         {
             Uri uri;
@@ -518,10 +558,7 @@ namespace AzerothLauncher
                 throw new UserError("This GitHub addon link must identify an exact release ZIP before it can be verified.");
             string api = "https://api.github.com/repos/" + parts[0] + "/" + parts[1] +
                          "/releases/tags/" + Uri.EscapeDataString(Uri.UnescapeDataString(parts[4]));
-            Dictionary<string, object> release;
-            using (var response = Net.Open(api, 15000, true, "GitHub", "application/vnd.github+json"))
-            using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                release = Json.AsDict(Json.Parse(reader.ReadToEnd()));
+            Dictionary<string, object> release = ReadGitHubReleaseMetadata(api);
             foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
             {
                 var asset = Json.AsDict(value);

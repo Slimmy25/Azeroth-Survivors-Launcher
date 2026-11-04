@@ -9,6 +9,8 @@ foreach ($value in @($env:BUILD_KIND, $env:EXTRA_CSC_FLAGS)) {
     if ($value) { foreach ($match in [regex]::Matches($value, '(?:[^\s"]|"[^"]*")+')) { $arguments.Add($match.Value) } }
 }
 $resources = @(
+    'assets\launcher-announcements.txt,AS.launcher-announcements.txt'
+    'assets\slimjim-avatar.png,AS.slimjim-avatar.png'
     'assets\logo.png,AS.logo.png'
     'assets\discord\symbol-blurple.png,AS.discord-blurple.png'
     'assets\discord\symbol-white.png,AS.discord-white.png'

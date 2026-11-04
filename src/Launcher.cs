@@ -116,8 +116,8 @@ namespace AzerothLauncher
                 string n = name;
                 if (n == "Changelog") continue;              // on the News line (below)
                 Action open = n == "Theorycrafting" ? (Action)delegate { GuideGroupPage(2); } :
-                              n == "New Player Handbook" ? (Action)delegate { GuideGroupPage(0); } : delegate { OpenMain(n); };   // dedicated guide destinations
-                nav[n] = Place(new WowButton(n.ToUpperInvariant(), open, 128, 27, 8.5f), 693, 480);
+                              n == "New Player Handbook" ? (Action)delegate { GuideGroupPage(0); } : delegate { if(n=="Addons" && addonUpdateCount>0) OpenAddonUpdates(); else OpenMain(n); };   // dedicated guide destinations
+                nav[n] = Place(n=="Addons" ? new AddonUpdateNavButton(n.ToUpperInvariant(),open,PaintAddonUpdateBadge) : new WowButton(n.ToUpperInvariant(), open, 128, 27, 8.5f), 693, 480);
                 nav[n].Skin = Retro.Button;
             }
             // UPDATE LAUNCHER and ABOUT LAUNCHER live in Options > Launcher now; these two stay hidden and carry their state
@@ -545,12 +545,13 @@ namespace AzerothLauncher
                         {
                             if (!NavShown(section)) continue;
                             string destination = section;
-                            var entry = new ToolStripMenuItem(Lang.T(section));
+                            var entry = new ToolStripMenuItem(Lang.T(section)+(section=="Addons" && addonUpdateCount>0 ? " — Updates Available!" : ""));
                             entry.Enabled = nav.ContainsKey(section) && !nav[section].Grayed;
                             entry.Click += delegate
                             {
                                 if (destination == "Theorycrafting") GuideGroupPage(2);
                                 else if (destination == "New Player Handbook") GuideGroupPage(0);
+                                else if(destination=="Addons" && addonUpdateCount>0) OpenAddonUpdates();
                                 else OpenMain(destination);
                             };
                             menu.Items.Add(entry);

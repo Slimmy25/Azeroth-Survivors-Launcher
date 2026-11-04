@@ -1961,6 +1961,7 @@ namespace AzerothLauncher
                 SetCrumbMenu(2, l);
                 AddonsDownloadView(8);
             }
+            else if (addonMode == "updates") AddonUpdatesView();
             else AddonsInstalledView(8);
         }
 
@@ -2207,12 +2208,9 @@ namespace AzerothLauncher
             return true;
         }
 
-        static Dictionary<string, object> ReadGitHubRelease(string apiUrl)
+        static Dictionary<string, object> ReadGitHubRelease(string apiUrl, bool refresh = false)
         {
-            string text;
-            using (var resp = Net.Open(apiUrl, 15000, true, "GitHub", "application/vnd.github+json"))
-            using (var rd = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8)) text = rd.ReadToEnd();
-            return Json.AsDict(Json.Parse(text));
+            return Archive.ReadGitHubReleaseMetadata(apiUrl, refresh);
         }
 
         static GitHubAddonRelease ParseGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
@@ -2245,17 +2243,18 @@ namespace AzerothLauncher
             return new GitHubAddonRelease { Tag = tag, Url = assetUrl, Sha256 = sha, PublishedAt = published };
         }
 
-        static GitHubAddonRelease ResolveGitHubAddonRelease(string url)
+        static GitHubAddonRelease ResolveGitHubAddonRelease(string url, bool refresh = false)
         {
             GitHubAddonSource source = GitHubAddonSourceFor(url);
             if (source == null) throw new UserError("This add-on is not configured for direct GitHub release updates.");
-            // Use /releases/latest for stable releases. If a project publishes only pre-releases (or its
-            // latest stable release has no matching package), choose the newest published release that
+            // Use /releases/latest for stable releases. If the project has no stable release,
+            // choose the newest published release that
             // contains this add-on's expected ZIP. The asset's GitHub-published digest is required.
             try
             {
                 GitHubAddonRelease stable = ParseGitHubAddonRelease(ReadGitHubRelease(
-                    "https://api.github.com/repos/" + source.Repo + "/releases/latest"), source);
+                    "https://api.github.com/repos/" + source.Repo + "/releases/latest", refresh), source);
+                if (stable == null) throw new UserError("The latest " + source.Repo + " release has no matching addon ZIP. Its package name may have changed; no older release was substituted.");
                 if (stable != null)
                 {
                     if (!IsSha256(stable.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
@@ -2288,93 +2287,10 @@ namespace AzerothLauncher
             return dynamicAddonReleases.TryGetValue((url ?? "").TrimEnd('/'), out release) ? release : null;
         }
 
-        void AskMirrorDates()
-        {
-            if (mirrorDates != null || mirrorAsking || PreviewMode) return;
-            mirrorAsking = true;
-            Bg(delegate
-            {
-                var dates = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
-                try
-                {
-                    string text;
-                    using (var resp = Net.Open("https://api.github.com/repos/Slimmy25/Azeroth-Survivors-Launcher/releases/tags/addons",
-                                               15000, true, "GitHub", "application/vnd.github+json"))
-                    using (var rd = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
-                        text = rd.ReadToEnd();
-                    foreach (object a in Json.AsList(Json.Get(Json.AsDict(Json.Parse(text)), "assets")) ?? new List<object>())
-                    {
-                        var d = Json.AsDict(a);
-                        DateTime t;
-                        if (DateTime.TryParse(Json.Str(d, "updated_at"), System.Globalization.CultureInfo.InvariantCulture,
-                                              System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out t))
-                            dates[Json.Str(d, "name")] = t;
-                    }
-                }
-                catch (Exception) { }
-                var liveReleases = new Dictionary<string, GitHubAddonRelease>(StringComparer.OrdinalIgnoreCase);
-                foreach (string sourceUrl in new[] { AzerothStatsLatestUrl, SurvivorsDragonUiLatestUrl, KeijinUiLatestUrl, AzerothFieldKitLatestUrl,
-                                                      AstinyPlatesLatestUrl, AsBuilderLatestUrl, AzerothHubLatestUrl })
-                {
-                    try { liveReleases[sourceUrl] = ResolveGitHubAddonRelease(sourceUrl); }
-                    catch (Exception) { liveReleases[sourceUrl] = null; }
-                }
-                Ui(delegate
-                {
-                    mirrorDates = dates;
-                    foreach (var release in liveReleases)
-                    {
-                        dynamicAddonReleases[release.Key] = release.Value;
-                        dynamicAddonReleaseChecked.Add(release.Key);
-                    }
-                    mirrorAsking = false;
-                    if (current == "Addons" && addonMode == "download") BuildPanel("Addons");
-                    AutoUpdateAddons();                       // newer copies on GitHub: installed right away
-                });
-            });
-        }
-
-        // Addon updates without asking: every installed Download More addon with a newer copy on GitHub is updated, one
-        // after the other, as soon as the launcher knows (at start, and again when the game closes). Never while the
-        // game runs (it keeps addons open) or a sync or setup is going on; the next chance picks them up.
-        bool autoAddonsBusy;
-
-        void AutoUpdateAddons()
-        {
-            if (PreviewMode || autoAddonsBusy || setupOpen || !GateOpen()) return;
-            if (GameRunningFlag || Util.GameRunning() || SyncBusy || addonDlBusy) return;
-            if (startupLauncherCheck || Updating) { After(3000, AutoUpdateAddons); return; }   // a launcher update may restart us first
-            if (mirrorDates == null) { AskMirrorDates(); return; }   // it comes back here when the dates are in
-            var todo = new List<AddonEntry>();
-            try
-            {
-                foreach (var e in Data.Addons)
-                    if (AddonFoldersOf(e.Name).Count > 0 &&
-                        (!IsDynamicGitHubAddonUrl(e.Url) || DynamicGitHubRelease(e.Url) != null) && AddonHasUpdate(e)) todo.Add(e);
-            }
-            catch (Exception) { return; }
-            if (todo.Count == 0) return;
-            autoAddonsBusy = true;
-            int i = 0;
-            Action next = null;
-            next = delegate
-            {
-                if (i >= todo.Count || GameRunningFlag || Util.GameRunning() || SyncBusy)
-                {
-                    autoAddonsBusy = false;
-                    if (i > 0) SetStatus(Lang.F("Addons updated: {0}.", i));
-                    return;
-                }
-                var e = todo[i++];
-                SyncLog("Updating the " + e.Name + " addon (a newer copy is on GitHub) ...", Level.Info);
-                DownloadAddon(e.Name, e.Url, next, true);
-            };
-            next();
-        }
-
         // true when the copy on GitHub is newer than the one installed
         bool AddonHasUpdate(AddonEntry it)
         {
+            if (it.WorkInProgress || addonUpdateProblems.ContainsKey(it.Name)) return false;
             if (mirrorDates == null || it.Category == Data.MyAddonsCategory || !Net.IsWebAddress(it.Url)) return false;
             if (AddonSetting(AddonPins(), it.Name) != null) return false;   // rolled back on purpose: left as it is
             if (IsDynamicGitHubAddonUrl(it.Url))
@@ -2409,7 +2325,9 @@ namespace AzerothLauncher
                     catch (Exception) { }
                 if (installed == DateTime.MinValue) return false;
             }
-            return up > installed.AddMinutes(1);
+            string identity = MirrorAddonIdentity(it);
+            string installedIdentity = Convert.ToString(AddonSetting(AddonInstalledRelease(), it.Name), CultureInfo.InvariantCulture);
+            return identity.Length > 0 ? !string.Equals(identity, installedIdentity, StringComparison.Ordinal) : up > installed.AddMinutes(1);
         }
 
         void AddonsDownloadView(int top)
@@ -2669,7 +2587,7 @@ namespace AzerothLauncher
         // quiet: an automatic update (no message box on a failure; the log says it and the next one goes on)
         void DownloadAddon(string name, string url, Action after = null, bool quiet = false)
         {
-            if (AddonsLocked()) return;
+            if (AddonsLocked()) { if (after != null) after(); return; }
             AddonEntry catalogEntry = null;
             foreach (AddonEntry candidate in Data.Addons)
                 if (string.Equals(candidate.Name, name, StringComparison.Ordinal) && string.Equals(candidate.Url, url, StringComparison.Ordinal))
@@ -2680,6 +2598,7 @@ namespace AzerothLauncher
             if (catalogEntry != null && catalogEntry.WorkInProgress)
             {
                 SetStatus(name + " is temporarily unavailable: work in progress.");
+                if (after != null) after();
                 return;
             }
             var conflictingOn = new List<string>();
@@ -2703,6 +2622,14 @@ namespace AzerothLauncher
             {
                 SetStatus("Another addon is still downloading.");
                 return;
+            }
+            bool keepDisabled = false;
+            var existingFolders = AddonFoldersOf(name);
+            if (existingFolders.Count > 0)
+            {
+                keepDisabled = true;
+                foreach (string folder in existingFolders)
+                    if (Directory.Exists(Path.Combine(AddonsDir(), folder)) && !folder.EndsWith(Addons.DisabledSuffix)) keepDisabled = false;
             }
             addonDlBusy = true;
             SetStatus("Installing " + name + "...");
@@ -2731,7 +2658,7 @@ namespace AzerothLauncher
                             installedRelease = release.Identity;
                             resolvedRelease = release;
                         }
-                        names = Archive.InstallAddonZip(downloadUrl, dir, Net.IsWebAddress(downloadUrl) ? AddonArchive.NewPath(name) : null, expectedSha);
+                        names = InstallAddonUpdateSafely(downloadUrl, dir, Net.IsWebAddress(downloadUrl) ? AddonArchive.NewPath(name) : null, expectedSha, existingFolders, keepDisabled, delegate {return !GameRunningFlag && !Util.GameRunning() && !SyncBusy;});
                         AddonArchive.Tidy(name);              // kept for ROLLBACK (Addons › Advanced)
                     }
                 }
@@ -2739,11 +2666,14 @@ namespace AzerothLauncher
                 Ui(delegate
                 {
                     addonDlBusy = false;
+                    addonLastResults[name] = err;
+                    if (err == null) addonUpdateProblems.Remove(name); else addonUpdateProblems[name] = err;
                     SetStatus(err == null ? name + " installed." : name + " failed.");
                     if (err == null)
                     {
+
                         var switchedOff = new List<string>();
-                        if (catalogEntry != null)
+                        if (catalogEntry != null && !keepDisabled)
                         {
                             foreach (string folder in catalogEntry.Folders)
                                 try
@@ -2763,7 +2693,9 @@ namespace AzerothLauncher
                         foreach (string n in names) rec.Add(n);
                         AddonInstalls()[name] = rec;
                         AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
+                        if (string.IsNullOrEmpty(installedRelease) && catalogEntry != null) installedRelease = MirrorAddonIdentity(catalogEntry);
                         if (!string.IsNullOrEmpty(installedRelease)) AddonInstalledRelease()[name] = installedRelease;
+
                         if (resolvedRelease != null)
                         {
                             string releaseUrl = (url ?? "").TrimEnd('/');
@@ -2773,10 +2705,10 @@ namespace AzerothLauncher
                         AddonPins().Remove(name);            // the newest copy: no longer [Outdated]
                         ClearLegacyAddonSettings(name);
                         Cfg.Save();
-                        if (after != null) try { after(); } catch (Exception) { }
                         if (current == "Addons" || current == "Stats") BuildPanel(current);
                         if (switchedOff.Count > 0)
                             SetStatus(name + " installed. " + string.Join(", ", switchedOff.ToArray()) + " switched off because they conflict.");
+                        if (after != null) after();
                     }
                     else if (quiet)
                     {
@@ -2922,7 +2854,7 @@ namespace AzerothLauncher
                 // Advanced profile controls are anchored separately at the bottom.
                 var more = Put(new WowButton("DOWNLOAD MORE ›", delegate { SetAddonMode("download"); }, 190, 32, 10), cx, top);
                 int rtop = BottomOf(more) + 6;
-                var refresh = Put(new WowButton("REFRESH", delegate { BuildPanel("Addons"); }, 92, 28, 9), cx, rtop);
+                var refresh = Put(new WowButton("REFRESH", delegate { CheckAddonUpdates(null, false); }, 92, 28, 9), cx, rtop);
                 Put(new WowButton("FOLDER", delegate { Util.OpenInShell(dir); }, 92, 28, 9), cx + (int)(98 * Theme.Zoom), rtop);
                 var toggle = Put(new WowButton("TOGGLE ALL", ToggleAllAddons, 190, 34, 11), cx, BottomOf(refresh) + 6);
                 addonCount = UI.Text("", 10, FontStyle.Italic, Theme.GoldDim, Theme.Panel, 0);
@@ -3050,6 +2982,11 @@ namespace AzerothLauncher
             }
             int w = sp.ClientSize.Width - 4 - 12;
             int y = 2;
+            var updateAll = new WowButton("UPDATE ALL", delegate { CheckAddonUpdates(null, true); }, 105, 24, 8);
+            updateAll.Location = new Point(Math.Max(6, sp.ClientSize.Width - updateAll.Width - 10), 2);
+            updateAll.Grayed = addonDlBusy || autoAddonsBusy || mirrorAsking;
+            sp.Controls.Add(updateAll);
+            AskMirrorDates();
             // grouped like Download More: AZS addons, WoW 1.12 addons, My Addons, then any other folder
             var cats = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var e in Data.Addons)
@@ -3116,14 +3053,16 @@ namespace AzerothLauncher
                     rule.BackColor = Theme.GoldDim;
                     rule.Bounds = new Rectangle(6, hd.Bottom + 1, w - 4, 1);
                     sp.Controls.Add(rule);
-                    y = rule.Bottom + 4;
+                    y = Math.Max(rule.Bottom + 4, updateAll.Bottom + Theme.Px(3));
                 }
                 string label = shownName[name];
                 if (pinnedFolders.Contains(name)) label += "  " + Lang.T("[Outdated]");   // rolled back on purpose (ROLLBACK)
                 var cb = UI.Check(label, a.Value, a.Value ? Theme.Text : Theme.GoldDim, listbg, 11, false);
                 cb.AutoSize = false;
-                Size need = TextRenderer.MeasureText(label, cb.Font, new Size(w - 24 - linkW, 0), TextFormatFlags.WordBreak);
-                cb.Bounds = new Rectangle(6, y, w - 34 - linkW, Math.Max(22, need.Height + 4));     // long names wrap
+                int rowWidth=Math.Max(30,w-Theme.Px(108)-linkW);
+                int checkboxTextWidth=Math.Max(1,rowWidth-(cb.Font.Height-2)-8);
+                Size need=TextRenderer.MeasureText(label,cb.Font,new Size(checkboxTextWidth,int.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
+                cb.Bounds=new Rectangle(6,y,rowWidth,Math.Max(22,need.Height+4));
                 rowBox[name] = cb.Bounds;
                 cb.CheckedChanged += delegate { OnAddonToggle(name); };
                 sp.Controls.Add(cb);
@@ -3131,6 +3070,13 @@ namespace AzerothLauncher
                 var del = new WowButton("X", delegate { UninstallFolder(name); }, 26, 22, 9);
                 del.Location = new Point(6 + w - 30, y + (cb.Height - del.Height) / 2);
                 sp.Controls.Add(del);
+                AddonEntry updateEntry = CatalogAddonForFolder(name);
+                var update = new WowButton("UPDATE", delegate { CheckAddonUpdates(updateEntry, true); }, 66, 22, 8);
+                update.Location = new Point(del.Left - update.Width - Theme.Px(4), del.Top);
+                update.Grayed = updateEntry == null || updateEntry.WorkInProgress || addonDlBusy || autoAddonsBusy || mirrorAsking;
+                update.GrayedTip = updateEntry == null ? "No managed release source is known for this addon." : "Updates are unavailable while another operation is running or the addon is work in progress.";
+                update.Tip = "Check this addon's release source and install an available update.";
+                sp.Controls.Add(update);
                 addonRows[name] = cb;
                 y += cb.Height + 1;
             }
@@ -3142,7 +3088,7 @@ namespace AzerothLauncher
                 link.BackColor = listbg;
                 int need = link.WordHeight(), mid = (y1 + y2) / 2;
                 int lt = Math.Max(0, Math.Min(y1 - 1, mid - need / 2)), lb = Math.Max(y2 + 2, mid + need / 2);
-                link.Bounds = new Rectangle(6 + w - 34 - linkW + i * 20, lt, 20, lb - lt);
+                link.Bounds = new Rectangle(6 + w - Theme.Px(108) - linkW + i * 20, lt, 20, lb - lt);
                 link.Tick1 = y1 - lt;
                 link.Tick2 = y2 - lt;
                 WowButton.Tips.SetToolTip(link, pairs[i].Key + " / " + pairs[i].Value + ": " +

@@ -442,7 +442,7 @@ namespace AzerothLauncher
                 {
                     string[] lines = Data.Changelog[0].Trim().Split('\n');
                     var state = graphics.Save(); graphics.SetClip(NewsArea);
-                    float y = NewsArea.Top - newsScroll;
+                    float y = DrawLauncherWhispers(graphics, NewsArea.Top - newsScroll);
                     using (var gold = new SolidBrush(Theme.Gold))
                     using (var text = new SolidBrush(Theme.Text))
                     {
