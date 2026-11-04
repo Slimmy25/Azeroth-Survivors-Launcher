@@ -1,5 +1,5 @@
 // The talent trees of every class, as the game has them (assets/talents.txt, read from the game at wow.aethus.pl by
-// tools/game_talents.py), and the pieces the New Player Guide's class pages draw them with:
+// tools/game_talents.py), and the pieces the New Player Handbook's class pages draw them with:
 //   * TalentTreeView: one spec's tree, its talents' icons on the game's grid (7 rows, 4 columns) with their ranks,
 //     the 10, 20 and 30 point milestones marked; pointing at a talent shows its text and the spells it changes
 //   * SpellRow: one spell of the class, its icon, the guide's line about it, and the talents that change it, and the spells that name it
@@ -36,6 +36,16 @@ namespace AzerothLauncher
     {
         static List<TalentTree> trees;
         static Dictionary<string, string> abilities;           // ability key -> name, as the game names them
+
+        // Stable key bridge used when an external gear code refers to a class spell by key.
+        public static string AbilityKey(string abilityName)
+        {
+            Load();
+            if (string.IsNullOrWhiteSpace(abilityName)) return null;
+            foreach (var ability in abilities)
+                if (string.Equals(ability.Value, abilityName.Trim(), StringComparison.OrdinalIgnoreCase)) return ability.Key;
+            return null;
+        }
 
         static void Load()
         {
@@ -331,19 +341,20 @@ namespace AzerothLauncher
                 using (var b = new SolidBrush(Build.SpentIn(tree) > 0 ? Theme.Hex("#7ee05a") : Theme.GoldDim))
                     g.DrawString(pts, pf, b, Width - 10 - ps.Width, 6);
             }
-            int cell = Cell, ic = Theme.CrispIcon(Math.Min(42, cell - 6)), x0 = 8 + (Width - 16 - cell * Cols) / 2, y0 = 30;
+            int cell = Math.Max(Theme.Px(14), (Height - Theme.Px(38)) / Rows), cellX = Math.Max(Theme.Px(14), (Width - Theme.Px(16)) / Cols);
+            int ic = Math.Max(10, Math.Min(Theme.Px(42), Math.Min(cell, cellX) - Theme.Px(6))), x0 = Theme.Px(8), y0 = Theme.Px(30);
             cells.Clear();
             // the line that joins the milestones, as in the game's window
             var ms = tree.Talents.FindAll(delegate(Talent t) { return t.Milestone; });
             ms.Sort(delegate(Talent a, Talent b) { return a.Row.CompareTo(b.Row); });
             using (var p = new Pen(Color.FromArgb(120, Theme.GoldDim), 2))
                 for (int i = 1; i < ms.Count; i++)
-                    g.DrawLine(p, x0 + ms[i - 1].Col * cell + cell / 2, y0 + ms[i - 1].Row * cell + cell / 2,
-                               x0 + ms[i].Col * cell + cell / 2, y0 + ms[i].Row * cell + cell / 2);
+                    g.DrawLine(p, x0 + ms[i - 1].Col * cellX + cellX / 2, y0 + ms[i - 1].Row * cell + cell / 2,
+                               x0 + ms[i].Col * cellX + cellX / 2, y0 + ms[i].Row * cell + cell / 2);
             Font rf = Theme.F(7.5f, FontStyle.Bold);
             foreach (var t in tree.Talents)
             {
-                var r = new Rectangle(x0 + t.Col * cell + (cell - ic) / 2, y0 + t.Row * cell + (cell - ic) / 2 - 3, ic, ic);
+                var r = new Rectangle(x0 + t.Col * cellX + (cellX - ic) / 2, y0 + t.Row * cell + (cell - ic) / 2 - 3, ic, ic);
                 cells.Add(new KeyValuePair<Rectangle, Talent>(r, t));
                 Image img = SpellIcons.Icon(t.Icon, this);
                 if (img != null) Theme.Draw(g, img, r);
@@ -432,6 +443,8 @@ namespace AzerothLauncher
         readonly List<KeyValuePair<Rectangle, KeyValuePair<string, string>>> spellChips = new List<KeyValuePair<Rectangle, KeyValuePair<string, string>>>();
         // set by the launcher: a set chip clicked opens the Gear Planner with that set put on (class, rarity)
         public static Action<string, string> OpenSet;
+        // Optional in-page destination for a talent chip. Class guides use this to keep readers in the same article.
+        public Action<Talent> OpenTalentInArticle;
         // the class's set bonuses whose text names this spell: { "Faith 8-piece", its text, the rarity }
         readonly List<string[]> setBonuses = new List<string[]>();
         readonly List<KeyValuePair<Rectangle, string[]>> setChips = new List<KeyValuePair<Rectangle, string[]>>();
@@ -441,7 +454,9 @@ namespace AzerothLauncher
         string overSpell;
         string[] overSet;
         Jewel overCodex;
-        const int Ic = 34;
+        readonly float layoutZoom;
+        int U(float value) { return Math.Max(1, (int)Math.Round(value * layoutZoom)); }
+        int Ic { get { return U(30); } }
 
         static string Base(string n) { return Regex.Replace(n ?? "", @"\s*\(.*\)$", "").Trim(); }
 
@@ -479,6 +494,7 @@ namespace AzerothLauncher
 
         public SpellRow(string name, string line, string className, int width, int topic, int page, List<KeyValuePair<string, string>> pool)
         {
+            layoutZoom = Theme.Zoom;
             this.topic = topic;
             this.page = page;
             affecting = Mentioning(name, pool);
@@ -512,19 +528,23 @@ namespace AzerothLauncher
             }
             catch (Exception) { }
             BackColor = Theme.Hex("#15121c");
-            text = new GuideText(line, 9.5f, Theme.Text, BackColor, width - Ic - 26, topic, page);
-            text.Location = new Point(Ic + 18, 24);
+            text = new GuideText(line, 9.5f, Theme.Text, BackColor, width - Ic - U(26), topic, page);
+            text.Location = new Point(Ic + U(18), U(24));
             Controls.Add(text);
-            int h = text.Bottom + 6;
-            if (changers.Count > 0) h += 26;
-            if (affecting.Count > 0) h += 26;
-            if (setBonuses.Count > 0) h += 26;
-            if (codexItems.Count > 0) h += 26;
-            Size = new Size(width, Math.Max(h, Ic + 14));
+            int h = text.Bottom + U(6);
+            if (changers.Count > 0) h += U(26);
+            if (affecting.Count > 0) h += U(26);
+            if (setBonuses.Count > 0) h += U(26);
+            if (codexItems.Count > 0) h += U(26);
+            Size = new Size(width, Math.Max(h, Ic + U(14)));
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            float previousZoom = Theme.Zoom;
+            Theme.Zoom = layoutZoom;
+            try
+            {
             Graphics g = e.Graphics;
             g.Clear(Parent != null ? Parent.BackColor : Theme.Panel);
             Theme.Smooth(g);
@@ -534,105 +554,107 @@ namespace AzerothLauncher
                 using (var b = new SolidBrush(BackColor)) g.FillPath(b, path);
                 using (var p = new Pen(lit ? Theme.Gold : Theme.Hex("#3a2e1e"), lit ? 2 : 1)) g.DrawPath(p, path);
             }
-            var ir = new Rectangle(8, 8, Ic, Ic);
+            var ir = new Rectangle(U(8), U(8), Ic, Ic);
             Image img = SpellIcons.Spell(Regex.Replace(name, @"\s*\(.*\)$", ""), this);
             if (img != null) Theme.Draw(g, img, ir);
             else using (var b = new SolidBrush(Theme.Hex("#2a2218"))) g.FillRectangle(b, ir);
-            using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, ir);
-            using (var b = new SolidBrush(Theme.Gold)) g.DrawString(name, Theme.F(10.5f, FontStyle.Bold), b, Ic + 16, 5);
+            using (var p = new Pen(Theme.Hex("#8a7040"), U(1))) g.DrawRectangle(p, ir);
+            using (var b = new SolidBrush(Theme.Gold)) g.DrawString(name, Theme.F(10.5f, FontStyle.Bold), b, Ic + U(16), U(5));
             chips.Clear();
             spellChips.Clear();
             setChips.Clear();
             codexChips.Clear();
             Font lf = Theme.F(8, FontStyle.Italic);
             int rowsBelow = (changers.Count > 0 ? 1 : 0) + (affecting.Count > 0 ? 1 : 0) + (setBonuses.Count > 0 ? 1 : 0) + (codexItems.Count > 0 ? 1 : 0);
-            float y = Height - 24 - 26 * Math.Max(0, rowsBelow - 1);
-            if (changers.Count > 0) { ChipRow(g, lf, y); y += 26; }
-            if (affecting.Count > 0) { SpellChipRow(g, lf, y); y += 26; }
-            if (setBonuses.Count > 0) { SetChipRow(g, lf, y); y += 26; }
+            float y = Height - U(24) - U(26) * Math.Max(0, rowsBelow - 1);
+            if (changers.Count > 0) { ChipRow(g, lf, y); y += U(26); }
+            if (affecting.Count > 0) { SpellChipRow(g, lf, y); y += U(26); }
+            if (setBonuses.Count > 0) { SetChipRow(g, lf, y); y += U(26); }
             if (codexItems.Count > 0) CodexChipRow(g, lf, y);
+            }
+            finally { Theme.Zoom = previousZoom; }
         }
 
         // the sets whose 8-piece bonus changes this spell: each set's name in its rarity's colour; the hover reads it
         void SetChipRow(Graphics g, Font lf, float y)
         {
-            float sx = Ic + 18;
+            float sx = Ic + U(18);
             string label = Lang.T("Set bonuses that change it:");
-            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(label, lf, b, sx, y + 3);
-            sx += g.MeasureString(label, lf).Width + 4;
+            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(label, lf, b, sx, y + U(3));
+            sx += g.MeasureString(label, lf).Width + U(4);
             Font cf = Theme.F(8, FontStyle.Bold);
             foreach (var sb in setBonuses)
             {
                 SizeF sz = g.MeasureString(sb[0], cf);
-                var r = new Rectangle((int)sx, (int)y, (int)sz.Width + 8, 18);
-                if (r.Right > Width - 6) break;
+                var r = new Rectangle((int)sx, (int)y, (int)sz.Width + U(8), U(18));
+                if (r.Right > Width - U(6)) break;
                 using (var b = new SolidBrush(Theme.Hex("#1e1a26"))) g.FillRectangle(b, r);
-                using (var p = new Pen(sb == overSet ? Theme.Hex("#fff2b0") : GearSheet.RarityColor(sb[2]), 1)) g.DrawRectangle(p, r);
-                using (var b = new SolidBrush(GearSheet.RarityColor(sb[2]))) g.DrawString(sb[0], cf, b, r.X + 4, r.Y + (r.Height - sz.Height) / 2);
+                using (var p = new Pen(sb == overSet ? Theme.Hex("#fff2b0") : GearSheet.RarityColor(sb[2]), U(1))) g.DrawRectangle(p, r);
+                using (var b = new SolidBrush(GearSheet.RarityColor(sb[2]))) g.DrawString(sb[0], cf, b, r.X + U(4), r.Y + (r.Height - sz.Height) / 2);
                 setChips.Add(new KeyValuePair<Rectangle, string[]>(r, sb));
-                sx = r.Right + 4;
+                sx = r.Right + U(4);
             }
         }
 
         // the other spells that name this one: their icons, each a link to its own row
         void SpellChipRow(Graphics g, Font lf, float y)
         {
-            float sx = Ic + 18;
+            float sx = Ic + U(18);
             string slabel = Lang.T("Spells that change it:");
-            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(slabel, lf, b, sx, y + 3);
-            sx += g.MeasureString(slabel, lf).Width + 4;
+            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(slabel, lf, b, sx, y + U(3));
+            sx += g.MeasureString(slabel, lf).Width + U(4);
             foreach (var sp in affecting)
             {
-                if (sx + 18 > Width - 6) break;
-                var r = new Rectangle((int)sx, (int)y, 18, 18);
+                if (sx + U(18) > Width - U(6)) break;
+                var r = new Rectangle((int)sx, (int)y, U(18), U(18));
                 Image si = SpellIcons.Spell(sp.Key, this);
                 if (si != null) Theme.Draw(g, si, r);
                 else using (var b = new SolidBrush(Theme.Hex("#2a2218"))) g.FillRectangle(b, r);
                 using (var p = new Pen(sp.Key == overSpell ? Theme.Hex("#fff2b0") : Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, r);
                 spellChips.Add(new KeyValuePair<Rectangle, KeyValuePair<string, string>>(r, sp));
-                sx += 22;
+                sx += U(22);
             }
         }
 
-        // The Codex neck piece that remakes this spell; clicking it opens Items > Codex.
+        // The Codex neck piece that remakes this spell; it routes through the class guide to its class guide.
         void CodexChipRow(Graphics g, Font lf, float y)
         {
-            float x = Ic + 18;
+            float x = Ic + U(18);
             string label = Lang.T("Codex neck piece:");
-            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(label, lf, b, x, y + 3);
-            x += g.MeasureString(label, lf).Width + 4;
+            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(label, lf, b, x, y + U(3));
+            x += g.MeasureString(label, lf).Width + U(4);
             Font cf = Theme.F(8, FontStyle.Bold);
             foreach (var j in codexItems)
             {
                 string name = j.Name;
                 SizeF sz = g.MeasureString(name, cf);
-                int width = Math.Min((int)sz.Width + 8, Width - (int)x - 6);
-                if (width < 24) break;
-                var r = new Rectangle((int)x, (int)y, width, 18);
+                int width = Math.Min((int)sz.Width + U(8), Width - (int)x - U(6));
+                if (width < U(24)) break;
+                var r = new Rectangle((int)x, (int)y, width, U(18));
                 using (var b = new SolidBrush(Theme.Hex("#1e1a26"))) g.FillRectangle(b, r);
-                using (var p = new Pen(j == overCodex ? Theme.Hex("#fff2b0") : GearSheet.RarityColor("Legendary"), 1)) g.DrawRectangle(p, r);
-                using (var b = new SolidBrush(GearSheet.RarityColor("Legendary"))) g.DrawString(name, cf, b, new RectangleF(r.X + 4, r.Y + 2, r.Width - 8, r.Height - 4));
+                using (var p = new Pen(j == overCodex ? Theme.Hex("#fff2b0") : GearSheet.RarityColor("Legendary"), U(1))) g.DrawRectangle(p, r);
+                using (var b = new SolidBrush(GearSheet.RarityColor("Legendary"))) g.DrawString(name, cf, b, new RectangleF(r.X + U(4), r.Y + U(2), r.Width - U(8), r.Height - U(4)));
                 codexChips.Add(new KeyValuePair<Rectangle, Jewel>(r, j));
-                x = r.Right + 4;
+                x = r.Right + U(4);
             }
         }
 
         void ChipRow(Graphics g, Font lf, float y)
         {
-            float x = Ic + 18;
+            float x = Ic + U(18);
             string label = Lang.T("Talents that change it:");
-            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(label, lf, b, x, y + 3);
-            x += g.MeasureString(label, lf).Width + 4;
+            using (var b = new SolidBrush(Theme.GoldDim)) g.DrawString(label, lf, b, x, y + U(3));
+            x += g.MeasureString(label, lf).Width + U(4);
             foreach (var t in changers)
             {
                 Image ti = SpellIcons.Icon(t.Icon, this);
-                var r = new Rectangle((int)x, (int)y, 18, 18);
-                if (x + 18 > Width - 6) break;
+                var r = new Rectangle((int)x, (int)y, U(18), U(18));
+                if (x + U(18) > Width - U(6)) break;
                 if (ti != null) Theme.Draw(g, ti, r);
                 else using (var b = new SolidBrush(Theme.Hex("#2a2218"))) g.FillRectangle(b, r);
                 using (var p = new Pen(t == over ? Theme.Hex("#fff2b0") : Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, r);
                 chips.Add(new KeyValuePair<Rectangle, Talent>(r, t));
-                x += 22;
+                x += U(22);
             }
         }
 
@@ -640,20 +662,20 @@ namespace AzerothLauncher
         {
             base.OnMouseMove(e);
             Talent t = null;
-            foreach (var c in chips) if (Rectangle.Inflate(c.Key, 2, 2).Contains(e.Location)) t = c.Value;
+            foreach (var c in chips) if (Rectangle.Inflate(c.Key, U(2), U(2)).Contains(e.Location)) t = c.Value;
             string s = null, sText = null;
-            foreach (var c in spellChips) if (Rectangle.Inflate(c.Key, 2, 2).Contains(e.Location)) { s = c.Value.Key; sText = c.Value.Value; }
+            foreach (var c in spellChips) if (Rectangle.Inflate(c.Key, U(2), U(2)).Contains(e.Location)) { s = c.Value.Key; sText = c.Value.Value; }
             string[] st = null;
-            foreach (var c in setChips) if (Rectangle.Inflate(c.Key, 2, 2).Contains(e.Location)) st = c.Value;
+            foreach (var c in setChips) if (Rectangle.Inflate(c.Key, U(2), U(2)).Contains(e.Location)) st = c.Value;
             Jewel cj = null;
-            foreach (var c in codexChips) if (Rectangle.Inflate(c.Key, 2, 2).Contains(e.Location)) cj = c.Value;
+            foreach (var c in codexChips) if (Rectangle.Inflate(c.Key, U(2), U(2)).Contains(e.Location)) cj = c.Value;
             if (t != over || s != overSpell || st != overSet || cj != overCodex) { over = t; overSpell = s; overSet = st; overCodex = cj; Invalidate(); }
             Cursor = t != null || s != null || st != null || cj != null ? Cursors.Hand : Cursors.Default;   // a click opens the talent's trees / the spell's row / the set in the planner
             if (t != null) GuideHover.Show(this, t.Name, Talents.HoverText(t), SpellIcons.Icon(t.Icon, null));
             else if (s != null) GuideHover.Show(this, s, sText, SpellIcons.Spell(s, null));
             else if (st != null) GuideHover.Show(this, st[0], st[1] + "\n\n" + Lang.T("all 8 at 3+ stars, half again as strong at 5"), null);
             else if (cj != null) GuideHover.Show(this, cj.Name, Items.Card(cj), SpellIcons.Spell(cj.Spell, null));
-            else if (new Rectangle(8, 8, Ic, Ic).Contains(e.Location) || e.Y < 24)
+            else if (new Rectangle(U(8), U(8), Ic, Ic).Contains(e.Location) || e.Y < U(24))
                 GuideHover.Show(this, name, SpellHover(), SpellIcons.Spell(Regex.Replace(name, @"\s*\(.*\)$", ""), null));
             else GuideHover.Hide();
         }
@@ -704,9 +726,9 @@ namespace AzerothLauncher
             {
                 GuideHover.Hide();
                 var topics = Data.Guide;
-                int ti = topics.FindIndex(delegate(GuideTopic g) { return g.Title == "Items"; });
-                int pi = ti < 0 ? -1 : topics[ti].Pages.FindIndex(delegate(GuidePage g) { return g.Title == "Codex"; });
-                if (ti >= 0 && pi >= 0) GuideLinks.Navigate(new GuideLink { Term = overCodex.Name, Topic = ti, Page = pi, Tip = Items.Card(overCodex) });
+                int ti = topics.FindIndex(delegate(GuideTopic g) { return g.Title == "Classes"; });
+                int pi = ti < 0 ? -1 : topics[ti].Pages.FindIndex(delegate(GuidePage p) { return p.Title == className; });
+                if (ti >= 0 && pi >= 0) GuideLinks.Navigate(new GuideLink { Term = overCodex.Name, FindText = overCodex.Name, Topic = ti, Page = pi, Tip = Items.Card(overCodex) });
                 return;
             }
             if (e.Button == MouseButtons.Left && overSet != null && OpenSet != null)
@@ -726,8 +748,15 @@ namespace AzerothLauncher
                 GuideLinks.Navigate(sl);
                 return;
             }
-            if (e.Button != MouseButtons.Left || over == null || GuideLinks.Navigate == null) return;
+            if (e.Button != MouseButtons.Left || over == null) return;
             GuideHover.Hide();
+            if (OpenTalentInArticle != null)
+            {
+                Talent target = over;
+                OpenTalentInArticle(target);
+                return;
+            }
+            if (GuideLinks.Navigate == null) return;
             var l = new GuideLink();
             l.Term = over.Name;
             l.Class = className;

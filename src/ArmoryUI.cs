@@ -58,7 +58,7 @@ namespace AzerothLauncher
             {
                 float old = Theme.Zoom;
                 Theme.Zoom = 1f;
-                f = Theme.F(f.SizeInPoints * Z, f.Style);
+                f = Theme.F(f.Size * .75f * Z, f.Style);
                 Theme.Zoom = old;
                 r = new Rectangle((int)(r.X * Z), (int)(r.Y * Z), (int)Math.Ceiling(r.Width * Z) + 1, (int)Math.Ceiling(r.Height * Z) + 1);
             }
@@ -72,7 +72,7 @@ namespace AzerothLauncher
             if (Z == 1f) return f;
             float old = Theme.Zoom;
             Theme.Zoom = 1f;
-            try { return Theme.F(f.SizeInPoints * Z, f.Style); }
+            try { return Theme.F(f.Size * .75f * Z, f.Style); }
             finally { Theme.Zoom = old; }
         }
 
@@ -206,7 +206,8 @@ namespace AzerothLauncher
 
         public void Fit(int width)
         {
-            float old = Theme.Zoom;
+            float old = Theme.Zoom, oldDensity=Theme.DisplayScale;
+            Theme.DisplayScale=1f;
             Theme.Zoom = 1f;                                 // laid out at full size, painted scaled
             Armory.Z = Zm;                                   // measured as painted
             try
@@ -215,7 +216,7 @@ namespace AzerothLauncher
                 base.Height = (int)Math.Ceiling((Top0 + ContentHeight(Width - 2 * Pad) + Pad) * Zm);
                 Layout2();
             }
-            finally { Theme.Zoom = old; Armory.Z = 1f; }
+            finally { Theme.Zoom = old; Theme.DisplayScale=oldDensity; Armory.Z = 1f; }
         }
 
         protected virtual void Layout2() { }
@@ -229,10 +230,11 @@ namespace AzerothLauncher
             Theme.Smooth(g);
             g.ScaleTransform(Zm, Zm);
             Armory.Z = Zm;
-            float oldZoom = Theme.Zoom;
+            float oldZoom = Theme.Zoom, oldDensity=Theme.DisplayScale;
+            Theme.DisplayScale=1f;
             Theme.Zoom = 1f;
             try { PaintAll(g); }
-            finally { Armory.Z = 1f; Theme.Zoom = oldZoom; }
+            finally { Armory.Z = 1f; Theme.Zoom = oldZoom; Theme.DisplayScale=oldDensity; }
         }
 
         void PaintAll(Graphics g)
@@ -584,7 +586,7 @@ namespace AzerothLauncher
         {
             int h = 0;
             foreach (var l in Lines) h += Armory.TextHeight((string)l[0], LineFont(l), w) + 6;
-            if (Button != null) h += Button.Height + 8;
+            if (Button != null) h += (int)Math.Ceiling(Button.Height / Zm) + 8;
             return Math.Max(0, h - 6);
         }
 
@@ -594,7 +596,7 @@ namespace AzerothLauncher
         {
             if (Button == null) return;
             if (Button.Parent != this) Controls.Add(Button);
-            Button.Location = new Point(Pad, Height - Pad - Button.Height);
+            Button.Location = new Point((int)(Pad*Zm), ((Control)this).Height - (int)(Pad*Zm) - Button.Height);
         }
 
         protected override void PaintContent(Graphics g, Rectangle r)
@@ -734,7 +736,7 @@ namespace AzerothLauncher
         {
             if (runs.Count < 2)
             {
-                Armory.Text(g, Lang.T("Play a few runs with the newest AZS Stats to see your DPS over time."), Theme.F(10, FontStyle.Italic),
+                Armory.Text(g, Lang.T("Play a few runs with Azeroth Stats to see your DPS over time."), Theme.F(10, FontStyle.Italic),
                             Armory.Dim, r, TextFormatFlags.Left | TextFormatFlags.WordBreak);
                 return;
             }

@@ -50,8 +50,8 @@ namespace AzerothLauncher
 
         public static readonly Conflict[] Conflicts =
         {
-            // two run-statistics addons that don't need to be on together. Maidenhead's Azeroth Stats always has the right
-            // of way: when both are found on, AZS Stats is the one switched off (Slimjim, 2026-10-28)
+            // Transition rule for older installs: if both the replacement and legacy tracker exist, leave Azeroth Stats
+            // enabled and switch off AZS Stats. The legacy folder and its SavedVariables are preserved.
             new Conflict { Preferred = new[] { "AzerothStats" }, Other = new[] { "AZSStats" },
                            Why = "both record your runs and statistics" },
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "AZSMinorMods" },
@@ -68,23 +68,13 @@ namespace AzerothLauncher
                            Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "SurvivorsDragonUi" }, Other = new[] { "KeijinUI" },
                            Why = "both replace the game's interface" },
-            new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "BordoUI" },
-                           Why = "both replace the game's interface" },
-            new Conflict { Preferred = new[] { "SurvivorUIClassic" }, Other = new[] { "BordoUI" },
-                           Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "BlackwellUI" },
                            Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "SurvivorUIClassic" }, Other = new[] { "BlackwellUI" },
                            Why = "both replace the game's interface" },
-            new Conflict { Preferred = new[] { "SurvivorsDragonUi" }, Other = new[] { "BordoUI" },
-                           Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "SurvivorsDragonUi" }, Other = new[] { "BlackwellUI" },
                            Why = "both replace the game's interface" },
-            new Conflict { Preferred = new[] { "KeijinUI" }, Other = new[] { "BordoUI" },
-                           Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "KeijinUI" }, Other = new[] { "BlackwellUI" },
-                           Why = "both replace the game's interface" },
-            new Conflict { Preferred = new[] { "BordoUI" }, Other = new[] { "BlackwellUI" },
                            Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "AetherHUD" },
                            Why = "both replace the game's interface" },
@@ -94,10 +84,16 @@ namespace AzerothLauncher
                            Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "KeijinUI" }, Other = new[] { "AetherHUD" },
                            Why = "both replace the game's interface" },
-            new Conflict { Preferred = new[] { "BordoUI" }, Other = new[] { "AetherHUD" },
-                           Why = "both replace the game's interface" },
             new Conflict { Preferred = new[] { "BlackwellUI" }, Other = new[] { "AetherHUD" },
                            Why = "both replace the game's interface" },
+            new Conflict { Preferred = new[] { "AZSSpellMeter" }, Other = new[] { "AZSMaxHit" },
+                           Why = "both provide a damage meter" },
+            new Conflict { Preferred = new[] { "AzerothCursor" }, Other = new[] { "BigCursor" },
+                           Why = "both replace or overlay the mouse cursor" },
+            new Conflict { Preferred = new[] { "AzerothCursor" }, Other = new[] { "CursorReticle" },
+                           Why = "both replace or overlay the mouse cursor" },
+            new Conflict { Preferred = new[] { "BigCursor" }, Other = new[] { "CursorReticle" },
+                           Why = "both replace or overlay the mouse cursor" },
         };
 
         static string Key(string s)
@@ -520,6 +516,9 @@ namespace AzerothLauncher
                 }
                 catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
             }
+            // Profiles may predate a newly added conflict rule; restore their switches, then
+            // enforce the current catalog's incompatibilities before returning to the caller.
+            changed += EnforceConflicts(addonDir).Count;
             return changed;
         }
 

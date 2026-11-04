@@ -1,6 +1,100 @@
 Patch notes shown in the launcher's Changelog. The launcher sorts them by version number itself.
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
-Everything above the first === line is ignored.
+===
+
+0.139.0
+-------
+Engine update: the game now runs on a newer version of the client it is built on. Everything should play as it did before. Addons can now tell a proc's hit from the spell it borrows.
+
+Under-the-hood engine improvements from the client the game is built on.
+For addon authors: combat text events now say which damage meter line each hit counts toward, as meterSource (the line's name) and meterSourceKey (its sourceKey in AZS_GetMeterSnapshot). A Shadow Weaving strike that floats as Shadow Word: Pain says Shadow Weaving, and a pet's or a summon's swing says whose it is.
+===
+
+0.138.0
+-------
+Addons that draw their own combat numbers can now keep them fixed in the world: a number stays over the spot where an enemy died as you turn or move, and hides when that spot leaves your view. The game's own numbers are unchanged.
+
+- For addon authors: AZS_GetCombatTextEvents() gives each of your hits as the game knows it (the exact target, amount, crit, school, spell and source, your pets and totems too), even with the game's own numbers turned off.
+- For addon authors: AZS_ProjectCombatTextAnchors() turns a hit's anchor into a screen position, over the living enemy and then where it fell, with distance for sizing text. It works even if the enemy never had a nameplate.
+- For addon authors: AZS_RegisterCombatTextFrameHandler() runs after the camera moves each frame, so numbers placed there don't trail behind when you turn. See "World-anchored combat text" in the addon docs.
+===
+
+0.137.0
+-------
+Enhancement Shaman's procs now feed each other: Windfury strikes and Stormbound Echoes repeats count as real Rockbiter and Stormstrike attacks. Flametongue, Frostbrand, Resonant Shocks and three necklaces are remade, with two new talents in Stormguard and Elemental Sunder.
+
+- Rockbiter Weapon: comes back every 2.2 sec (was 1.9). It now shows in the Shaman's Spell Pool on the hero picker, with a "Learnt from Rockbiter Initiation" line. It still comes only from that talent.
+- Stormbound Echoes: you now also start every run with Stormstrike, beside your first spell.
+- Stormguard (replaces Earthen Bulwark; your points carry over): while Lightning Shield is active, you take 3/6/9/12/15% less damage, up to the usual 60% cap. No enemy needs to be near. Lightning Shield's buff and the character pane's Armor tooltip show it.
+- Elemental Sunder (replaces Unleashed Weapons; your point carries over): enemies hit by Rockbiter Weapon or Stormstrike take 10% more Fire and Nature damage for 4 sec. Later hits refresh it, and it shows as a debuff on them.
+- Resonant Shocks: every Shock now strikes 1/2/3 more nearby enemies for 35% damage, with no sequence needed.
+- Flametongue Weapon: each Rockbiter attack has a 5/10/15% chance to cast a free Fire Nova with 10/20/30% more damage. The every-fourth-cast counter is gone.
+- Frostbrand Weapon: chance raised to 10/20/30% on each Stormstrike attack, for a free Frost Shock on up to 3 enemies, plus your learned targets.
+- Windfury Weapon: each extra strike is your full spell again, with all its targets and its own crit roll, and it still goes on if the first target dies. Extra strikes can set off Flametongue, Frostbrand, Ancestral Fortitude, Flurry and Eye of the Tempest, but not another Windfury.
+- Stormbound Echoes: a repeated Windfury's strikes count the same way. Nothing a repeat sets off can repeat again.
+- Flurry: now really speeds cooldown recovery by 6/12/18% for 4 sec, even on a cooldown already running. Windfury crits start it too. It has a buff icon with a countdown.
+- Heart of the Earthbreaker: Rockbiter Weapon (new necklace, replaces its old one): +30% damage, and each cast's first hit sends a shockwave for 40% damage to enemies within 6 yd.
+- Eye of the Tempest: Stormstrike: now a 20% chance on each Stormstrike attack to cast a free Chain Lightning at 100% damage.
+- Cinderheart Pendant: Fire Nova: +60% area, +30% damage, and Fire Nova instantly deals 40% of the Flame Shock damage left on each enemy it hits, without removing the Flame Shock. The stun is gone.
+- These three necklaces have no last rank any more: they keep growing like other legendaries.
+- Damage meter: Windfury's extra strikes stay on Windfury Weapon. Flametongue's Fire Nova, with its Cinderheart damage, is now on Flametongue Weapon, and Frostbrand's Frost Shock on Frostbrand Weapon.
+- Frost Shock's slow now shows as a debuff on the enemy for as long as it lasts, and Shattering Elements' 6 sec window shows as a buff.
+===
+0.136.0
+-------
+The local clock under the minimap can now be turned off on its own, in Options or by an addon. Addons can also read its time, so one that draws its own clock no longer leaves two on screen.
+
+- Options, Interface: new Show Local Clock checkbox. It hides only the clock under the minimap; the minimap and the run clock stay.
+- For addon authors: AZS_GetLocalTime() gives the clock's text, hour, minute and format, even with the clock or the minimap hidden and out of a run. AZS_SetHudShown("localClock", false) hides the clock.
+===
+0.135.1
+-------
+Fixes the character pane, which showed an error and none of the run's numbers in 0.135.0.
+
+- Character pane (C): the "PaperDollFrame.lua: unfinished string" error is gone, and the pane shows your Health, Damage, Armor and the rest again, with Earthen Bulwark's line under Armor.
+===
+0.135.0
+-------
+Enhancement Shaman fights from farther and more often: Rockbiter Weapon and Stormstrike reach 10 yards and come back sooner, and Rockbiter hits harder. Earthen Bulwark is now plain damage reduction, and the character pane shows when it is working.
+
+- Rockbiter Weapon: reaches 10 yards (was 5), comes back every 1.9 sec (was 2.5) and deals 10% more damage.
+- Stormstrike: reaches 10 yards (was 6) and comes back every 8.5 sec (was 9.8). Its damage is unchanged.
+- Earthen Bulwark: gives 2/4/6/8/10% Damage Reduction while an enemy is within 7 yards, adding to your Armor up to the usual 60% cap (before, it was a separate 1-5% that went past the cap). Already at 60%, it adds nothing more.
+- Character pane: while you have Earthen Bulwark, the Armor tooltip says whether it is active (an enemy within 7 yards) or inactive, and the Armor value includes it while active.
+===
+0.134.0
+-------
+Enhancement Shaman is reworked into a melee spec with Stormstrike, Rockbiter Weapon and a new talent tree, and the Shaman's Shock and Fire Nova necklaces are new. Ice Barrier can no longer hold more than your maximum health, and the hero picker gets a Check for Updates button.
+
+- Shaman: new spell Stormstrike, a Nature strike on the nearest enemy, bosses and elites first. Call of Flame is gone from the Shaman's spells.
+- Shaman: Rockbiter Weapon, a quick melee swing at two enemies, is only learned through the Enhancement talent Rockbiter Initiation, which starts every run with it in place of Lightning Bolt.
+- Enhancement's talents are all new: Thundering Strikes, Earthen Bulwark, Resonant Shocks, Shattering Elements, Rockbiter Initiation, Windfury Weapon (a chance for two more strikes), Flametongue Weapon (every fourth Rockbiter casts a free Fire Nova), Frostbrand Weapon (Stormstrike can cast Frost Shock), Unleashed Weapons, Ancestral Fortitude (free Healing Waves from Stormstrikes), Flurry, Sweeping Storm and the capstone Stormbound Echoes (a chance for every Enhancement proc to trigger again, and 1% of all damage you deal heals you). Talent points spent in the old Enhancement tree are given back.
+- New Shaman necklaces: Eye of the Tempest (Stormstrike: every fourth Stormstrike strikes again), Cinderheart Pendant (Fire Nova: more area and damage, its hits stun), Winter's Embrace (Frost Shock: a strong slow, more damage against chilled enemies), Earthshatter Seal (Earth Shock: more damage against wounded enemies, a kill halves its cooldown) and Emberwake Pendant (Flame Shock: more periodic damage, each tick splashes two nearby enemies). They replace the Shaman's old Shock and Fire Nova necklaces, and the Shaman no longer gets The Eternal Talisman.
+- The damage meter lists the Shocks that Resonant Shocks and Frostbrand Weapon cast under those Shocks.
+- Mage: Ice Barrier can hold at most your maximum health, however much it is raised, and a new Ice Barrier replaces what was left of the old one instead of adding to it. Ice Barriers from party friends count toward the same limit.
+- Seal of the Damned now speeds up only damage over time that you lay on enemies.
+- The hero picker has a Check for Updates button next to Options.
+===
+0.133.0
+-------
+Co-op parties now get a Ready Check before the run starts, so nobody gets pulled into a zone while still away from the keyboard. Players who joined can leave a run with End Run: the run gets easier for the rest, and ends once only one player is left.
+
+- Co-op: when the host presses Enter the zone, everyone in the party is asked "Are you ready?" with Ready and Not Ready buttons. The run starts as soon as all say Ready.
+- The Ready Check window lists every party member with their answer and a 30-second countdown. If anyone says Not Ready or the time runs out, the party stays in the lobby and the chat says who was not ready or did not answer. The host can cancel it.
+- Co-op: a player who joined can now leave a run in progress with End Run in the pause menu. They go back to the hero picker and out of the party, and the run goes on for the others, made easier for one fewer player: enemies have less health and fewer come.
+- Co-op: when everyone else has left and only one player is still in the run, the run ends, with its end screen and rewards as after a defeat.
+===
+0.132.0
+-------
+Arcane Power keeps its echoes going past 100% Echo, co-op guests now earn their achievements and take the same damage as the host, and Divine Shield no longer wastes Will of the Forsaken. Set tooltips show which bonuses are really on.
+
+- Arcane Power: once your Echo chance reaches 100% or more, echoes keep cascading. Before, reaching 100% dropped your casts from nearly 5 per spell to 2.
+- Co-op: in a party of two, the player who joined now earns co-op achievements (United Front, the cloaks and the rest) just like the host. Earlier wins in a party cannot be counted back, so win them again together.
+- Co-op: in a party of two, the player who joined no longer takes more damage than the host.
+- Divine Shield, Will of the Forsaken and Shadowmeld no longer go off at the same moment. While one keeps you safe, the other waits, ready for the next time you are in danger.
+- Gear tooltips now light up only the set bonuses that are really active. A bonus whose pieces do not have enough stars yet, such as an 8-piece bonus at 2 stars, shows in grey.
+- Your healing meter now counts the heals your party friends land on you.
+- For addon makers: your hero's live position now works in dungeons and raids too, so minimap markers for caches and guardians move smoothly instead of jumping. Addons can also read full damage and healing breakdowns for you and your party, by source, pet and player, and these survive a /reload.
 ===
 0.131.0
 -------
@@ -9,6 +103,13 @@ Choose how enemy nameplates sit in a crowd, skip a level-up or a cache with a ke
 Options -> Combat has a new Nameplate Layout setting. Stacking (as before) moves nameplates apart so each one can be read; Overlapping keeps every plate right over its enemy. The change shows at once, even mid-run.
 When a hand of cards can be skipped, the X key now does the same as the Skip button, and the button shows its key. Rebind it under Key Bindings -> Azeroth Survivors -> Skip. It only acts on the cards, so X still makes your hero sit or stand everywhere else.
 A small clock under the minimap shows your computer's or phone's local time: 10:42 PM in English, 22:42 in the other languages. It moves and hides with the minimap and follows the HUD Scale setting.
+===
+0.130.1
+-------
+Dwarves and Humans are stronger: Stoneform shields you more and more often, and Humans level up faster.
+
+- Stoneform (Dwarf) now comes every 30 sec instead of 45, and its shield absorbs 45% of your max health instead of 30%.
+- The Human Spirit (Human) now gives +20% experience instead of +10%.
 ===
 0.130.0
 -------

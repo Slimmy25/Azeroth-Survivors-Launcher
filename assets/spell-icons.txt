@@ -203,3 +203,5 @@ Totemic Wrath|spell_fire_totemofwrath
 Lightning Overload|spell_nature_lightningoverload
 Heroic Strike|ability_rogue_ambush
 Fan of Knives|ability_rogue_fanofknives
+Rockbiter Weapon|spell_nature_rockbiter
+Stormstrike|spell_nature_cyclone

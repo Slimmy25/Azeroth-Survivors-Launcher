@@ -10,27 +10,31 @@
 # "github-latest:<owner>/<repo>:<prefix>" only a .zip whose name starts with <prefix> (a release with other zips too).
 # "github-bundle-latest:<owner>/<repo>:<prefix>+<owner>/<repo>:<prefix>" combines matching ZIP assets into one addon bundle.
 # "local:<folder>+<folder>" zips several folders into the one .zip (an addon that comes with a second one).
-# The launcher's Download More list (assets/addons.txt) points at:
-#   https://github.com/Slimmy25/Azeroth-Survivors-Launcher/releases/download/addons/<file name>
+# Most Download More entries point at the mirror below. Azeroth Stats, SurvivorsDragonUi, Keijin UI, Azeroth FieldKit,
+# ASTinyPlates, ASBuilder and Azeroth Hub resolve their current upstream releases directly in the launcher, with SHA-256.
+# The old mirror ZIPs remain hosted for older launcher builds that still reference those URLs.
+# Current upstream release pages: migwynkriid13/SurvivorsDragonUi, KeijinDE/KeijinUI_modern-as-ui,
+# Maidenquinn/azeroth-fieldkit, Maidenquinn/AzerothStats, Valorless/ASTinyPlates, cadoky/ASBuilder and Maidenquinn/AzerothHub.
 
 Azerloot-by-KindaGray.zip       | github-latest:Kindagrey/Azerloot
-SurvivorsDragonUi-by-Mxgwyn.zip | https://github.com/migwynkriid13/SurvivorsDragonUi/releases/latest/download/SurvivorsDragonUi.zip
+SurvivorsDragonUi-by-Mxgwyn.zip | hosted
 # Survivor UI and Classic are one launcher bundle; select the addon ZIP, never an installer, from each latest release.
 Survivor-UI-by-morderous.zip    | github-bundle-latest:morderous/survivor-ui:SurvivorUI-v+morderous/survivorui-classic:SurvivorUIClassic-
-Keijin-UI-by-Keijin.zip         | https://github.com/KeijinDE/KeijinUI_modern-as-ui/releases/download/v3.7.1/KeijinUI-3.7.1.zip
-Bordo-UI-by-BordoBereli.zip     | github-latest:threenox/BordoUI
+Keijin-UI-by-Keijin.zip         | hosted
 BlackwellUI-by-Blackwell.zip    | github-latest:Blackwellcode/BlackwellUI
 AetherHUD-by-Rehabrocket.zip    | github-latest:NORehabRocket/AetherHUD:AetherHUD
 LuckyOdds-by-Cadoky.zip         | github-latest:cadoky/LuckyOdds:LuckyOdds
-Damage-Meter-by-Kexo.zip        | github-latest:kex0/AZSSpellMeter
-# Maidenhead's two: their current versions are pre-releases, which "github-latest" skips, so the exact zips are named
-Azeroth-FieldKit-by-Maidenhead.zip | https://github.com/Maidenquinn/azeroth-fieldkit/releases/download/v0.2.1-review.3/AzerothFieldKit-0.2.1-review.3.zip
-Azeroth-Stats-by-Maidenhead.zip | https://github.com/Maidenquinn/AzerothStats/releases/download/v1.6.0-beta.2/AzerothStats-1.6.0-beta.2.zip
+AZSSpellMeter-by-Kexo.zip       | github-latest:kex0/AZSSpellMeter
+# Legacy mirror copies stay hosted for older launcher builds; current builds resolve these upstream directly.
+Azeroth-FieldKit-by-Maidenhead.zip | hosted
+Azeroth-Stats-by-Maidenhead.zip | hosted
 AzerothCursor-by-Maidenhead.zip | github-latest:Maidenquinn/AzerothCursor:AzerothCursor-
-AZS-Stats-by-Slimjim.zip        | local:AZSStats
 CursorReticle-by-Muffla.zip | github-latest:Muffla/CursorReticle:CursorReticle
-LocalClock-by-JamieeLee.zip | github-latest:JamieeLee/LocalClock-Addon:LocalClock_AzerothSurvivors_
+LocalClock-by-JamieeLee.zip | github-latest:JamieeLee/LocalClock-Addon:LocalClock-
 MinimapButtonBag-by-Tunhadil-LaYt.zip | local:MBB
 BugSack-by-Fritti-Rabbit.zip    | local:!BugGrabber+BugSack
-# Planned only; do not mirror until JamieeLee publishes a player-ready BigCursor release ZIP.
-# https://github.com/JamieeLee/BigCursor/releases/latest currently has no release, and the source archive folder does not match the addon's expected folder.
+BigCursor-by-JamieeLee.zip | github-latest:JamieeLee/BigCursor:BigCursor
+MoveAnything-by-JamieeLee.zip | github-latest:JamieeLee/MoveUI:MoveUI-
+AZSMoveAnything-by-kodfod.zip | github-latest:kodfod/AZSMoveAnything:AZSMoveAnything
+AZSMaxHit-by-ghoulcompiler.zip | github-latest:ghoulcompiler/AZSMaxHit:AZSMaxHit-
+ASBuilder-v1.10.0.zip | hosted

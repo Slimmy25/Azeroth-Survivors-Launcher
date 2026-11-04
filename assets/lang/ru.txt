@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Показывать время в игре на главном экране
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Руководство новичка
 {#0} of {#1} topics read
 = Прочитано {#0} из {#1} тем
@@ -1067,10 +1067,6 @@ Download cancelled.
 = Загрузка отменена.
 The download server did not accept the launcher's login.
 = Сервер загрузки не принял логин лаунчера.
-The backup host's page has no download link right now.
-= На странице резервного сервера сейчас нет ссылки на загрузку.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Файл с резервного сервера повреждён (контрольная сумма не совпадает). Попробуйте ещё раз.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Лаунчер уже запущен.\n\nНайдите его значок в области уведомлений (рядом с часами).
 INSTALL FROM A FILE
@@ -1484,7 +1480,7 @@ Most level-up saves in a run
 = Больше всего спасений повышением за забег
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Вся ваша статистика в игре (/azs) и на странице СТАТИСТИКА: забеги, рекорды, способности, классы, время в игре, ваш Немезис и кооператив с друзьями.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Всё руководство новичка из лаунчера прямо в игре (/handbook): каждая тема и страница, заклинания каждого класса с иконками и талантами, которые их меняют, и все деревья талантов.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Небольшие изменения, каждое вкл. или выкл. (/azsmods или его кнопка у миникарты): без строк о новом уровне, бонусе к характеристикам и новом заклинании в чате, метки боссов (череп, крест, ромб), метки мини-боссов (звезда, треугольник, ромб), мигающая метка над каждым павшим другом, простая панель действий только из шести ячеек, перемещение и закрепление интерфейса, скрытие рамки цели и камера на 50.
@@ -1524,8 +1520,8 @@ switched off: the two conflict.
 = выключен: эти два конфликтуют.
 these two can't be on together. Switching one on switches the other off.
 = эти два нельзя включить одновременно. Если включить один, другой выключится.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Плоские тёмные рамки юнитов и компактная панель действий, индикаторы имён в стиле Plater (Survivor Plates), удача и шансы карт на полосе опыта, чат с вкладками и автоматические рейдовые метки. Нельзя включить вместе с AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Плоские тёмные рамки юнитов и компактная панель действий, индикаторы имён в стиле Plater (Survivor Plates), удача и шансы карт на полосе опыта, чат с вкладками и автоматические рейдовые метки. Нельзя включить вместе с Slim Suite.
 The game updated itself and is opening again...
 = Игра обновилась сама и открывается снова...
 The game updated itself and opened again.

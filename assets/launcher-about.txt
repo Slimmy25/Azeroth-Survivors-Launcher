@@ -1,23 +1,31 @@
 # What it is
 A free helper for Azeroth Survivors, the game made by Aethus. Slimjim made it for the community. Everything in it is optional.
 
+# Project partners and foundations
+- ASBuilder by Cadoky: the talent and gear build-sharing project behind our compatible import/export work. https://github.com/cadoky/ASBuilder
+- Azeroth Stats by Maidenhead: the in-game run and build tracker used for the launcher's statistics. https://github.com/Maidenquinn/AzerothStats
+- ASDataSync by Keijin: the original cloud-save sync framework this launcher builds on, used with his blessing. https://github.com/KeijinDE/ASDataSync
+- SurvivorsForge provides addon pictures and community-reviewed, version-specific status for matching releases. The game owner has approved this launcher's addon manager. The launcher keeps its own addon catalog and download sources. https://forge.rezondes.net/ | https://github.com/Rezondes/SurvivorsForge
+
 # What it does
-- Installs the game: one click downloads it from the official hosts, checks that the file is right, and puts it in place. The game updates itself; the launcher waits for it.
-- Plays the game: PLAY starts it, and the launcher waits in the taskbar until you are done.
-- Cloud save: keeps your progress and your addons' settings in your own cloud folder (Google Drive, OneDrive, Dropbox or any synced folder), so you can play on any PC. It downloads before you play and uploads after, even after a crash, and keeps backups.
+- First-time setup lets browser players import a save, existing players locate their game, and new players install the game. Existing players skip the game download; new players start it at the final setup step.
+- Plays the game: PLAY starts the game after checking for a launcher update. Closing the launcher exits it; it does not stay in the system tray.
+- Optional cloud save: off by default for a new install; existing saved preferences are kept. When enabled, syncs the game's save folder and addon settings to your chosen cloud folder, with recovery backups. The game controls where it writes live saves; changing the launcher's save-folder field only changes the folder used for import and sync.
 - Addons: switch addons on and off, install approved ones with one click from Download More, keep them up to date and uninstall them. Advanced settings add profiles that keep their own game settings.
-- Its own addons: AZS Stats (records every run), AZS Handbook (this Guide inside the game) and AZS Minor Mods (small changes you switch on and off).
-- Guide: everything a new player needs, from classes, spells and talents to races, zones, bosses, gear, transmog, controls and tips, with videos.
-- Theorycrafting: the Talent Tree Builder and the Gear Planner, to try builds before you play.
-- Stats: your play time and every run's numbers, records, Nemesis and co-op.
+- Its own addons: AZS Handbook (this Guide inside the game) and Slim Suite (a Swiss-army knife of useful tools and interface controls). Maidenhead's Azeroth Stats is an optional third-party addon; the launcher can read its saved run history.
+- Guide: the New Player Handbook and Wiki. The Wiki has class guides, Items and Transmog; Codex entries stay in class guides while Archive is retained outside search and navigation.
+  Item hovers show their Wowhead Classic 3D model when a match is available.
+- Theorycrafting: a shared Gear and Talent Builder, Build Guides and Build Videos. Named talent builds are shared across classes and open in their saved class.
+  Item hovers in the Gear Planner show available Wowhead Classic 3D models.
+- Stats: run totals, available records, class summaries, saved history, observed combat/build details, Nemesis evidence and co-op samples from Azeroth Stats. It records time in runs, not time spent in game menus.
 - Community: players' videos on the home screen, the game's patch notes and the Discord.
-- Options: the game's folders, graphics and gameplay settings, and the launcher's own, in 26 languages.
+- Options: the game's folders, graphics and gameplay settings, the launcher's own settings, and portable save import/export from Options > Folders, in 26 languages.
 
 # Look
-The launcher layout is inspired by the WoW Retro Launcher by Parquelle (https://github.com/Parquelle/WoWRetroLauncher). All of its artwork is original, drawn for this launcher.
+The launcher layout is inspired by the WoW Retro Launcher by Parquelle (https://github.com/Parquelle/WoWRetroLauncher). The stone, metal trim and button surfaces are original launcher art by Slimjim; game art and external icons are credited in the project sources.
 
 # Thanks
 - Keijin has been there since the beginning, and is the main reason I wanted to get into this.
 - Kraatos spent a little time helping me launch into open source; I'm grateful for his insight on problems still to come.
 - Maidenhead has been an exceptional advisor, spending extensive time helping me clarify and realize my vision for this project. His insight and support have been invaluable.
-- The Mod team has shown overwhelming support for keeping this transparent, and has given me a fair and reasonable time to put my addon up for review. At the time of writing it is still pending review: fingers crossed!
+- The Azeroth Survivors Discord Mod team has supported transparency and made room for addon review. Thank you for the time and feedback.

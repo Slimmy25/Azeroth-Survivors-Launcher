@@ -1,4 +1,4 @@
-# Developer tool: builds assets/item-models.txt ("Item name|item id|display id") for real class gear and Transmog looks
+# Developer tool: builds assets/item-models.txt ("Item name|item id|display id") for real class gear, jewelry and Transmog looks
 # from the CMaNGOS Classic world database (https://github.com/cmangos/classic-db), so Guide hovers can show item models
 # from Wowhead's model viewer host. Also checks which picture address
 # Wowhead serves. Puts the file on the private "item-models" branch. Run by hand: Actions > Item models.
@@ -26,14 +26,18 @@ jobs:
             *) cp "$f" /tmp/world.sql ;;
           esac
           python3 tools/gear_names.py assets/items.txt > /tmp/gear-names.txt
-          python3 tools/item_models.py assets/transmog.txt /tmp/gear-names.txt < /tmp/world.sql > /tmp/items.txt || echo "::error::parse failed"
-          echo "::notice::found $(wc -l < /tmp/items.txt) real gear/look items: $(cut -d'|' -f1 /tmp/items.txt | tr '\n' ';')"
-          { echo "# Item name|item id|display id, for real class gear and Transmog items, from the CMaNGOS Classic world"
-            echo "# database (https://github.com/cmangos/classic-db). Made by Actions > Item models."
+          python3 tools/jewelry_names.py assets/items.txt > /tmp/jewelry-names.txt
+          python3 tools/item_models.py assets/transmog.txt /tmp/gear-names.txt /tmp/jewelry-names.txt < /tmp/world.sql > /tmp/raw-items.txt || echo "::error::parse failed"
+          python3 tools/verify_item_models.py /tmp/raw-items.txt > /tmp/items.txt
+          echo "::notice::found $(wc -l < /tmp/items.txt) real gear, jewelry and look items: $(cut -d'|' -f1 /tmp/items.txt | tr '\n' ';')"
+          { echo "# Item label|model source item id|display id, gear, jewelry and Transmog from the CMaNGOS Classic world"
+            echo "# database (https://github.com/cmangos/classic-db); same-set slot synonyms are used where AZS uses a different slot noun."
+            echo "# Only items with an available Wowhead Classic JPG or PNG model thumbnail are included."
             cat /tmp/items.txt; } > /tmp/item-models.txt
       - name: Which picture address works
         run: |
-          d=$(sed -n '3p' /tmp/item-models.txt | cut -d'|' -f3); i=$(sed -n '3p' /tmp/item-models.txt | cut -d'|' -f2)
+          first=$(grep -v '^#' /tmp/item-models.txt | head -1)
+          d=$(echo "$first" | cut -d'|' -f3); i=$(echo "$first" | cut -d'|' -f2)
           [ -z "$d" ] && exit 0
           m=$((d % 256))
           for u in "https://wow.zamimg.com/modelviewer/classic/webthumbs/item/$m/$d.jpg" \

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
@@ -16,38 +17,334 @@ namespace AzerothLauncher
     {
         public const string GearPlanner = "Gear Planner";
         bool gPlanner;                                        // the Gear Planner is open
-        string plannerClass;                                  // the class both tools build for (asked first; not saved)
+        string theorycraftClass;                              // one in-session class shared by the Talent Builder and Gear Planner
+        string plannerClass;                                  // the class currently shown by the Gear Planner
         readonly Dictionary<string, object> plannerSlots = new Dictionary<string, object>();   // slot -> GearPiece or Jewel
 
         void GuideGearPlanner()
         {
             GuideHeader(GearPlanner, Data.Guide);
+            AddPeelToolSwitch();
             if (plannerClass == null)
             {
-                ClassPrompt(delegate(string cls) { PlannerClass(cls); BuildPanel("Guide"); });
-                return;
+                PlannerClass("Warrior");
             }
-            int top = GuideTop, w = PW - 40;                  // the trail above leads to the talents and the other tools
-            // the sheet fits the box: its slots are sized to the room there is, so nothing scrolls
-            int h = PH - 12 - top;
-            var sheet = new GearSheet(plannerClass, plannerSlots, GearIcons(), h);
-            sheet.Bounds = new Rectangle(20, top, w, h);
-            panel.Controls.Add(sheet);
+            // Match the guide passage's compact inset. PW already stops before the favorites rail.
+            int inset = 4;
+            int top = inset, w = PW - inset * 2;
+            var exportCode = new WowButton("EXPORT ASBUILDS", delegate
+            {
+                try
+                {
+                    TalentBuild talents = liveBuild != null && string.Equals(liveBuildCls, plannerClass, StringComparison.OrdinalIgnoreCase)
+                        ? liveBuild : TalentBuild.Parse("", plannerClass);
+                    Clipboard.SetText(AsBuildsInterop.ExportBuild(plannerClass, "Gear Plan", talents.Save(), CapturePlannerJewelry()));
+                    Info("Gear Planner", "ASBuilds build code copied. It includes this jewelry and the current talent build.");
+                }
+                catch (Exception) { Warn("Gear Planner", "Could not copy the ASBuilds code."); }
+            }, 144, 26, 8);
+            exportCode.Location = new Point(20, top);
+            if (SHOW_TEMPORARY_BUILD_MENUS) panel.Controls.Add(exportCode);
+            var importCode = new WowButton("IMPORT ASBUILDS", delegate
+            {
+                string initial = "";
+                try { if (Clipboard.ContainsText()) initial = Clipboard.GetText(); } catch (Exception) { }
+                using (var prompt = new TalentBuildImportDialog(initial))
+                {
+                    if (prompt.ShowModal(panel.FindForm()) != DialogResult.OK || prompt.Code.Length == 0) return;
+                    List<AsBuildsBuild> imported;
+                    string error;
+                    if (!AsBuildsInterop.TryRead(prompt.Code, out imported, out error)) { Warn("IMPORT BUILD", error); return; }
+                    List<AsBuildsBuild> stored = StoreAsBuildsBuilds(Config.Load(), imported);
+                    if (stored.Count == 0) { Warn("IMPORT BUILD", "The profile did not contain a supported build."); return; }
+                    AsBuildsBuild first = stored[0];
+                    ApplyPlannerJewelry(first.Class, first.Gear);
+                    pendingTalentBuildKey = first.Class + "|" + first.Name;
+                    BuildPanel("Guide");
+                    Info("Gear Planner", stored.Count == 1
+                        ? "Build imported. Its jewelry is loaded here; its talent build is saved in the Talent Builder."
+                        : stored.Count + " builds imported. The first build's jewelry is loaded here; all talent builds are saved in the Talent Builder.");
+                }
+            }, 144, 26, 8);
+            importCode.Location = new Point(170, top);
+            if (SHOW_TEMPORARY_BUILD_MENUS) panel.Controls.Add(importCode);
+            // The complete character sheet fits the available height; only the item picker has its
+            // own scrollbar when its list is longer than the visible slot.
+            int mainWidth = w - TheoryStatsWidth - 6;
+            int header = Theme.Px(36);
+            var viewport = new Panel { BackColor = Theme.Panel, Bounds = new Rectangle(inset,header+inset,mainWidth,Math.Max(40,PH-header-inset*2)) };
+            panel.Controls.Add(viewport);
+            int h=Math.Max(40,viewport.ClientSize.Height-2);
+            var sheet = new GearSheet(plannerClass, plannerSlots, GearIcons(), h) { MainOnly=true };
+            sheet.Bounds=new Rectangle(0,0,Math.Max(50,viewport.ClientSize.Width-2),h);
+            viewport.Controls.Add(sheet);
+            var selector = new GearSheet(plannerClass,plannerSlots,GearIcons()) {SelectorOnly=true};
+            selector.Bounds=new Rectangle(PW-4-TheoryStatsWidth,4,TheoryStatsWidth,PH-8);
+            sheet.StatsChanged=delegate { selector.Invalidate(); };
+            selector.StatsChanged=delegate { sheet.Invalidate(); };
+            panel.Controls.Add(selector);
+            AddTheoryStats(plannerClass);
+            AddTheoryClassSelector(plannerClass);
         }
 
-        // a new class: its gear goes (each class has its own), the jewelry stays
+        int TheoryStatsHeight { get { return GearSheet.BuildControlsHeight; } }
+        int TheoryStatsWidth { get { return Math.Min((PW - 8) / 3, Math.Max(Theme.Px(155), (PW - 8) * 22 / 100)); } }
+
+        Control AddTheoryStats(string cls)
+        {
+            var box = new Bordered(Theme.GoldDim, 1);
+            box.BackColor = Theme.Card;
+            box.Bounds = new Rectangle(PW - 4 - TheoryStatsWidth, PH - 4 - TheoryStatsHeight, TheoryStatsWidth, TheoryStatsHeight);
+            var saved = new ComboBox { DropDownStyle = ComboBoxStyle.DropDown, Font = Theme.F(8),
+                BackColor = Theme.Card, ForeColor = Theme.Text, Bounds = new Rectangle(Theme.Px(5), Theme.Px(5), box.Width - Theme.Px(10), Theme.Px(22)),
+                AccessibleName = "Saved builds: choose a save or type a name" };
+            Action refresh = delegate
+            {
+                saved.Items.Clear();
+                foreach (var choice in SavedTalentBuilds(Config.Load())) if (choice.Class == cls) saved.Items.Add(choice);
+            };
+            refresh();
+            box.Controls.Add(saved);
+            int gap = Theme.Px(4), bw = (box.Width - Theme.Px(10) - gap) / 2;
+            int y = box.Height - Theme.Px(53);
+            var save = new WowButton("SAVE", delegate
+            {
+                var selected = saved.SelectedItem as TalentBuildChoice;
+                string name = selected != null && saved.Text == selected.ToString() ? selected.Name : saved.Text.Trim();
+                if (name.Length == 0) { saved.Focus(); return; }
+                var cfg = Config.Load();
+                SavedTalentBuilds(cfg);
+                var rows = Json.AsList(Json.Get(cfg.Data, "talentTreeBuildsShared")) ?? new List<object>();
+                var entry = new Dictionary<string, object>();
+                entry["name"] = name; entry["class"] = cls;
+                entry["build"] = liveBuild != null && liveBuildCls == cls ? liveBuild.Save() : "";
+                entry["gear"] = StoredBuildGear(CapturePlannerJewelry());
+                int at = rows.FindIndex(delegate(object value)
+                {
+                    var row = Json.AsDict(value);
+                    return row != null && string.Equals(Json.Str(row, "class"), cls, StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(Json.Str(row, "name"), name, StringComparison.OrdinalIgnoreCase);
+                });
+                if (at < 0) rows.Add(entry); else rows[at] = entry;
+                cfg.Set("talentTreeBuildsShared", rows); cfg.Save();
+                refresh();
+                foreach (TalentBuildChoice choice in saved.Items) if (choice.Class == cls && choice.Name == name) { saved.SelectedItem = choice; break; }
+            }, bw, 22, 7.5f);
+            save.Bounds = new Rectangle(Theme.Px(5), y, bw, Theme.Px(22)); box.Controls.Add(save);
+            var load = new WowButton("LOAD", delegate
+            {
+                var choice = saved.SelectedItem as TalentBuildChoice;
+                if (choice == null) return;
+                ApplyPlannerJewelry(choice.Class, choice.Gear);
+                liveBuild = TalentBuild.Parse(choice.Code, choice.Class); liveBuildCls = choice.Class;
+                if (gBuilder) gTalents = choice.Class;
+                BuildPanel("Guide");
+            }, bw, 22, 7.5f);
+            load.Bounds = new Rectangle(Theme.Px(5) + bw + gap, y, bw, Theme.Px(22)); box.Controls.Add(load);
+            var export = new WowButton("EXPORT", delegate { ShowTheoryCodeOverlay(cls, true); }, bw, 22, 7.5f);
+            export.Bounds = new Rectangle(Theme.Px(5), y + Theme.Px(26), bw, Theme.Px(22)); box.Controls.Add(export);
+            var import = new WowButton("IMPORT", delegate { ShowTheoryCodeOverlay(cls, false); }, bw, 22, 7.5f);
+            import.Bounds = new Rectangle(Theme.Px(5) + bw + gap, y + Theme.Px(26), bw, Theme.Px(22)); box.Controls.Add(import);
+            panel.Controls.Add(box); box.BringToFront();
+            return box;
+        }
+
+        void ShowTheoryCodeOverlay(string cls, bool exporting)
+        {
+            var overlay = new Bordered(Theme.GoldDim, 1) { BackColor = Theme.Card,
+                Bounds = new Rectangle(8, 8, PW - 16, PH - 16), Tag="theory-code-overlay" };
+            var title = UI.Text(exporting ? "EXPORT BUILD" : "IMPORT BUILD", 11, FontStyle.Bold, Theme.Gold, Theme.Card, overlay.Width - 24);
+            title.Location = new Point(12, 10); overlay.Controls.Add(title);
+            var errorLabel = UI.Text("", 8, FontStyle.Regular, Theme.Gold, Theme.Card, overlay.Width - 24);
+            errorLabel.Bounds = new Rectangle(12, 34, overlay.Width - 24, 32); overlay.Controls.Add(errorLabel);
+            var input = new TextBox { Multiline = true, WordWrap = true, ScrollBars = ScrollBars.Vertical,
+                ReadOnly = exporting, BackColor = Theme.Card, ForeColor = Theme.Text, Font = Theme.F(9),
+                Bounds = new Rectangle(12, 70, overlay.Width - 24, Math.Max(30, overlay.Height - 122)),
+                AccessibleName = exporting ? "ASBuilder compatible export code" : "Paste build code" };
+            if (exporting)
+            {
+                string ranks = liveBuild != null && liveBuildCls == cls ? liveBuild.Save() : "";
+                input.Text = AsBuildsInterop.ExportBuild(cls, "Build", ranks, CapturePlannerJewelry());
+            }
+            overlay.Controls.Add(input);
+            int buttonWidth = Math.Min(125, (overlay.Width - 36) / 2);
+            var close = new WowButton(exporting ? "CLOSE" : "CANCEL", delegate { overlay.Dispose(); }, buttonWidth, 28, 9);
+            close.Location = new Point(12, overlay.Height - 40); overlay.Controls.Add(close);
+            var action = new WowButton(exporting ? "COPY CODE" : "IMPORT", delegate
+            {
+                if (exporting)
+                {
+                    try { Clipboard.SetText(input.Text); errorLabel.Text = Lang.T("Code copied."); }
+                    catch (Exception) { errorLabel.Text = Lang.T("Could not copy the build code."); }
+                    return;
+                }
+                List<AsBuildsBuild> builds; string error;
+                if (!AsBuildsInterop.TryRead(input.Text.Trim(), out builds, out error)) { errorLabel.Text = error; return; }
+                var stored = StoreAsBuildsBuilds(Config.Load(), builds);
+                if (stored.Count == 0) return;
+                var first = stored[0];
+                ApplyPlannerJewelry(first.Class, first.Gear);
+                liveBuild = TalentBuild.Parse(first.Talent, first.Class); liveBuildCls = first.Class;
+                if (gBuilder) gTalents = first.Class;
+                overlay.Dispose();
+                BuildPanel("Guide");
+            }, buttonWidth, 28, 9);
+            action.Location = new Point(overlay.Width - 12 - buttonWidth, overlay.Height - 40); overlay.Controls.Add(action);
+            Action reflow=delegate
+            {
+                float previous=Theme.Zoom; Theme.Zoom=Theme.SectionZoom;
+                try
+                {
+                    int pad=Theme.Px(10), footer=Theme.Px(28), gap=Theme.Px(6);
+                    title.Font=Theme.F(11,FontStyle.Bold);
+                    title.Bounds=new Rectangle(pad,pad,overlay.Width-pad*2,title.Font.Height+gap);
+                    errorLabel.Font=Theme.F(8); errorLabel.Bounds=new Rectangle(pad,title.Bottom+gap,overlay.Width-pad*2,errorLabel.Font.Height*2);
+                    input.Font=Theme.F(9);
+                    int buttonY=overlay.Height-pad-footer;
+                    input.Bounds=new Rectangle(pad,errorLabel.Bottom+gap,overlay.Width-pad*2,Math.Max(20,buttonY-gap-errorLabel.Bottom-gap));
+                    int bw=Math.Min(Theme.Px(125),(overlay.Width-pad*2-gap)/2);
+                    close.SetDisplayZoom(Theme.SectionZoom); action.SetDisplayZoom(Theme.SectionZoom);
+                    close.Bounds=new Rectangle(pad,buttonY,bw,footer);
+                    action.Bounds=new Rectangle(overlay.Width-pad-bw,buttonY,bw,footer);
+                }
+                finally { Theme.Zoom=previous; }
+            };
+            overlay.SizeChanged+=delegate { reflow(); };
+            reflow();
+            panel.Controls.Add(overlay); overlay.BringToFront(); if(!PreviewMode) input.Focus();
+            if (exporting) input.SelectAll();
+        }
+
+        void AddTheorySelector(string cls, Control stats)
+        {
+            var selector = new GearSheet(cls, plannerSlots, GearIcons());
+            selector.SelectorOnly = true;
+            selector.Bounds = new Rectangle(PW - 4 - TheoryStatsWidth, 4, TheoryStatsWidth, PH - 8);
+            selector.StatsChanged = delegate { stats.Invalidate(); };
+            panel.Controls.Add(selector);
+            selector.BringToFront();
+            stats.BringToFront();
+        }
+
+        readonly Dictionary<string, Dictionary<string, object>> classGearDrafts = new Dictionary<string, Dictionary<string, object>>();
+        readonly Dictionary<string, Dictionary<string, int>> classStarDrafts = new Dictionary<string, Dictionary<string, int>>();
+        readonly Dictionary<string, string> classTalentDrafts = new Dictionary<string, string>();
+
+        void AddTheoryClassSelector(string cls)
+        {
+            int mainWidth = PW - 8 - TheoryStatsWidth - 6;
+            var menu = ThemeMenus.Create(true);
+            var picker = new WowButton(Lang.T(cls) + "  ▾", null, 145, 25, 9);
+            picker.AccessibleName = Lang.T("Build class");
+            picker.Size = new Size(Math.Min(Theme.Px(145), mainWidth / 2), Theme.Px(27));
+            picker.Location = new Point(4 + (mainWidth - picker.Width) / 2, Theme.Px(5));
+            foreach (string item in Items.Classes)
+            {
+                string selected = item;
+                var option = new ToolStripMenuItem(Lang.T(item));
+                option.Checked = item == cls;
+                option.Click += delegate
+                {
+                    menu.Close();
+                    if (selected == plannerClass) return;
+                    PlannerClass(selected);
+                    if (gBuilder) gTalents = selected;
+                    BuildPanel("Guide");
+                };
+                menu.Items.Add(option);
+            }
+            picker.Pressed += delegate { if (menu.Visible) menu.Close(); else menu.Show(picker, new Point(0, picker.Height)); };
+            var owner = this;
+            EventHandler dismiss = delegate { if (!menu.IsDisposed) menu.Close(); };
+            if (owner != null) owner.Deactivate += dismiss;
+            picker.Disposed += delegate
+            {
+                if (owner != null) owner.Deactivate -= dismiss;
+                menu.Dispose();
+            };
+            panel.Controls.Add(picker); picker.BringToFront();
+            if (theoryPeel != null && !theoryPeel.IsDisposed) theoryPeel.BringToFront();
+        }
+
         void PlannerClass(string cls)
         {
             if (plannerClass != cls)
-                foreach (string s in new List<string>(plannerSlots.Keys))
-                    if (plannerSlots[s] is GearPiece) { plannerSlots.Remove(s); GearSheet.Stars.Remove(s); }
-            plannerClass = cls;
+            {
+                if (plannerClass != null)
+                {
+                    classGearDrafts[plannerClass] = new Dictionary<string, object>(plannerSlots);
+                    classStarDrafts[plannerClass] = new Dictionary<string, int>(GearSheet.Stars);
+                }
+                if (liveBuild != null && liveBuildCls != null) classTalentDrafts[liveBuildCls] = liveBuild.Save();
+                plannerSlots.Clear(); GearSheet.Stars.Clear();
+                Dictionary<string, object> gear;
+                if (classGearDrafts.TryGetValue(cls, out gear)) foreach (var pair in gear) plannerSlots[pair.Key] = pair.Value;
+                Dictionary<string, int> stars;
+                if (classStarDrafts.TryGetValue(cls, out stars)) foreach (var pair in stars) GearSheet.Stars[pair.Key] = pair.Value;
+                string talents;
+                liveBuild = TalentBuild.Parse(classTalentDrafts.TryGetValue(cls, out talents) ? talents : "", cls);
+                liveBuildCls = cls;
+            }
+            plannerClass = theorycraftClass = cls;
+        }
+
+        // ASBuilds codes can carry the jewelry shared by both tools. Armor and star ranks stay
+        // local because the external code has no matching fields for them.
+        Dictionary<string, string> CapturePlannerJewelry()
+        {
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var slot in plannerSlots)
+            {
+                GearPiece armor = slot.Value as GearPiece;
+                if (armor != null) result["$armor:" + slot.Key] = armor.Name;
+                int stars;
+                if (GearSheet.Stars.TryGetValue(slot.Key, out stars)) result["$star:" + slot.Key] = stars.ToString();
+                Jewel jewel = slot.Value as Jewel;
+                if (jewel != null && (slot.Key.StartsWith("Finger", StringComparison.OrdinalIgnoreCase) ||
+                    slot.Key.StartsWith("Trinket", StringComparison.OrdinalIgnoreCase) || (slot.Key == "Amulet" || slot.Key == "Neck")))
+                    result[slot.Key == "Neck" ? "Amulet" : slot.Key] = jewel.Key;
+            }
+            return result;
+        }
+
+        void ApplyPlannerJewelry(string cls, Dictionary<string, string> gear)
+        {
+            PlannerClass(cls);
+            foreach (string slot in new List<string>(plannerSlots.Keys))
+                if (plannerSlots[slot] is Jewel) { plannerSlots.Remove(slot); GearSheet.Stars.Remove(slot); }
+            if (gear == null) return;
+            if (gear.Keys.Any(key => key.StartsWith("$armor:")))
+                foreach (string slot in new List<string>(plannerSlots.Keys))
+                    if (plannerSlots[slot] is GearPiece) { plannerSlots.Remove(slot); GearSheet.Stars.Remove(slot); }
+            foreach (var pair in gear)
+            {
+                if (pair.Key.StartsWith("$armor:"))
+                {
+                    string slot = pair.Key.Substring(7);
+                    foreach (var piece in Items.GearOf(cls, slot)) if (piece.Name == pair.Value) { plannerSlots[slot] = piece; break; }
+                    continue;
+                }
+                if (pair.Key.StartsWith("$star:"))
+                {
+                    int rank;
+                    if (int.TryParse(pair.Value, out rank)) GearSheet.Stars[pair.Key.Substring(6)] = Math.Max(0, Math.Min(5, rank));
+                    continue;
+                }
+                Jewel jewel = Items.Jewelry.Find(delegate(Jewel j) { return string.Equals(j.Key, pair.Value, StringComparison.OrdinalIgnoreCase); });
+                if (jewel == null || (jewel.IsCodex && !string.Equals(jewel.Class, cls, StringComparison.OrdinalIgnoreCase))) continue;
+                if ((pair.Key.StartsWith("Finger", StringComparison.OrdinalIgnoreCase) && jewel.Kind == "Ring") ||
+                    (pair.Key.StartsWith("Trinket", StringComparison.OrdinalIgnoreCase) && jewel.Kind == "Trinket") ||
+                    (pair.Key == "Amulet" && (jewel.Kind == "Amulet" || jewel.IsCodex)))
+                    plannerSlots[pair.Key == "Amulet" ? "Neck" : pair.Key] = jewel;
+            }
         }
 
         // Clear every transient Gear Planner choice when the user leaves it, including jewelry, stars and the selected slot.
         void ResetPlannerState()
         {
             plannerSlots.Clear();
+            classGearDrafts.Clear(); classStarDrafts.Clear(); classTalentDrafts.Clear();
+            theorycraftClass = null;
             plannerClass = null;
             GearSheet.ResetView();
             PlannerTotals = null;
@@ -60,8 +357,59 @@ namespace AzerothLauncher
         public static Dictionary<string, double> PlannerTotals;
     }
 
-    public class GearSheet : Control
+    public class GearSheet : Control, IWheel
     {
+        public static int BuildControlsHeight { get { return Theme.Px(86); } }
+        public int SelectorWidth { get { return Math.Min(Width / 3, Math.Max(Theme.Px(155), Width * 22 / 100)); } }
+        readonly RichTextBox bonusView = new RichTextBox {
+            ReadOnly = true, BorderStyle = BorderStyle.None, WordWrap = true,
+            ScrollBars = RichTextBoxScrollBars.Vertical, DetectUrls = false,
+            BackColor = Theme.Hex("#0e0d14"), ForeColor = Theme.Gold,
+            TabStop = false, Visible = false
+        };
+        readonly RichTextBox amuletEffectView = JewelryView();
+        readonly RichTextBox ringTrinketEffectView = JewelryView();
+        readonly VScrollBar itemScroll = new VScrollBar();
+        int itemOffset;
+        string scrollSlot;
+        Action pendingBonusLayout, pendingItemLayout;
+        bool nativeLayoutQueued;
+
+        static RichTextBox JewelryView()
+        {
+            return new RichTextBox { ReadOnly = true, BorderStyle = BorderStyle.None, WordWrap = true,
+                ScrollBars = RichTextBoxScrollBars.Vertical, DetectUrls = false,
+                BackColor = Theme.Hex("#0e0d14"), ForeColor = Theme.Gold, TabStop = false, Visible = false,
+                Margin = new Padding(2) };
+        }
+
+        void QueueNativeLayout()
+        {
+            if(nativeLayoutQueued||IsDisposed||!IsHandleCreated)return;
+            nativeLayoutQueued=true;
+            BeginInvoke((MethodInvoker)delegate
+            {
+                nativeLayoutQueued=false;
+                if(IsDisposed)return;
+                Action bonus=pendingBonusLayout, items=pendingItemLayout;
+                pendingBonusLayout=pendingItemLayout=null;
+                if(bonus!=null)bonus();
+                if(items!=null)items();
+            });
+        }
+        void HideItemScrollAfterPaint()
+        {
+            pendingItemLayout=delegate {itemScroll.Visible=false;}; QueueNativeLayout();
+        }
+
+        public void Wheel(int delta)
+        {
+            if(MainOnly) return;
+            if (StatsOnly || tierMode || !itemScroll.Visible) return;
+            int limit = Math.Max(0, itemScroll.Maximum - itemScroll.LargeChange + 1);
+            itemScroll.Value = Math.Max(0, Math.Min(limit, itemScroll.Value - Math.Sign(delta) * 2));
+        }
+
         static Image dpsUpLabel;
         static readonly string[] Left = { "Head", "Neck", "Shoulder", "Back", "Chest", "Shirt", "Tabard", "Wrist" };
         static readonly string[] Right = { "Hands", "Waist", "Legs", "Feet", "Finger 1", "Finger 2", "Trinket 1", "Trinket 2" };
@@ -74,7 +422,7 @@ namespace AzerothLauncher
 
         readonly string cls;
         readonly Dictionary<string, object> slots;
-        readonly Dictionary<string, string> gearIcons;       // piece name -> icon (the ones AZS Stats has seen)
+        readonly Dictionary<string, string> gearIcons;       // piece name -> icon captured from game data
         readonly Dictionary<string, Rectangle> boxes = new Dictionary<string, Rectangle>();
         readonly List<KeyValuePair<Rectangle, object>> rows = new List<KeyValuePair<Rectangle, object>>();   // the selector's lines
         readonly Font fTitle = Theme.F(13, FontStyle.Bold), fText = Theme.F(9.5f), fBold = Theme.F(9.5f, FontStyle.Bold),
@@ -143,10 +491,10 @@ namespace AzerothLauncher
         public GearSheet(string cls, Dictionary<string, object> slots, Dictionary<string, string> gearIcons, int height)
             : this(cls, slots, gearIcons)
         {
-            int fixedH = 40 + (int)(fTitle.Height + fSmall.Height) + 14;
-            int row = Math.Max(24, (height - fixedH) / 9);    // a slot and its gap
-            slotSize = Math.Max(20, Math.Min((int)(44 * Theme.Zoom), row * 44 / 51));
-            slotGap = Math.Max(3, row - slotSize);
+            int fixedH = Theme.Px(40);
+            int row = Math.Max(1, (height - fixedH) / 9);    // reserve the shared stats footer before sizing the slots
+            slotSize = Math.Max(10, Math.Min(Theme.Px(32), row - 2));
+            slotGap = Math.Max(0, row - slotSize);
         }
 
         public GearSheet(string cls, Dictionary<string, object> slots, Dictionary<string, string> gearIcons)
@@ -156,6 +504,23 @@ namespace AzerothLauncher
             this.cls = cls;
             this.slots = slots;
             this.gearIcons = gearIcons ?? new Dictionary<string, string>();
+            itemScroll.Visible = false;
+            itemScroll.SmallChange = 1;
+            itemScroll.ValueChanged += delegate
+            {
+                itemOffset = itemScroll.Value;
+                hoverRow = -1;
+                tip.SetToolTip(this, null);
+                GuideHover.Hide(this);
+                Invalidate();
+            };
+            Controls.Add(itemScroll);
+            bonusView.Font = Theme.F(8.25f);
+            Controls.Add(bonusView);
+            amuletEffectView.Font = Theme.F(7.5f);
+            ringTrinketEffectView.Font = Theme.F(7.5f);
+            Controls.Add(amuletEffectView);
+            Controls.Add(ringTrinketEffectView);
             tip.InitialDelay = 150;
             tip.AutoPopDelay = 30000;
             if (Unused.Contains(chosenSlot)) chosenSlot = "Head";
@@ -255,6 +620,7 @@ namespace AzerothLauncher
             int h, u;
             var t = Totals(out h, out u);
             LauncherApp.PlannerTotals = t.Count > 0 ? t : null;
+            if (StatsChanged != null) StatsChanged();
         }
 
         string Val(Dictionary<string, double> t, string stat, string unit)
@@ -270,52 +636,50 @@ namespace AzerothLauncher
             g.Clear(Parent != null ? Parent.BackColor : Theme.Panel);
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            if (StatsOnly)
+            {
+                DrawStatColumns(g, new Rectangle(0, 0, Width - 1, Height - 1));
+                return;
+            }
+            if (SelectorOnly)
+            {
+                Selector(g, new Rectangle(0, 0, Width - 1, Height - 1 - BuildControlsHeight - 6));
+                return;
+            }
             boxes.Clear();
-            int pickW = Math.Min(Width * 2 / 5, 280);
-            var sheet = new Rectangle(0, 0, Width - pickW - 10, Height - 1);
-            var pick = new Rectangle(sheet.Right + 10, 0, pickW - 1, Height - 1);
+            // The character sheet owns roughly 78% of the canvas; the compact selector uses the rest.
+            int pickW = MainOnly ? 0 : SelectorWidth;
+            var sheet = new Rectangle(0, 0, Width - pickW - (MainOnly?1:6), Height - 1);
+            var pick = new Rectangle(sheet.Right + 6, 0, pickW - 1, Math.Max(40, Height - 1 - BuildControlsHeight - 6));
             Frame(g, sheet);
-            Frame(g, pick);
+            if(!MainOnly) Frame(g, pick);
             int health, unknown;
             var t = Totals(out health, out unknown);
 
             // the title
             string title = Lang.T(cls);
             SizeF ts = g.MeasureString(title, fTitle);
-            using (var b = new SolidBrush(Bright)) g.DrawString(title, fTitle, b, sheet.X + (sheet.Width - ts.Width) / 2, sheet.Y + 8);
-            string sub = Lang.T("What your gear and jewelry add");
-            SizeF ss = g.MeasureString(sub, fSmall);
-            using (var b = new SolidBrush(Gold)) g.DrawString(sub, fSmall, b, sheet.X + (sheet.Width - ss.Width) / 2, sheet.Y + 10 + ts.Height);
-            int top = sheet.Y + 16 + (int)(ts.Height + ss.Height);
+            // The shared class dropdown owns this title position.
+            int top = sheet.Y + Theme.Px(MainOnly?5:38);
 
             // the slots: two columns and the weapons under them
             int s = slotSize, gap = slotGap;
             int tierW = Math.Max(6, s / 5) + 3;                // room for a piece's column of 5 small stars on its inner side
-            int lx = sheet.X + 12, rx = sheet.Right - 8 - tierW - s;
-            for (int i = 0; i < Left.Length; i++) Slot(g, Left[i], new Rectangle(lx, top + i * (s + gap), s, s));
-            for (int i = 0; i < Right.Length; i++) Slot(g, Right[i], new Rectangle(rx, top + i * (s + gap), s, s));
-            int by = top + 8 * (s + gap);
+            int lx = sheet.X + Theme.Px(12), rx = sheet.Right - Theme.Px(8) - tierW - s;
+            int by = Math.Max(top + s, sheet.Bottom - s - 10);
+            // Spread both columns evenly down to the row above the weapons, instead of
+            // leaving the spare height below tightly packed slots.
+            int columnBottom = Math.Max(top, by - s - 8);
+            for (int i = 0; i < Left.Length; i++)
+                Slot(g, Left[i], new Rectangle(lx, top + (columnBottom - top) * i / Math.Max(1, Left.Length - 1), s, s));
+            for (int i = 0; i < Right.Length; i++)
+                Slot(g, Right[i], new Rectangle(rx, top + (columnBottom - top) * i / Math.Max(1, Right.Length - 1), s, s));
             int bgap = gap + tierW;                           // the weapons: room for their stars between them
             int bx = sheet.X + (sheet.Width - (3 * s + 2 * bgap)) / 2;
             for (int i = 0; i < Bottom.Length; i++) Slot(g, Bottom[i], new Rectangle(bx + i * (s + bgap), by, s, s));
 
             // the middle: the two stat boxes like the game's, then the note
             var mid = new Rectangle(lx + s + 6 + tierW, top, rx - lx - s - 18 - tierW, by - top - 8);
-            int boxH = (int)(6 * (fText.GetHeight(g) + 2)) + 12;
-            int half = (mid.Width - 6) / 2;
-            double hp;
-            t.TryGetValue("health%", out hp);
-            string healthText = "+" + health + (hp != 0 ? " +" + Items.Pct(hp) + "%" : "");
-            StatBox(g, new Rectangle(mid.X, mid.Y, half, boxH), new[]
-            {
-                new[] { "Health", healthText }, new[] { "Damage", Val(t, "damage", "%") }, new[] { "Haste", Val(t, "cooldown", "%") },
-                new[] { "Crit", Val(t, "crit", "%") }, new[] { "Crit Dmg", Val(t, "critdmg", "%") }, new[] { "Armor", Val(t, "armor", "%") },
-            });
-            StatBox(g, new Rectangle(mid.X + half + 6, mid.Y, mid.Width - half - 6, boxH), new[]
-            {
-                new[] { "Area", Val(t, "area", "%") }, new[] { "Targets", Val(t, "targets", "") }, new[] { "Echo", Val(t, "echo", "%") },
-                new[] { "Speed", Val(t, "speed", "%") }, new[] { "Regen", Val(t, "regen", "") }, new[] { "Pickup", Val(t, "pickup", "%") },
-            });
             // The gear-calculation explanation is a hover-only question mark, matching the global help button.
             unknownPieces = unknown;
             helpBox = new Rectangle(sheet.Right - 28, sheet.Bottom - 25, 22, 18);
@@ -326,47 +690,157 @@ namespace AzerothLauncher
 
             // under the totals, in the middle of the sheet (where the explanation was): every set worn, its 4-piece and
             // 8-piece bonuses (bright when reached), so two sets of four show and count both, and an 8-piece shows its 4-piece too
-            int setsTop = mid.Y + boxH + 8;
-            DrawSets(g, new Rectangle(mid.X, setsTop, mid.Width, by - 8 - setsTop));   // above the weapons
+            int fullStatHeight = Theme.Px(29) + 6 * (Theme.F(7.5f).Height + Theme.Px(2));
+            int statHeight = Math.Min(mid.Height, Math.Min(fullStatHeight, mid.Height * 3 / 4));
+            var statBounds = new Rectangle(mid.X, top, Math.Max(30, mid.Width), Math.Max(1, statHeight));
+            DrawStatColumns(g, statBounds, fullStatHeight <= 0 ? 1f : statHeight / (float)fullStatHeight);
+            int setsTop = statBounds.Bottom + Theme.Px(6);
+            int belowStats = Math.Max(0, by - 8 - setsTop);
+            int jewelryHeight = belowStats >= Theme.Px(54)
+                ? Math.Min(Theme.Px(78), Math.Max(Theme.Px(42), belowStats / 3)) : 0;
+            int jewelryTop = by - 8 - jewelryHeight;
+            DrawSets(g, new Rectangle(mid.X, setsTop, mid.Width, Math.Max(0, jewelryTop - setsTop - (jewelryHeight > 0 ? Theme.Px(4) : 0))));
+            DrawJewelryEffects(g, new Rectangle(mid.X, jewelryTop, mid.Width, jewelryHeight));
 
             // the selector: what the chosen slot can hold, each with its picture
-            Selector(g, pick);
+            if(!MainOnly) Selector(g, pick);
+        }
+
+        public bool StatsOnly, SelectorOnly, MainOnly;
+        public Action StatsChanged;
+
+        void DrawStatColumns(Graphics g, Rectangle mid, float scale = 1f)
+        {
+            int health, unknown;
+            var t = Totals(out health, out unknown);
+            double hp;
+            t.TryGetValue("health%", out hp);
+            string healthText = "+" + health + (hp != 0 ? " +" + Items.Pct(hp) + "%" : "");
+            string[][] main = {
+                new[] { "Health", healthText }, new[] { "Damage", Val(t, "damage", "%") }, new[] { "Haste", Val(t, "cooldown", "%") },
+                new[] { "Crit", Val(t, "crit", "%") }, new[] { "Crit Dmg", Val(t, "critdmg", "%") }, new[] { "Armor", Val(t, "armor", "%") }
+            };
+            string[][] misc = {
+                new[] { "Area", Val(t, "area", "%") }, new[] { "Targets", Val(t, "targets", "") }, new[] { "Echo", Val(t, "echo", "%") },
+                new[] { "Speed", Val(t, "speed", "%") }, new[] { "Regen", Val(t, "regen", "") }, new[] { "Pickup", Val(t, "pickup", "%") }
+            };
+            Font baseFont = Theme.F(7.5f, FontStyle.Bold);
+            float compact = Math.Max(0.35f, Math.Min(1f, scale));
+            using (var font = new Font(baseFont.FontFamily, Math.Max(5f, baseFont.Size * compact), FontStyle.Bold, GraphicsUnit.Pixel))
+            {
+                int gap = Math.Max(1, (int)Math.Round(Theme.Px(6) * compact));
+                int half = (mid.Width - 1 - gap) / 2;
+                int pad = Math.Max(1, (int)Math.Round(Theme.Px(3) * compact));
+                int headingHeight = Math.Max(font.Height + 1, (int)Math.Round(Theme.Px(18) * compact));
+                int headingTop = (int)Math.Round(Theme.Px(3) * compact);
+                int rowTop = (int)Math.Round(Theme.Px(25) * compact);
+                int lh = Math.Max(font.Height, font.Height + (int)Math.Round(Theme.Px(2) * compact));
+                var state = g.Save();
+                try
+                {
+                    g.SetClip(mid);
+                    for (int column = 0; column < 2; column++)
+                    {
+                        var box = new Rectangle(mid.X + column * (half + gap), mid.Y, column == 0 ? half : mid.Width - 1 - (half + gap), mid.Height - 1);
+                        using (var edge = new Pen(SlotEdge)) g.DrawRectangle(edge, box);
+                        var heading = new Rectangle(box.X + pad, box.Y + headingTop, box.Width - pad * 2, headingHeight);
+                        TextRenderer.DrawText(g, Lang.T(column == 0 ? "Main Stats" : "Secondary Stats"), font, heading, Gold,
+                            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
+                        int y = box.Y + rowTop;
+                        foreach (var row in column == 0 ? main : misc)
+                        {
+                            var line = new Rectangle(box.X + pad + 2, y, box.Width - (pad + 2) * 2, lh);
+                            TextRenderer.DrawText(g, Lang.T(row[0]), font, line, Gold, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
+                            TextRenderer.DrawText(g, row[1], font, line, Bright, TextFormatFlags.Right | TextFormatFlags.NoPrefix);
+                            y += lh;
+                        }
+                    }
+                }
+                finally { g.Restore(state); }
+            }
         }
 
         void DrawSets(Graphics g, Rectangle r)
         {
-            float y = r.Y;
-            using (var b = new SolidBrush(Gold)) g.DrawString(Lang.T("Set bonuses"), fBold, b, r.X, y);
-            y += fBold.GetHeight(g) + 2;
-            if (setsWorn.Count == 0)
+            var lines = new List<string>();
+            foreach (string rarity in Items.Rarities)
             {
-                Para(g, Lang.T("Wear armor pieces of a set to see its bonuses here. Four pieces of two sets give both 4-piece bonuses."), fSmall, Dim, r.X, y, r.Width, r.Bottom);
-                return;
+                int[] counts;
+                if (!setsWorn.TryGetValue(rarity, out counts)) continue;
+                var four = Items.FourPiece(rarity);
+                string eight = Items.EightPiece(cls, rarity);
+                lines.Add(Items.SetName(cls, rarity) + "  " + counts[0] + "/8");
+                lines.Add("4p: " + (four != null ? four.Text : Lang.T("not entered yet")) +
+                    " [" + counts[1] + "/4, 1+ " + Lang.T("stars") + "]");
+                lines.Add("8p: " + (eight ?? Lang.T("not entered yet")) +
+                    " [" + counts[2] + "/8, 3+ " + Lang.T("stars") + "]");
+                lines.Add("");
             }
-            // what is reached, in one line
-            var reached = new List<string>();
-            foreach (string rar in Items.Rarities)
+            string text = string.Join("\n", lines.ToArray());
+            // Native RichEdit creation/layout cannot run in a GDI paint callback. Commit it next UI turn.
+            pendingBonusLayout=delegate
             {
-                int[] c;
-                if (!setsWorn.TryGetValue(rar, out c)) continue;
-                if (c[1] >= 4) reached.Add(Items.SetName(cls, rar) + " (4)");
-                if (c[2] >= 8) reached.Add(Items.SetName(cls, rar) + " (8)" + (c[3] >= 8 ? " " + Lang.T("empowered") : ""));
-            }
-            y += Para(g, Lang.T("Reached") + ": " + (reached.Count > 0 ? string.Join(", ", reached.ToArray()) : Lang.T("none yet")),
-                      fSmall, reached.Count > 0 ? Active : Dim, r.X, y, r.Width, r.Bottom) + 4;
-            foreach (string rar in Items.Rarities)
+                bool visible=r.Height>12&&text.Length>0;
+                if(visible)
+                {
+                    bonusView.Bounds=new Rectangle(r.X,r.Y,Math.Max(30,r.Width),r.Height);
+                    if(bonusView.Text!=text)bonusView.Text=text;
+                }
+                bonusView.Visible=visible;
+            };
+            QueueNativeLayout();
+        }
+
+        static string EquippedJewelryText(Dictionary<string, object> slots, params string[] names)
+        {
+            var parts = new List<string>();
+            foreach (string slot in names)
             {
-                int[] c;
-                if (!setsWorn.TryGetValue(rar, out c) || y >= r.Bottom) continue;
-                y += Para(g, Items.SetName(cls, rar) + "  " + c[0] + "/8", fBold, GearSheet.RarityColor(rar), r.X, y, r.Width, r.Bottom);
-                var four = Items.FourPiece(rar);
-                string eight = Items.EightPiece(cls, rar);
-                bool on4 = c[1] >= 4, on8 = c[2] >= 8, emp = c[3] >= 8;
-                y += Rich(g, "(4) " + (four != null ? four.Text : Lang.T("not entered yet")) + "  [" + c[1] + "/4, 1+ " + Lang.T("stars") + "]",
-                          fSmall, on4 ? Active : Dim, on4, r.X + 10, y, r.Width - 10, r.Bottom);
-                y += Rich(g, "(8) " + (eight ?? Lang.T("not entered yet")) + "  [" + c[2] + "/8, 3+ " + Lang.T("stars") + "]" +
-                          (emp ? "  " + Lang.T("empowered") : ""), fSmall, on8 ? Active : Dim, on8, r.X + 10, y, r.Width - 10, r.Bottom) + 4;
+                object value;
+                Jewel jewel = slots != null && slots.TryGetValue(slot, out value) ? value as Jewel : null;
+                if (jewel == null) continue;
+                var lines = new List<string> { jewel.Name };
+                if (jewel.Lines != null) lines.AddRange(jewel.Lines);
+                parts.Add(string.Join("\n", lines.ToArray()));
             }
+            return parts.Count == 0 ? Lang.T("None selected") : string.Join("\n\n", parts.ToArray());
+        }
+
+        void DrawJewelryEffects(Graphics g, Rectangle bounds)
+        {
+            string amulet = Lang.T("Amulet") + "\n" + EquippedJewelryText(slots, "Neck");
+            string rings = Lang.T("Rings & Trinkets") + "\n" + EquippedJewelryText(slots,
+                "Finger 1", "Finger 2", "Trinket 1", "Trinket 2");
+            pendingBonusLayout = Combine(pendingBonusLayout, delegate
+            {
+                bool visible = MainOnly && bounds.Width >= Theme.Px(64) && bounds.Height >= Theme.Px(28);
+                if (visible)
+                {
+                    int gap = Theme.Px(5), half = Math.Max(24, (bounds.Width - gap) / 2);
+                    amuletEffectView.Bounds = new Rectangle(bounds.X, bounds.Y, half, bounds.Height);
+                    ringTrinketEffectView.Bounds = new Rectangle(bounds.X + half + gap, bounds.Y,
+                        Math.Max(24, bounds.Width - half - gap), bounds.Height);
+                    if (amuletEffectView.Text != amulet) amuletEffectView.Text = amulet;
+                    if (ringTrinketEffectView.Text != rings) ringTrinketEffectView.Text = rings;
+                }
+                amuletEffectView.Visible = ringTrinketEffectView.Visible = visible;
+            });
+            if (bounds.Height > 0)
+            {
+                int gap = Theme.Px(5), half = Math.Max(24, (bounds.Width - gap) / 2);
+                using (var edge = new Pen(SlotEdge))
+                {
+                    g.DrawRectangle(edge, bounds.X, bounds.Y, Math.Max(1, half - 1), Math.Max(1, bounds.Height - 1));
+                    g.DrawRectangle(edge, bounds.X + half + gap, bounds.Y,
+                        Math.Max(1, bounds.Width - half - gap - 1), Math.Max(1, bounds.Height - 1));
+                }
+            }
+            QueueNativeLayout();
+        }
+
+        static Action Combine(Action first, Action next)
+        {
+            return delegate { if (first != null) first(); if (next != null) next(); };
         }
 
         // a line wrapped word by word, the spells and talents in it in gold (as the Guide links them); its height
@@ -414,7 +888,8 @@ namespace AzerothLauncher
 
         List<object> Choices(string slot)
         {
-            var l = new List<object> { EmptyRow };
+            // Unequip through the character slot's right-click action; the picker lists equipment only.
+            var l = new List<object>();
             if (slot == "Neck")
             {
                 foreach (var j in Items.JewelryOf("Amulet")) if (!j.IsCodex || j.Class == cls) l.Add(j);
@@ -432,7 +907,10 @@ namespace AzerothLauncher
             tierBoxes.Clear();
             float lh = Math.Max(fText.GetHeight(g) + 6, 20);
             // where the header was: Single Item / Tier Bonus
-            int bh = (int)lh + 4, half = (r.Width - 24) / 2;
+            int starSpace=Math.Max(24,(int)(28*Theme.SectionZoom))+8;
+            int half=Math.Max(24,(r.Width-24-starSpace)/2), bh=(int)lh+4;
+            foreach(string label in new[]{Lang.T("Single Item"),Lang.T("Tier Bonus")})
+                bh=Math.Max(bh,TextRenderer.MeasureText(label,fBold,new Size(Math.Max(12,half-4),1000),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix).Height+6);
             using (var sfc = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 for (int i = 0; i < 2; i++)
                 {
@@ -443,17 +921,8 @@ namespace AzerothLauncher
                     using (var b = new SolidBrush(on ? Color.Black : Bright)) g.DrawString(Lang.T(tier ? "Tier Bonus" : "Single Item"), fBold, b, box, sfc);
                     modeBoxes.Add(new KeyValuePair<Rectangle, bool>(box, tier));
                 }
-            float y = r.Y + 8 + bh + 8;
-            if (tierMode) { TierRows(g, r, y, lh); return; }
-            // the slot and the name of what it holds, under those two
-            object held;
-            slots.TryGetValue(chosenSlot, out held);
-            using (var b = new SolidBrush(Gold)) g.DrawString(Lang.T(chosenSlot), fHead, b, r.X + 10, y);
-            y += fHead.GetHeight(g);
-            using (var sfn = new StringFormat(StringFormatFlags.NoWrap) { Trimming = StringTrimming.EllipsisCharacter })
-            using (var b = new SolidBrush(held != null ? RarityColor(RarityOf(held)) : Dim))
-                g.DrawString(held != null ? NameOf(held) : Lang.T("Empty"), fText, b, new RectangleF(r.X + 10, y, r.Width - 20, lh), sfn);
-            y += lh + 2;
+            float y = r.Y + 8 + bh + 3;
+            if (tierMode) { HideItemScrollAfterPaint(); TierRows(g, r, y, lh); return; }
             int ic = (int)(lh - 4);                          // the picture: as tall as the line
             object worn;
             slots.TryGetValue(chosenSlot, out worn);
@@ -461,44 +930,93 @@ namespace AzerothLauncher
             object inOther = null;
             if (other != null) slots.TryGetValue(other, out inOther);
             var list = Choices(chosenSlot);
-            using (var sf = new StringFormat(StringFormatFlags.NoWrap) { Trimming = StringTrimming.EllipsisCharacter, LineAlignment = StringAlignment.Center })
-                for (int i = 0; i < list.Count; i++)
+            if (list.Count == 0) { HideItemScrollAfterPaint(); return; }
+            Font selectorFont = Theme.F(8.25f);
+            ic = Math.Max(12, selectorFont.Height);
+            int textWidth = Math.Max(20, r.Width - 4 - 14 - ic - 6);
+            var names = new List<string>();
+            var heights = new List<int>();
+            foreach (object entry in list)
+            {
+                var piece = entry as GearPiece;
+                string name = entry == EmptyRow ? Lang.T("Empty") : NameOf(entry) +
+                    (piece != null && !piece.Known ? " *" : "") + (entry == inOther && entry != EmptyRow ? "  (" + Lang.T("worn") + ")" : "");
+                names.Add(name);
+                heights.Add(Math.Max(ic + 2, (int)Math.Ceiling(g.MeasureString(name, selectorFont, textWidth, StringFormat.GenericTypographic).Height) + 1));
+            }
+            int room = Math.Max(1, r.Bottom - 1 - (int)y);
+            int maxOffset = list.Count - 1, tailHeight = heights[list.Count - 1];
+            while (maxOffset > 0 && tailHeight + 1 + heights[maxOffset - 1] <= room)
+                tailHeight += 1 + heights[--maxOffset];
+            int visibleRows = Math.Max(1, list.Count - maxOffset);
+            if (scrollSlot != chosenSlot) { itemOffset = 0; scrollSlot = chosenSlot; }
+            itemOffset = Math.Min(itemOffset, maxOffset);
+            bool scrollable = maxOffset > 0;
+            Rectangle scrollBounds=new Rectangle(r.Right-15,(int)y,12,Math.Max(1,r.Bottom-1-(int)y));
+            string layoutSlot=chosenSlot;
+            pendingItemLayout=delegate
+            {
+                if(layoutSlot!=chosenSlot)return;
+                if(scrollable)
                 {
-                    if (y + lh > r.Bottom - 6) break;
-                    object o = list[i];
-                    var row = new Rectangle(r.X + 6, (int)y, r.Width - 12, (int)lh);
-                    bool isWorn = o == worn || (o == EmptyRow && worn == null);
-                    bool taken = o != EmptyRow && o == inOther;  // the same ring or trinket twice: no
-                    if (isWorn || hoverRow == i)
-                        using (var b = new SolidBrush(isWorn ? Color.FromArgb(60, 240, 192, 80) : Theme.Hex("#252331"))) g.FillRectangle(b, row);
-                    var icon = new Rectangle(row.X + 2, row.Y + 2, ic, ic);
-                    if (o == EmptyRow)
+                    int target=Math.Max(0,Math.Min(itemOffset,maxOffset));
+                    itemScroll.Bounds=scrollBounds;
+                    itemScroll.Maximum=Math.Max(0,list.Count-1);
+                    itemScroll.LargeChange=visibleRows;
+                    itemScroll.Value=target;
+                }
+                itemScroll.Visible=scrollable;
+            };
+            QueueNativeLayout();
+
+            // A wrapped row may be taller than a compact picker. Keep its visible portion
+            // selectable instead of rejecting the first row and showing an empty list.
+            var itemViewport = new Rectangle(r.X + 2, (int)y, Math.Max(1, r.Width - 4 - 14), Math.Max(0, r.Bottom - 1 - (int)y));
+            var itemClip = g.Save();
+            try
+            {
+                g.SetClip(itemViewport, CombineMode.Intersect);
+                using (var sf = new StringFormat(StringFormat.GenericTypographic) { LineAlignment = StringAlignment.Near })
+                    for (int i = itemOffset; i < list.Count; i++)
                     {
-                        using (var p = new Pen(SlotEdge)) g.DrawRectangle(p, icon);
-                        using (var b = new SolidBrush(Dim)) g.DrawString(Lang.T("Empty"), fText, b, new RectangleF(icon.Right + 6, row.Y, row.Width - ic - 10, row.Height), sf);
-                    }
-                    else
-                    {
-                        Image img = IconOf(o);
-                        if (img != null) Theme.Draw(g, img, icon);
-                        else if (o is GearPiece) Theme.ImageSoon(g, icon, RarityColor(RarityOf(o)));
+                        int rowHeight = heights[i];
+                        if ((int)y >= itemViewport.Bottom || (i > itemOffset && y + rowHeight > itemViewport.Bottom)) break;
+                        object o = list[i];
+                        var row = new Rectangle(r.X + 2, (int)y, r.Width - 4 - 14, rowHeight);
+                        bool isWorn = o == worn || (o == EmptyRow && worn == null);
+                        bool taken = o != EmptyRow && o == inOther;  // the same ring or trinket twice: no
+                        if (isWorn || hoverRow == rows.Count)
+                            using (var b = new SolidBrush(isWorn ? Color.FromArgb(60, 240, 192, 80) : Theme.Hex("#252331"))) g.FillRectangle(b, row);
+                        var icon = new Rectangle(row.X + 1, row.Y + 1, ic, ic);
+                        if (o == EmptyRow)
+                        {
+                            using (var p = new Pen(SlotEdge)) g.DrawRectangle(p, icon);
+                            using (var b = new SolidBrush(Dim)) g.DrawString(Lang.T("Empty"), selectorFont, b, new RectangleF(icon.Right + 3, row.Y + 1, textWidth, row.Height), sf);
+                        }
                         else
                         {
-                            using (var b = new SolidBrush(Color.FromArgb(70, RarityColor(RarityOf(o))))) g.FillRectangle(b, icon);
-                            string ab = chosenSlot.Substring(0, Math.Min(2, chosenSlot.Length));
-                            using (var f2 = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                            using (var b = new SolidBrush(Bright)) g.DrawString(ab, fSmall, b, icon, f2);
+                            Image img = IconOf(o);
+                            if (img != null) Theme.Draw(g, img, icon);
+                            else if (o is GearPiece) Theme.ImageSoon(g, icon, RarityColor(RarityOf(o)));
+                            else
+                            {
+                                using (var b = new SolidBrush(Color.FromArgb(70, RarityColor(RarityOf(o))))) g.FillRectangle(b, icon);
+                                string ab = chosenSlot.Substring(0, Math.Min(2, chosenSlot.Length));
+                                using (var f2 = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                                using (var b = new SolidBrush(Bright)) g.DrawString(ab, fSmall, b, icon, f2);
+                            }
+                            using (var p = new Pen(RarityColor(RarityOf(o)))) g.DrawRectangle(p, icon);
+                            var piece = o as GearPiece;
+                            string name = names[i];
+                            Color c = taken ? Dim : RarityColor(RarityOf(o));
+                            using (var b = new SolidBrush(c)) g.DrawString(name, selectorFont, b, new RectangleF(icon.Right + 3, row.Y + 1, textWidth, row.Height), sf);
                         }
-                        using (var p = new Pen(RarityColor(RarityOf(o)))) g.DrawRectangle(p, icon);
-                        var piece = o as GearPiece;
-                        string name = NameOf(o) + (piece != null && !piece.Known ? " *" : "") + (taken ? "  (" + Lang.T("worn") + ")" : "");
-                        Color c = taken ? Dim : RarityColor(RarityOf(o));
-                        using (var b = new SolidBrush(c)) g.DrawString(name, fText, b, new RectangleF(icon.Right + 6, row.Y, row.Width - ic - 10, row.Height), sf);
+                        if (!taken) rows.Add(new KeyValuePair<Rectangle, object>(Rectangle.Intersect(row, itemViewport), o));
+                        else rows.Add(new KeyValuePair<Rectangle, object>(Rectangle.Empty, o));
+                        y += rowHeight + 1;
                     }
-                    if (!taken) rows.Add(new KeyValuePair<Rectangle, object>(row, o));
-                    else rows.Add(new KeyValuePair<Rectangle, object>(Rectangle.Empty, o));
-                    y += lh + 1;
-                }
+            }
+            finally { g.Restore(itemClip); }
         }
 
         // Tier Bonus: one line per rarity, its name on the left and 4 piece / 8 piece side by side
@@ -640,7 +1158,9 @@ namespace AzerothLauncher
                 if (!unused)
                     using (var f = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                     using (var b = new SolidBrush(Color.FromArgb(110, 156, 138, 100)))
-                        g.DrawString(Lang.T(slot), fSmall, b, r, f);
+                        g.DrawString(Lang.T(slot.StartsWith("Finger") ? "R" + slot.Substring(slot.Length - 1) :
+                            slot.StartsWith("Trinket") ? "T" + slot.Substring(slot.Length - 1) :
+                            slot == "Main Hand" ? "MH" : slot == "Off Hand" ? "OH" : slot == "Shoulder" ? "Shldr" : slot == "Hands" ? "Hnds" : slot == "Chest" ? "Chst" : slot), Theme.FFit(7, FontStyle.Regular), b, r, f);
             }
             if (slot == chosenSlot && !unused)                // the slot the selector shows
                 using (var p = new Pen(Gold, 2f)) g.DrawRectangle(p, Rectangle.Inflate(r, 2, 2));
@@ -695,7 +1215,14 @@ namespace AzerothLauncher
                 else if (r >= 0) o = rows[r].Value;
                 int st = StarsOf(s ?? chosenSlot);
                 string text = o is GearPiece ? Items.Card((GearPiece)o, st) : o is Jewel ? Items.Card((Jewel)o) : s != null ? Lang.T(s) : null;
-                tip.SetToolTip(this, text);
+                string itemName = o is GearPiece ? ((GearPiece)o).Name : o is Jewel ? ((Jewel)o).Name : null;
+                if (itemName != null)
+                {
+                    int titleEnd = text == null ? -1 : text.IndexOf('\n');
+                    string body = titleEnd > 0 ? text.Substring(titleEnd + 1) : text;
+                    tip.SetItemToolTip(this, itemName, body, Items.IconFor(itemName));
+                }
+                else tip.SetToolTip(this, text);
                 Invalidate();
             }
             base.OnMouseMove(e);
@@ -705,6 +1232,11 @@ namespace AzerothLauncher
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
+            if (StatsOnly)
+            {
+                return;
+            }
+
             base.OnMouseUp(e);
             if (e.Button == MouseButtons.Left)
             {

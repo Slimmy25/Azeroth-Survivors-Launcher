@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -272,9 +273,12 @@ namespace AzerothLauncher
 
         public Dictionary<string, object> Data;
 
+        static Config previewConfig;
+
         public static Config Load()
         {
             var c = new Config();
+            if (LauncherApp.PreviewMode) { if(previewConfig==null) previewConfig=new Config { Data=new Dictionary<string,object>() }; return previewConfig; }
             try
             {
                 c.Data = Json.AsDict(Json.Parse(File.ReadAllText(FilePath, Encoding.UTF8)));
@@ -293,7 +297,7 @@ namespace AzerothLauncher
 
         public void Save()
         {
-            if (Frozen) return;
+            if (Frozen || LauncherApp.PreviewMode) return;
             try
             {
                 Directory.CreateDirectory(AppDir);
@@ -439,6 +443,42 @@ namespace AzerothLauncher
             }
         }
 
+        // Create the launcher's current-user Desktop shortcut after setup has been completed. Using the running
+        // executable keeps local/portable installs pointed at the copy the player just configured.
+        public static void CreateLauncherDesktopShortcut()
+        {
+            string target = Path.GetFullPath(Application.ExecutablePath);
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            if (string.IsNullOrWhiteSpace(desktop)) desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            if (string.IsNullOrWhiteSpace(desktop)) throw new InvalidOperationException("Windows did not provide a Desktop folder.");
+
+            string linkPath = Path.Combine(desktop, "Azeroth Survivors Launcher.lnk");
+            Type shellType = Type.GetTypeFromProgID("WScript.Shell");
+            if (shellType == null) throw new InvalidOperationException("Windows Script Host is not available to create a shortcut.");
+
+            object shell = null;
+            object link = null;
+            try
+            {
+                shell = Activator.CreateInstance(shellType);
+                link = shellType.InvokeMember("CreateShortcut", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance,
+                                              null, shell, new object[] { linkPath });
+                Type linkType = link.GetType();
+                BindingFlags set = BindingFlags.SetProperty | BindingFlags.Public | BindingFlags.Instance;
+                linkType.InvokeMember("TargetPath", set, null, link, new object[] { target });
+                linkType.InvokeMember("WorkingDirectory", set, null, link, new object[] { Path.GetDirectoryName(target) });
+                linkType.InvokeMember("IconLocation", set, null, link, new object[] { target + ",0" });
+                linkType.InvokeMember("Description", set, null, link, new object[] { "Azeroth Survivors Launcher" });
+                linkType.InvokeMember("Save", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance,
+                                      null, link, null);
+            }
+            finally
+            {
+                if (link != null && Marshal.IsComObject(link)) Marshal.FinalReleaseComObject(link);
+                if (shell != null && Marshal.IsComObject(shell)) Marshal.FinalReleaseComObject(shell);
+            }
+        }
+
         public static string AppData
         {
             get { return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); }
@@ -474,6 +514,12 @@ namespace AzerothLauncher
             lock (dataLock)
             {
                 if (dataDir != null) return;
+                if(LauncherApp.PreviewMode || Program.DisplayPreviewBuild)
+                {
+                    dataDir=Path.Combine(LauncherDir,Program.DisplayPreviewBuild?"Display Preview Data":"preview-runtime-data");
+                    newFolder=!Directory.Exists(dataDir); dataBesideExe=true;
+                    return; // QA never migrates or shares public settings, sync state, logs or backups.
+                }
                 string beside = Path.Combine(LauncherDir, DataFolderName);
                 newFolder = !Directory.Exists(beside) && !File.Exists(Path.Combine(LauncherDir, GameExe));
                 if (!InCloudDrive(LauncherDir) && Writable(beside))
@@ -763,7 +809,9 @@ namespace AzerothLauncher
     // ------------------------------------------------------------------ built-in data
     public class AddonEntry
     {
-        public string Category, Name, Url, Description;
+        public string Category, Name, Url, Description, ForgeId, GalleryId, Note;
+        public bool ForgeVerified, WorkInProgress; // catalog review flag and temporary install availability
+        public List<string> ForgeIds = new List<string>();
         public List<string> Folders = new List<string>();    // its folders in the AddOns folder (addons.txt's 4th field)
     }
 
@@ -964,7 +1012,36 @@ namespace AzerothLauncher
                         if (found == null) continue;
                         e.Url = found;
                     }
-                    e.Description = f.Length > 4 ? string.Join("|", f, 4, f.Length - 4).Trim() : "";
+                    int descriptionEnd = f.Length;
+                    // Catalog metadata is kept at the end so descriptions may still contain '|'.
+                    while (descriptionEnd > 4 && (f[descriptionEnd - 1].Trim().StartsWith("forge-", StringComparison.OrdinalIgnoreCase) ||
+                                                   f[descriptionEnd - 1].Trim().StartsWith("gallery-", StringComparison.OrdinalIgnoreCase) ||
+                                                   f[descriptionEnd - 1].Trim().StartsWith("note=", StringComparison.OrdinalIgnoreCase) ||
+                                                   f[descriptionEnd - 1].Trim().StartsWith("wip=", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        string meta = f[descriptionEnd - 1].Trim();
+                        if (meta.StartsWith("forge-id=", StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach (string id in meta.Substring("forge-id=".Length).Split(','))
+                            {
+                                string cleanId = id.Trim();
+                                if (cleanId.Length == 0 || e.ForgeIds.Contains(cleanId)) continue;
+                                e.ForgeIds.Add(cleanId);
+                            }
+                            if (e.ForgeIds.Count > 0) e.ForgeId = e.ForgeIds[0];
+                        }
+                        else if (meta.StartsWith("forge-verified=", StringComparison.OrdinalIgnoreCase))
+                            e.ForgeVerified = string.Equals(meta.Substring("forge-verified=".Length).Trim(), "true", StringComparison.OrdinalIgnoreCase);
+                        else if (meta.StartsWith("gallery-id=", StringComparison.OrdinalIgnoreCase))
+                            e.GalleryId = meta.Substring("gallery-id=".Length).Trim();
+                        else if (meta.StartsWith("note=", StringComparison.OrdinalIgnoreCase))
+                            e.Note = meta.Substring("note=".Length).Trim();
+                        else if (meta.StartsWith("wip=", StringComparison.OrdinalIgnoreCase))
+                            e.WorkInProgress = string.Equals(meta.Substring("wip=".Length).Trim(), "true", StringComparison.OrdinalIgnoreCase);
+                        else break;
+                        descriptionEnd--;
+                    }
+                    e.Description = descriptionEnd > 4 ? string.Join("|", f, 4, descriptionEnd - 4).Trim() : "";
                     if (f.Length > 3)
                         foreach (string t in f[3].Split(','))
                             if (t.Trim().Length > 0) e.Folders.Add(t.Trim());

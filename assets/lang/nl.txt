@@ -977,8 +977,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Speeltijd tonen op het startscherm
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Gids voor nieuwe spelers
 {#0} of {#1} topics read
 = {#0} van {#1} onderwerpen gelezen
@@ -1066,10 +1066,6 @@ Download cancelled.
 = Download geannuleerd.
 The download server did not accept the launcher's login.
 = De downloadserver accepteerde de login van de launcher niet.
-The backup host's page has no download link right now.
-= De pagina van de reserveserver heeft nu geen downloadlink.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= De download van de reserveserver is beschadigd (de controlesom klopt niet). Probeer het opnieuw.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = De launcher draait al.\n\nZoek het pictogram in het systeemvak (bij de klok).
 INSTALL FROM A FILE
@@ -1483,7 +1479,7 @@ Most level-up saves in a run
 = Meeste reddingen door levelup in één run
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Al je statistieken in het spel (/azs) en op de STATISTIEKEN-pagina: runs, records, vaardigheden, klassen, speeltijd, je aartsvijand en co-op met vrienden.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = De hele gids voor nieuwe spelers van de launcher in het spel (/handbook): elk onderwerp en elke pagina, de spreuken van elke klasse met hun iconen en de talenten die ze veranderen, en alle talentbomen.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Kleine wijzigingen, elk aan of uit (/azsmods of de minimapknop): geen regels over level-up, statbonus of nieuwe spreuk in de chat, baasmarkeringen (Schedel, Kruis, Diamant), minibaasmarkeringen (Ster, Driehoek, Diamant), een knipperende markering boven elke gevallen vriend, een eenvoudige actiebalk met alleen de zes vakjes, de interface verplaatsen en vergrendelen, het doelkader verbergen en de camera op 50.
@@ -1523,8 +1519,8 @@ switched off: the two conflict.
 = uitgeschakeld: de twee botsen.
 these two can't be on together. Switching one on switches the other off.
 = deze twee kunnen niet tegelijk aan staan. Zet je de ene aan, dan gaat de andere uit.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Platte, donkere eenheidskaders en een compacte actiebalk, naambordjes in Plater-stijl (Survivor Plates), geluk en kaartkansen op de XP-balk, een chatpaneel met tabbladen en automatische raidmarkeringen. Kan niet tegelijk aan staan met AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Platte, donkere eenheidskaders en een compacte actiebalk, naambordjes in Plater-stijl (Survivor Plates), geluk en kaartkansen op de XP-balk, een chatpaneel met tabbladen en automatische raidmarkeringen. Kan niet tegelijk aan staan met Slim Suite.
 The game updated itself and is opening again...
 = De game heeft zichzelf bijgewerkt en gaat weer open...
 The game updated itself and opened again.

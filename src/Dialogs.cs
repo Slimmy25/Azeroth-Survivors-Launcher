@@ -168,9 +168,9 @@ namespace AzerothLauncher
             Page2();
         }
 
-        // page 3: addons. All of them are optional; if the player wants addons, AZS Stats is asked about first (before
+        // page 3: addons. All of them are optional; if the player wants addons, Azeroth Stats is asked about first (before
         // the list), and is only turned on when they want their stats tracked in and out of the game.
-        public bool? TrackStats;                              // the answer about AZS Stats (null: not asked)
+        public bool? TrackStats;                              // the answer about Azeroth Stats (null: not asked)
 
         void Page2()
         {
@@ -189,10 +189,11 @@ namespace AzerothLauncher
         {
             BackAction = Page2;
             Begin();
-            Heading("AZS Stats", "Step 3 of 3", 26);
+            Heading("Azeroth Stats", "Step 3 of 3", 26);
             Para("Do you want to track your stats in and out of the game?", 13, FontStyle.Bold, Theme.Gold, 26, 0, 4, 560);
-            Para("AZS Stats records your runs while you play (/azs in game) and fills the launcher's STATS page: records, " +
-                 "abilities, classes, play time, your Nemesis and co-op with friends.", 11, FontStyle.Regular, Theme.Text, 26, 2, 12, 560);
+            Para("Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, " +
+                 "classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons " +
+                 "and configurable in-game HUD remain available in the addon.", 11, FontStyle.Regular, Theme.Text, 26, 2, 12, 560);
             Body.Add(new HRow(12, B("YES, TRACK MY STATS", delegate { TrackStats = true; Leave("download"); }, 250, 42, 12),
                                   B("NO", delegate { TrackStats = false; Leave("download"); }, 140, 42, 12)),
                      Align.Center, 26, 4, 26, 18);

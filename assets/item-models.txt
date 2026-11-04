@@ -1,4 +1,5 @@
-# Item name|item id|display id, real class gear and Transmog items, from the CMaNGOS Classic world database (https://github.com/cmangos/classic-db).
+# Item label|model source item id|display id, real class gear, jewelry and Transmog items from CMaNGOS Classic.
+# Same-set slot synonyms are used only where AZS uses a different English armor slot noun.
 # Model pictures load from Wowhead: https://wow.zamimg.com/modelviewer/classic/webthumbs/item/<display id mod 256>/<display id>.jpg. Made by Actions > Item models.
 Admiral's Hat|10030|18872
 Anathema|18609|31346
@@ -217,3 +218,123 @@ Wildheart Spaulders|16718|30412
 Wooden Maul|1820|19535
 Worn Dagger|2092|6442
 Zul'Gurub Mask|9470|18689
+Archimtiros' Ring of Reckoning|19376|31498
+Band of Accuria|17063|9840
+Blackhand's Breadth|13965|24776
+Carrot on a Stick|11122|21115
+Earthstrike|21180|33520
+Gnomish Universal Remote|7506|15150
+Hand of Justice|11815|6337
+Heavy Dark Iron Ring|18879|9836
+Insignia of the Horde|18834|31306
+Lifegiving Gem|19341|31843
+Major Soulstone|16896|6009
+Mark of the Chosen|17774|29947
+Master Dragonslayer's Ring|19384|31908
+Onyxia Blood Talisman|18406|30764
+Quick Strike Ring|18821|9835
+Ring of Spell Power|19147|31664
+Ring of the Devoured|21681|33864
+Royal Seal of Eldre'Thalas|18465|29712
+Seal of the Damned|23025|35423
+Star of Mystaria|12103|23717
+Talisman of Ephemeral Power|18820|31287
+Acolyte's Leggings|1396|3260
+Apprentice's Leggings|1395|9924
+Arcanist Circlet|16795|31517
+Beaststalker's Bracers|16681|31405
+Beaststalker's Breastplate|16674|31402
+Beaststalker's Gauntlets|16676|31406
+Beaststalker's Greaves|16675|31408
+Beaststalker's Helm|16677|31410
+Beaststalker's Legguards|16678|31403
+Beaststalker's Spaulders|16679|31409
+Belt of Prophecy|16817|30621
+Bloodfang Cover|16908|33743
+Bonescythe Boots|22480|36351
+Bonescythe Chestpiece|22476|35054
+Bonescythe Gloves|22481|35055
+Bonescythe Pants|22477|35065
+Bonescythe Spaulders|22479|35064
+Bracers of Elements|16671|31411
+Cenarion Cover|16834|32790
+Cenarion Pants|16835|31729
+Cryptstalker Belt|22442|35410
+Cryptstalker Breastplate|22436|35415
+Cryptstalker Greaves|22440|35409
+Cryptstalker Helm|22438|35601
+Devout Bindings|16697|30426
+Devout Circlet|16693|31104
+Dreadmist Bindings|16703|29795
+Dreamwalker Belt|22494|35164
+Dreamwalker Chestpiece|22488|35159
+Dreamwalker Cover|22490|35162
+Dreamwalker Pants|22489|35161
+Earthfury Greaves|16837|31830
+Earthshatter Belt|22470|35747
+Earthshatter Breastplate|22464|35752
+Earthshatter Greaves|22468|35746
+Felheart Bindings|16804|31970
+Felheart Leggings|16810|31972
+Giantstalker's Gauntlets|16852|32024
+Giantstalker's Greaves|16849|32040
+Giantstalker's Legguards|16847|32029
+Girdle of Might|16864|31019
+Girdle of Valor|16736|29959
+Greaves of Elements|16670|31412
+Judgement Bracers|16951|33634
+Judgement Girdle|16952|33633
+Judgement Helm|16955|34216
+Judgement Pauldrons|16953|34258
+Lawbringer Girdle|16858|31353
+Lawbringer Pauldrons|16856|31510
+Lawbringer Sabatons|16859|31354
+Leggings of Prophecy|16814|28198
+Legguards of Ten Storms|16946|34084
+Lightforge Girdle|16723|29966
+Lightforge Pauldrons|16729|29971
+Lightforge Sabatons|16725|29967
+Magister's Circlet|16686|31087
+Mantle of Transcendence|16924|34048
+Nemesis Bindings|16934|34012
+Nemesis Mantle|16932|34022
+Netherwind Circlet|16914|34218
+Netherwind Leggings|16915|34039
+Novice's Leggings|6124|9987
+Pauldrons of Valor|16733|29964
+Primal Greaves|15004|7537
+Primal Legguards|15009|28008
+Recruit's Legplates|39|9892
+Recruit's Sabatons|40|10141
+Redemption Breastplate|22425|35618
+Redemption Legplates|22427|35616
+Redemption Pauldrons|22429|35617
+Redemption Sabatons|22430|35613
+Sabatons of Valor|16734|29960
+Shadowcraft Chestpiece|16721|28160
+Shadowcraft Cover|16707|28180
+Spaulders of Elements|16669|30925
+Squire's Legplates|44|9937
+Squire's Sabatons|43|10272
+Stormrage Pants|16901|30540
+Stormrage Spaulders|16902|30546
+Tracker's Breastplate|9924|18934
+Tracker's Gauntlets|9920|18936
+Tracker's Greaves|9917|18937
+Tracker's Legguards|9922|18935
+Amulet of Vek'nilash|21608|34204
+Amulet of the Darkmoon|19491|32008
+Animated Chain Necklace|18723|6539
+Choker of Enlightenment|17109|9858
+Choker of the Fire Lord|18814|1399
+Jeklik's Opaline Talisman|19923|32395
+Malice Stone Pendant|22943|35358
+Mark of Fordring|15411|23716
+Medallion of Steadfast Might|17065|4841
+Onyxia Tooth Pendant|18404|9860
+Pendant of the Fallen Dragon|19371|31889
+Prestor's Talisman of Connivery|19377|31899
+Pristine Enchanted South Seas Kelp|19613|32716
+Talvash's Enhancing Necklace|7673|9854
+The Eye of Hakkar|19856|32297
+Woven Ivy Necklace|19159|31633

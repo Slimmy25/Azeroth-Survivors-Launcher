@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = 홈 화면에 플레이 시간 표시
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = 신규 플레이어 가이드
 {#0} of {#1} topics read
 = {#1}개 중 {#0}개 주제 읽음
@@ -1067,10 +1067,6 @@ Download cancelled.
 = 다운로드를 취소했습니다.
 The download server did not accept the launcher's login.
 = 다운로드 서버가 런처의 로그인을 받아들이지 않았습니다.
-The backup host's page has no download link right now.
-= 예비 서버 페이지에 지금은 다운로드 링크가 없습니다.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= 예비 서버에서 받은 파일이 손상되었습니다(체크섬 불일치). 다시 시도하세요.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = 런처가 이미 실행 중입니다.\n\n시스템 트레이(시계 근처)에서 아이콘을 찾아보세요.
 INSTALL FROM A FILE
@@ -1484,7 +1480,7 @@ Most level-up saves in a run
 = 한 번의 런에서 가장 많은 레벨 업 생존
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = 게임 안(/azs)과 통계 페이지의 모든 통계: 런, 기록, 능력, 직업, 플레이 시간, 숙적, 친구와의 협동.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = 런처의 신규 플레이어 가이드 전체를 게임 안에서(/handbook): 모든 주제와 페이지, 각 직업의 주문과 아이콘, 그 주문을 바꾸는 특성, 그리고 모든 특성 트리.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = 작은 변경, 각각 켜고 끄기 (/azsmods 또는 미니맵 버튼): 채팅에 레벨 업, 능력치 보너스, 새 주문 줄 없음, 우두머리 징표 (해골, 가위표, 다이아몬드), 중간 우두머리 징표 (별, 세모, 다이아몬드), 쓰러진 친구마다 위에서 깜박이는 징표, 여섯 칸만 있는 단순한 행동 단축바, UI 이동과 잠금, 대상 창 숨기기, 카메라 거리 50.
@@ -1524,8 +1520,8 @@ switched off: the two conflict.
 = 꺼짐: 두 애드온이 충돌합니다.
 these two can't be on together. Switching one on switches the other off.
 = 이 두 애드온은 함께 켤 수 없습니다. 하나를 켜면 다른 하나는 꺼집니다.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= 평평하고 어두운 유닛 프레임과 작은 행동 단축바, Plater 스타일 이름표(Survivor Plates), 경험치 바의 행운과 카드 확률, 탭이 있는 채팅 창, 자동 공격대 징표. AZS Minor Mods와 함께 켤 수 없습니다.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= 평평하고 어두운 유닛 프레임과 작은 행동 단축바, Plater 스타일 이름표(Survivor Plates), 경험치 바의 행운과 카드 확률, 탭이 있는 채팅 창, 자동 공격대 징표. Slim Suite와 함께 켤 수 없습니다.
 The game updated itself and is opening again...
 = 게임이 스스로 업데이트하고 다시 열리는 중입니다...
 The game updated itself and opened again.

@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = แสดงเวลาเล่นบนหน้าจอหลัก
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = คู่มือผู้เล่นใหม่
 {#0} of {#1} topics read
 = อ่านแล้ว {#0} จาก {#1} หัวข้อ
@@ -1067,10 +1067,6 @@ Download cancelled.
 = ยกเลิกการดาวน์โหลดแล้ว
 The download server did not accept the launcher's login.
 = เซิร์ฟเวอร์ดาวน์โหลดไม่ยอมรับการเข้าสู่ระบบของลันเชอร์
-The backup host's page has no download link right now.
-= หน้าเซิร์ฟเวอร์สำรองยังไม่มีลิงก์ดาวน์โหลดในตอนนี้
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= ไฟล์จากเซิร์ฟเวอร์สำรองเสียหาย (checksum ไม่ตรง) โปรดลองอีกครั้ง
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = ลันเชอร์กำลังทำงานอยู่แล้ว\n\nมองหาไอคอนในถาดระบบ (ใกล้นาฬิกา)
 INSTALL FROM A FILE
@@ -1484,7 +1480,7 @@ Most level-up saves in a run
 = รอดด้วยการเลเวลอัปมากที่สุดในหนึ่งรอบ
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = สถิติทั้งหมดของคุณในเกม (/azs) และในหน้าสถิติ: รอบการเล่น สถิติสูงสุด ความสามารถ อาชีพ เวลาเล่น ศัตรูคู่แค้นของคุณ และการเล่นร่วมกับเพื่อน
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = คู่มือผู้เล่นใหม่ทั้งหมดของตัวเปิดเกมในเกม (/handbook): ทุกหัวข้อและหน้า เวทมนตร์ของแต่ละอาชีพพร้อมไอคอนและทาเลนต์ที่เปลี่ยนมัน และต้นทาเลนต์ทั้งหมด
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = การเปลี่ยนแปลงเล็กๆ เปิดหรือปิดได้ทีละอย่าง (/azsmods หรือปุ่มที่มินิแมป): ไม่มีบรรทัดเลเวลอัป โบนัสค่าสถานะ หรือคาถาใหม่ในแชท, เครื่องหมายบอส (หัวกะโหลก กากบาท เพชร), เครื่องหมายมินิบอส (ดาว สามเหลี่ยม เพชร), เครื่องหมายกะพริบเหนือเพื่อนแต่ละคนที่ล้ม, แถบแอคชันเรียบๆ มีแค่หกช่อง, ย้ายและล็อก UI, ซ่อนกรอบเป้าหมาย และกล้องที่ 50
@@ -1524,8 +1520,8 @@ switched off: the two conflict.
 = ปิดแล้ว: ทั้งสองขัดแย้งกัน
 these two can't be on together. Switching one on switches the other off.
 = สองตัวนี้เปิดพร้อมกันไม่ได้ เปิดตัวหนึ่งแล้วอีกตัวจะปิด
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= กรอบยูนิตแบนสีเข้มและแถบแอคชันกะทัดรัด, ป้ายชื่อแบบ Plater (Survivor Plates), โชคและโอกาสของการ์ดบนแถบ XP, แผงแชทแบบแท็บ และเครื่องหมายเรดอัตโนมัติ เปิดพร้อมกับ AZS Minor Mods ไม่ได้
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= กรอบยูนิตแบนสีเข้มและแถบแอคชันกะทัดรัด, ป้ายชื่อแบบ Plater (Survivor Plates), โชคและโอกาสของการ์ดบนแถบ XP, แผงแชทแบบแท็บ และเครื่องหมายเรดอัตโนมัติ เปิดพร้อมกับ Slim Suite ไม่ได้
 The game updated itself and is opening again...
 = เกมอัปเดตตัวเองและกำลังเปิดอีกครั้ง...
 The game updated itself and opened again.

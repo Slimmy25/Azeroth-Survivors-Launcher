@@ -25,26 +25,25 @@ namespace AzerothLauncher
         // ("Azeroth Survivors Launcher - Temp": a name no other folder has, so nothing of the player's is ever wiped).
         public const string ClientUrl = "https://budapestmix.hu:5000/download";
         public const string ClientUser = "AzerothSurvivors_uSZfhjS", ClientPassword = "AzerothSurvivors_uSZfhjS";
-        // The developers' backup host: a page with a link to the newest archive and its SHA-256 (no login).
-        public const string ClientMirrorUrl = "https://azerothsurvivors-mirror.sandervspl.dev/";
-        // A third host, on Google Drive (the same game in its own archive, so its own MD5). This copy is published by one
+        // The second regular host is Google Drive (the same game in its own archive, so its own MD5). This copy is published by one
         // of the head moderators of the official Discord, a trusted source: it is kept with its MD5 check and no further
         // measures, by choice (MD5 can only be fooled by the person who made the file, see "Download hosts" in the
         // README). Only hosts endorsed by both Aethus and the mod team are ever used; no unofficial mirrors.
         public const string ClientDriveId = "12EHYJrgdANtgZvND49L_cxQwoObTbkWq";
-        // The last resort: the game's own download page. Never one of the three picked at random; only tried after
-        // all three have failed. Its archive may be newer than the checksums below, so it is accepted when it is a
+        // The last resort: the game's own download page. It is only tried after both regular hosts fail. Its archive
+        // may be newer than the checksums below, so it is accepted when it is a
         // real .rar/.zip/.7z archive from the game's own site.
         public const string ClientLastResortUrl = "https://wow.aethus.pl/download";
-        // Each install picks one of the hosts at random; if that one fails, the others are tried in turn. Every download
-        // is checked against the game's known checksums below (update them with a new game version).
+        // Each install picks one of the two regular hosts at random; if it fails, the other is tried. The game's own
+        // page remains the last resort. Regular-host downloads are checked against the game's known checksums below.
         public const string ClientSha256 = "971db7968dc37ec50b18d64a1de7f693e137f6793a7368e4d5c27bd9522eccd8";   // AzerothSurvivorsWindowsNew.rar
         public const string ClientMd5 = "7748bfdffaccd2f46d868cf69ad3e72c";                                       //   (760497456 bytes)
         public const string ClientDriveMd5 = "81887cd5d56dcca3b7dd086b0b498cf6";                                  // the Google Drive archive
         public const string DiscordUrl = "https://discord.gg/azerothsurvivors";
         public const string SupportUrl = "https://buymeacoffee.com/aethusx";      // the game's developer's own page
 
-        const int W = 1100, H = 690;                         // retro launcher window: sections open on the left, News on the right
+        int W { get { return ClientSize.Width; } }
+        int H { get { return ClientSize.Height; } } // actual available client pixels; DisplayLayout controls density and columns
 
         public Config Cfg;
         public bool GameRunningFlag, Installing, SyncBusy, Updating, UpdateChecking;   // Updating: the launcher's own update
@@ -60,7 +59,7 @@ namespace AzerothLauncher
         readonly HeartIcon supportHeart;
         readonly Dictionary<string, WowButton> nav = new Dictionary<string, WowButton>();
         // the buttons under "Launcher": Guide and its Theorycrafting group, Addons, Stats, Options (Cloud Save is in Options)
-        readonly string[] navNames = { "Guide", "Theorycrafting", "Addons", "Changelog", "Stats", "Options" };   // Changelog: on the News line   // order under "Launcher" (Discord before Options)
+        readonly string[] navNames = { "Guide", "New Player Handbook", "Theorycrafting", "Addons", "Changelog", "Stats", "Options" };   // Changelog: on the News line   // order under "Launcher" (Discord before Options)
         // Options > Language
         public void SetLanguage(string code)
         {
@@ -94,16 +93,17 @@ namespace AzerothLauncher
             WowDialog.Host = this;                           // questions and messages open inside the launcher
             Theme.PickFont();
             Cfg = Config.Load();
+            InitializeDisplay();
             // Create the first-run marker beside this exe before Shown can start the automatic updater. It remains
             // pending until setup succeeds, including across an automatic updater restart.
             if (!PreviewMode) try { Util.EnsureSetupPendingMarker(); } catch (Exception) { }
             if (!PreviewMode && Util.SetupPendingForThisInstall) status = "First Time Setup";
 
-            Text = "Azeroth Survivors Launcher";
+            Text = "Azeroth Survivors Launcher" + (Program.DisplayPreviewBuild ? " - Display Preview" : "");
             Icon = Theme.AppIcon;
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MaximizeBox = false;
-            ClientSize = new Size(W, H);
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MaximizeBox = true;
+            ClientSize = displayLayout.InitialClientSize;
             BackColor = Theme.BgBottom;
             DoubleBuffered = true;
             StartPosition = FormStartPosition.CenterScreen;
@@ -115,8 +115,9 @@ namespace AzerothLauncher
             {
                 string n = name;
                 if (n == "Changelog") continue;              // on the News line (below)
-                Action open = n == "Theorycrafting" ? (Action)delegate { GuideGroupPage(2); } : delegate { OpenMain(n); };   // always its main page
-                nav[n] = Place(new WowButton(n.ToUpperInvariant(), open, 128, 27, 8.5f), 693, 480);
+                Action open = n == "Theorycrafting" ? (Action)delegate { GuideGroupPage(2); } :
+                              n == "New Player Handbook" ? (Action)delegate { GuideGroupPage(0); } : delegate { if(n=="Addons" && addonUpdateCount>0) OpenAddonUpdates(); else OpenMain(n); };   // dedicated guide destinations
+                nav[n] = Place(n=="Addons" ? new AddonUpdateNavButton(n.ToUpperInvariant(),open,PaintAddonUpdateBadge) : new WowButton(n.ToUpperInvariant(), open, 128, 27, 8.5f), 693, 480);
                 nav[n].Skin = Retro.Button;
             }
             // UPDATE LAUNCHER and ABOUT LAUNCHER live in Options > Launcher now; these two stay hidden and carry their state
@@ -141,6 +142,7 @@ namespace AzerothLauncher
             LayoutNav();
 
             BuildSide();
+            EnableResponsiveDisplay();
             RefreshPlayLabel();
 
             FormClosing += OnClosingWindow;
@@ -157,6 +159,8 @@ namespace AzerothLauncher
             GuideLinks.Navigate = delegate(GuideLink l)        // a link in the Guide's text (GuideLinks.cs)
             {
                 if (current != "Guide" || !side.Visible) ShowSection("Guide");
+                if (NavigateClassInline(l)) return;              // class spells, talents and item links stay in their article
+                if (NavigateDirectoryCodex(l)) return;            // a Codex entry opens its class guide context
                 guideFindQuery = string.IsNullOrWhiteSpace(l.FindText) ? l.Term : l.FindText;
                 guideQuery = guideFindQuery;
                 if (l.Class != null)                             // a talent: its class's talent trees
@@ -169,18 +173,25 @@ namespace AzerothLauncher
                 SetGuideView(l.Topic, l.Page);
                 After(30, delegate { ShowSpellRow(l.Term); });   // a spell: its row on the page, scrolled to and lit up
             };
-            // Restore repaint: everything is redrawn after minimizing and restoring from the taskbar.
+            // Keep the last visible state so launcher actions can restore a minimized window
+            // without demoting a maximized one to its normal-size bounds.
             Resize += delegate
             {
                 if (WindowState == FormWindowState.Minimized) { wasMinimized = true; return; }
-                if (!wasMinimized) return;
-                wasMinimized = false;
-                After(1, RepaintAfterRestore);
+                if (wasMinimized)
+                {
+                    wasMinimized = false;
+                    lastNonMinimizedWindowState = WindowState;
+                    After(1, RepaintAfterRestore);
+                    return;
+                }
+                lastNonMinimizedWindowState = WindowState;
             };
             Shown += delegate
             {
+                if (!PreviewMode) LoadPublishedWhispers();
                 if (!PreviewMode && !Program.LocalDevelopmentBuild) After(300, StartupUpdateCheck);
-                if (!PreviewMode) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
+                if (!PreviewMode && !Program.DisplayPreviewBuild) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
                 After(500, MaybeFirstRun);
                 After(700, delegate { if ((current == null || current == "Home") && !setupOpen) ShowHomeCommunity(); });   // home: Community
             };
@@ -276,8 +287,11 @@ namespace AzerothLauncher
             }
         }
 
-        // false while the temporary "install the game with this launcher first" rule is blocking
-        public bool GateOpen() { return !RequireLauncherInstall || ClientPresent() || (Installing && setupBrowseWhileInstalling); }
+        // Setup can open Download More immediately before it starts the game download. The
+        // handoff flag is set for that short transition and remains set while the download runs.
+        // Requiring Installing here creates a race: SetupLeave opens Addons just before
+        // InstallClient sets Installing, so the catalog is rejected and the user lands home.
+        public bool GateOpen() { return !RequireLauncherInstall || ClientPresent() || setupBrowseWhileInstalling; }
 
         public bool CloudEnabled() { return Cfg.Bool("cloud_enabled", Cfg.Str("cloud_dir").Trim().Length > 0); }
 
@@ -296,180 +310,14 @@ namespace AzerothLauncher
         // the launcher art (layout after the WoW Retro Launcher); the newest patch notes in the News panel
         // what never changes on the home screen (the picture, the title, its byline, the headings, the game version) is
         // drawn once into a picture of its own; a repaint copies the part it needs and draws only what moves on top
-        Bitmap homeLayer;
-        string homeLayerKey;
-        readonly Dictionary<string, SizeF> newsMeasured = new Dictionary<string, SizeF>();
-
-        // the whole window is drawn by OnPaint from the picture above: no fill first (it only makes the window flicker)
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-            if (homeLayer == null || e.ClipRectangle.Right > W || e.ClipRectangle.Bottom > H) base.OnPaintBackground(e);
-        }
-
-        Bitmap HomeLayer()
-        {
-            string key = Lang.Code + "|" + Theme.FontName + "|" + W + "x" + H;
-            if (homeLayer != null && homeLayerKey == key) return homeLayer;
-            if (homeLayer != null) homeLayer.Dispose();
-            homeLayer = new Bitmap(W, H, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            homeLayer.SetResolution(96, 96);
-            homeLayerKey = key;
-            using (Graphics g = Graphics.FromImage(homeLayer))
-            {
-                Image bg = Retro.Get("background");
-                if (bg != null) Theme.Draw(g, bg, new Rectangle(0, 0, W, H));
-                else g.Clear(Theme.BgBottom);
-                Theme.Smooth(g);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-                // title: "Azeroth Survivors" in big gold letters over the section area, the emblem to its right
-                using (var path = new GraphicsPath())
-                using (var sf = new StringFormat())
-                {
-                    path.AddString("Azeroth Survivors", Theme.TitleFamily(), (int)FontStyle.Bold, 58f, new PointF(0, 0), sf);   // the decorative title font
-                    RectangleF b = path.GetBounds();
-                    Image em = Theme.Logo;
-                    int emW = em != null ? 128 : 0, emH = em != null ? em.Height * 128 / em.Width : 0;
-                    float total = b.Width + (em != null ? 16 + emW : 0);
-                    float x0 = 8 + (670 - total) / 2, y0 = 70 + (120 - b.Height) / 2;
-                    using (var m = new Matrix())
-                    {
-                        m.Translate(x0 - b.X, y0 - b.Y);
-                        path.Transform(m);
-                    }
-                    using (var sh = new GraphicsPath())
-                    {
-                        sh.AddPath(path, false);
-                        using (var m = new Matrix()) { m.Translate(3, 4); sh.Transform(m); }
-                        using (var sb = new SolidBrush(Color.FromArgb(200, 0, 0, 0))) g.FillPath(sb, sh);
-                    }
-                    RectangleF pb = path.GetBounds();
-                    using (var lg = new LinearGradientBrush(pb, Theme.Hex("#fff1b8"), Theme.Hex("#c9821a"), LinearGradientMode.Vertical))
-                        g.FillPath(lg, path);
-                    using (var pen = new Pen(Theme.Hex("#4a2a08"), 2f)) g.DrawPath(pen, path);
-                    if (em != null) g.DrawImage(em, pb.Right + 16, 70 + (120 - emH) / 2, emW, emH);
-                    // under the title: who made the game
-                    string by = Lang.T("A Game Made By Aethus");
-                    Font byf = Theme.F(13, FontStyle.Italic);
-                    float bw = g.MeasureString(by, byf).Width, bx = pb.Left + (pb.Width - bw) / 2, byy = pb.Bottom + 12;
-                    using (var bsh = new SolidBrush(Color.Black)) g.DrawString(by, byf, bsh, bx + 1, byy + 1);
-                    using (var bb = new SolidBrush(Theme.Hex("#e8d9a8"))) g.DrawString(by, byf, bb, bx, byy);
-                }
-                using (var gold = new SolidBrush(Retro.Gold))
-                using (var shadow = new SolidBrush(Color.Black))
-                {
-                    Font hf = Theme.F(11);
-                    g.DrawString(Lang.T("News"), hf, shadow, 757, 205);    // centered after the heart and Discord icons
-                    g.DrawString(Lang.T("News"), hf, gold, 756, 204);
-                    g.DrawString(Lang.T("Launcher"), hf, shadow, 698, 447);
-                    g.DrawString(Lang.T("Launcher"), hf, gold, 697, 446);
-                }
-                string version = Data.GameVersion;
-                using (var vb = new SolidBrush(Theme.Hex("#b8a27a")))            // bottom-left corner
-                    g.DrawString(Lang.T("Game version") + (version.Length > 0 ? ": " + version : ""), Theme.F(9.5f), vb, 12, 670);   // a little bigger
-            }
-            return homeLayer;
-        }
+        // The display renderer covers the client area; avoid an intermediate background fill/flicker.
+        protected override void OnPaintBackground(PaintEventArgs e) { }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            Rectangle clip = Rectangle.Intersect(e.ClipRectangle, new Rectangle(0, 0, W, H));
-            if (clip.Width > 0 && clip.Height > 0)
-            {
-                g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                g.PixelOffsetMode = PixelOffsetMode.Half;
-                g.CompositingMode = CompositingMode.SourceCopy;
-                g.DrawImage(HomeLayer(), clip, clip, GraphicsUnit.Pixel);
-                g.CompositingMode = CompositingMode.SourceOver;
-            }
-            Theme.Smooth(g);
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-            // News: the newest patch note
-            var posts = Data.Changelog;
-            if (posts.Count > 0)
-            {
-                string[] lines = posts[0].Trim('\n').Split('\n');
-                using (var title = new SolidBrush(Retro.Gold))
-                using (var body = new SolidBrush(Theme.Hex("#e8dcc0")))
-                using (var shadow = new SolidBrush(Color.Black))
-                {
-                    Font tf = Theme.F(11, FontStyle.Bold), bf = Theme.F(9);
-                    // the whole post, scrolled by newsScroll inside NewsArea (mouse wheel, or drag the slim bar)
-                    Region oldClip = g.Clip;
-                    g.SetClip(NewsArea);
-                    float y = NewsArea.Y - newsScroll;
-                    g.DrawString(Lang.T("Patch") + " " + lines[0].Trim(), tf, shadow, 698, y + 1);
-                    g.DrawString(Lang.T("Patch") + " " + lines[0].Trim(), tf, title, 697, y);
-                    y += 22;
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        string l = lines[i].Trim();
-                        if (l.Length == 0 || l.Trim('-', '=', '_', '\u2014', '\u2013').Length == 0) continue;   // blank or a rule
-                        if (l.StartsWith("- ") || l.StartsWith("* ")) l = "\u2022 " + l.Substring(2);
-                        SizeF sz;                            // measured once per line and font
-                        string mk = l + "\u0001" + bf.Size + bf.Name;
-                        if (!newsMeasured.TryGetValue(mk, out sz)) { sz = g.MeasureString(l, bf, NewsTextW); newsMeasured[mk] = sz; }
-                        if (y + sz.Height > NewsArea.Y && y < NewsArea.Bottom)
-                        {
-                            var box = new RectangleF(700, y, NewsTextW, sz.Height + 2);
-                            g.DrawString(l, bf, shadow, new RectangleF(box.X + 1, box.Y + 1, box.Width, box.Height));
-                            g.DrawString(l, bf, body, box);
-                        }
-                        y += sz.Height + 1;
-                    }
-                    newsHeight = (int)(y + newsScroll - NewsArea.Y) + 4;
-                    g.Clip = oldClip;
-                    Rectangle thumb = NewsThumb();
-                    if (!thumb.IsEmpty)
-                    {
-                        using (var tb = new SolidBrush(Color.FromArgb(120, Theme.CardEdge))) g.FillRectangle(tb, NewsBar.X + 2, NewsBar.Y, 2, NewsBar.Height);
-                        using (var tb = new SolidBrush(newsDrag || newsBarHover ? Theme.Gold : Theme.GoldDim)) g.FillRectangle(tb, thumb);
-                    }
-                }
-            }
-            WeeklyRecap(g);
-            // bottom bar: the status above PLAY says everything
-            using (var gb = new SolidBrush(Retro.Gold))
-            using (var sf = new StringFormat())
-            {
-                // bottom bar, right: status above PLAY, time played below it, the game version in the corner
-                sf.Alignment = StringAlignment.Center;
-                var rc = new RectangleF(800, 0, 292, 16);
-                using (var sb = new SolidBrush(Theme.Hex("#fff2b0")))
-                {
-                    // centred over PLAY; a long status that would run off the window ends at the right edge instead
-                    string st = Lang.T(status == "Ready." && !ClientPresentPaint()
-                        ? (RequireLauncherInstall ? "Game client not found. Press INSTALL to download it first."
-                                                  : "Game client not found. Press INSTALL, or set the game folder in Options.")
-                        : status);
-                    Font stf = Theme.F(9, FontStyle.Italic);
-                    float cxp = playBtn.Left + playBtn.Width / 2f;
-                    if (dlActive)                            // the game download: its bar takes the status line's place
-                    {
-                        int pct = dlTotal > 0 ? (int)Math.Min(100, dlDone * 100 / dlTotal) : -1;
-                        st = Lang.T(pct >= 0 ? "Downloading the game: " + pct + "%  (" + Util.FmtSize(dlDone) + " of " + Util.FmtSize(dlTotal) + ")"
-                                             : "Downloading the game: " + Util.FmtSize(dlDone));
-                        Font df = Theme.F(8, FontStyle.Italic);
-                        float dw = g.MeasureString(st, df).Width;
-                        const int bw = 250, bh = 8;
-                        float bx = Math.Min(cxp - bw / 2f, W - 10 - bw);
-                        float by = playBtn.Top - 12;
-                        g.DrawString(st, df, sb, Math.Min(cxp - dw / 2, W - 10 - dw), by - 15);
-                        using (var back = new SolidBrush(Theme.Hex("#1a1410"))) g.FillRectangle(back, bx, by, bw, bh);
-                        if (pct > 0)
-                            using (var fill = new LinearGradientBrush(new RectangleF(bx, by, bw, bh), Theme.Hex("#f4d27a"), Theme.Hex("#a8761e"), 90f))
-                                g.FillRectangle(fill, bx, by, bw * pct / 100f, bh);
-                        using (var edge = new Pen(Theme.Hex("#c49a48"))) g.DrawRectangle(edge, bx, by, bw, bh);
-                    }
-                    else
-                    {
-                        float sw = g.MeasureString(st, stf).Width;
-                        float sx = Math.Min(cxp - sw / 2, W - 10 - sw);
-                        g.DrawString(st, stf, sb, sx, playBtn.Top - 26);
-                    }
-                }
-            }
+            DrawResponsiveLauncher(e.Graphics);
         }
+
 
         // the paint asks often; the disk is asked at most every 2 seconds
         bool clientPresentSeen;
@@ -480,17 +328,16 @@ namespace AzerothLauncher
             return clientPresentSeen;
         }
 
-        // ---- "This week": a card in the empty lower left of the home screen (AZS Stats' runs of the last 7 days)
+        // ---- "This week": a card in the empty lower left of the home screen (recent recorded runs)
         RunStats recapStats;
         DateTime recapAt;
 
         void WeeklyRecap(Graphics g)
         {
-            // under the Launcher buttons: "This week" (AZS Stats' runs of the last 7 days) and the play time AZS Stats
-            // counts in game, together in one small card
+            // Under the Launcher buttons: recent run activity and the available kind of play-time data.
             var lines = new List<string[]>();                // { heading, text }
             RunStats st = null;
-            // AZS Stats' file is looked at most every 3 seconds (a repaint happens often: hovering, the news, a button)
+            // The addon's file is read at most every 3 seconds (repaints happen often).
             if ((DateTime.UtcNow - recapAt).TotalSeconds > 3)
             {
                 try { recapStats = StatsEnabled() ? AddonStats() : null; } catch (Exception) { recapStats = null; }
@@ -499,10 +346,12 @@ namespace AzerothLauncher
             st = recapStats;
             if (st != null && st.History.Count > 0) lines.Add(new[] { Lang.T("This week"), WeekText(st) });
             PlayStats ps = st != null ? st.Play : new PlayStats();
-            if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
+            if (st != null && st.Source == "Azeroth Stats" && st.Total.Time > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
+                lines.Add(new[] { Lang.T("Time in runs"), Duration((long)st.Total.Time) + " · " + Lang.T(Big(st.Total.Runs) + " runs recorded") });
+            else if (ps.Sessions > 0 && StatsEnabled() && Cfg.Bool("home_playtime", true))
                 lines.Add(new[] { Lang.T("Time played"), Duration(ps.Seconds) + "  ·  " + Lang.T("Last session") + " " + Duration(ps.LastSeconds) });
             if (lines.Count == 0) return;
-            var box = new RectangleF(694, 546, 394, 30);
+            var box = new RectangleF(ResponsiveNewsRect.Left, FooterTop - U(26), ResponsiveNewsRect.Width, U(23));
             using (var path = Armory.Round(box, 5))
             {
                 using (var b = new SolidBrush(Color.FromArgb(190, 14, 13, 20))) g.FillPath(b, path);
@@ -588,9 +437,9 @@ namespace AzerothLauncher
         }
 
         // ---- the News panel scrolls when the patch note is longer than its space
-        static readonly Rectangle NewsArea = new Rectangle(694, 236, 386, 442 - 236);
-        static readonly Rectangle NewsBar = new Rectangle(1080, 238, 6, 442 - 240);
-        const int NewsTextW = 372;
+        Rectangle NewsArea { get { return ResponsiveNewsRect; } }
+        Rectangle NewsBar { get { return new Rectangle(NewsArea.Right + U(3), NewsArea.Top, U(6), NewsArea.Height); } }
+        int NewsTextW { get { return Math.Max(40, NewsArea.Width - U(10)); } }
         int newsScroll, newsHeight;
         bool newsDrag, newsBarHover;
         int newsDragOffset;
@@ -615,6 +464,7 @@ namespace AzerothLauncher
         public void Wheel(int delta)
         {
             Point p = PointToClient(Cursor.Position);
+            if (WheelWhispers(p, delta)) return;
             Rectangle hot = Rectangle.Union(NewsArea, NewsBar);
             if (hot.Contains(p)) ScrollNews(newsScroll - delta / 120 * 40);
         }
@@ -664,7 +514,7 @@ namespace AzerothLauncher
         {
             status = msg ?? "";
             if (status == "Ready." && Util.SetupPendingForThisInstall) status = "First Time Setup";
-            Invalidate(new Rectangle(0, 578, W, H - 578));
+            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
         }
 
         // every message goes to the one status line above PLAY (there is no note in the bottom left any more)
@@ -674,28 +524,72 @@ namespace AzerothLauncher
             if (cloudNote.Length > 0) SetStatus(cloudNote);
         }
 
-        // a section button is hidden while its feature is off: Cloud Save (cloud saving) and Stats (Options)
+        // Cloud Save is opened from Options; Stats stays visible and is gated separately when unavailable.
         bool NavShown(string name)
         {
             if (name == "Cloud Save") return false;         // opened from Options > CLOUD SAVE
-            if (name == "Stats") return StatsEnabled();
             return true;
         }
 
         // stack the section buttons
+        WowButton compactNavigation;
         void LayoutNav()
         {
-            int k = 0;                                       // three per row under "Launcher"
+            if (CompactDisplay)
+            {
+                foreach (var button in nav.Values) button.Visible = false;
+                if (compactNavigation == null)
+                {
+                    compactNavigation = new WowButton("MENU ▾", delegate
+                    {
+                        var menu = ThemeMenus.Create(true);
+                        foreach (string section in navNames)
+                        {
+                            if (!NavShown(section)) continue;
+                            string destination = section;
+                            var entry = new ToolStripMenuItem(Lang.T(section)+(section=="Addons" && addonUpdateCount>0 ? " — Updates Available!" : ""));
+                            entry.Enabled = nav.ContainsKey(section) && !nav[section].Grayed;
+                            entry.Click += delegate
+                            {
+                                if (destination == "Theorycrafting") GuideGroupPage(2);
+                                else if (destination == "New Player Handbook") GuideGroupPage(0);
+                                else if(destination=="Addons" && addonUpdateCount>0) OpenAddonUpdates();
+                                else OpenMain(destination);
+                            };
+                            menu.Items.Add(entry);
+                        }
+                        menu.Items.Add(new ToolStripSeparator());
+                        var discord=new ToolStripMenuItem(Lang.T("Join the community!"),null,delegate {Util.OpenInShell(DiscordUrl);});
+                        var support=new ToolStripMenuItem(Lang.T("Support the Dev"),null,delegate {Util.OpenInShell(SupportUrl);});
+                        discord.Enabled=support.Enabled=!setupOpen; menu.Items.Add(discord);menu.Items.Add(support);
+                        menu.Closed += delegate { Ui(delegate { menu.Dispose(); }); };
+                        menu.Show(compactNavigation, new Point(0, compactNavigation.Height));
+                    }, 120, 28, 9);
+                    Controls.Add(compactNavigation);
+                }
+                compactNavigation.SetDisplayZoom(Theme.DisplayScale);
+                compactNavigation.Bounds = new Rectangle(W - U(132), U(8), U(120), U(30));
+                compactNavigation.Visible = true; compactNavigation.BringToFront();
+                if (strip != null) LayoutStrip();
+                return;
+            }
+            if (compactNavigation != null) compactNavigation.Visible = false;
+            int left = CompactDisplay ? U(6) : ResponsiveNewsRect.Left;
+            int width = CompactDisplay ? W - U(12) : W - left - U(10);
+            int top = FooterTop - NavHeight + U(20), gap = U(5);
+            int buttonWidth = Math.Max(U(65), (width - gap * 2) / 3);
+            int k = 0;
             foreach (string name in navNames)
             {
-                if (name == "Changelog") continue;           // its place is on the News line
+                if (name == "Changelog") continue;
                 if (!NavShown(name)) { nav[name].Visible = false; continue; }
-                nav[name].Visible = true;
-                nav[name].Location = new Point(693 + (k % 3) * 134, 480 + (k / 3) * 34);
+                var button = nav[name]; button.Visible = true; button.SetDisplayZoom(Theme.DisplayScale);
+                button.Bounds = new Rectangle(left + (k % 3) * (buttonWidth + gap), top + (k / 3) * U(31), buttonWidth, U(27));
                 k++;
             }
             if (strip != null) LayoutStrip();
         }
+
 
         public void RefreshPlayLabel()
         {
@@ -707,11 +601,12 @@ namespace AzerothLauncher
             else if (ClientPresent()) { playBtn.Label = "PLAY"; playBtn.FontSize = 24; }
             else { playBtn.Label = "REQUIRES INSTALL"; playBtn.FontSize = 13; }
             playBtn.Tip = (setupOpen || firstSetupPending) ? "Click to continue to the next step of First Time Setup." :
-                           ClientPresent() ? "" : "Click to continue through First Time Setup and get help installing the game.";
+                           Installing ? "Click to stop the game download." :
+                           ClientPresent() ? "" : "Click to install Azeroth Survivors.";
             // Play stays illuminated and acts as the current slide's NEXT action during setup.
             playBtn.GrayedTip = "";
             playBtn.Grayed = false;
-            Invalidate(new Rectangle(0, 578, W, H - 578));
+            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
             RefreshGates();
         }
 
@@ -738,9 +633,9 @@ namespace AzerothLauncher
         const string CloudNeedsGame = "Cloud Save needs the game. Press INSTALL to download it first.";
         const string AddonsNeedGame = "Addons need the game. Press INSTALL to download it first.";
 
-        public const string StatsNeedAddon = "Disabled when AZS Stats is not active";
+        public const string StatsNeedAddon = "Disabled when Azeroth Stats or saved stats are unavailable";
 
-        // AZS Stats installed and switched on: the Stats page has something to show
+            // Azeroth Stats is preferred; a legacy AZS Stats installation remains readable during transition.
         public bool StatsAddonActive()
         {
             try
@@ -796,6 +691,7 @@ namespace AzerothLauncher
         }
 
         bool wasMinimized;
+        FormWindowState lastNonMinimizedWindowState = FormWindowState.Normal;
 
         // back from the taskbar: the section shown again (the game's start may have closed it) and every part redrawn
         void RepaintAfterRestore()
@@ -816,8 +712,9 @@ namespace AzerothLauncher
 
         public void ShowWindowFront()
         {
+            bool minimized = WindowState == FormWindowState.Minimized;
             Show();
-            WindowState = FormWindowState.Normal;
+            if (minimized) WindowState = lastNonMinimizedWindowState;
             TopMost = true;
             Activate();
             BringToFront();
@@ -1137,20 +1034,37 @@ namespace AzerothLauncher
             catch (Exception e) { SyncLog("  Addons for the synced settings not checked: " + e.Message, Level.Warn); return done; }
             foreach (var entry in missing)
             {
+                string releaseIdentity = null;
                 try
                 {
                     Directory.CreateDirectory(ss.AddonsDir);
                     List<string> names;
                     BuiltinAddon builtin = BuiltinAddons.Find(entry.Url);
                     if (builtin != null) { BuiltinAddons.Install(ss.AddonsDir, builtin); names = new List<string> { builtin.Folder }; }
-                    else names = Archive.InstallAddonZip(entry.Url, ss.AddonsDir);
+                    else
+                    {
+                        string installUrl = entry.Url, expectedSha = null;
+                        if (IsDynamicGitHubAddonUrl(entry.Url))
+                        {
+                            GitHubAddonRelease release = ResolveGitHubAddonRelease(entry.Url);
+                            if (release == null || !IsSha256(release.Sha256))
+                                throw new UserError("The latest GitHub release for " + entry.Name + " has no usable SHA-256 digest. Nothing was installed.");
+                            installUrl = release.Url;
+                            expectedSha = release.Sha256;
+                            releaseIdentity = release.Identity;
+                        }
+                        names = Archive.InstallAddonZip(installUrl, ss.AddonsDir, null, expectedSha);
+                        AddonArchive.Tidy(entry.Name);
+                    }
                     string name = entry.Name;
+                    string savedReleaseIdentity = releaseIdentity;
                     var rec = new List<object>();
                     foreach (string n in names) rec.Add(n);
                     Ui(delegate
                     {
                         AddonInstalls()[name] = rec;
                         AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+                        if (!string.IsNullOrEmpty(savedReleaseIdentity)) AddonInstalledRelease()[name] = savedReleaseIdentity;
                         Cfg.Save();
                     });
                     SyncLog(name + " installed: its settings came from the cloud.", Level.Good);
@@ -1245,20 +1159,23 @@ namespace AzerothLauncher
             Bg(delegate { Session(exe, eng, cloudOnButNoFolder); });
         }
 
-        // A copy of your AZS Stats records before every game start, the last 10 kept, in the launcher's
-        // backups\AZS Stats folder: if the game ever loses the file, an older copy is there to put back.
+        // Keep a small local recovery copy of both new and legacy stats files before launching the game.
         static void BackupStats(string savedDir)
         {
             try
             {
-                string src = Path.Combine(savedDir ?? "", Stats.FileName);
-                if (!File.Exists(src) || new FileInfo(src).Length < 200) return;
-                string dir = Path.Combine(Util.DataDir, "backups", "AZS Stats");
+                string dir = Path.Combine(Util.DataDir, "backups", "Stats");
                 Directory.CreateDirectory(dir);
-                File.Copy(src, Path.Combine(dir, "AZSStats " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".lua"), true);
-                var files = new List<string>(Directory.GetFiles(dir, "AZSStats *.lua"));
-                files.Sort(StringComparer.Ordinal);
-                for (int i = 0; i < files.Count - 10; i++) { try { File.Delete(files[i]); } catch (Exception) { } }
+                string stamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+                foreach (var file in new[] { new[] { Stats.FileName, "AzerothStats" }, new[] { "AZSStats.lua", "AZSStats-legacy" } })
+                {
+                    string src = Path.Combine(savedDir ?? "", file[0]);
+                    if (!File.Exists(src) || new FileInfo(src).Length < 100) continue;
+                    File.Copy(src, Path.Combine(dir, file[1] + " " + stamp + ".lua"), true);
+                    var files = new List<string>(Directory.GetFiles(dir, file[1] + " *.lua"));
+                    files.Sort(StringComparer.Ordinal);
+                    for (int i = 0; i < files.Count - 10; i++) { try { File.Delete(files[i]); } catch (Exception) { } }
+                }
             }
             catch (Exception) { }
         }
@@ -1297,19 +1214,9 @@ namespace AzerothLauncher
                     InstallAddonsForSettings();              // the addons whose settings came from the cloud
                 }
                 else if (cloudOnButNoFolder) problems.Add("No sync folder set - launched without cloud sync.");
-                // the AZS Stats addon this launcher carries goes in right before the game starts: after the cloud
-                // download, which could otherwise bring back an older copy from another PC
-                try
-                {
-                    SyncSettings ss = SyncSettings();
-                    BackupStats(ss.SavedDir);
-                    if (Stats.AddonInstalled(ss.AddonsDir) && Stats.AddonOutdated(ss.AddonsDir))
-                    {
-                        Stats.InstallAddon(ss.AddonsDir, ss.SavedDir);
-                        SyncLog("AZS Stats addon updated to the launcher's version.", Level.Info);
-                    }
-                }
-                catch (Exception e) { SyncLog("  AZS Stats addon not updated: " + e.Message, Level.Warn); }
+                BackupStats(SyncSettings().SavedDir);
+                // Azeroth Stats is installed and updated through Download More; the launcher does not overwrite
+                // its files at game start. Legacy AZS Stats SavedVariables are read-only and are never removed.
                 // the other AZS addons the launcher carries (AZS Handbook, AZS Minor Mods): the installed ones brought up
                 // to the launcher's version too, and the retired ones (AZS Transparency) taken out
                 try
@@ -1445,8 +1352,7 @@ namespace AzerothLauncher
         }
 
         // ------------------------------------------------------------------ play time
-        // Counted in game by the AZS Stats addon (the time the game runs) and read from its saved file, which
-        // cloud saving carries between PCs with the other addon settings. The launcher no longer counts it.
+        // Duration of an entire player session when a legacy stats file supplies it. The new add-on records run time.
         public static string Duration(long seconds)
         {
             long h = seconds / 3600, m = seconds % 3600 / 60;
@@ -1456,7 +1362,7 @@ namespace AzerothLauncher
         RunStats statsCache;
         string statsCacheKey = "";
 
-        // the addon's stats, read again only when its file changed; null without the addon's file
+        // Add-on stats, read again only when the saved-variable file changed.
         public RunStats AddonStats()
         {
             try
@@ -1515,7 +1421,7 @@ namespace AzerothLauncher
                 LayoutDownloadClosePrompt();
                 closeDownloadCard.Invalidate();
             }
-            Invalidate(new Rectangle(0, 578, W, H - 578));
+            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
         }
 
         ManualResetEvent installCancel;
@@ -1644,13 +1550,13 @@ namespace AzerothLauncher
 
         static readonly Random hostDice = new Random();
 
-        // One of the hosts at random; when it fails (not when you cancel), the next one.
+        // Try the two regular hosts in random order; if one fails (not when cancelled), try the other.
         static void DownloadClient(string file, Action<long, long> progress, ManualResetEvent cancel, Action<string> say)
         {
-            var hosts = new List<int> { 0, 1, 2 };            // 0 main, 1 backup, 2 Google Drive
+            var hosts = new List<int> { 0, 1 };               // 0 main, 1 Google Drive
             lock (hostDice)
                 for (int i = hosts.Count - 1; i > 0; i--) { int j = hostDice.Next(i + 1); int t = hosts[i]; hosts[i] = hosts[j]; hosts[j] = t; }
-            string[] names = { "main host", "backup host", "Google Drive host" };
+            string[] names = { "main host", "Google Drive host" };
             var errors = new List<string>();
             for (int i = 0; i < hosts.Count; i++)
             {
@@ -1660,7 +1566,6 @@ namespace AzerothLauncher
                 try
                 {
                     if (h == 0) DownloadFromMain(file, progress, cancel);
-                    else if (h == 1) DownloadFromMirror(file, progress, cancel);
                     else DownloadFromDrive(file, progress, cancel);
                     return;
                 }
@@ -1723,29 +1628,6 @@ namespace AzerothLauncher
             if (Archive.Kind(file) != null) return;
             try { File.Delete(file); } catch (Exception) { }
             throw new UserError("The game's download page did not give a game archive.");
-        }
-
-        // the backup host: its page names the newest archive (the link changes with every upload) and its SHA-256;
-        // the download must match the game's known checksums (and the page's, when it shows one)
-        static void DownloadFromMirror(string file, Action<long, long> progress, ManualResetEvent cancel)
-        {
-            string html;
-            using (HttpWebResponse resp = Net.Open(ClientMirrorUrl, 30000, true, "backup download", "text/html"))
-            using (var rd = new StreamReader(resp.GetResponseStream(), Encoding.UTF8))
-                html = rd.ReadToEnd();
-            var link = System.Text.RegularExpressions.Regex.Match(html,
-                "href\\s*=\\s*[\"']([^\"']*/downloads/[^\"']+\\.(?:rar|zip|7z))[\"']", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            if (!link.Success) throw new UserError("The backup host's page has no download link right now.");
-            string url = new Uri(new Uri(ClientMirrorUrl), System.Net.WebUtility.HtmlDecode(link.Groups[1].Value)).AbsoluteUri;
-            var sum = System.Text.RegularExpressions.Regex.Match(html, "SHA-?256.{0,300}?\\b([0-9a-fA-F]{64})\\b",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Singleline);
-            string sha = Net.Download(url, file, true, "backup download", progress, cancel, 0);
-            if (sum.Success && !string.Equals(sum.Groups[1].Value, sha, StringComparison.OrdinalIgnoreCase))
-            {
-                try { File.Delete(file); } catch (Exception) { }
-                throw new UserError("The download from the backup host is damaged (its checksum does not match). Please try again.");
-            }
-            CheckClient(file, sha, Net.LastMd5, false, "backup host");
         }
 
         // Google Drive: a large file first gives a "can't scan this file for viruses" page whose form holds the real
@@ -1845,7 +1727,7 @@ namespace AzerothLauncher
             else
             {
                 SetStatus("Install complete - press PLAY.");
-                if (Cfg.Bool("stats_pending", false))        // setup said yes to AZS Stats before the game was here
+                if (Cfg.Bool("stats_pending", false))        // setup opted into Azeroth Stats before the game was here
                 {
                     Cfg.Remove("stats_pending");
                     Cfg.Save();
@@ -1886,6 +1768,7 @@ namespace AzerothLauncher
         // At start-up it stays quiet unless there is something to offer; the button always answers.
         void CheckLauncherUpdate(bool manual)
         {
+            if(Program.DisplayPreviewBuild) { if(manual)SetStatus("Display Preview uses local builds; public updates stay separate."); return; }
             if (Updating) return;
             if (UpdateChecking) return;
             UpdateChecking = true;

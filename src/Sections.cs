@@ -10,69 +10,6 @@ using System.Windows.Forms;
 
 namespace AzerothLauncher
 {
-    // A transparent child overlay: only the heart is visible. It shares the launcher's client
-    // coordinate system with the breadcrumb, avoiding screen-DPI offsets from a separate Form.
-    sealed class FavoriteHeartPopup : Control
-    {
-        public event Action FavoriteClicked;
-
-        public FavoriteHeartPopup()
-        {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
-                     ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw |
-                     ControlStyles.SupportsTransparentBackColor, true);
-            BackColor = Color.Transparent;
-            Size = new Size(34, 34);
-            Cursor = Cursors.Hand;
-            // Keep only the heart-shaped region. A normal transparent child paints its parent's
-            // background across its rectangular client area, which creates the visible dark box.
-            using (var path = HeartPath()) Region = new Region(path);
-        }
-
-        GraphicsPath HeartPath()
-        {
-            var path = new GraphicsPath();
-            float x = 4, y = 4, s = 26;
-            path.AddBezier(x + s / 2, y + s * 0.95f, x - s * 0.15f, y + s * 0.45f,
-                           x + s * 0.12f, y - s * 0.12f, x + s / 2, y + s * 0.25f);
-            path.AddBezier(x + s / 2, y + s * 0.25f, x + s * 0.88f, y - s * 0.12f,
-                           x + s * 1.15f, y + s * 0.45f, x + s / 2, y + s * 0.95f);
-            path.CloseFigure();
-            return path;
-        }
-
-        public void PlaceAbove(Rectangle textBoundsOnScreen, Control coordinateOwner)
-        {
-            if (textBoundsOnScreen.IsEmpty || coordinateOwner == null || IsDisposed) return;
-            // Convert the same screen-space glyph bounds back into the launcher's client space.
-            // Both the breadcrumb and this control are then laid out by the same WinForms DPI context.
-            Rectangle text = coordinateOwner.RectangleToClient(textBoundsOnScreen);
-            int centerX = text.Left + text.Width / 2;
-            int top = text.Top - 30;                         // heart art ends at the word's top edge
-            Location = new Point(centerX - Width / 2, top);
-        }
-
-        protected override void OnPaintBackground(PaintEventArgs e) { base.OnPaintBackground(e); } // transparent parent background
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            using (var path = HeartPath())
-            {
-                using (var brush = new SolidBrush(Theme.Gold)) g.FillPath(brush, path);
-            }
-            base.OnPaint(e);
-        }
-
-        protected override void OnMouseClick(MouseEventArgs e)
-        {
-            base.OnMouseClick(e);
-            if (e.Button == MouseButtons.Left && FavoriteClicked != null) FavoriteClicked();
-        }
-    }
-
     // the bronze title bar: round emblem portrait, the section's name, a red X
     // The section window's title bar: the back arrow, then the trail of where you are ("Guide › Theorycrafting ›
     // Talent Tree Builder › Priest"): click a step to go back to it. The red X closes the section.
@@ -80,6 +17,7 @@ namespace AzerothLauncher
     {
         public Action CloseClicked;
         public Action HelpClicked;                           // "Lost?" beside the X: how the path at the top works
+        public Action FavoriteClicked;
         public Action HelpLeft;
         bool helpShown;                                      // only on a section's other pages, never on its main page
         public bool HelpShown { get { return helpShown; } set { if (helpShown != value) { helpShown = value; Invalidate(); } } }
@@ -91,22 +29,19 @@ namespace AzerothLauncher
         public bool CloseEnabled { get { return closeEnabled; } set { if (closeEnabled != value) { closeEnabled = value; Invalidate(); } } }
         string note = "";                                    // a short line at the right end of the bar (Community: while a video plays)
         public string Note { get { return note; } set { note = value ?? ""; Invalidate(); } }
-        int NoteW { get { return note.Length == 0 ? 0 : 12 + TextRenderer.MeasureText(note, Theme.F(9, FontStyle.Bold)).Width; } }
+        int NoteW { get { return note.Length == 0 ? 0 : Theme.Px(12) + TextRenderer.MeasureText(note, Theme.F(9, FontStyle.Bold)).Width; } }
         public Action<Point> Moved;
         Point? dragOffset;
         List<KeyValuePair<string, Action>> crumbs = new List<KeyValuePair<string, Action>>();
         readonly List<KeyValuePair<Rectangle, Action>> hot = new List<KeyValuePair<Rectangle, Action>>();
         readonly List<KeyValuePair<Rectangle, int>> crumbRects = new List<KeyValuePair<Rectangle, int>>();
-        readonly List<KeyValuePair<Rectangle, int>> crumbTextRects = new List<KeyValuePair<Rectangle, int>>();
-        readonly Dictionary<int, Action> crumbFavorites = new Dictionary<int, Action>();
+        Rectangle favoriteBox = Rectangle.Empty;
         // a step's drop-down (the other choices at that level), and where its arrow was drawn
         readonly Dictionary<int, List<KeyValuePair<string, Action>>> menus = new Dictionary<int, List<KeyValuePair<string, Action>>>();
         readonly List<KeyValuePair<Rectangle, int>> arrows = new List<KeyValuePair<Rectangle, int>>();
         int hoverArrow = -1;
         int hover = -1;                                      // the step under the pointer (-2: the back arrow)
-        int favoriteHoverStep = -1;
-        FavoriteHeartPopup favoritePopup;
-        int favoritePopupStep = -1, quietFavoriteStep = -1;
+        bool favoriteHover;
         Form hoverHost;
 
         public SideHead()
@@ -148,10 +83,12 @@ namespace AzerothLauncher
         {
             if (hoverTimer != null) hoverTimer.Stop();
             CloseOpenMenu();
-            CloseFavoritePopup();
-            if (helpTip) helpTip = false;
+            favoriteHover = false;
             GuideHover.Hide(this);
+            if (helpTip) helpTip = false;
         }
+
+        internal void HideTransientUi() { HoverHostDeactivated(this, EventArgs.Empty); }
 
         protected override void Dispose(bool disposing)
         {
@@ -161,7 +98,6 @@ namespace AzerothLauncher
                 hoverHost = null;
                 if (hoverTimer != null) { hoverTimer.Stop(); hoverTimer.Dispose(); hoverTimer = null; }
                 CloseOpenMenu();
-                CloseFavoritePopup();
                 GuideHover.Hide(this);
             }
             base.Dispose(disposing);
@@ -178,23 +114,15 @@ namespace AzerothLauncher
         {
             if (hoverTimer != null) hoverTimer.Stop();
             CloseOpenMenu();
-            CloseFavoritePopup();
+            FavoriteClicked = null;
             crumbs = list ?? new List<KeyValuePair<string, Action>>();
             menus.Clear();
-            crumbFavorites.Clear();
             hover = -1;
             hoverStep = -1;
             hoverArrow = -1;
             quietStep = -1;
-            quietFavoriteStep = -1;
-            favoriteHoverStep = -1;
+            favoriteHover = false;
             Invalidate();
-        }
-
-        // Any location in a link-tree can be saved from its word in the breadcrumb trail.
-        public void SetCrumbFavorite(int i, Action add)
-        {
-            if (i >= 0 && i < crumbs.Count && add != null) { crumbFavorites[i] = add; Invalidate(); }
         }
 
         // the choices of step i (not the first one): a small arrow beside it opens them
@@ -205,13 +133,23 @@ namespace AzerothLauncher
             Invalidate();
         }
 
-        Rectangle CloseBox { get { return closable ? new Rectangle(Width - 27, 9, 18, 18) : Rectangle.Empty; } }
+        Rectangle CloseBox { get { return closable ? new Rectangle(Width - Theme.Px(27),Theme.Px(9),Theme.Px(18),Theme.Px(18)) : Rectangle.Empty; } }
         // "Lost?" beside the X: for anyone not sure how to get around (its width follows the word in the language)
-        int HelpW { get { return 26 + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
-        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? 32 : 9) - HelpW, 9, HelpW, 18) : Rectangle.Empty; } }
+        int HelpW { get { return Theme.Px(26) + (int)TextRenderer.MeasureText(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold)).Width; } }
+        Rectangle HelpBox { get { return HelpClicked != null && helpShown ? new Rectangle(Width - (closable ? Theme.Px(32) : Theme.Px(9)) - HelpW, Theme.Px(9), HelpW, Theme.Px(18)) : Rectangle.Empty; } }
         public Point HelpScreenAnchor { get { Rectangle box = HelpBox; return box.IsEmpty ? PointToScreen(Point.Empty) : PointToScreen(new Point(box.Left + box.Width / 2, box.Bottom)); } }
         public Rectangle HelpScreenBounds { get { Rectangle box = HelpBox; return box.IsEmpty ? Rectangle.Empty : RectangleToScreen(box); } }
-        Rectangle BackBox { get { return BackClicked != null ? new Rectangle(44, 8, 30, 20) : Rectangle.Empty; } }
+        Rectangle BackBox { get { return BackClicked != null ? new Rectangle(Theme.Px(44),Theme.Px(8),Theme.Px(30),Theme.Px(20)) : Rectangle.Empty; } }
+        Rectangle FavoriteBox
+        {
+            get
+            {
+                if (FavoriteClicked == null) return Rectangle.Empty;
+                Rectangle help = HelpBox;
+                int right = !help.IsEmpty ? help.Left - Theme.Px(4) : (closable ? Width - Theme.Px(32) : Width - Theme.Px(8));
+                return new Rectangle(right - Theme.Px(20), Theme.Px(8), Theme.Px(18), Theme.Px(20));
+            }
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -219,26 +157,26 @@ namespace AzerothLauncher
             g.Clear(BackColor);
             int w = Math.Max(Width, 200);
             Image bar = Retro.Get("long");                  // the launcher's blue stone, framed in gold
-            if (bar != null) Theme.Draw(g, bar, new Rectangle(22, 7, w - 26, 22));
-            using (var p = new Pen(Theme.Hex("#c49a48"), 2)) g.DrawRectangle(p, 22, 7, w - 26, 21);
+            if (bar != null) Theme.Draw(g, bar, new Rectangle(Theme.Px(22),Theme.Px(7), w - Theme.Px(26),Theme.Px(22)));
+            using (var p = new Pen(Theme.Hex("#c49a48"), 2)) g.DrawRectangle(p, Theme.Px(22), Theme.Px(7), w - Theme.Px(26), Theme.Px(21));
             Theme.Smooth(g);
             hot.Clear();
             arrows.Clear();
             menuText.Clear();
             stepRects.Clear();
             crumbRects.Clear();
-            crumbTextRects.Clear();
-            int x = 50;
+            favoriteBox = FavoriteBox;
+            int x = Theme.Px(50);
             Rectangle bb = BackBox;
             if (!bb.IsEmpty)
             {
                 using (var b = new SolidBrush(hover == -2 ? Theme.Hex("#3a2c18") : Theme.Hex("#1c160e"))) g.FillRectangle(b, bb);
                 using (var p = new Pen(Theme.Hex("#d6a640"), 1.5f)) g.DrawRectangle(p, bb);
                 using (var b = new SolidBrush(Theme.Hex("#fff0b0")))
-                    g.FillPolygon(b, new[] { new PointF(bb.X + 11, bb.Y + 10), new PointF(bb.X + 19, bb.Y + 4), new PointF(bb.X + 19, bb.Y + 16) });
+                    g.FillPolygon(b, new[] { new PointF(bb.X + Theme.Px(11), bb.Y + Theme.Px(10)), new PointF(bb.X + Theme.Px(19), bb.Y + Theme.Px(4)), new PointF(bb.X + Theme.Px(19), bb.Y + Theme.Px(16)) });
                 x = bb.Right + 8;
             }
-            int right = (closable ? Width - 32 : Width - 8) - (HelpClicked != null && helpShown ? HelpW + 5 : 0) - NoteW;
+            int right = (closable ? Width - Theme.Px(32) : Width - Theme.Px(8)) - (HelpClicked != null && helpShown ? HelpW + Theme.Px(5) : 0) - NoteW;
             if (note.Length > 0)
                 TextRenderer.DrawText(g, note, Theme.F(9, FontStyle.Bold), new Rectangle(right, 0, NoteW, Height), Theme.Hex("#e0a040"),
                                       TextFormatFlags.Right | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
@@ -250,7 +188,7 @@ namespace AzerothLauncher
                 sf.Trimming = StringTrimming.EllipsisCharacter;
                 // from the end: the steps that fit; the first ones go when the trail is too long
                 var widths = new List<float>();
-                float arrowW = 14;
+                float arrowW = Theme.Px(14);
                 for (int i = 0; i < crumbs.Count; i++)
                     widths.Add(g.MeasureString(Lang.T(crumbs[i].Key), i == crumbs.Count - 1 ? f : fs).Width + (menus.ContainsKey(i) ? arrowW : 0));
                 float sep = g.MeasureString(" › ", fs).Width;
@@ -264,37 +202,17 @@ namespace AzerothLauncher
                     string t = Lang.T(crumbs[i].Key);
                     float tw = Math.Min(widths[i], right - x);
                     bool menu = menus.ContainsKey(i);
-                    var r = new RectangleF(x, 7, Math.Max(1, tw - (menu ? arrowW : 0)), 22);
+                    var r = new RectangleF(x,Theme.Px(7), Math.Max(1, tw - (menu ? arrowW : 0)), Theme.Px(22));
                     crumbRects.Add(new KeyValuePair<Rectangle, int>(Rectangle.Round(r), i));
                     Color c = !last && hover == i ? Color.White : Theme.Hex("#e6cf8c");
                     using (var b = new SolidBrush(c)) g.DrawString(t, last ? f : fs, b, r, sf);
-                    // Measure the visible text glyphs using the same font, layout box and trimming as DrawString.
-                    // The breadcrumb box also contains layout padding (and sometimes a menu arrow), so centering
-                    // the favorite popup over that box can visibly pull it away from the word.
-                    Rectangle textBounds = Rectangle.Round(r);
-                    try
-                    {
-                        using (StringFormat measure = (StringFormat)sf.Clone())
-                        {
-                            measure.SetMeasurableCharacterRanges(new[] { new CharacterRange(0, t.Length) });
-                            Region[] measured = g.MeasureCharacterRanges(t, last ? f : fs, r, measure);
-                            if (measured != null && measured.Length > 0)
-                            {
-                                RectangleF glyphs = measured[0].GetBounds(g);
-                                if (glyphs.Width > 0 && glyphs.Height > 0) textBounds = Rectangle.Ceiling(glyphs);
-                                foreach (Region region in measured) if (region != null) region.Dispose();
-                            }
-                        }
-                    }
-                    catch (ArgumentException) { }
-                    crumbTextRects.Add(new KeyValuePair<Rectangle, int>(textBounds, i));
                     if (menu)
                     {
                         // the drop-down arrow: the other choices at this step
                         var ar = new Rectangle((int)r.Right + 1, 11, (int)arrowW - 2, 14);
                         if (hoverArrow == i) using (var b = new SolidBrush(Theme.Hex("#3a2c18"))) g.FillRectangle(b, ar);
                         using (var b = new SolidBrush(hoverArrow == i ? Color.White : Theme.Hex("#d9c48a")))
-                            g.FillPolygon(b, new[] { new PointF(ar.X + 2, ar.Y + 5), new PointF(ar.Right - 2, ar.Y + 5), new PointF(ar.X + ar.Width / 2f, ar.Y + 10) });
+                            g.FillPolygon(b, new[] { new PointF(ar.X + Theme.Px(2), ar.Y + Theme.Px(5)), new PointF(ar.Right - Theme.Px(2), ar.Y + Theme.Px(5)), new PointF(ar.X + ar.Width / 2f, ar.Y + Theme.Px(10)) });
                         arrows.Add(new KeyValuePair<Rectangle, int>(ar, i));
                         if (last || crumbs[i].Value == null) menuText.Add(new KeyValuePair<Rectangle, int>(Rectangle.Round(r), i));
                         stepRects.Add(new KeyValuePair<Rectangle, int>(Rectangle.Union(Rectangle.Round(r), ar), i));
@@ -308,20 +226,26 @@ namespace AzerothLauncher
                     x += (int)tw;
                     if (!last)
                     {
-                        using (var b = new SolidBrush(Theme.Hex("#a08850"))) g.DrawString(" › ", fs, b, new RectangleF(x, 7, sep + 2, 22), sf);
+                        using (var b = new SolidBrush(Theme.Hex("#a08850"))) g.DrawString(" › ", fs, b, new RectangleF(x,Theme.Px(7), sep + Theme.Px(2),Theme.Px(22)), sf);
                         x += (int)sep;
                     }
                     if (x >= right) break;
                 }
             }
-            if (Theme.Portrait != null) Theme.Draw(g, Theme.Portrait, new Rectangle(2, 1, 36, 36));
+            if (Theme.Portrait != null) Theme.Draw(g, Theme.Portrait, new Rectangle(Theme.Px(2), 1,Theme.Px(36),Theme.Px(36)));
             Rectangle hb = HelpBox;
             if (!hb.IsEmpty)
             {
                 using (var b = new SolidBrush(Theme.Hex("#1c1a26"))) g.FillRectangle(b, hb);
                 using (var p = new Pen(Theme.Hex("#d6a640"), 2)) g.DrawRectangle(p, hb);
                 using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                using (var b = new SolidBrush(Theme.Hex("#f0c050"))) g.DrawString(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold), b, new RectangleF(hb.X, hb.Y + 1, hb.Width, hb.Height), sf);
+                using (var b = new SolidBrush(Theme.Hex("#f0c050"))) g.DrawString(Lang.T("Lost?"), Theme.F(9, FontStyle.Bold), b, new RectangleF(hb.X, hb.Y + Theme.Px(1), hb.Width, hb.Height), sf);
+            }
+            if (!favoriteBox.IsEmpty)
+            {
+                using (var b = new SolidBrush(favoriteHover ? Theme.Hex("#fff2b0") : Theme.Gold))
+                    TextRenderer.DrawText(g, "★", Theme.F(12, FontStyle.Bold), favoriteBox, b.Color,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
             }
             Rectangle xb = CloseBox;
             if (xb.IsEmpty) return;
@@ -371,93 +295,11 @@ namespace AzerothLauncher
             return Rectangle.Empty;
         }
 
-        int FavoriteAt(Point pt)
-        {
-            foreach (var crumb in crumbRects)
-            {
-                Rectangle pathPart = StepRect(crumb.Value);
-                if (crumbFavorites.ContainsKey(crumb.Value) &&
-                    (crumb.Key.Contains(pt) || (!pathPart.IsEmpty && pathPart.Contains(pt)))) return crumb.Value;
-            }
-            return -1;
-        }
-
-        Rectangle CrumbRect(int i)
-        {
-            foreach (var crumb in crumbTextRects) if (crumb.Value == i) return crumb.Key;
-            return Rectangle.Empty;
-        }
-
-        Rectangle CrumbScreenRect(int i)
-        {
-            Rectangle text = CrumbRect(i);
-            return text.IsEmpty ? Rectangle.Empty : RectangleToScreen(text);
-        }
-
-        void CloseFavoritePopup()
-        {
-            if (favoritePopup != null && !favoritePopup.IsDisposed)
-            {
-                Control parent = favoritePopup.Parent;
-                if (parent != null) parent.Controls.Remove(favoritePopup);
-                favoritePopup.Dispose();
-            }
-            favoritePopup = null;
-            favoritePopupStep = -1;
-        }
-
-        void ShowFavoritePopup(int step, Rectangle anchor)
-        {
-            Action add;
-            if (anchor.IsEmpty || !crumbFavorites.TryGetValue(step, out add)) return;
-            CloseFavoritePopup();
-            var popup = new FavoriteHeartPopup();
-            favoritePopup = popup;
-            favoritePopupStep = step;
-            popup.FavoriteClicked += delegate
-            {
-                quietFavoriteStep = step;                    // do not reopen until the pointer leaves this path name
-                CloseFavoritePopup();
-                WowButton.Fire(add);
-            };
-            // Parent the heart to the same top-level launcher as its breadcrumb. It is a child
-            // control rather than a second window, so DPI scaling and monitor coordinates cannot
-            // pull it toward the desktop corner or out of alignment with short/long labels.
-            Control owner = hoverHost;
-            if (owner == null || owner.IsDisposed)
-            {
-                Form form = FindForm();
-                while (form != null && !form.TopLevel) form = form.Parent as Form;
-                owner = form;
-            }
-            if (owner == null) { favoritePopup = null; favoritePopupStep = -1; popup.Dispose(); return; }
-            owner.Controls.Add(popup);
-            popup.BringToFront();
-            popup.PlaceAbove(RectangleToScreen(anchor), owner);
-        }
-
         void HoverTick()
         {
             Point pt = PointToClient(Cursor.Position);
             int s = ClientRectangle.Contains(pt) ? StepAt(pt) : -1;
-            int favoriteStep = ClientRectangle.Contains(pt) ? FavoriteAt(pt) : -1;
-            bool inPopup = favoritePopup != null && !favoritePopup.IsDisposed && favoritePopup.Parent != null &&
-                           favoritePopup.Bounds.Contains(favoritePopup.Parent.PointToClient(Cursor.Position));
             bool inMenu = openMenu != null && !openMenu.IsDisposed && openMenu.Visible && openMenu.Bounds.Contains(Cursor.Position);
-            int retainedStep = favoriteStep >= 0 ? favoriteStep :
-                               inMenu ? openMenuStep :
-                               inPopup ? favoritePopupStep : -1;
-            if (quietFavoriteStep >= 0 && retainedStep != quietFavoriteStep) quietFavoriteStep = -1;
-
-            // Treat the breadcrumb, its heart and its drop-down as one hover target. That lets the
-            // heart stay above the same path name while the pointer travels into the open menu.
-            if (favoritePopup != null && !favoritePopup.IsDisposed && retainedStep != favoritePopupStep)
-                CloseFavoritePopup();
-            if (retainedStep >= 0 && retainedStep != quietFavoriteStep && crumbFavorites.ContainsKey(retainedStep) &&
-                (favoritePopup == null || favoritePopup.IsDisposed || favoritePopupStep != retainedStep))
-                ShowFavoritePopup(retainedStep, CrumbRect(retainedStep));
-            else if (retainedStep >= 0 && favoritePopup != null && !favoritePopup.IsDisposed && favoritePopupStep == retainedStep)
-                favoritePopup.PlaceAbove(CrumbScreenRect(retainedStep), favoritePopup.Parent);
 
             if (openMenu != null && !openMenu.IsDisposed)
             {
@@ -476,12 +318,10 @@ namespace AzerothLauncher
         protected override void OnMouseMove(MouseEventArgs e)
         {
             int st = StepAt(e.Location);
-            int favoriteStep = FavoriteAt(e.Location);
             if (st != quietStep) quietStep = -1;
-            if (st != hoverStep || favoriteStep != favoriteHoverStep)
+            if (st != hoverStep)
             {
                 hoverStep = st;
-                favoriteHoverStep = favoriteStep;
                 if (hoverTimer == null)
                 {
                     hoverTimer = new Timer();
@@ -493,7 +333,11 @@ namespace AzerothLauncher
             int h = HotAt(e.Location), ha = ArrowAt(e.Location);
             if (ha < 0) ha = MenuTextAt(e.Location);          // the last step's name lights its arrow
             if (h != hover || ha != hoverArrow) { hover = h; hoverArrow = ha; Invalidate(); }
-            Cursor = (closeEnabled && CloseBox.Contains(e.Location)) || h != -1 || ha != -1 || favoriteStep >= 0 ? Cursors.Hand : Cursors.Default;   // "Lost?" is not clicked: pointed at
+            favoriteHover = !favoriteBox.IsEmpty && favoriteBox.Contains(e.Location);
+            Cursor = (closeEnabled && CloseBox.Contains(e.Location)) || h != -1 || ha != -1 || favoriteHover ? Cursors.Hand : Cursors.Default;   // "Lost?" is not clicked: pointed at
+            if (favoriteHover) GuideHover.ShowHelp(this, Lang.T("Save to Quick Access"), Lang.T("Save this location to Quick Access."));
+            else GuideHover.Hide(this);
+            Invalidate();
             // "Lost?": a small note while the pointer is on it (no window over the launcher)
             bool onHelp = HelpBox.Contains(e.Location);
             if (onHelp && !helpTip) { helpTip = true; WowButton.Fire(HelpClicked); }
@@ -508,7 +352,7 @@ namespace AzerothLauncher
 
         bool helpTip;                                        // the "Lost?" note is showing
 
-        protected override void OnMouseLeave(EventArgs e) { if (helpTip) { helpTip = false; if (HelpLeft != null) HelpLeft(); } if (hover != -1 || hoverArrow != -1) { hover = -1; hoverArrow = -1; Invalidate(); } base.OnMouseLeave(e); }
+        protected override void OnMouseLeave(EventArgs e) { favoriteHover = false; GuideHover.Hide(this); if (helpTip) { helpTip = false; if (HelpLeft != null) HelpLeft(); } if (hover != -1 || hoverArrow != -1) { hover = -1; hoverArrow = -1; Invalidate(); } base.OnMouseLeave(e); }
 
         void ShowMenu(int i, Rectangle at)
         {
@@ -545,7 +389,7 @@ namespace AzerothLauncher
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && !CloseBox.Contains(e.Location) && !HelpBox.Contains(e.Location) && Owner2 != null)
+            if (e.Button == MouseButtons.Left && !CloseBox.Contains(e.Location) && !HelpBox.Contains(e.Location) && !FavoriteBox.Contains(e.Location) && Owner2 != null)
             {
                 Point s = PointToScreen(e.Location);
                 dragOffset = new Point(s.X - Owner2.Left, s.Y - Owner2.Top);   // drag the title bar to move the window
@@ -563,6 +407,7 @@ namespace AzerothLauncher
                 if (Moved != null && Owner2 != null) Moved(Owner2.Location);
             }
             else if (e.Button == MouseButtons.Left && CloseBox.Contains(e.Location) && closeEnabled) { CloseOpenMenu(); WowButton.Fire(CloseClicked); }
+            else if (e.Button == MouseButtons.Left && FavoriteBox.Contains(e.Location) && FavoriteClicked != null) WowButton.Fire(FavoriteClicked);
             else if (e.Button == MouseButtons.Left && HelpBox.Contains(e.Location)) { }   // "Lost?" only answers the pointer
             else if (e.Button == MouseButtons.Left && ArrowAt(e.Location) >= 0) ClickMenu(ArrowAt(e.Location));
             else if (e.Button == MouseButtons.Left)
@@ -610,11 +455,21 @@ namespace AzerothLauncher
         sealed class GuideFavoriteRoute
         {
             public string Kind, Topic, Page, ClassKey, Url;
+            public string Anchor;
+            public int ScrollY, AnchorOffset;
             public string PageLabel
             {
                 get
                 {
-                    if (Kind == "guide" || Kind == "guideTalents") return Page.Length > 0 ? Page : Topic;
+                    if (Kind == "wiki") return "Wiki";
+                    if (Kind == "buildVideos") return "Build Videos";
+                    if (Kind == "guide" || Kind == "guideTalents")
+                    {
+                        string label = Page.Length > 0 ? Page : Topic;
+                        if (string.Equals(label, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase)) label = "Codex";
+                        string anchorLabel = string.Equals(Anchor, "Codex (Necklaces)", StringComparison.OrdinalIgnoreCase) ? "Codex" : Lang.T(Anchor);
+                        return Anchor.Length > 0 ? label + " · " + anchorLabel : label;
+                    }
                     if (Kind == "group" || Kind == "section") return Topic;
                     if (Kind == "builderClass" || Kind == "plannerClass") return ClassKey;
                     if (Kind == "video") return Page.Length > 0 ? Page : Topic;
@@ -647,7 +502,10 @@ namespace AzerothLauncher
             }
             public GuideFavoriteRoute(string kind, string topic, string page) : this(kind, topic, page, "", "") { }
             public GuideFavoriteRoute(string kind, string topic, string page, string classKey, string url)
-            { Kind = string.IsNullOrEmpty(kind) ? "guide" : kind; Topic = topic ?? ""; Page = page ?? ""; ClassKey = classKey ?? ""; Url = url ?? ""; }
+            { Kind = string.IsNullOrEmpty(kind) ? "guide" : kind; Topic = topic ?? ""; Page = page ?? ""; ClassKey = classKey ?? ""; Url = url ?? ""; Anchor = ""; }
+            public GuideFavoriteRoute(string kind, string topic, string page, string classKey, string url, string anchor, int scrollY, int anchorOffset)
+                : this(kind, topic, page, classKey, url)
+            { Anchor = anchor ?? ""; ScrollY = Math.Max(0, scrollY); AnchorOffset = Math.Max(0, anchorOffset); }
         }
 
         const int SideW = 680, SideH = 600;
@@ -727,8 +585,8 @@ namespace AzerothLauncher
         DateTime clLastStep = DateTime.MinValue;
         Dictionary<string, CheckBox> addonRows;
         Label addonCount;
-        // an uninstall waiting for its answer: the question takes the place of My Addons' right column (not a window,
-        // not a step in the path), so the addon list stays in view while the player decides. Name: a Download More
+        // An uninstall question takes the place of My Addons' right column, not a modal dialog.
+        // History treats this as a view: Back navigates, but never chooses UNINSTALL or CANCEL. Name: a Download More
         // addon; folder: one folder of the list (its X)
         string askUninstallName, askUninstallFolder;
 
@@ -747,6 +605,8 @@ namespace AzerothLauncher
         {
             Color bronzeD = Theme.Hex("#2a2620"), dark = Theme.Hex("#0e0d14");   // night stone, like the launcher
             side = new Form();
+            side.AutoScaleMode=AutoScaleMode.None;
+            WowDialog.SecondaryHost = side;
             side.FormBorderStyle = FormBorderStyle.None;
             side.ShowInTaskbar = false;                      // the sections open inside the launcher, on its left side
             side.TopLevel = false;
@@ -818,7 +678,7 @@ namespace AzerothLauncher
                          route.Kind == "builderClass" || route.Kind == "guideTalents" ||
                          (route.Kind == "stats" && route.Page == "class")))
                         favoriteIcon = SpellIcons.Class(route.ClassKey, favoriteBtns[slot]);
-                    else if (route != null && route.Kind == "guide" && route.Topic == "Items" && route.Page == "Codex")
+                    else if (route != null && route.Kind == "guide" && route.Topic == "Archive")
                     {
                         if (codexFavoriteIcon == null) codexFavoriteIcon = Theme.LoadImage("AS.favorites.codex-aura.png");
                         favoriteIcon = codexFavoriteIcon;
@@ -854,20 +714,23 @@ namespace AzerothLauncher
                     }
                     if (favoriteIcon != null)
                     {
-                        float scale = Math.Min(18f / favoriteIcon.Width, 18f / favoriteIcon.Height);
+                        float extent=Math.Max(10,favoriteBtns[slot].Width-Theme.Px(8));
+                        float scale = Math.Min(extent / favoriteIcon.Width, extent / favoriteIcon.Height);
                         var iconRect = new RectangleF(x - favoriteIcon.Width * scale / 2f, y - favoriteIcon.Height * scale / 2f,
                             favoriteIcon.Width * scale, favoriteIcon.Height * scale);
                         g.DrawImage(favoriteIcon, iconRect);
                         using (var p = new Pen(c, 1.2f)) g.DrawRectangle(p, Rectangle.Round(iconRect));
                         return;
                     }
-                    var ring = new RectangleF(x - 9, y - 9, 18, 18);
+                    float diameter=Math.Max(10,favoriteBtns[slot].Width-Theme.Px(8));
+                    var ring = new RectangleF(x-diameter/2,y-diameter/2,diameter,diameter);
                     using (var p = new Pen(c, 1.4f)) g.DrawEllipse(p, ring);
-                    Theme.CenterText(g, (slot + 1).ToString(), Theme.F(9, FontStyle.Bold), c, ring, null);
+                    using(var numberFont=new Font(Theme.F(9).FontFamily,Math.Max(6,diameter*(slot>=9?.55f:.75f)),FontStyle.Bold,GraphicsUnit.Pixel))
+                        Theme.CenterText(g, (slot + 1).ToString(), numberFont, c, ring, null);
                 };
                 var b = new IconButton(paint, delegate { OpenGuideFavorite(slot); });
                 b.AccessibleName = Lang.T("Quick Access " + (i + 1));
-                b.Tip = "Quick Access " + (i + 1) + " is empty. Hover a path name and click the heart to save it.";
+                b.Tip = "Quick Access " + (i + 1) + " is empty. Use the guide star or a section favorite control to save a location.";
                 b.ContextClicked += delegate(Control source, Point at) { RemoveGuideFavorite(slot); };
                 b.MouseDown += delegate(object sender, MouseEventArgs e)
                 {
@@ -929,7 +792,7 @@ namespace AzerothLauncher
             panel.Dock = DockStyle.Fill;
             panel.BackColor = Theme.Panel;
             chat.Controls.Add(panel);
-            lostHelpCard = new Panel();
+            lostHelpCard = new ScrollPanel();
             lostHelpCard.BackColor = Theme.Hex("#120f18");
             lostHelpCard.Visible = false;
             lostHelpCard.Paint += PaintLostHelpInline;
@@ -937,7 +800,7 @@ namespace AzerothLauncher
             lostHelpCard.MouseLeave += delegate { DeferHideLostHelpInline(); };
             chat.Controls.Add(lostHelpCard);
             lostHelpCard.BringToFront();
-            closeDownloadCard = new Panel();
+            closeDownloadCard = new ScrollPanel();
             closeDownloadCard.Dock = DockStyle.Fill;
             closeDownloadCard.BackColor = Theme.Hex("#0e0d14");
             closeDownloadCard.Visible = false;
@@ -962,15 +825,16 @@ namespace AzerothLauncher
 
         void LayoutStrip()
         {
-            int y = 0;
+            int count = 0;
+            for (int i = 0; i < guideFavorites.Length; i++) if (guideFavorites[i] != null) count++;
+            int gap = Theme.Px(3), y = 0;
+            int size = Math.Min(Math.Max(16, strip.Width - 6), Math.Max(16, (strip.ClientSize.Height - Math.Max(0, count - 1) * gap) / Math.Max(1, count)));
             for (int i = 0; i < favoriteBtns.Length; i++)
             {
-                var b = favoriteBtns[i];
-                bool bound = guideFavorites[i] != null;
-                b.Visible = bound;
-                if (!bound) continue;
-                b.Location = new Point(3, y);
-                y += 26 + 5;
+                var button = favoriteBtns[i]; button.Visible = guideFavorites[i] != null;
+                if (!button.Visible) continue;
+                button.Bounds = new Rectangle((strip.Width - size) / 2, y, size, size);
+                y += size + gap;
             }
         }
 
@@ -1060,7 +924,7 @@ namespace AzerothLauncher
 
         // the section area: its top level with the top of the word "News", its bottom level with the Launcher buttons
         // (a little taller than the News column: from under the game's name down to the bottom bar, for more room)
-        static readonly Rectangle SideRect = new Rectangle(6, 198, 674, 574 - 198);
+        Rectangle SideRect { get { return ResponsiveSideRect; } }
         Panel lostHelpCard;
         Timer lostHelpTimer;
 
@@ -1068,11 +932,15 @@ namespace AzerothLauncher
         {
             if (lostHelpCard == null || side == null || !side.Visible) return;
             if (lostHelpTimer != null) lostHelpTimer.Stop();
-            int width = Math.Min(360, lostHelpCard.Parent.ClientSize.Width - 12);
-            int height = Math.Min(320, lostHelpCard.Parent.ClientSize.Height - 12);
+            int width = Math.Min(Theme.Px(360), lostHelpCard.Parent.ClientSize.Width - 12);
+            int height = Math.Min(Theme.Px(320), lostHelpCard.Parent.ClientSize.Height - 12);
             lostHelpCard.Size = new Size(Math.Max(220, width), Math.Max(220, height));
-            lostHelpCard.Location = new Point((lostHelpCard.Parent.ClientSize.Width - lostHelpCard.Width) / 2,
-                                              (lostHelpCard.Parent.ClientSize.Height - lostHelpCard.Height) / 2);
+            Point cursor = lostHelpCard.Parent.PointToClient(Cursor.Position);
+            int left = Math.Max(0, Math.Min(lostHelpCard.Parent.ClientSize.Width - lostHelpCard.Width, cursor.X));
+            int top = cursor.Y + 20;
+            if (top + lostHelpCard.Height > lostHelpCard.Parent.ClientSize.Height)
+                top = Math.Max(0, lostHelpCard.Parent.ClientSize.Height - lostHelpCard.Height);
+            lostHelpCard.Location = new Point(left, top);
             lostHelpCard.Visible = true;
             lostHelpCard.BringToFront();
             lostHelpCard.Invalidate();
@@ -1108,12 +976,15 @@ namespace AzerothLauncher
             Graphics g = e.Graphics;
             g.Clear(Theme.Hex("#120f18"));
             using (var p = new Pen(Theme.Hex("#c49a48"), 2)) g.DrawRectangle(p, 1, 1, lostHelpCard.Width - 3, lostHelpCard.Height - 3);
-            int y = 10, width = lostHelpCard.Width - 24;
-            TextRenderer.DrawText(g, Lang.T("Lost?"), Theme.F(11, FontStyle.Bold), new Rectangle(12, y, width, 20), Theme.Gold,
+            var scroll=lostHelpCard as ScrollPanel;
+            if(scroll!=null) g.TranslateTransform(0,scroll.AutoScrollPosition.Y);
+            int y = Theme.Px(10), width = lostHelpCard.ClientSize.Width - Theme.Px(24);
+            TextRenderer.DrawText(g, Lang.T("Lost?"), Theme.F(11, FontStyle.Bold), new Rectangle(12, y, width, Theme.Px(20)), Theme.Gold,
                                   TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
-            y += 26;
-            DrawLostHelpSection(g, "Click a breadcrumb to go back. Hover ▼ to choose another page.", PathExamplePart(true), ref y, width);
-            DrawLostHelpSection(g, "Hover a name and click the heart to save it. Click to open, drag to move, or right-click to remove.", PathExamplePart(false), ref y, width);
+            y += Theme.Px(26);
+            DrawLostHelpSection(g, "Click the star on a page to save it to Favorites. On Wiki pages, choose your current reading spot or the top of the page.", null, ref y, width);
+            DrawLostHelpSection(g, "Click a Favorites tab to open it. Hold left-click and drag to reorder tabs. Right-click a tab to remove it.", PathExamplePart(false), ref y, width);
+            if(scroll!=null) scroll.AutoScrollMinSize=new Size(0,y+Theme.Px(8));
         }
 
         void DrawLostHelpSection(Graphics g, string text, Image picture, ref int y, int width)
@@ -1124,7 +995,7 @@ namespace AzerothLauncher
                                   TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
             y += textHeight + 5;
             if (picture == null) return;
-            float scale = Math.Min(240f / picture.Width, 160f / picture.Height);
+            float scale = Math.Min(Theme.Px(240) / (float)picture.Width, Theme.Px(160) / (float)picture.Height);
             scale = Math.Min(scale, (float)(width - 12) / picture.Width);
             int w = Math.Max(1, (int)(picture.Width * scale)), h = Math.Max(1, (int)(picture.Height * scale));
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -1172,37 +1043,50 @@ namespace AzerothLauncher
             if (closeDownloadCard != null) closeDownloadCard.Visible = false;
         }
 
+        Rectangle closeTitleBounds, closeMessageBounds;
+        Font closeTitleFont, closeMessageFont;
+        bool arrangingDownloadClose;
+        string DownloadCloseTitle { get {return Lang.T(dlActive?"The game is downloading":"The game is being installed");} }
+        string DownloadCloseMessage { get {return Lang.T(dlActive
+            ? "Would you like to cancel the download and close the launcher, or leave it open until the download finishes?"
+            : "The download is complete and the game files are being installed. Choose whether to close after installation finishes or leave the launcher open.");} }
         void LayoutDownloadClosePrompt()
         {
-            if (closeDownloadCard == null) return;
-            int y = Math.Max(125, closeDownloadCard.ClientSize.Height / 2 + 35);
-            int gap = 10;
-            cancelDownloadCloseButton.Visible = true;
-            cancelDownloadCloseButton.Label = dlActive ? "CANCEL DOWNLOAD & CLOSE" : "CLOSE WHEN FINISHED";
-            keepDownloadButton.Label = "STAY & FINISH";
-            int total = cancelDownloadCloseButton.Width + keepDownloadButton.Width + gap;
-            int x = Math.Max(12, (closeDownloadCard.ClientSize.Width - total) / 2);
-            cancelDownloadCloseButton.Location = new Point(x, y);
-            keepDownloadButton.Location = new Point(x + cancelDownloadCloseButton.Width + gap, y);
+            if(closeDownloadCard==null||arrangingDownloadClose)return;
+            arrangingDownloadClose=true;
+            float previous=Theme.Zoom; Theme.Zoom=Theme.SectionZoom;
+            try
+            {
+                int pad=Theme.Px(18),gap=Theme.Px(10),width=Math.Max(60,closeDownloadCard.ClientSize.Width-pad*2);
+                closeTitleFont=Theme.F(15,FontStyle.Bold); closeMessageFont=Theme.F(10);
+                int titleHeight=TextRenderer.MeasureText(DownloadCloseTitle,closeTitleFont,new Size(width,1000),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix).Height;
+                int bodyHeight=TextRenderer.MeasureText(DownloadCloseMessage,closeMessageFont,new Size(width,2000),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix).Height;
+                closeTitleBounds=new Rectangle(pad,pad,width,titleHeight);
+                closeMessageBounds=new Rectangle(pad,closeTitleBounds.Bottom+gap,width,bodyHeight);
+                cancelDownloadCloseButton.Label=dlActive?"CANCEL DOWNLOAD & CLOSE":"CLOSE WHEN FINISHED";
+                keepDownloadButton.Label="STAY & FINISH";
+                int firstWidth=(int)(210*Theme.Zoom), secondWidth=(int)(180*Theme.Zoom), height=Theme.Px(30);
+                bool stacked=firstWidth+secondWidth+gap>width;
+                int total=stacked?Math.Min(width,Math.Max(firstWidth,secondWidth)):firstWidth+secondWidth+gap;
+                int x=pad+(width-total)/2,y=closeMessageBounds.Bottom+Theme.Px(18);
+                cancelDownloadCloseButton.SetDisplayZoom(Theme.Zoom);keepDownloadButton.SetDisplayZoom(Theme.Zoom);
+                cancelDownloadCloseButton.Bounds=new Rectangle(x,y,stacked?total:firstWidth,height);
+                keepDownloadButton.Bounds=new Rectangle(stacked?x:x+firstWidth+gap,stacked?y+height+gap:y,stacked?total:secondWidth,height);
+                var scroll=closeDownloadCard as ScrollPanel;
+                if(scroll!=null)scroll.AutoScrollMinSize=new Size(0,keepDownloadButton.Bottom+pad);
+            }
+            finally {Theme.Zoom=previous;arrangingDownloadClose=false;}
         }
 
-        void PaintDownloadClosePrompt(object sender, PaintEventArgs e)
+        void PaintDownloadClosePrompt(object sender,PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            g.Clear(Theme.Hex("#0e0d14"));
-            using (var p = new Pen(Theme.Hex("#c49a48"), 2))
-                g.DrawRectangle(p, 1, 1, closeDownloadCard.Width - 3, closeDownloadCard.Height - 3);
-            int width = Math.Max(100, closeDownloadCard.ClientSize.Width - 48);
-            bool downloading = dlActive;
-            string title = downloading ? "The game is downloading" : "The game is being installed";
-            string message = downloading
-                ? "Would you like to cancel the download and close the launcher, or leave it open until the download finishes?"
-                : "The download is complete and the game files are being installed. Choose whether to close after installation finishes or leave the launcher open.";
-            TextRenderer.DrawText(g, Lang.T(title), Theme.F(15, FontStyle.Bold),
-                new Rectangle(24, 42, width, 30), Theme.Gold, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
-            TextRenderer.DrawText(g, message, Theme.F(10, FontStyle.Regular),
-                new Rectangle(30, 85, width - 12, 60), Theme.Text,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
+            Graphics g=e.Graphics;g.Clear(Theme.Hex("#0e0d14"));
+            using(var pen=new Pen(Theme.Hex("#c49a48"),2))g.DrawRectangle(pen,1,1,closeDownloadCard.Width-3,closeDownloadCard.Height-3);
+            var scroll=closeDownloadCard as ScrollPanel;
+            if(scroll!=null)g.TranslateTransform(0,scroll.AutoScrollPosition.Y);
+            if(closeTitleFont==null)return;
+            TextRenderer.DrawText(g,DownloadCloseTitle,closeTitleFont,closeTitleBounds,Theme.Gold,TextFormatFlags.HorizontalCenter|TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
+            TextRenderer.DrawText(g,DownloadCloseMessage,closeMessageFont,closeMessageBounds,Theme.Text,TextFormatFlags.HorizontalCenter|TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
         }
 
         // closing a section goes back to the home screen, which shows Community; Community itself cannot be closed
@@ -1233,7 +1117,7 @@ namespace AzerothLauncher
                 ShowWindowFront();
                 return;
             }
-            if (name == "Stats" && !StatsAddonActive())     // the Stats page needs AZS Stats on
+            if (name == "Stats" && !StatsAddonActive())     // the Stats page needs a supported stats addon on
             {
                 SetStatus(StatsNeedAddon);
                 if (current == "Stats") { current = null; ShowSection("Community"); }
@@ -1242,8 +1126,9 @@ namespace AzerothLauncher
             if (name == "Guide" && current == "Guide" && side.Visible)   // the Guide's button again: back to its main page
             {
                 if (gPlanner) ResetPlannerState();
-                guideGroupPage = -1;
-                gTopic = -1; gPage = -1; guideQuery = ""; gBuilder = false; gPlanner = false; gTalents = null; gVideo = null; guideMain = true;
+                guideGroupPage = 1;
+                gTopic = -1; gPage = -1; guideQuery = ""; gBuilder = false; gPlanner = false; gTalents = null; gVideo = null;
+                guideMain = false; guideWikiIndex = true; guideBuildVideos = false;
                 BuildPanel("Guide");
                 return;
             }
@@ -1253,7 +1138,7 @@ namespace AzerothLauncher
             foreach (var kv in nav) kv.Value.Active = kv.Key == name;
             RefreshStrip();
             if (name == "Changelog") clView = ClList;          // the list of every patch note to pick from
-            if (name == "Guide") { gTopic = -1; gPage = -1; guideQuery = ""; guideLastTopic = 0; gBuilder = false; gPlanner = false; gTalents = null; guideGroup = 0; guideMain = true; }   // the guide opens on its first topic
+            if (name == "Guide") { gTopic = -1; gPage = -1; guideQuery = ""; guideLastTopic = 0; gBuilder = false; gPlanner = false; gTalents = null; guideGroup = 1; guideGroupPage = 1; guideMain = false; guideWikiIndex = true; guideBuildVideos = false; }   // the Guide button opens the Wiki introduction
             if (name == "About Launcher") aboutLog = false;
             if (name == "Home")
             {
@@ -1289,14 +1174,44 @@ namespace AzerothLauncher
             }
         }
 
+        int panelGeneration;
+        bool buildingPanel;
+        string pendingPanel;
+        bool panelRebuildQueued;
         void BuildPanel(string name)
         {
+            if(buildingPanel)
+            {
+                pendingPanel=name;
+                return;
+            }
+            buildingPanel=true;
+            try { BuildPanelCore(name); }
+            finally
+            {
+                buildingPanel=false;
+                if(pendingPanel!=null&&!panelRebuildQueued&&IsHandleCreated&&!IsDisposed)
+                {
+                    panelRebuildQueued=true;
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        panelRebuildQueued=false;
+                        string target=pendingPanel; pendingPanel=null;
+                        if(target!=null&&!IsDisposed) BuildPanel(target);
+                    });
+                }
+            }
+        }
+
+        void BuildPanelCore(string name)
+        {
+            panelGeneration++;
             CaptureDisplayedScrollPositions();
             GuideHover.Hide();
             HideLostHelpInline();
             if (name != "Community") communityPlaying = null;   // another section: the Community video is left
             // the talent trees left (another page, class or section): their test build starts empty next time
-            if (name != "Guide" || gTalents == null || gTalents != liveBuildCls) { liveBuild = null; liveBuildCls = null; }
+            if (name != "Guide" || (!gPlanner && (gTalents == null || gTalents != liveBuildCls))) { liveBuild = null; liveBuildCls = null; }
             bool freeze = !PreviewMode && name != "Community";  // Community's player window is another program's
             if (freeze) Freeze(true);
             panel.SuspendLayout();
@@ -1320,7 +1235,8 @@ namespace AzerothLauncher
             }
             finally
             {
-                Theme.Zoom = 1f;
+                Theme.Zoom = Theme.DisplayScale;
+                panelDensity=Theme.DisplayScale;
                 panel.ResumeLayout();
                 if (freeze) Freeze(false);
             }
@@ -1330,23 +1246,26 @@ namespace AzerothLauncher
                 restoreScrollPositions = null;
                 RestoreDisplayedScrollPositions(positions);
             }
-            if (name == "Addons") RefreshGates();             // AZS Stats switched on or off: the Stats buttons follow
+            if (name == "Addons") RefreshGates();             // the stats add-on switched on or off: the Stats buttons follow
         }
 
         // the "Lost?" note demonstrates both breadcrumb navigation and saving a favorite
         static readonly Dictionary<string, Bitmap> pathExamples = new Dictionary<string, Bitmap>();
         static readonly Dictionary<string, Bitmap[]> pathExampleParts = new Dictionary<string, Bitmap[]>();
 
-        static void DrawExampleHeart(Graphics g, float centerX, float top, float size)
+        static void DrawExampleStar(Graphics g, float centerX, float centerY, float size)
         {
-            float x = centerX - size / 2f, y = top;
             using (var path = new GraphicsPath())
             {
-                path.AddBezier(x + size / 2, y + size * 0.95f, x - size * 0.15f, y + size * 0.45f,
-                              x + size * 0.12f, y - size * 0.12f, x + size / 2, y + size * 0.25f);
-                path.AddBezier(x + size / 2, y + size * 0.25f, x + size * 0.88f, y - size * 0.12f,
-                              x + size * 1.15f, y + size * 0.45f, x + size / 2, y + size * 0.95f);
-                path.CloseFigure();
+                PointF[] points = new PointF[10];
+                for (int i = 0; i < points.Length; i++)
+                {
+                    double angle = -Math.PI / 2 + i * Math.PI / 5;
+                    float radius = i % 2 == 0 ? size / 2f : size / 4.5f;
+                    points[i] = new PointF(centerX + (float)Math.Cos(angle) * radius,
+                                           centerY + (float)Math.Sin(angle) * radius);
+                }
+                path.AddPolygon(points);
                 using (var brush = new SolidBrush(Theme.Gold)) g.FillPath(brush, path);
             }
         }
@@ -1356,7 +1275,11 @@ namespace AzerothLauncher
             string language = Lang.Code ?? "en";
             Bitmap cached;
             if (pathExamples.TryGetValue(language, out cached)) return cached;
+            float previousZoom=Theme.Zoom, previousDensity=Theme.DisplayScale;
+            Theme.Zoom=.72f; Theme.DisplayScale=1f;
             var bmp = new Bitmap(300, 235);
+            try
+            {
             using (var g = Graphics.FromImage(bmp))
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -1394,8 +1317,6 @@ namespace AzerothLauncher
                 using (var b = new SolidBrush(Theme.Hex("#e6cf8c")))
                     g.FillPolygon(b, new[] { new PointF(arrow.X + 2, arrow.Y + 3), new PointF(arrow.Right - 2, arrow.Y + 3),
                                              new PointF(arrow.X + arrow.Width / 2f, arrow.Y + 8) });
-                DrawExampleHeart(g, groupStart + 20, 22, 15);
-
                 var menu = new Rectangle(groupStart - 4, 64, 142, 60);
                 using (var b = new SolidBrush(Theme.Hex("#0e0d14"))) g.FillRectangle(b, menu);
                 using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, menu);
@@ -1410,18 +1331,14 @@ namespace AzerothLauncher
 
                 TextRenderer.DrawText(g, Lang.T("2  SAVE A FAVORITE"), heading, new Rectangle(10, 148, 180, 14), Theme.Gold,
                                       TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
-                var savePath = new Rectangle(9, 182, 171, 22);
-                using (var b = new SolidBrush(Theme.Hex("#1c1a26"))) g.FillRectangle(b, savePath);
+                var savePath = new Rectangle(9, 178, 171, 38);
+                using (var b = new SolidBrush(Theme.Hex("#15121c"))) g.FillRectangle(b, savePath);
                 using (var p = new Pen(Theme.Hex("#d6a640"), 1)) g.DrawRectangle(p, savePath);
-                string saveCrumbs = Lang.T("Guide") + "  ›  " + Lang.T("Classes") + "  ›  " + Lang.T("Priest");
-                TextRenderer.DrawText(g, saveCrumbs, crumbFont, new Rectangle(savePath.X + 5, savePath.Y + 4, savePath.Width - 8, 14),
+                TextRenderer.DrawText(g, Lang.T("Priest guide"), crumbFont, new Rectangle(savePath.X + 6, savePath.Y + 5, 118, 14),
                                       Theme.Hex("#e6cf8c"), TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
-                string beforePriest = Lang.T("Guide") + "  ›  " + Lang.T("Classes") + "  ›  ";
-                int priestX = savePath.X + 5 + TextRenderer.MeasureText(beforePriest, crumbFont,
-                              new Size(savePath.Width, 18), TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding).Width;
-                int priestWidth = TextRenderer.MeasureText(Lang.T("Priest"), crumbFont, new Size(80, 18),
-                                   TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding).Width;
-                DrawExampleHeart(g, priestX + priestWidth / 2f, 164, 15);
+                TextRenderer.DrawText(g, Lang.T("Gear section"), menuFont, new Rectangle(savePath.X + 6, savePath.Y + 20, 118, 13),
+                                      Theme.GoldDim, TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
+                DrawExampleStar(g, savePath.Right - 12, savePath.Top + 12, 15);
 
                 TextRenderer.DrawText(g, Lang.T("QUICK ACCESS"), Theme.F(6.5f, FontStyle.Bold), new Rectangle(202, 169, 82, 11),
                                       Theme.Hex("#d9c48a"), TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
@@ -1441,6 +1358,8 @@ namespace AzerothLauncher
             }
             pathExamples[language] = bmp;
             return bmp;
+            }
+            finally { Theme.Zoom=previousZoom; Theme.DisplayScale=previousDensity; }
         }
 
         static Image PathExamplePart(bool path)
@@ -1479,7 +1398,9 @@ namespace AzerothLauncher
             {
                 Control c = panel.Controls[0];
                 panel.Controls.RemoveAt(0);
-                c.Dispose();
+                string snapshot=PreviewMode?ScalingControlSnapshot(c,0):"";
+                try { c.Dispose(); }
+                catch(Exception error) { throw new InvalidOperationException("Disposing "+c.GetType().FullName+" while opening "+title+"\n"+snapshot,error); }
             }
             SetSideTitle(title);
             // the back arrow and the trail live in the title bar: "Addons › Download More"
@@ -1522,21 +1443,21 @@ namespace AzerothLauncher
 
         void BindCrumbFavorites(List<KeyValuePair<string, Action>> trail)
         {
-            if (current == "Community") return;
-            for (int i = 0; i < trail.Count; i++)
-            {
-                GuideFavoriteRoute route = CrumbFavoriteRoute(trail[i].Key, i);
-                if (route == null) continue;
-                int step = i;
-                sideHead.SetCrumbFavorite(step, delegate { AddGuideFavorite(route); });
-            }
+            // Guide pages have a dedicated star beside their search field, where Wiki pages can
+            // ask whether to save the exact reading point or the page top. Every other navigable
+            // section gets one stable star in the title bar for its current location.
+            sideHead.FavoriteClicked = null;
+            if (trail == null || trail.Count == 0 || current == "Community" || current == "Guide" || current == "Setup") return;
+            int at = trail.Count - 1;
+            GuideFavoriteRoute route = CrumbFavoriteRoute(trail[at].Key, at);
+            if (route == null) return;
+            sideHead.FavoriteClicked = delegate { AddGuideFavorite(route); };
+            sideHead.Invalidate();
         }
 
         GuideFavoriteRoute CrumbFavoriteRoute(string label, int step)
         {
             if (current == "Community" || label == "Community") return null;
-            if (step == 0) return new GuideFavoriteRoute("section", label, "");
-
             if (current == "Guide")
             {
                 for (int i = 0; i < 3; i++)
@@ -1622,7 +1543,8 @@ namespace AzerothLauncher
             if (current == "Setup") { SetupBack(); return; }
             if (LeaveCommunityVideo()) return;
             if (current == "Guide" && gVideo != null) { gVideo = null; BuildPanel("Guide"); return; }   // a video: back to its page
-            if (BackInHistory()) return;                     // back along the way you came (History.cs)
+            if (current == "Guide" && BackWithinClassArticle()) return; // return to the prior scroll position after an in-page jump
+            if (BackInHistory()) return;                     // restore the previous complete view, including addon context
             if (current == "Addons" && addonMode == "download") { SetAddonMode("installed"); return; }
             if (current == "Options" && optionsLang) { optionsLang = false; BuildPanel("Options"); return; }
             if (current == "Changelog")
@@ -1669,13 +1591,14 @@ namespace AzerothLauncher
         ScrollPanel MakeThinScroll(Control parent, Rectangle r, Color bg, Color border, Color thumb, Color thumbHot)
         {
             var frame = new Bordered(border, 1);
-            frame.Padding = new Padding(1, 1, 10, 1);        // a gutter on the right for the slim bar
+            int gutterWidth=Theme.Px(10);
+            frame.Padding = new Padding(1, 1, gutterWidth, 1);        // a gutter on the right for the slim bar
             frame.Bounds = r;
             parent.Controls.Add(frame);
             frame.BringToFront();
             var gutter = new Panel();
             gutter.BackColor = bg;
-            gutter.Bounds = new Rectangle(r.Width - 10, 1, 9, r.Height - 2);
+            gutter.Bounds = new Rectangle(r.Width - gutterWidth, 1, gutterWidth-1, r.Height - 2);
             frame.Controls.Add(gutter);
             var sp = new ScrollPanel();
             sp.HideBars = true;
@@ -1683,7 +1606,7 @@ namespace AzerothLauncher
             sp.Dock = DockStyle.Fill;
             frame.Controls.Add(sp);
             var bar = new ThinScrollBar(sp, Theme.Mix(bg, border, 0.3), thumb, thumbHot);
-            bar.Bounds = new Rectangle(1, 3, 6, r.Height - 2 - 6);
+            bar.Bounds = new Rectangle(1, 3, Math.Max(4,gutterWidth-4), r.Height - 2 - 6);
             gutter.Controls.Add(bar);
             return sp;
         }
@@ -1883,12 +1806,36 @@ namespace AzerothLauncher
                 log.Selected = aboutLog;
             }
             else aboutLog = false;
-            var credits = UI.Text("Vibe coded by Slimjim\nCloud save code established by Keijin", 13, FontStyle.Italic,
+            var credits = UI.Text("Made by Slimjim\nASBuilder by Cadoky\nAzeroth Stats by Maidenhead\nCloud-save foundation by Keijin", 13, FontStyle.Italic,
                                   Theme.Credit, Theme.Panel, 0);
             credits.TextAlign = ContentAlignment.TopRight;
             credits.Size = VStack.Measure(credits);
             Put(credits, PW - 20 - credits.Width, ShowLauncherChangelog ? 8 + (int)(32 * Theme.Zoom) + 6 : 8);
-            var line = Put(UI.Line(Theme.GoldDim, PW - 40, 2), 20, BottomOf(credits) + 4);
+            var forgeLinks = new LinkLabel();
+            forgeLinks.Text = "Addon pictures by SurvivorsForge  ·  website  ·  repository";
+            forgeLinks.Font = Theme.F(9, FontStyle.Regular);
+            forgeLinks.ForeColor = Theme.Credit;
+            forgeLinks.LinkColor = Theme.Gold;
+            forgeLinks.ActiveLinkColor = Theme.Gold;
+            forgeLinks.VisitedLinkColor = Theme.GoldDim;
+            forgeLinks.LinkBehavior = LinkBehavior.HoverUnderline;
+            forgeLinks.BackColor = Theme.Panel;
+            forgeLinks.AutoSize = true;
+            int websiteStart = forgeLinks.Text.IndexOf("SurvivorsForge", StringComparison.Ordinal);
+            forgeLinks.Links.Add(websiteStart, "SurvivorsForge".Length, "https://forge.rezondes.net/");
+            int siteStart = forgeLinks.Text.LastIndexOf("website", StringComparison.Ordinal);
+            forgeLinks.Links.Add(siteStart, "website".Length, "https://forge.rezondes.net/");
+            int repoStart = forgeLinks.Text.IndexOf("repository", StringComparison.Ordinal);
+            forgeLinks.Links.Add(repoStart, "repository".Length, "https://github.com/Rezondes/SurvivorsForge");
+            forgeLinks.LinkClicked += delegate(object sender, LinkLabelLinkClickedEventArgs e)
+            {
+                string target = e.Link.LinkData as string;
+                if (!string.IsNullOrEmpty(target)) Util.OpenInShell(target);
+            };
+            forgeLinks.Size = TextRenderer.MeasureText(forgeLinks.Text, forgeLinks.Font, new Size(PW - 40, 200),
+                TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
+            Put(forgeLinks, PW - 20 - forgeLinks.Width, BottomOf(credits) + 1);
+            var line = Put(UI.Line(Theme.GoldDim, PW - 40, 2), 20, BottomOf(forgeLinks) + 4);
             var box = UI.Log(Theme.Panel, 11);
             box.Bounds = new Rectangle(20, BottomOf(line) + 10, PW - 34, PH - BottomOf(line) - 18);
             Put(box, box.Left, box.Top);
@@ -2014,6 +1961,7 @@ namespace AzerothLauncher
                 SetCrumbMenu(2, l);
                 AddonsDownloadView(8);
             }
+            else if (addonMode == "updates") AddonUpdatesView();
             else AddonsInstalledView(8);
         }
 
@@ -2027,9 +1975,38 @@ namespace AzerothLauncher
 
         Dictionary<string, object> AddonInstalls() { return Cfg.Section("addon_installs"); }
 
+        string LegacyAddonName(string name)
+        {
+            foreach (AddonEntry e in Data.Addons)
+            {
+                if (!string.Equals(e.Name, name, StringComparison.Ordinal)) continue;
+                if (e.Folders.Contains("AZSSpellMeter")) return "Damage Meter By Kexo";
+                if (e.Folders.Contains("MoveUI")) return "Move UI By JamieeLee";
+            }
+            return null;
+        }
+
+        object AddonSetting(Dictionary<string, object> section, string name)
+        {
+            object value;
+            if (section != null && section.TryGetValue(name, out value)) return value;
+            string legacy = LegacyAddonName(name);
+            return !string.IsNullOrEmpty(legacy) && section != null && section.TryGetValue(legacy, out value) ? value : null;
+        }
+
+        void ClearLegacyAddonSettings(string name)
+        {
+            string legacy = LegacyAddonName(name);
+            if (string.IsNullOrEmpty(legacy)) return;
+            AddonInstalls().Remove(legacy);
+            AddonInstalledAt().Remove(legacy);
+            AddonInstalledRelease().Remove(legacy);
+            AddonPins().Remove(legacy);
+        }
+
         List<string> RecordedFolders(string name)
         {
-            var l = Json.AsList(Json.Get(AddonInstalls(), name));
+            var l = Json.AsList(AddonSetting(AddonInstalls(), name));
             if (l == null) return null;
             var r = new List<string>();
             foreach (object o in l) r.Add(Convert.ToString(o));
@@ -2044,12 +2021,16 @@ namespace AzerothLauncher
                     string at = BuiltinAddons.PathOf(AddonsDir(), BuiltinAddons.Find(e.Url));
                     return at == null ? new List<string>() : new List<string> { Path.GetFileName(at) };
                 }
-            return Addons.FoldersOf(AddonsDir(), name, RecordedFolders(name));
+            List<string> recorded = RecordedFolders(name);
+            if (recorded == null)
+                foreach (AddonEntry e in Data.Addons)
+                    if (string.Equals(e.Name, name, StringComparison.Ordinal)) { recorded = e.Folders; break; }
+            return Addons.FoldersOf(AddonsDir(), name, recorded);
         }
 
-        // ---- addon updates: when each Download More addon was installed (UTC), against when its copy on GitHub
-        // was last uploaded (the release's asset dates, asked once a session). Newer on GitHub: UPDATE.
+        // ---- addon updates: standard mirror assets use upload dates; direct GitHub entries track upstream tag and digest.
         Dictionary<string, object> AddonInstalledAt() { return Cfg.Section("addon_installed_at"); }
+        Dictionary<string, object> AddonInstalledRelease() { return Cfg.Section("addon_installed_release"); }
         Dictionary<string, object> AddonPins() { return Cfg.Section("addon_pins"); }   // addon name -> the kept copy rolled back to
 
         // ---- ROLLBACK (Addons › Advanced): an older kept copy replaces the addon's folders. Its saved settings are not in
@@ -2104,6 +2085,7 @@ namespace AzerothLauncher
         void UnpinAddon(string name)
         {
             AddonPins().Remove(name);
+            ClearLegacyAddonSettings(name);
             Cfg.Save();
             foreach (var e in Data.Addons) if (e.Name == name) { DownloadAddon(e.Name, e.Url); return; }
             BuildPanel("Addons");
@@ -2127,10 +2109,12 @@ namespace AzerothLauncher
             {
                 if (BuiltinAddons.Find(e.Url) != null || AddonFoldersOf(e.Name).Count == 0) continue;
                 var vers = AddonArchive.Versions(e.Name);
+                string legacyName = LegacyAddonName(e.Name);
+                if (vers.Count == 0 && !string.IsNullOrEmpty(legacyName)) vers = AddonArchive.Versions(legacyName);
                 if (vers.Count == 0) continue;
                 any++;
                 string name = e.Name;
-                string pin = Json.Str(AddonPins(), name);
+                string pin = Convert.ToString(AddonSetting(AddonPins(), name), System.Globalization.CultureInfo.InvariantCulture);
                 WowButton b = null;
                 b = new WowButton(name + (pin.Length > 0 ? " *" : "") + " ▾", delegate
                 {
@@ -2162,88 +2146,168 @@ namespace AzerothLauncher
         }
         static Dictionary<string, DateTime> mirrorDates;     // zip file name -> uploaded (UTC); null: not asked yet
         static bool mirrorAsking;
+        const string AzerothStatsLatestUrl = "https://github.com/Maidenquinn/AzerothStats/releases/latest";
+        const string SurvivorsDragonUiLatestUrl = "https://github.com/migwynkriid13/SurvivorsDragonUi/releases/latest";
+        const string KeijinUiLatestUrl = "https://github.com/KeijinDE/KeijinUI_modern-as-ui/releases/latest";
+        const string AzerothFieldKitLatestUrl = "https://github.com/Maidenquinn/azeroth-fieldkit/releases/latest";
+        const string AstinyPlatesLatestUrl = "https://github.com/Valorless/ASTinyPlates/releases/latest";
+        const string AsBuilderLatestUrl = "https://github.com/cadoky/ASBuilder/releases/latest";
+        const string AzerothHubLatestUrl = "https://github.com/Maidenquinn/AzerothHub/releases/latest";
+        static readonly Dictionary<string, GitHubAddonRelease> dynamicAddonReleases = new Dictionary<string, GitHubAddonRelease>(StringComparer.OrdinalIgnoreCase);
+        static readonly HashSet<string> dynamicAddonReleaseChecked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        void AskMirrorDates()
+        sealed class GitHubAddonRelease
         {
-            if (mirrorDates != null || mirrorAsking || PreviewMode) return;
-            mirrorAsking = true;
-            Bg(delegate
-            {
-                var dates = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
-                try
-                {
-                    string text;
-                    using (var resp = Net.Open("https://api.github.com/repos/Slimmy25/Azeroth-Survivors-Launcher/releases/tags/addons",
-                                               15000, true, "GitHub", "application/vnd.github+json"))
-                    using (var rd = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
-                        text = rd.ReadToEnd();
-                    foreach (object a in Json.AsList(Json.Get(Json.AsDict(Json.Parse(text)), "assets")) ?? new List<object>())
-                    {
-                        var d = Json.AsDict(a);
-                        DateTime t;
-                        if (DateTime.TryParse(Json.Str(d, "updated_at"), System.Globalization.CultureInfo.InvariantCulture,
-                                              System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out t))
-                            dates[Json.Str(d, "name")] = t;
-                    }
-                }
-                catch (Exception) { }
-                Ui(delegate
-                {
-                    mirrorDates = dates;
-                    mirrorAsking = false;
-                    if (current == "Addons" && addonMode == "download") BuildPanel("Addons");
-                    AutoUpdateAddons();                       // newer copies on GitHub: installed right away
-                });
-            });
+            public string Tag, Url, Sha256;
+            public DateTime PublishedAt;
+            public string Identity { get { return (Tag ?? "") + "|" + (Sha256 ?? ""); } }
         }
 
-        // Addon updates without asking: every installed Download More addon with a newer copy on GitHub is updated, one
-        // after the other, as soon as the launcher knows (at start, and again when the game closes). Never while the
-        // game runs (it keeps addons open) or a sync or setup is going on; the next chance picks them up.
-        bool autoAddonsBusy;
-
-        void AutoUpdateAddons()
+        static bool IsDynamicGitHubAddonUrl(string url)
         {
-            if (PreviewMode || autoAddonsBusy || setupOpen || !GateOpen()) return;
-            if (GameRunningFlag || Util.GameRunning() || SyncBusy || addonDlBusy) return;
-            if (startupLauncherCheck || Updating) { After(3000, AutoUpdateAddons); return; }   // a launcher update may restart us first
-            if (mirrorDates == null) { AskMirrorDates(); return; }   // it comes back here when the dates are in
-            var todo = new List<AddonEntry>();
+            string normalized = (url ?? "").TrimEnd('/');
+            return string.Equals(normalized, AzerothStatsLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, SurvivorsDragonUiLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, KeijinUiLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AstinyPlatesLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AsBuilderLatestUrl, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase);
+        }
+
+        sealed class GitHubAddonSource
+        {
+            public string Url, Repo, AssetPrefix;
+            public bool FixedAssetName;
+        }
+
+        static GitHubAddonSource GitHubAddonSourceFor(string url)
+        {
+            string normalized = (url ?? "").TrimEnd('/');
+            if (string.Equals(normalized, AzerothStatsLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AzerothStatsLatestUrl, Repo = "Maidenquinn/AzerothStats", AssetPrefix = "AzerothStats-" };
+            if (string.Equals(normalized, SurvivorsDragonUiLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = SurvivorsDragonUiLatestUrl, Repo = "migwynkriid13/SurvivorsDragonUi", AssetPrefix = "SurvivorsDragonUi.zip", FixedAssetName = true };
+            if (string.Equals(normalized, KeijinUiLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = KeijinUiLatestUrl, Repo = "KeijinDE/KeijinUI_modern-as-ui", AssetPrefix = "KeijinUI-" };
+            if (string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AzerothFieldKitLatestUrl, Repo = "Maidenquinn/azeroth-fieldkit", AssetPrefix = "AzerothFieldKit-" };
+            if (string.Equals(normalized, AstinyPlatesLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AstinyPlatesLatestUrl, Repo = "Valorless/ASTinyPlates", AssetPrefix = "ASTinyPlates-" };
+            if (string.Equals(normalized, AsBuilderLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AsBuilderLatestUrl, Repo = "cadoky/ASBuilder", AssetPrefix = "ASBuilder-" };
+            if (string.Equals(normalized, AzerothHubLatestUrl, StringComparison.OrdinalIgnoreCase))
+                return new GitHubAddonSource { Url = AzerothHubLatestUrl, Repo = "Maidenquinn/AzerothHub", AssetPrefix = "AzerothHub-" };
+            return null;
+        }
+
+        static bool IsSha256(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length != 64) return false;
+            foreach (char c in value) if (!Uri.IsHexDigit(c)) return false;
+            return true;
+        }
+
+        static Dictionary<string, object> ReadGitHubRelease(string apiUrl, bool refresh = false)
+        {
+            return Archive.ReadGitHubReleaseMetadata(apiUrl, refresh);
+        }
+
+        static GitHubAddonRelease ParseGitHubAddonRelease(Dictionary<string, object> release, GitHubAddonSource source)
+        {
+            if (release == null || string.Equals(Json.Str(release, "draft"), "True", StringComparison.OrdinalIgnoreCase)) return null;
+            string tag = Json.Str(release, "tag_name");
+            if (tag.Length == 0) return null;
+            string version = tag.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? tag.Substring(1) : tag;
+            string assetName = source.FixedAssetName ? source.AssetPrefix : source.AssetPrefix + version + ".zip";
+            string taggedAssetName = source.FixedAssetName ? assetName : source.AssetPrefix + tag + ".zip";
+            string assetUrl = "", digest = "";
+            foreach (object value in Json.AsList(Json.Get(release, "assets")) ?? new List<object>())
+            {
+                Dictionary<string, object> asset = Json.AsDict(value);
+                string name = Json.Str(asset, "name");
+                if ((!string.Equals(name, assetName, StringComparison.OrdinalIgnoreCase) &&
+                     !string.Equals(name, taggedAssetName, StringComparison.OrdinalIgnoreCase)) ||
+                    !name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) continue;
+                assetUrl = Json.Str(asset, "browser_download_url");
+                digest = Json.Str(asset, "digest");
+                break;
+            }
+            if (assetUrl.Length == 0) return null;
+            string sha = digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest.Substring(7) : "";
+            if (!IsSha256(sha)) sha = "";
+            DateTime published;
+            if (!DateTime.TryParse(Json.Str(release, "published_at"), CultureInfo.InvariantCulture,
+                                   DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out published))
+                published = DateTime.MinValue;
+            return new GitHubAddonRelease { Tag = tag, Url = assetUrl, Sha256 = sha, PublishedAt = published };
+        }
+
+        static GitHubAddonRelease ResolveGitHubAddonRelease(string url, bool refresh = false)
+        {
+            GitHubAddonSource source = GitHubAddonSourceFor(url);
+            if (source == null) throw new UserError("This add-on is not configured for direct GitHub release updates.");
+            // Use /releases/latest for stable releases. If the project has no stable release,
+            // choose the newest published release that
+            // contains this add-on's expected ZIP. The asset's GitHub-published digest is required.
             try
             {
-                foreach (var e in Data.Addons)
-                    if (AddonFoldersOf(e.Name).Count > 0 && AddonHasUpdate(e)) todo.Add(e);
-            }
-            catch (Exception) { return; }
-            if (todo.Count == 0) return;
-            autoAddonsBusy = true;
-            int i = 0;
-            Action next = null;
-            next = delegate
-            {
-                if (i >= todo.Count || GameRunningFlag || Util.GameRunning() || SyncBusy)
+                GitHubAddonRelease stable = ParseGitHubAddonRelease(ReadGitHubRelease(
+                    "https://api.github.com/repos/" + source.Repo + "/releases/latest", refresh), source);
+                if (stable == null) throw new UserError("The latest " + source.Repo + " release has no matching addon ZIP. Its package name may have changed; no older release was substituted.");
+                if (stable != null)
                 {
-                    autoAddonsBusy = false;
-                    if (i > 0) SetStatus(Lang.F("Addons updated: {0}.", i));
-                    return;
+                    if (!IsSha256(stable.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
+                    return stable;
                 }
-                var e = todo[i++];
-                SyncLog("Updating the " + e.Name + " addon (a newer copy is on GitHub) ...", Level.Info);
-                DownloadAddon(e.Name, e.Url, next, true);
-            };
-            next();
+            }
+            catch (UserError e)
+            {
+                if (e.Message.IndexOf("error 404", StringComparison.OrdinalIgnoreCase) < 0) throw;
+            }
+
+            string text;
+            using (var resp = Net.Open("https://api.github.com/repos/" + source.Repo + "/releases?per_page=100",
+                                       15000, true, "GitHub", "application/vnd.github+json"))
+            using (var rd = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8)) text = rd.ReadToEnd();
+            GitHubAddonRelease newest = null;
+            foreach (object value in Json.AsList(Json.Parse(text)) ?? new List<object>())
+            {
+                GitHubAddonRelease candidate = ParseGitHubAddonRelease(Json.AsDict(value), source);
+                if (candidate != null && (newest == null || candidate.PublishedAt > newest.PublishedAt)) newest = candidate;
+            }
+            if (newest == null) throw new UserError("GitHub has no published " + source.Repo + " release ZIP matching " + source.AssetPrefix + ".");
+            if (!IsSha256(newest.Sha256)) throw new UserError("GitHub did not publish a SHA-256 digest for the latest " + source.Repo + " release. Nothing was installed.");
+            return newest;
+        }
+
+        GitHubAddonRelease DynamicGitHubRelease(string url)
+        {
+            GitHubAddonRelease release;
+            return dynamicAddonReleases.TryGetValue((url ?? "").TrimEnd('/'), out release) ? release : null;
         }
 
         // true when the copy on GitHub is newer than the one installed
         bool AddonHasUpdate(AddonEntry it)
         {
+            if (it.WorkInProgress || addonUpdateProblems.ContainsKey(it.Name)) return false;
             if (mirrorDates == null || it.Category == Data.MyAddonsCategory || !Net.IsWebAddress(it.Url)) return false;
-            if (AddonPins().ContainsKey(it.Name)) return false;   // rolled back on purpose: left as it is
+            if (AddonSetting(AddonPins(), it.Name) != null) return false;   // rolled back on purpose: left as it is
+            if (IsDynamicGitHubAddonUrl(it.Url))
+            {
+                string sourceUrl = (it.Url ?? "").TrimEnd('/');
+                if (!dynamicAddonReleaseChecked.Contains(sourceUrl)) return false;
+                GitHubAddonRelease currentRelease = DynamicGitHubRelease(it.Url);
+                if (currentRelease == null) return true;  // keep a manual UPDATE available if the startup check failed
+                string installedRelease = Convert.ToString(AddonSetting(AddonInstalledRelease(), it.Name), CultureInfo.InvariantCulture);
+                // An older mirrored install has no release identity yet, so move it to the current upstream asset once.
+                return !string.Equals(installedRelease, currentRelease.Identity, StringComparison.OrdinalIgnoreCase);
+            }
             string file = Uri.UnescapeDataString(it.Url.Substring(it.Url.LastIndexOf('/') + 1));
             DateTime up;
             if (!mirrorDates.TryGetValue(file, out up)) return false;
             DateTime installed = DateTime.MinValue;
-            string rec = Json.Str(AddonInstalledAt(), it.Name);
+            string rec = Convert.ToString(AddonSetting(AddonInstalledAt(), it.Name), System.Globalization.CultureInfo.InvariantCulture);
             if (!DateTime.TryParse(rec, System.Globalization.CultureInfo.InvariantCulture,
                                    System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out installed))
             {
@@ -2261,7 +2325,9 @@ namespace AzerothLauncher
                     catch (Exception) { }
                 if (installed == DateTime.MinValue) return false;
             }
-            return up > installed.AddMinutes(1);
+            string identity = MirrorAddonIdentity(it);
+            string installedIdentity = Convert.ToString(AddonSetting(AddonInstalledRelease(), it.Name), CultureInfo.InvariantCulture);
+            return identity.Length > 0 ? !string.Equals(identity, installedIdentity, StringComparison.Ordinal) : up > installed.AddMinutes(1);
         }
 
         void AddonsDownloadView(int top)
@@ -2276,15 +2342,6 @@ namespace AzerothLauncher
                 if (a.Category == Data.AddonCategories[cat]) items.Add(a);
             items.Sort(delegate(AddonEntry a, AddonEntry b) { return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase); });   // A to Z
             int y0 = 4;
-            if (Data.AddonCategories[cat] == Data.UiCategory)
-            {
-                var pick = UI.Text("Most interfaces overlap. Survivor UI and SurvivorUI Classic are bundled and toggle together; use their in-game chooser to pick one. Other known conflicts switch off when you enable an interface.",
-                                   9, FontStyle.Italic, Theme.GoldDim, listbg, sp.ClientSize.Width - 24);
-                pick.Size = VStack.Measure(pick);
-                pick.Location = new Point(10, 6);
-                sp.Controls.Add(pick);
-                y0 = pick.Bottom + 6;
-            }
             if (Data.AddonCategories[cat] == Data.MyAddonsCategory)
             {
                 var hint = UI.Text("Put addon .zip files in the My Addons folder; they stay on this PC.", 9, FontStyle.Italic,
@@ -2297,6 +2354,43 @@ namespace AzerothLauncher
                 sp.Controls.Add(open);
                 y0 = Math.Max(hint.Bottom, open.Bottom) + 8;
             }
+            string forgeCopy = "SurvivorsForge helps provide addon pictures and shares its addon expertise.\n" +
+                "Visit the SurvivorsForge website to discover even more addons than the ones listed here.";
+            var trust = new LinkLabel();
+            trust.Text = forgeCopy;
+            trust.Font = Theme.F(9, FontStyle.Regular);
+            trust.ForeColor = Theme.Text;
+            trust.LinkColor = Theme.Gold;
+            trust.ActiveLinkColor = Theme.Gold;
+            trust.VisitedLinkColor = Theme.GoldDim;
+            trust.LinkBehavior = LinkBehavior.HoverUnderline;
+            trust.BackColor = listbg;
+            trust.AutoSize = false;
+            trust.TextAlign = ContentAlignment.TopLeft;
+            trust.Size = new Size(Math.Max(80, sp.ClientSize.Width - 20),
+                TextRenderer.MeasureText(forgeCopy, trust.Font, new Size(Math.Max(80, sp.ClientSize.Width - 20), 1000),
+                    TextFormatFlags.WordBreak | TextFormatFlags.NoPadding).Height + 4);
+            int sfStart = forgeCopy.IndexOf("SurvivorsForge website", StringComparison.Ordinal);
+            if (sfStart >= 0) trust.Links.Add(sfStart, "SurvivorsForge website".Length, "https://rezondes.github.io/SurvivorsForge/");
+            trust.LinkClicked += delegate(object sender, LinkLabelLinkClickedEventArgs e)
+            {
+                string target = e.Link.LinkData as string;
+                if (!string.IsNullOrEmpty(target)) Util.OpenInShell(target);
+            };
+            trust.Location = new Point(10, y0 + 4);
+            sp.Controls.Add(trust);
+            int ruleY = trust.Bottom + 7;
+            var rule = UI.Line(Theme.Bad, Math.Max(40, sp.ClientSize.Width - 20), 2);
+            rule.Location = new Point(10, ruleY);
+            sp.Controls.Add(rule);
+            y0 = rule.Bottom + 9;
+
+            // Pull provider details only while a download category is open; the seven-day cache prevents view changes
+            // from becoming extra API refreshes. Rebuild after the bounded fetch so eligible artwork can appear.
+            SurvivorsForge.PrepareDownloadPage(items, delegate
+            {
+                if (!IsDisposed && current == "Addons" && addonMode == "download") BuildPanel("Addons");
+            });
             if (items.Count == 0)
             {
                 var l = UI.Text("No downloadable addons listed yet.",
@@ -2316,7 +2410,7 @@ namespace AzerothLauncher
 
         void AddonCards(ScrollPanel sp, List<AddonEntry> items, int w, int y, Color listbg)
         {
-            const int gap = 6, cols = 4;
+            int gap = Theme.Px(6), cols = Math.Max(1, Math.Min(4, w / Theme.Px(155)));
             int cw = (w - gap * (cols - 1)) / cols, textW = cw - 2 - 14;
             int bw = (int)((cw - 2 - 16) / Theme.Zoom);       // the block's button runs along its bottom
             var heights = new List<int>();
@@ -2331,17 +2425,73 @@ namespace AzerothLauncher
                 card.Controls.Add(inner);
                 bool haveIt = AddonFoldersOf(it.Name).Count > 0;
                 bool update = haveIt && AddonHasUpdate(it);
-                var btn = update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
+                ForgeAddonInfo forge = SurvivorsForge.GetInfo(it);
+                // The seal means this catalog entry was manually reviewed once. Keep that
+                // decision in the shipped catalog; do not infer it from rolling API status.
+                Image watermark = it.ForgeVerified ? SurvivorsForge.LoadWatermark(forge) : null;
+                bool verified = it.ForgeVerified;
+                var btn = it.WorkInProgress ? new WowButton("Work in Progress", delegate { }, bw, 30, 9)
+                        : update ? new WowButton("UPDATE", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
+                if (it.WorkInProgress) btn.Enabled = false;
                 if (update) btn.Selected = true;
                 if (btn.Width > cw - 14) btn.Width = cw - 14;  // never wider than its block
                 int ty = 6;
-                var name = UI.Text(it.Name, 9.5f, FontStyle.Bold, Theme.Gold, listbg, textW, false);
+                var badge = verified ? UI.Text("Verified", 7.5f, FontStyle.Italic, Theme.Good,
+                    listbg, Theme.Px(50), false) : null;
+                if (badge != null) badge.Size = VStack.Measure(badge);
+                int nameWidth = watermark == null ? textW : Math.Max(30,
+                    textW - Theme.Px(16) - (badge == null ? 0 : badge.Width + Theme.Px(4)) - Theme.Px(6));
+                var name = UI.Text(it.Name, 9.5f, FontStyle.Bold, Theme.Gold, listbg, nameWidth, false);
                 name.Size = VStack.Measure(name);
                 name.Location = new Point(7, ty);
+                if (watermark != null)
+                {
+                    var forgeMark = new PictureBox();
+                    forgeMark.Image = watermark;
+                    forgeMark.SizeMode = PictureBoxSizeMode.Zoom;
+                    forgeMark.BackColor = listbg;
+                    int logoBadgeGap = Theme.Px(2);
+                    int groupWidth = Theme.Px(16) + (badge == null ? 0 : badge.Width + logoBadgeGap);
+                    int groupLeft = cw - Theme.Px(7) - groupWidth;
+                    forgeMark.Bounds = new Rectangle(groupLeft, ty, Theme.Px(16), Theme.Px(16));
+                    forgeMark.Disposed += delegate { try { watermark.Dispose(); } catch (Exception) { } };
+                    inner.Controls.Add(forgeMark);
+                    if (badge != null)
+                    {
+                        badge.Location = new Point(forgeMark.Right + logoBadgeGap, ty + Math.Max(0, (forgeMark.Height - badge.Height) / 2));
+                        inner.Controls.Add(badge);
+                    }
+                }
+                if (SurvivorsForge.HasGalleryImages(forge))
+                {
+                    name.Cursor = Cursors.Hand;
+                    name.MouseEnter += delegate
+                    {
+                        if (!GuideHover.CanShow(name)) return;
+                        List<Image> gallery = SurvivorsForge.LoadGalleryImages(forge);
+                        try { GuideHover.ShowGallery(name, it.Name, "Click to browse addon pictures.", gallery, false); }
+                        finally { foreach (Image image in gallery) try { image.Dispose(); } catch (Exception) { } }
+                    };
+                    name.MouseLeave += delegate { GuideHover.Hide(name); };
+                    name.MouseClick += delegate(object sender, MouseEventArgs e)
+                    {
+                        if (e.Button != MouseButtons.Left || !GuideHover.CanShow(name)) return;
+                        List<Image> gallery = SurvivorsForge.LoadGalleryImages(forge);
+                        string sourceText = forge.HasSourceScreenshots ? "Screenshots from SurvivorsForge." : "Provided addon screenshots.";
+                        try { GuideHover.ShowGallery(name, it.Name, sourceText, gallery, true); }
+                        finally { foreach (Image image in gallery) try { image.Dispose(); } catch (Exception) { } }
+                    };
+                }
                 inner.Controls.Add(name);
                 ty += name.Height + 1;
+                if (verified && watermark == null && badge != null)
+                {
+                    badge.Location = new Point(7, ty);
+                    inner.Controls.Add(badge);
+                    ty += badge.Height + 2;
+                }
                 if (it.Description.Length > 0)
                 {
                     // a short line on the block; the whole description when the pointer rests on it
@@ -2351,11 +2501,18 @@ namespace AzerothLauncher
                     if (shortDesc.Length > 64) shortDesc = shortDesc.Substring(0, 62).TrimEnd() + "…";
                     var d = UI.Text(shortDesc, 7.5f, FontStyle.Regular, Theme.Text, listbg, textW, false);
                     addonTips.SetToolTip(d, Lang.T(it.Description));
-                    addonTips.SetToolTip(inner, Lang.T(it.Description));
                     d.Size = VStack.Measure(d);
                     d.Location = new Point(7, ty);
                     inner.Controls.Add(d);
                     ty += d.Height;
+                }
+                if (!string.IsNullOrWhiteSpace(it.Note))
+                {
+                    var note = UI.Text(it.Note, 7.5f, FontStyle.Bold, Theme.Gold, listbg, textW, false);
+                    note.Size = VStack.Measure(note);
+                    note.Location = new Point(7, ty + Theme.Px(3));
+                    inner.Controls.Add(note);
+                    ty += note.Height + Theme.Px(3);
                 }
                 if (haveIt)
                 {
@@ -2385,6 +2542,29 @@ namespace AzerothLauncher
                     foreach (Control c in inner.Controls)
                         if ((c.Tag as string) == "installed" && b != null) c.Location = new Point(7, b.Top - c.Height - 2);
                     sp.Controls.Add(card);
+                    if (items[i].WorkInProgress)
+                    {
+                        var tape = new Panel();
+                        tape.Bounds = new Rectangle(0, Math.Max(8, h / 2 - Theme.Px(13)), cw - 2, Theme.Px(26));
+                        tape.Cursor = Cursors.No;
+                        tape.AccessibleName = "Work in Progress";
+                        tape.Paint += delegate(object sender, PaintEventArgs e)
+                        {
+                            Rectangle rct = ((Control)sender).ClientRectangle;
+                            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                            using (var gold = new SolidBrush(Color.FromArgb(238, 194, 119, 34))) e.Graphics.FillRectangle(gold, rct);
+                            using (var dark = new Pen(Color.FromArgb(235, 30, 21, 15), Theme.Px(7)))
+                                for (int x = -rct.Height; x < rct.Width + rct.Height; x += Theme.Px(20))
+                                    e.Graphics.DrawLine(dark, x, rct.Height, x + rct.Height, 0);
+                            Rectangle label = new Rectangle(Theme.Px(4), Theme.Px(3), Math.Max(0, rct.Width - Theme.Px(8)), Math.Max(0, rct.Height - Theme.Px(6)));
+                            using (var backing = new SolidBrush(Color.FromArgb(238, 20, 15, 12))) e.Graphics.FillRectangle(backing, label);
+                            TextRenderer.DrawText(e.Graphics, "Work in Progress", Theme.F(8.5f, FontStyle.Bold), label,
+                                Theme.Gold, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+                        };
+                        inner.Controls.Add(tape);
+                        tape.BringToFront();
+                        addonTips.SetToolTip(tape, "Temporarily unavailable while work is in progress.");
+                    }
                 }
                 y += h + gap;
             }
@@ -2407,11 +2587,49 @@ namespace AzerothLauncher
         // quiet: an automatic update (no message box on a failure; the log says it and the next one goes on)
         void DownloadAddon(string name, string url, Action after = null, bool quiet = false)
         {
-            if (AddonsLocked()) return;
+            if (AddonsLocked()) { if (after != null) after(); return; }
+            AddonEntry catalogEntry = null;
+            foreach (AddonEntry candidate in Data.Addons)
+                if (string.Equals(candidate.Name, name, StringComparison.Ordinal) && string.Equals(candidate.Url, url, StringComparison.Ordinal))
+                {
+                    catalogEntry = candidate;
+                    break;
+                }
+            if (catalogEntry != null && catalogEntry.WorkInProgress)
+            {
+                SetStatus(name + " is temporarily unavailable: work in progress.");
+                if (after != null) after();
+                return;
+            }
+            var conflictingOn = new List<string>();
+            if (catalogEntry != null)
+            {
+                try
+                {
+                    List<KeyValuePair<string, bool>> installed = Addons.Scan(AddonsDir());
+                    foreach (string folder in catalogEntry.Folders)
+                        foreach (var partner in Addons.PartnersOf(AddonsDir(), folder, installed))
+                            foreach (var currentAddon in installed)
+                                if (currentAddon.Key == partner.Key && currentAddon.Value && !conflictingOn.Contains(currentAddon.Key))
+                                    conflictingOn.Add(currentAddon.Key);
+                }
+                catch (Exception) { }
+                if (conflictingOn.Count > 0 && !quiet && Msg.Show(this,
+                    name + " cannot be enabled with " + string.Join(", ", conflictingOn.ToArray()) + ". Install it and switch those addons off?",
+                    "Addon conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            }
             if (addonDlBusy)
             {
                 SetStatus("Another addon is still downloading.");
                 return;
+            }
+            bool keepDisabled = false;
+            var existingFolders = AddonFoldersOf(name);
+            if (existingFolders.Count > 0)
+            {
+                keepDisabled = true;
+                foreach (string folder in existingFolders)
+                    if (Directory.Exists(Path.Combine(AddonsDir(), folder)) && !folder.EndsWith(Addons.DisabledSuffix)) keepDisabled = false;
             }
             addonDlBusy = true;
             SetStatus("Installing " + name + "...");
@@ -2420,13 +2638,27 @@ namespace AzerothLauncher
             {
                 List<string> names = null;
                 string err = null;
+                string installedRelease = null;
+                GitHubAddonRelease resolvedRelease = null;
                 BuiltinAddon builtin = BuiltinAddons.Find(url);
                 try
                 {
                     if (builtin != null) { BuiltinAddons.Install(dir, builtin); names = new List<string> { builtin.Folder }; }
                     else
                     {
-                        names = Archive.InstallAddonZip(url, dir, Net.IsWebAddress(url) ? AddonArchive.NewPath(name) : null);
+                        string downloadUrl = url;
+                        string expectedSha = null;
+                        if (IsDynamicGitHubAddonUrl(url))
+                        {
+                            GitHubAddonRelease release = ResolveGitHubAddonRelease(url);
+                            if (release == null || !IsSha256(release.Sha256))
+                                throw new UserError("The latest GitHub release for " + name + " has no usable SHA-256 digest. Nothing was installed.");
+                            downloadUrl = release.Url;
+                            expectedSha = release.Sha256;
+                            installedRelease = release.Identity;
+                            resolvedRelease = release;
+                        }
+                        names = InstallAddonUpdateSafely(downloadUrl, dir, Net.IsWebAddress(downloadUrl) ? AddonArchive.NewPath(name) : null, expectedSha, existingFolders, keepDisabled, delegate {return !GameRunningFlag && !Util.GameRunning() && !SyncBusy;});
                         AddonArchive.Tidy(name);              // kept for ROLLBACK (Addons › Advanced)
                     }
                 }
@@ -2434,17 +2666,49 @@ namespace AzerothLauncher
                 Ui(delegate
                 {
                     addonDlBusy = false;
+                    addonLastResults[name] = err;
+                    if (err == null) addonUpdateProblems.Remove(name); else addonUpdateProblems[name] = err;
                     SetStatus(err == null ? name + " installed." : name + " failed.");
                     if (err == null)
                     {
+
+                        var switchedOff = new List<string>();
+                        if (catalogEntry != null && !keepDisabled)
+                        {
+                            foreach (string folder in catalogEntry.Folders)
+                                try
+                                {
+                                    foreach (string off in Addons.SwitchOffPartners(AddonsDir(), folder))
+                                        if (!switchedOff.Contains(off)) switchedOff.Add(off);
+                                }
+                                catch (Exception) { }
+                            try
+                            {
+                                foreach (string off in Addons.EnforceConflicts(AddonsDir()))
+                                    if (!switchedOff.Contains(off)) switchedOff.Add(off);
+                            }
+                            catch (Exception) { }
+                        }
                         var rec = new List<object>();
                         foreach (string n in names) rec.Add(n);
                         AddonInstalls()[name] = rec;
                         AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
+                        if (string.IsNullOrEmpty(installedRelease) && catalogEntry != null) installedRelease = MirrorAddonIdentity(catalogEntry);
+                        if (!string.IsNullOrEmpty(installedRelease)) AddonInstalledRelease()[name] = installedRelease;
+
+                        if (resolvedRelease != null)
+                        {
+                            string releaseUrl = (url ?? "").TrimEnd('/');
+                            dynamicAddonReleases[releaseUrl] = resolvedRelease;
+                            dynamicAddonReleaseChecked.Add(releaseUrl);
+                        }
                         AddonPins().Remove(name);            // the newest copy: no longer [Outdated]
+                        ClearLegacyAddonSettings(name);
                         Cfg.Save();
-                        if (after != null) try { after(); } catch (Exception) { }
                         if (current == "Addons" || current == "Stats") BuildPanel(current);
+                        if (switchedOff.Count > 0)
+                            SetStatus(name + " installed. " + string.Join(", ", switchedOff.ToArray()) + " switched off because they conflict.");
+                        if (after != null) after();
                     }
                     else if (quiet)
                     {
@@ -2487,6 +2751,8 @@ namespace AzerothLauncher
             }
             AddonInstalls().Remove(name);
             AddonInstalledAt().Remove(name);
+            AddonInstalledRelease().Remove(name);
+            ClearLegacyAddonSettings(name);
             Cfg.Save();
             SetStatus(removed.Count > 0 ? name + " uninstalled." : name + " was not installed.");
             if (current == "Addons") BuildPanel("Addons");
@@ -2517,7 +2783,7 @@ namespace AzerothLauncher
             foreach (var kv in new List<KeyValuePair<string, object>>(AddonInstalls()))
             {
                 var l = Json.AsList(kv.Value);
-                if (l != null && (l.Contains(folder) || all.Exists(delegate(string x) { return l.Contains(x); }))) { AddonInstalls().Remove(kv.Key); AddonInstalledAt().Remove(kv.Key); }
+                if (l != null && (l.Contains(folder) || all.Exists(delegate(string x) { return l.Contains(x); }))) { AddonInstalls().Remove(kv.Key); AddonInstalledAt().Remove(kv.Key); AddonInstalledRelease().Remove(kv.Key); }
             }
             Cfg.Save();
             SetStatus(folder + " uninstalled.");
@@ -2550,7 +2816,7 @@ namespace AzerothLauncher
             if (!Directory.Exists(dir))
             {
                 PutText("No AddOns folder found.\nSet the game config folder in Options\n(the benilla-config folder).", 12,
-                        FontStyle.Regular, Theme.Text, 20, top, 0);
+                        FontStyle.Regular, Theme.Text, 20, top, PW-40);
                 return;
             }
             List<KeyValuePair<string, bool>> addons;
@@ -2569,11 +2835,17 @@ namespace AzerothLauncher
             // Advanced settings are a replacement for the basic right-hand submenu, not an extra layer over it.
             // Keeping both sets of controls visible made the profile stack run into DOWNLOAD MORE / REFRESH /
             // TOGGLE ALL on shorter windows. The left addon list stays visible in either mode.
-            int cx = PW - 20 - (int)(190 * Theme.Zoom);
+            int cx = PW - 20 - (int)(190 * Theme.Zoom) - Theme.Px(12);
             bool advanced = Cfg.Bool("addons_advanced", false);
             if (askUninstallName != null || askUninstallFolder != null) AddonsUninstallAsk(cx, top);
             else if (rollbackOpen) AddonsRollbackPanel(cx, top);
             else {
+            int columnX=cx, columnTop=top, columnBottom=bottom;
+            var actions=MakeThinScroll(panel,new Rectangle(cx,top,PW-cx-12,bottom-top),Theme.Panel,Theme.Bronze,Theme.GoldDim,Theme.Gold);
+            Control previousPut=putInto; putInto=actions;
+            cx=1; top=4; bottom=Math.Max(actions.ClientSize.Height,Theme.Px(advanced?300:170));
+            try
+            {
             var profiles = Cfg.Section("addon_profiles");
             int py = bottom;
             string active = ActiveAddonProfile();
@@ -2582,13 +2854,13 @@ namespace AzerothLauncher
                 // Advanced profile controls are anchored separately at the bottom.
                 var more = Put(new WowButton("DOWNLOAD MORE ›", delegate { SetAddonMode("download"); }, 190, 32, 10), cx, top);
                 int rtop = BottomOf(more) + 6;
-                var refresh = Put(new WowButton("REFRESH", delegate { BuildPanel("Addons"); }, 92, 28, 9), cx, rtop);
+                var refresh = Put(new WowButton("REFRESH", delegate { CheckAddonUpdates(null, false); }, 92, 28, 9), cx, rtop);
                 Put(new WowButton("FOLDER", delegate { Util.OpenInShell(dir); }, 92, 28, 9), cx + (int)(98 * Theme.Zoom), rtop);
                 var toggle = Put(new WowButton("TOGGLE ALL", ToggleAllAddons, 190, 34, 11), cx, BottomOf(refresh) + 6);
                 addonCount = UI.Text("", 10, FontStyle.Italic, Theme.GoldDim, Theme.Panel, 0);
                 addonCount.AutoSize = false;
                 addonCount.TextAlign = ContentAlignment.TopCenter;
-                addonCount.Bounds = new Rectangle(cx, BottomOf(toggle) + 2, toggle.Width, 20);
+                addonCount.Bounds = new Rectangle(cx, BottomOf(toggle) + 2, toggle.Width, Math.Max(20,addonCount.Font.Height+2));
                 Put(addonCount, cx, BottomOf(toggle) + 2);
             }
             // The basic view has one bottom button; the advanced view replaces it with profile controls and rollback.
@@ -2635,7 +2907,7 @@ namespace AzerothLauncher
                 var head = custom.Length > 0 ? UI.Text(custom, 11, FontStyle.Bold, Theme.Gold, Theme.Panel, 0, false)
                                              : UI.Text(s == "none" ? "No profile [Recommended]" : "Profile " + s, 11, FontStyle.Bold, Theme.Gold, Theme.Panel, 0);
                 head.Size = VStack.Measure(head);
-                if (head.Width > (int)(160 * Theme.Zoom)) { head.AutoSize = false; head.AutoEllipsis = true; head.Width = (int)(160 * Theme.Zoom); }
+                if (head.Width > (int)(160 * Theme.Zoom)) { head.MaximumSize=new Size((int)(160*Theme.Zoom),0); head.Size=VStack.Measure(head); }
                 py -= head.Height;
                 Put(head, cx, py);
                 if (s != "none")
@@ -2645,6 +2917,7 @@ namespace AzerothLauncher
                     rt.SetToolTip(head, Lang.T("Click to give this profile a name of your own."));
                     head.Disposed += delegate { rt.Dispose(); };
                     Label hl = head;
+                    float profileZoom=Theme.Zoom;
                     head.Click += delegate
                     {
                         var box = new TextBox();
@@ -2654,7 +2927,7 @@ namespace AzerothLauncher
                         box.BackColor = Theme.Ink;
                         box.ForeColor = Theme.Gold;
                         box.BorderStyle = BorderStyle.FixedSingle;
-                        box.Bounds = new Rectangle(hl.Left, hl.Top - 2, (int)(160 * Theme.Zoom), hl.Height + 4);
+                        box.Bounds = new Rectangle(hl.Left, hl.Top - 2, (int)(160 * profileZoom), hl.Height + 4);
                         hl.Parent.Controls.Add(box);
                         box.BringToFront();
                         box.Focus();
@@ -2695,6 +2968,8 @@ namespace AzerothLauncher
                 py -= 3;
             }
             }
+            finally { putInto=previousPut; cx=columnX; top=columnTop; bottom=columnBottom; }
+            }
             // --- left: scrollable list with one switch per addon ---
             Color listbg = Theme.Ink;
             var sp = MakeScroll(panel, new Rectangle(20, top, cx - 14 - 20, bottom - top), listbg, Theme.Bronze);
@@ -2707,6 +2982,11 @@ namespace AzerothLauncher
             }
             int w = sp.ClientSize.Width - 4 - 12;
             int y = 2;
+            var updateAll = new WowButton("UPDATE ALL", delegate { CheckAddonUpdates(null, true); }, 105, 24, 8);
+            updateAll.Location = new Point(Math.Max(6, sp.ClientSize.Width - updateAll.Width - 10), 2);
+            updateAll.Grayed = addonDlBusy || autoAddonsBusy || mirrorAsking;
+            sp.Controls.Add(updateAll);
+            AskMirrorDates();
             // grouped like Download More: AZS addons, WoW 1.12 addons, My Addons, then any other folder
             var cats = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var e in Data.Addons)
@@ -2773,14 +3053,16 @@ namespace AzerothLauncher
                     rule.BackColor = Theme.GoldDim;
                     rule.Bounds = new Rectangle(6, hd.Bottom + 1, w - 4, 1);
                     sp.Controls.Add(rule);
-                    y = rule.Bottom + 4;
+                    y = Math.Max(rule.Bottom + 4, updateAll.Bottom + Theme.Px(3));
                 }
                 string label = shownName[name];
                 if (pinnedFolders.Contains(name)) label += "  " + Lang.T("[Outdated]");   // rolled back on purpose (ROLLBACK)
                 var cb = UI.Check(label, a.Value, a.Value ? Theme.Text : Theme.GoldDim, listbg, 11, false);
                 cb.AutoSize = false;
-                Size need = TextRenderer.MeasureText(label, cb.Font, new Size(w - 24 - linkW, 0), TextFormatFlags.WordBreak);
-                cb.Bounds = new Rectangle(6, y, w - 34 - linkW, Math.Max(22, need.Height + 4));     // long names wrap
+                int rowWidth=Math.Max(30,w-Theme.Px(108)-linkW);
+                int checkboxTextWidth=Math.Max(1,rowWidth-(cb.Font.Height-2)-8);
+                Size need=TextRenderer.MeasureText(label,cb.Font,new Size(checkboxTextWidth,int.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.NoPrefix);
+                cb.Bounds=new Rectangle(6,y,rowWidth,Math.Max(22,need.Height+4));
                 rowBox[name] = cb.Bounds;
                 cb.CheckedChanged += delegate { OnAddonToggle(name); };
                 sp.Controls.Add(cb);
@@ -2788,6 +3070,13 @@ namespace AzerothLauncher
                 var del = new WowButton("X", delegate { UninstallFolder(name); }, 26, 22, 9);
                 del.Location = new Point(6 + w - 30, y + (cb.Height - del.Height) / 2);
                 sp.Controls.Add(del);
+                AddonEntry updateEntry = CatalogAddonForFolder(name);
+                var update = new WowButton("UPDATE", delegate { CheckAddonUpdates(updateEntry, true); }, 66, 22, 8);
+                update.Location = new Point(del.Left - update.Width - Theme.Px(4), del.Top);
+                update.Grayed = updateEntry == null || updateEntry.WorkInProgress || addonDlBusy || autoAddonsBusy || mirrorAsking;
+                update.GrayedTip = updateEntry == null ? "No managed release source is known for this addon." : "Updates are unavailable while another operation is running or the addon is work in progress.";
+                update.Tip = "Check this addon's release source and install an available update.";
+                sp.Controls.Add(update);
                 addonRows[name] = cb;
                 y += cb.Height + 1;
             }
@@ -2799,7 +3088,7 @@ namespace AzerothLauncher
                 link.BackColor = listbg;
                 int need = link.WordHeight(), mid = (y1 + y2) / 2;
                 int lt = Math.Max(0, Math.Min(y1 - 1, mid - need / 2)), lb = Math.Max(y2 + 2, mid + need / 2);
-                link.Bounds = new Rectangle(6 + w - 34 - linkW + i * 20, lt, 20, lb - lt);
+                link.Bounds = new Rectangle(6 + w - Theme.Px(108) - linkW + i * 20, lt, 20, lb - lt);
                 link.Tick1 = y1 - lt;
                 link.Tick2 = y2 - lt;
                 WowButton.Tips.SetToolTip(link, pairs[i].Key + " / " + pairs[i].Value + ": " +
@@ -2871,7 +3160,7 @@ namespace AzerothLauncher
             }
             cb.ForeColor = want ? Theme.Text : Theme.GoldDim;
             UpdateAddonCount();
-            RefreshGates();                                  // the Stats buttons follow AZS Stats
+            RefreshGates();                                  // the Stats buttons follow the enabled stats add-on
             if (!want && conflicted != null && conflicted.Contains(name))
             {
                 BuildPanel("Addons");                        // the conflict is settled: the rows go back in A to Z order
@@ -2905,10 +3194,28 @@ namespace AzerothLauncher
             foreach (var a in addons) if (!a.Value) allOn = false;
             bool target = !allOn;                            // all on -> switch all off, otherwise all on
             var errors = new List<string>();
-            foreach (var a in addons)
-                if (a.Value != target)
-                    try { Addons.SetEnabled(d, a.Key, target); }
-                    catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
+            if (target)
+            {
+                // Toggle All still honors incompatibilities: turn candidates on in order,
+                // switch their conflicting partner off, then keep each pair's preferred member.
+                foreach (var a in addons)
+                    if (!a.Value)
+                        try
+                        {
+                            Addons.SetEnabled(d, a.Key, true);
+                            Addons.SwitchOffPartners(d, a.Key);
+                        }
+                        catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
+                try { Addons.EnforceConflicts(d); }
+                catch (Exception e) { errors.Add("Conflicting addons: " + e.Message); }
+            }
+            else
+            {
+                foreach (var a in addons)
+                    if (a.Value)
+                        try { Addons.SetEnabled(d, a.Key, false); }
+                        catch (Exception e) { errors.Add(a.Key + ": " + e.Message); }
+            }
             SetStatus("All addons " + (target ? "enabled." : "disabled."));
             BuildPanel("Addons");
             if (errors.Count > 0)
@@ -3392,17 +3699,26 @@ namespace AzerothLauncher
             return string.Equals(a.Trim(), b.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
-        // the play time AZS Stats counts (at the end of LAUNCHER)
+        // Time tracking provided by the selected stats source.
         int OptionsPlayTime(int PW, int y)
         {
             var head = PutText("Play time", 11, FontStyle.Bold, Theme.Gold, 20, y, 0);
+            RunStats data = AddonStats();
+            if (data != null && data.Source == "Azeroth Stats")
+            {
+                string text = data.Total.Runs > 0
+                    ? "Time in recorded runs: " + Duration((long)data.Total.Time) + " across " + Big(data.Total.Runs) + " runs. Azeroth Stats does not count time spent in menus."
+                    : "Azeroth Stats records time spent in runs, not time spent in menus. Finish a run to begin recording it.";
+                var label = PutText(text, 10, FontStyle.Regular, Theme.Text, 20, BottomOf(head) + 2, PW - 40);
+                return BottomOf(label);
+            }
             PlayStats ps = ShownPlayStats();
             long sessions = ps.Sessions;
             string stats = sessions == 0
-                ? (Stats.AddonInstalled(AddonsDir()) ? "No play time counted yet. AZS Stats counts it while the game runs."
-                                                      : "Play time is counted in game by the AZS Stats addon. Install it on the STATS page.")
+                ? (Stats.AddonInstalled(AddonsDir()) ? "No session play time counted yet."
+                                                      : "Install Azeroth Stats to record run and build information.")
                 : "Total: " + Duration(ps.Seconds) + " over " + Util.Plural((int)sessions, "session") + "\n" +
-                  "Counted in game by AZS Stats; cloud saving carries it to your other PCs.";
+                  "Session time retained from the legacy stats file; cloud saving carries addon settings between PCs.";
             var statsLabel = PutText(stats, 10, FontStyle.Regular, Theme.Text, 20, BottomOf(head) + 2, PW - 40);
             return BottomOf(statsLabel);
         }
@@ -3435,10 +3751,31 @@ namespace AzerothLauncher
                 y = Math.Max(BottomOf(b), BottomOf(t)) + 8;
             };
             // Closing the launcher exits it; it stays visible while the game runs and has no tray/minimize-on-play mode.
-            y = OptionCheck("Show the Stats section (your play time and run records)", StatsEnabled(), y,
+            y = OptionCheck("Show the Stats section (run records and available play time)", StatsEnabled(), y,
                             delegate(bool on) { SetStatsEnabled(on); });
             y = OptionCheck("Show play time on the home screen", Cfg.Bool("home_playtime", true), y,
                             delegate(bool on) { Cfg.Set("home_playtime", on); Cfg.Save(); Invalidate(); });
+            y += Theme.Px(6);
+            var scaleTitle = PutText("Interface size", 10, FontStyle.Bold, Theme.Gold, 20, y, PW-40);
+            y=BottomOf(scaleTitle)+Theme.Px(4);
+            var scaleNote=PutText(displayLayout.RequestedScale>displayLayout.Scale+.01f
+                ? "Size is limited to fit this display. Choose a smaller size for more room."
+                : "Auto follows your monitor. Choose a size to adjust it without changing Windows settings.",9,
+                FontStyle.Italic,Theme.GoldDim,20,y,PW-40);
+            y=BottomOf(scaleNote)+Theme.Px(6);
+            int scaleX=20, scaleHeight=Theme.Px(27), scaleGap=Theme.Px(5);
+            foreach(float choice in new[]{0f,.8f,.9f,1f,1.1f,1.25f,1.5f,1.6f})
+            {
+                float selectedScale=choice;
+                int buttonWidth=Theme.Px(choice==0?60:48);
+                if(scaleX+buttonWidth>PW-20) { scaleX=20; y+=scaleHeight+scaleGap; }
+                var sizeButton=new WowButton(choice==0?"AUTO":(choice*100).ToString("0")+"%",delegate{SetInterfaceScale(selectedScale);},60,27,8);
+                sizeButton.Bounds=new Rectangle(scaleX,y,buttonWidth,scaleHeight);
+                sizeButton.Selected=Math.Abs(ReadInterfaceScale()-choice)<.001f;
+                Put(sizeButton,scaleX,y);
+                scaleX+=buttonWidth+scaleGap;
+            }
+            y+=scaleHeight+Theme.Px(10);
             // Launcher is the end of the path (Options › Launcher): everything it holds is on this page, nothing opens a
             // step of its own. The language is picked from a list under its button; About is written out at the bottom.
             string langName = Lang.Code;

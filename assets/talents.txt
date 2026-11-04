@@ -229,19 +229,19 @@ storm_reach | Storm Reach | Spell_Nature_StormReach | 5 | 0 | 2 | Chain Lightnin
 elemental_devastation | Elemental Devastation | Spell_Fire_ElementalDevastation | 5 | 2 | 3 | Increases your critical strike damage by {v}%.
 elemental_mastery | Elemental Mastery | Spell_Nature_WispHeal | 6 | 1 | 1 | Capstone. You start every run with Chain Lightning, and a second Chain Lightning casts itself every 3 sec.
 @tree Shaman | Enhancement
-ancestral_knowledge | Ancestral Knowledge | Spell_Shadow_GrimWard | 0 | 1 | 5 | Increases your maximum health by {v}%.
-shield_spec_shaman | Shield Specialization | INV_Shield_06 | 0 | 2 | 5 | Reduces all damage taken by {v}%.
-guardian_totems | Guardian Totems | Spell_Nature_StoneSkinTotem | 1 | 0 | 2 | Your totems last {v}% longer.
-thundering_strikes | Thundering Strikes | Ability_ThunderBolt | 1 | 2 | 5 | Increases your critical strike chance by {v}%.
-windfury | Windfury | Spell_Nature_Cyclone | 2 | 1 | 1 | Milestone. Your Lightning Bolts, Earth Shocks and Frost Shocks have a {v}% chance to strike twice more at once.
-two_hand_shaman | Improved Lightning Bolt | Spell_Nature_Lightning | 2 | 2 | 5 | Lightning Bolt deals {v}% more damage.
-elemental_weapons | Elemental Weapons | Spell_Fire_FlameTounge | 3 | 0 | 3 | Flame Shock and Frost Shock deal {v}% more damage.
-anticipation_shaman | Anticipation | Spell_Nature_MirrorImage | 3 | 2 | 3 | Reduces all damage taken by {v}%.
-maelstrom | Maelstrom Weapon | Spell_Lightning_LightningBolt01 | 4 | 1 | 1 | Milestone. Every {v}th spell you cast is followed by a free Chain Lightning.
-enhancing_totems | Enhancing Totems | Spell_Nature_EarthBindTotem | 4 | 2 | 3 | Your totems deal {v}% more damage.
-flurry_shaman | Flurry | Ability_GhoulFrenzy | 5 | 0 | 3 | A critical strike sends you into a flurry: cooldowns recover {v}% faster for 5 sec.
-parry_shaman | Parry | Ability_Parry | 5 | 2 | 3 | Increases all damage by {v}%.
-stormstrike | Feral Spirit | Spell_Nature_SpiritWolf | 6 | 1 | 1 | Capstone. Two spirit wolves fight beside you, and their bites carry Windfury: a {v}% chance to strike twice more at once.
+enh_thundering_strikes | Thundering Strikes | Ability_ThunderBolt | 0 | 1 | 5 | Rockbiter and Stormstrike gain +{v}% critical chance.
+enh_earthen_bulwark | Stormguard | Spell_Nature_LightningShield | 0 | 2 | 5 | While Lightning Shield is active, you take {v}% less damage.
+enh_resonant_shocks | Resonant Shocks | Spell_Nature_EarthShock | 1 | 0 | 3 | Your Shocks strike {v} additional nearby enemies for 35% damage.
+enh_shattering_elements | Shattering Elements | Spell_Frost_FrostShock | 1 | 2 | 3 | Your next different Shock within 6 sec deals +{v}% damage.
+rockbiter_initiation | Rockbiter Initiation | Spell_Nature_RockBiter | 2 | 1 | 1 | Milestone. Start each run with Rockbiter Weapon instead of Lightning Bolt.
+enh_windfury_weapon | Windfury Weapon | Spell_Nature_Cyclone | 2 | 2 | 3 | Rockbiter and Stormstrike have a {v}% chance to strike two additional times.
+enh_flametongue_weapon | Flametongue Weapon | Spell_Fire_FlameTounge | 3 | 0 | 3 | Rockbiter Weapon has a {v}% chance to cast a free Fire Nova, dealing {v2}% increased damage.
+enh_frostbrand_weapon | Frostbrand Weapon | Spell_Frost_FrostBrand | 3 | 2 | 3 | Stormstrike has a {v}% chance to cast a free Frost Shock against up to 3 enemies.
+enh_unleashed_weapons | Elemental Sunder | Ability_Warrior_Sunder | 4 | 1 | 1 | Milestone. Rockbiter Weapon and Stormstrike cause enemies they hit to take 10% increased Fire and Nature damage for 4 sec.
+enh_ancestral_fortitude | Ancestral Fortitude | Spell_Nature_UndyingStrength | 4 | 2 | 3 | Every {v} Stormstrikes casts a free Healing Wave at 50% effectiveness.
+enh_flurry | Flurry | Ability_GhoulFrenzy | 5 | 0 | 3 | Melee critical strikes make Rockbiter and Stormstrike cooldowns recover {v}% faster for 4 sec.
+enh_sweeping_storm | Sweeping Storm | Spell_Holy_SealOfMight | 5 | 2 | 3 | Stormstrike hits {v} additional nearby enemies.
+enh_stormbound_echoes | Stormbound Echoes | Spell_Nature_CallStorm | 6 | 1 | 1 | Capstone. All Enhancement Shaman procs have a {v}% chance to trigger one additional time. 1% of all the damage you deal heals you. You start every run with Stormstrike.
 @tree Shaman | Restoration
 imp_healing_wave | Improved Healing Wave | Spell_Nature_MagicImmunity | 0 | 1 | 5 | Healing Wave's cooldown is {v}% shorter.
 tidal_focus | Tidal Focus | Spell_Frost_ManaRecharge | 0 | 2 | 5 | Regenerate {v} more health per second.
@@ -498,3 +498,5 @@ berserking | Berserking
 penance | Penance
 arcane_power | Arcane Power
 demonic_empowerment | Demonic Empowerment
+rockbiter | Rockbiter Weapon
+stormstrike | Stormstrike

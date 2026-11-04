@@ -1,7 +1,7 @@
 // The Community section: what the home screen shows whenever no other section is open. It features ONE of the
-// players' build videos (the Guide's Build Guides topic in assets/guide.txt), picked at random and changed every
-// 10 minutes, with its title and credit to the person who made it. Nothing plays by itself: a click plays it right
-// here, inside the section's borders, like the New Player Guide's videos.
+// videos in the active Big Streamers or Content Creators queue (plus the Guide's Build Guides pool when applicable),
+// with a shuffled rotation and the current title and creator credit. Nothing plays by itself: a click plays it right
+// here, inside the section's borders, like the New Player Handbook's videos.
 //
 // Windows' old web view (which the Guide's own videos use) cannot play YouTube any more, so a YouTube video plays in
 // Microsoft Edge (part of every Windows 10/11): Edge is started in app mode with a profile of its own (in the
@@ -22,9 +22,12 @@ namespace AzerothLauncher
 {
     public partial class LauncherApp
     {
-        static int communityPick = -1;                       // the featured video (index in BuildVideos)
+        static readonly List<GuideVideo> communityQueue = new List<GuideVideo>();
+        static int communityQueueFilter = int.MinValue;
+        static GuideVideo communityCurrent;
         static DateTime communityPicked = DateTime.MinValue;
         GuideVideo communityPlaying;                         // the video playing in the section, or null
+        GuideVideo communityChoice;                          // a preview the player chose as the next featured video
         Process edgeVideo;                                   // the Edge that plays it
         Panel edgeHost;                                      // where its window sits
         IntPtr edgeWnd = IntPtr.Zero;
@@ -89,21 +92,152 @@ namespace AzerothLauncher
         static int communityFilter = -1;
         System.Windows.Forms.Timer filterTimer;
 
-        static GuideVideo Featured(List<GuideVideo> list)
+        static List<GuideVideo> CommunityCandidates(List<GuideVideo> list)
         {
             if (communityFilter == 1 && Headlines.Length > 0) list = new List<GuideVideo>(Headlines);
             else if (communityFilter == 2)                    // the content creators: every video that is not a big streamer's
                 list = list.FindAll(delegate(GuideVideo v) { return Array.IndexOf(Headlines, v) < 0; });
-            if (list.Count == 0) return null;
-            if (communityPick < 0 || communityPick >= list.Count || (DateTime.Now - communityPicked).TotalMinutes >= RotateMinutes)
+            return list;
+        }
+
+        static string CommunityVideoKey(GuideVideo video)
+        {
+            if (video == null) return "";
+            string id = VideoCard.YouTubeIdOf(video.Url);
+            return id ?? video.Url ?? "";
+        }
+
+        static void ShuffleCommunityQueue(List<GuideVideo> candidates)
+        {
+            communityQueue.Clear();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (GuideVideo candidate in candidates)
             {
-                var rnd = new Random();
-                int pick = rnd.Next(list.Count);
-                if (list.Count > 1 && pick == communityPick) pick = (pick + 1 + rnd.Next(list.Count - 1)) % list.Count;
-                communityPick = pick;
-                communityPicked = DateTime.Now;
+                string key = CommunityVideoKey(candidate);
+                if (seen.Add(key)) communityQueue.Add(candidate);
             }
-            return list[communityPick];
+            var rnd = new Random();
+            for (int i = communityQueue.Count - 1; i > 0; i--)
+            {
+                int j = rnd.Next(i + 1);
+                GuideVideo swap = communityQueue[i];
+                communityQueue[i] = communityQueue[j];
+                communityQueue[j] = swap;
+            }
+        }
+
+        static void PrepareCommunityQueue(List<GuideVideo> candidates)
+        {
+            if (communityQueueFilter != communityFilter)
+            {
+                communityQueueFilter = communityFilter;
+                communityCurrent = null;
+                ShuffleCommunityQueue(candidates);
+                return;
+            }
+
+            var available = new HashSet<string>(StringComparer.Ordinal);
+            foreach (GuideVideo candidate in candidates) available.Add(CommunityVideoKey(candidate));
+            communityQueue.RemoveAll(delegate(GuideVideo queued) { return !available.Contains(CommunityVideoKey(queued)); });
+            var queuedKeys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (GuideVideo queued in communityQueue) queuedKeys.Add(CommunityVideoKey(queued));
+            foreach (GuideVideo candidate in candidates)
+            {
+                string key = CommunityVideoKey(candidate);
+                if (!queuedKeys.Contains(key) && candidate != communityCurrent)
+                {
+                    communityQueue.Add(candidate);
+                    queuedKeys.Add(key);
+                }
+            }
+        }
+
+        static void ReturnCommunityVideoToQueue(GuideVideo video, List<GuideVideo> candidates)
+        {
+            if (video == null || !candidates.Contains(video)) return;
+            string key = CommunityVideoKey(video);
+            communityQueue.RemoveAll(delegate(GuideVideo queued) { return CommunityVideoKey(queued) == key; });
+            communityQueue.Add(video);                       // skipped/finished videos return at the back of this filter's queue
+        }
+
+        static void RemoveCommunityVideoFromQueue(GuideVideo video)
+        {
+            if (video == null) return;
+            string key = CommunityVideoKey(video);
+            communityQueue.RemoveAll(delegate(GuideVideo queued) { return CommunityVideoKey(queued) == key; });
+        }
+
+        GuideVideo Featured(List<GuideVideo> list)
+        {
+            List<GuideVideo> candidates = CommunityCandidates(list);
+            if (candidates.Count == 0) { communityCurrent = null; return null; }
+            PrepareCommunityQueue(candidates);
+            if (communityChoice != null && candidates.Contains(communityChoice))
+            {
+                GuideVideo chosen = communityChoice;
+                communityChoice = null;
+                if (communityCurrent != chosen) ReturnCommunityVideoToQueue(communityCurrent, candidates);
+                RemoveCommunityVideoFromQueue(chosen);
+                communityCurrent = chosen;
+                communityPicked = DateTime.Now;
+                return chosen;
+            }
+            if (communityCurrent != null && candidates.Contains(communityCurrent) &&
+                (DateTime.Now - communityPicked).TotalMinutes < RotateMinutes) return communityCurrent;
+            if (communityCurrent != null)
+            {
+                ReturnCommunityVideoToQueue(communityCurrent, candidates);
+                communityCurrent = null;
+            }
+            if (communityQueue.Count == 0) ShuffleCommunityQueue(candidates);
+            if (communityQueue.Count == 0) return null;
+            communityCurrent = communityQueue[0];
+            communityQueue.RemoveAt(0);
+            communityPicked = DateTime.Now;
+            return communityCurrent;
+        }
+
+        GuideVideo NextCommunityVideo(GuideVideo currentVideo, List<GuideVideo> all)
+        {
+            List<GuideVideo> candidates = CommunityCandidates(all);
+            string currentKey = CommunityVideoKey(currentVideo);
+            candidates.RemoveAll(delegate(GuideVideo candidate) { return CommunityVideoKey(candidate) == currentKey; });
+            if (candidates.Count == 0) return null;
+            PrepareCommunityQueue(CommunityCandidates(all));
+            // Preview the next queued choice, preferring an unwatched video without changing the queue.
+            foreach (GuideVideo queued in communityQueue)
+                if (candidates.Contains(queued) && !IsWatched(queued)) return queued;
+            foreach (GuideVideo queued in communityQueue)
+                if (candidates.Contains(queued)) return queued;
+            List<GuideVideo> unwatched = candidates.FindAll(delegate(GuideVideo candidate) { return !IsWatched(candidate); });
+            return unwatched.Count > 0 ? unwatched[0] : candidates[0];
+        }
+
+        void SkipCommunityVideo(GuideVideo video)
+        {
+            int topicIndex;
+            List<GuideVideo> candidates = CommunityCandidates(BuildVideos(out topicIndex));
+            PrepareCommunityQueue(candidates);
+            ReturnCommunityVideoToQueue(video, candidates);
+            communityCurrent = null;
+            communityChoice = null;
+            communityPicked = DateTime.MinValue;
+            BuildPanel("Community");
+        }
+
+        void ChooseNextCommunityVideo(GuideVideo currentVideo, GuideVideo chosenVideo, List<GuideVideo> all)
+        {
+            List<GuideVideo> candidates = CommunityCandidates(all);
+            if (chosenVideo == null || !candidates.Contains(chosenVideo)) return;
+            PrepareCommunityQueue(candidates);
+
+            // Treat Up Next as a queue choice: return the declined current video to the tail,
+            // consume the previewed choice, and let the next preview come from this same filter.
+            ReturnCommunityVideoToQueue(currentVideo, candidates);
+            RemoveCommunityVideoFromQueue(chosenVideo);
+            communityChoice = null;
+            communityCurrent = chosenVideo;
+            communityPicked = DateTime.Now;
         }
 
         // fills in a video's missing title and channel from YouTube's oEmbed, then redraws Community
@@ -186,6 +320,10 @@ namespace AzerothLauncher
                     if (!((CheckBox)cb).Checked && communityFilter == which) { ((CheckBox)cb).Checked = true; return; }
                     if (((CheckBox)cb).Checked && communityFilter == which) return;   // re-ticked above: nothing changed
                     communityFilter = ((CheckBox)cb).Checked ? which : (communityFilter == which ? 0 : communityFilter);
+                    communityChoice = null;
+                    communityQueueFilter = int.MinValue;
+                    communityQueue.Clear();
+                    communityCurrent = null;
                     Cfg.Set("community_filter", communityFilter);
                     Cfg.Save();
                     if (filterTimer == null)
@@ -195,7 +333,7 @@ namespace AzerothLauncher
                         filterTimer.Tick += delegate
                         {
                             filterTimer.Stop();
-                            communityPick = -1;               // a new pick, from the chosen shuffle
+                            communityCurrent = null;           // start the newly selected filter's queue
                             if (current == "Community" && side.Visible && communityPlaying == null && !communityMore) BuildPanel("Community");
                         };
                     }
@@ -208,12 +346,22 @@ namespace AzerothLauncher
                 Put(cb, bx, 8);
                 bx = cb.Right + 14;
             }
-            int top = 8 + (int)(32 * Theme.Zoom) + 8;          // (no line about whose video it is: the ticked box says it)
+            int rowHeight = Math.Max(Theme.Px(28), (int)(32 * Theme.Zoom));
+            int rowGap = Theme.Px(5), moreWidth = (int)(200 * Theme.Zoom);
+            int moreX = PW - 20 - moreWidth, moreY = 8;
+            bool checksWrap = bx > moreX - Theme.Px(8);
+            if (checksWrap) moreY = 8 + rowHeight + rowGap;
+            int skipWidth = Math.Max(Theme.Px(100), (int)(112 * Theme.Zoom));
+            bool skipWrap = !checksWrap && bx + skipWidth > moreX - Theme.Px(8);
+            int skipX = skipWrap || checksWrap ? 24 : bx;
+            int skipY = (skipWrap || checksWrap) ? 8 + rowHeight + rowGap : 8;
+            int top = Math.Max(8 + rowHeight, skipY + rowHeight) + rowGap;
             if (v == null)
             {
                 PutText("No community videos yet.", 11, FontStyle.Italic, Theme.GoldDim, 24, top + 8, 0);
                 return;
             }
+            Put(new WowButton("SKIP VIDEO", delegate { SkipCommunityVideo(v); }, skipWidth, rowHeight, 8.5f), skipX, skipY);
             // the video's title as the heading, the credit under it, then its picture with a play button
             var title = PutText(v.Title.Length > 0 ? v.Title : "Video", 13, FontStyle.Bold, Theme.Gold, 24, top, PW - 48, false);
             int y = BottomOf(title) + 2;
@@ -235,8 +383,43 @@ namespace AzerothLauncher
             panel.Controls.Add(pic);
             pic.BringToFront();
             if (MoreVideos().Count > 1)
-                Put(new WowButton("MORE VIDEOS ›", delegate { communityMore = true; moreOrder = null; BuildPanel("Community"); }, 200, 30, 9),
-                    PW - 20 - (int)(200 * Theme.Zoom), 8);
+                Put(new WowButton("MORE VIDEOS ›", delegate { communityMore = true; moreOrder = null; BuildPanel("Community"); }, moreWidth, rowHeight, 9), moreX, moreY);
+
+            // A small, non-playing preview offers another choice from the selected watch list.
+            // It disappears with the idle page when playback starts and never creates a player.
+            GuideVideo next = NextCommunityVideo(v, BuildVideos(out ti));
+            if (next != null)
+            {
+                FetchTitle(next);
+                int previewW = Math.Min(Theme.Px(145), Math.Max(Theme.Px(96), PW / 4));
+                int previewH = previewW * 9 / 16;
+                int previewX = PW - previewW - Theme.Px(18);
+                Color previewText = Theme.Mix(Theme.Text, Theme.Card, .42);
+                var nextTitle = UI.Text(next.Title.Length > 0 ? next.Title : "Next video", 7.5f, FontStyle.Regular,
+                    previewText, Color.Transparent, previewW, false);
+                nextTitle.Size = VStack.Measure(nextTitle);
+                int posterTop = 0, titleTop = posterTop + previewH + Theme.Px(3);
+                int previewHeight = titleTop + nextTitle.Height + Theme.Px(5);
+                int previewY = PH - previewHeight - Theme.Px(12);
+                var preview = new Bordered(Theme.Mix(Theme.GoldDim, Theme.Card, .45), 1) { BackColor = Color.Transparent,
+                    Bounds = new Rectangle(previewX, previewY, previewW + Theme.Px(8), previewHeight), Cursor = Cursors.Hand };
+                nextTitle.Location = new Point(4, titleTop);
+                preview.Controls.Add(nextTitle);
+                var nextPoster = new VideoPoster(next, new Size(previewW, previewH));
+                nextPoster.ImageOpacity = 0.52f;
+                nextPoster.Location = new Point(4, posterTop);
+                Action chooseNext = delegate
+                {
+                    ChooseNextCommunityVideo(v, next, BuildVideos(out ti));
+                    BuildPanel("Community");
+                };
+                preview.Click += delegate { chooseNext(); };
+                nextTitle.Click += delegate { chooseNext(); };
+                nextPoster.Click += delegate { chooseNext(); };
+                preview.Controls.Add(nextPoster);
+                panel.Controls.Add(preview);
+                preview.BringToFront();
+            }
         }
 
         // MORE VIDEOS: the big streamers' videos first, always at the top in their own order, then all the
@@ -298,7 +481,7 @@ namespace AzerothLauncher
             foreach (var mv in list) FetchTitle(mv);
             int top = 8;
             var sp = MakeScroll(panel, new Rectangle(20, top, PW - 40, PH - 12 - top), Theme.Panel, Theme.Bronze);
-            const int cols = 3, gap = 12;
+            int gap=Theme.Px(12), cols=Math.Max(1,Math.Min(3,sp.ClientSize.Width/Theme.Px(210)));
             int cw = (sp.ClientSize.Width - 20 - gap * (cols - 1)) / cols, ph = cw * 9 / 16;
             int y = 6, rowH = 0;
             for (int i = 0; i < list.Count; i++)
@@ -364,6 +547,10 @@ namespace AzerothLauncher
         [DllImport("user32.dll")] static extern IntPtr SetParent(IntPtr child, IntPtr parent);
         [DllImport("user32.dll")] static extern int GetWindowLong(IntPtr hWnd, int index);
         [DllImport("user32.dll")] static extern int SetWindowLong(IntPtr hWnd, int index, int value);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+        static extern IntPtr SetWindowLongPointer64(IntPtr hWnd, int index, IntPtr value);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
+        static extern int SetWindowLongPointer32(IntPtr hWnd, int index, int value);
         [DllImport("user32.dll")] static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
         [DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int w, int h, uint flags);
         [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr hWnd, int cmd);
@@ -378,6 +565,14 @@ namespace AzerothLauncher
         const int WS_CHILD = 0x40000000, WS_VISIBLE = 0x10000000, WS_POPUP = unchecked((int)0x80000000), WS_CLIPSIBLINGS = 0x04000000;
         const int WS_CAPTION = 0x00C00000, WS_THICKFRAME = 0x00040000, WS_SYSMENU = 0x00080000;
         const int WS_MINIMIZEBOX = 0x00020000, WS_MAXIMIZEBOX = 0x00010000, WS_EX_APPWINDOW = 0x00040000;
+
+        // GWLP_HWNDPARENT means the owner for a top-level popup. HWNDs are pointer-sized;
+        // the style helpers above intentionally use 32-bit values and must not store one.
+        static void SetNativeVideoOwner(IntPtr window, IntPtr owner)
+        {
+            if (IntPtr.Size == 8) SetWindowLongPointer64(window, -8, owner);
+            else SetWindowLongPointer32(window, -8, owner.ToInt32());
+        }
 
         // the video player's Edge window: a visible Edge window (Chrome's window class, with a title) of an msedge.exe
         // started with the player's own profile. Edge often hands its first process over to another one, so the
@@ -657,13 +852,18 @@ namespace AzerothLauncher
                 style &= ~WS_CHILD;
                 style |= WS_POPUP | WS_VISIBLE;
                 SetWindowLong(edgeWnd, GWL_STYLE, style);
-                SetWindowPos(edgeWnd, new IntPtr(-1), sc.X, sc.Y, sc.Width, sc.Height, 0x0020 | 0x0040);   // topmost, frame changed, shown
+                SetNativeVideoOwner(edgeWnd, Handle);
+                // Fullscreen stays above its launcher owner, but is not globally topmost.
+                // Windows hides owned popups with their minimized owner; Alt+Tab can put
+                // another application over this window without interrupting playback.
+                SetWindowPos(edgeWnd, new IntPtr(-2), sc.X, sc.Y, sc.Width, sc.Height, 0x0020 | 0x0040);
                 SetForegroundWindow(edgeWnd);
                 PlaceVideoClose();
             }
             else
             {
                 SetWindowPos(edgeWnd, new IntPtr(-2), 0, 0, 0, 0, 0x0001 | 0x0002);                     // not topmost
+                SetNativeVideoOwner(edgeWnd, IntPtr.Zero);
                 int style = GetWindowLong(edgeWnd, GWL_STYLE);
                 style &= ~WS_POPUP;
                 style |= WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS;
@@ -760,7 +960,9 @@ namespace AzerothLauncher
             Form top = edgeHost != null && !edgeHost.IsDisposed ? edgeHost.TopLevelControl as Form : null;
             bool on = !videoFull && top != null && edgeVideo != null && edgeHost.Visible && top.Visible && top.WindowState != FormWindowState.Minimized;
             if (!on) { videoClose.Hide(); return; }
-            Point p = edgeHost.PointToScreen(new Point(edgeHost.ClientSize.Width - videoClose.Width - 10, 10));
+            videoClose.SetDisplayScale(Theme.DisplayScale);
+            int inset = Theme.Px(10);
+            Point p = edgeHost.PointToScreen(new Point(Math.Max(0, edgeHost.ClientSize.Width - videoClose.Width - inset), inset));
             videoClose.Location = p;
             if (!videoClose.Visible) videoClose.Show(top);
         }
@@ -802,14 +1004,22 @@ namespace AzerothLauncher
 
         public VideoClose()
         {
+            AutoScaleMode = AutoScaleMode.None;
             FormBorderStyle = FormBorderStyle.None;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
-            Size = new Size(34, 34);
+            SetDisplayScale(Theme.DisplayScale);
             BackColor = Color.Black;
             TransparencyKey = Color.Magenta;
             Cursor = Cursors.Hand;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+        }
+
+        public void SetDisplayScale(float density)
+        {
+            int size = Math.Max(20, (int)Math.Round(34 * density));
+            Size = new Size(size, size);
+            Invalidate();
         }
 
         protected override bool ShowWithoutActivation { get { return true; } }
@@ -837,11 +1047,13 @@ namespace AzerothLauncher
             Graphics g = e.Graphics;
             g.Clear(Color.Magenta);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;   // no pink fringe on the see-through corners
-            var r = new Rectangle(1, 1, Width - 3, Height - 3);
+            float scale = Width / 34f;
+            int inset = Math.Max(1, (int)Math.Round(scale));
+            var r = new Rectangle(inset, inset, Width - 2 * inset - 1, Height - 2 * inset - 1);
             using (var b = new SolidBrush(hover ? Theme.Hex("#c8442f") : Color.FromArgb(30, 22, 18))) g.FillEllipse(b, r);
-            using (var p = new Pen(Theme.Gold, 2f)) g.DrawEllipse(p, r);
-            int c = Width / 2, d = 6;
-            using (var p = new Pen(Color.White, 2.5f))
+            using (var p = new Pen(Theme.Gold, 2f * scale)) g.DrawEllipse(p, r);
+            int c = Width / 2, d = Math.Max(1, (int)Math.Round(6 * scale));
+            using (var p = new Pen(Color.White, 2.5f * scale))
             {
                 g.DrawLine(p, c - d, c - d, c + d, c + d);
                 g.DrawLine(p, c - d, c + d, c + d, c - d);
@@ -856,6 +1068,9 @@ namespace AzerothLauncher
         readonly string id;
         bool hover;
         public bool Watched;                                 // a "Watched!" tag over its top-left corner
+        // Used by the small What's Next choice so it stays visible without competing
+        // with the currently featured video. Hover restores full contrast.
+        public float ImageOpacity { get; set; }
 
         public VideoPoster(GuideVideo v, Size size)
         {
@@ -863,6 +1078,7 @@ namespace AzerothLauncher
                      ControlStyles.ResizeRedraw, true);
             video = v;
             id = VideoCard.YouTubeIdOf(v.Url);
+            ImageOpacity = 1f;
             Size = size;
             Cursor = Cursors.Hand;
         }
@@ -880,6 +1096,7 @@ namespace AzerothLauncher
             {
                 try { if (IsHandleCreated) BeginInvoke(new Action(Invalidate)); } catch (Exception) { }
             }) : null;
+            float opacity = hover ? 1f : Math.Max(0f, Math.Min(1f, ImageOpacity));
             using (var clip = Armory.Round(r, 8))
             {
                 g.SetClip(clip);
@@ -887,21 +1104,33 @@ namespace AzerothLauncher
                 {
                     float s = Math.Max((float)Width / img.Width, Height / (img.Height * 0.75f));
                     float iw = img.Width * s, ih = img.Height * s;
-                    Theme.Draw(g, img, (Width - iw) / 2, (Height - ih) / 2, iw, ih);
+                    using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+                    {
+                        var matrix = new System.Drawing.Imaging.ColorMatrix();
+                        matrix.Matrix33 = opacity;
+                        attributes.SetColorMatrix(matrix, System.Drawing.Imaging.ColorMatrixFlag.Default,
+                                                  System.Drawing.Imaging.ColorAdjustType.Bitmap);
+                        var dest = new Rectangle((int)Math.Round((Width - iw) / 2f), (int)Math.Round((Height - ih) / 2f),
+                                                  Math.Max(1, (int)Math.Round(iw)), Math.Max(1, (int)Math.Round(ih)));
+                        g.DrawImage(img, dest, 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, attributes);
+                    }
                     if (!hover) using (var dim = new SolidBrush(Color.FromArgb(50, 0, 0, 0))) g.FillRectangle(dim, r);
                 }
                 else
-                    using (var lg = new System.Drawing.Drawing2D.LinearGradientBrush(r, Theme.Hex("#3b1f4a"), Theme.Hex("#120a18"), 60f))
+                    using (var lg = new System.Drawing.Drawing2D.LinearGradientBrush(r,
+                        Color.FromArgb((int)(255 * opacity), Theme.Hex("#3b1f4a")),
+                        Color.FromArgb((int)(255 * opacity), Theme.Hex("#120a18")), 60f))
                         g.FillRectangle(lg, r);
                 g.ResetClip();
             }
-            using (var pen = new Pen(hover ? Theme.Gold : Theme.Hex("#4a3a22"), hover ? 2f : 1f))
+            using (var pen = new Pen(Color.FromArgb((int)(opacity * 255), hover ? Theme.Gold : Theme.Hex("#4a3a22")), hover ? 2f : 1f))
             using (var path = Armory.Round(r, 8)) g.DrawPath(pen, path);
             float pd = Math.Min(70, Height * 0.3f), cx = Width / 2f, cy = Height / 2f;
-            using (var b = new SolidBrush(hover ? Theme.Hex("#c8442f") : Color.FromArgb(220, 30, 22, 18))) g.FillEllipse(b, cx - pd / 2, cy - pd / 2, pd, pd);
-            using (var pen = new Pen(Theme.Gold, 2f)) g.DrawEllipse(pen, cx - pd / 2, cy - pd / 2, pd, pd);
+            Color playFill = hover ? Theme.Hex("#c8442f") : Color.FromArgb(220, 30, 22, 18);
+            using (var b = new SolidBrush(Color.FromArgb((int)(playFill.A * opacity), playFill.R, playFill.G, playFill.B))) g.FillEllipse(b, cx - pd / 2, cy - pd / 2, pd, pd);
+            using (var pen = new Pen(Color.FromArgb((int)(255 * opacity), Theme.Gold), 2f)) g.DrawEllipse(pen, cx - pd / 2, cy - pd / 2, pd, pd);
             float t = pd * 0.32f;
-            using (var b = new SolidBrush(Color.White))
+            using (var b = new SolidBrush(Color.FromArgb((int)(255 * opacity), Color.White)))
                 g.FillPolygon(b, new[] { new PointF(cx - t * 0.7f, cy - t), new PointF(cx - t * 0.7f, cy + t), new PointF(cx + t, cy) });
             if (Watched)
             {

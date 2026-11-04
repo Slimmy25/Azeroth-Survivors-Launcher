@@ -1,14 +1,12 @@
-﻿// Long-term stats: the AZS Stats addon (built into the launcher, addons\AZSStats; also in Download More) records
-// every run, the play time, deaths and co-op runs in its saved-variable file, AZSStats.lua in the game's addon settings folder
-// (benilla-config\saved). This file
-// reads that Lua table and installs the addon; the STATS section (Sections.cs) shows what it found, together with
-// the launcher's own play time. Everything here is optional: the section can be turned off in Options and
-// the addon is only installed when the player asks for it.
+// The STATS page reads Maidenhead's Azeroth Stats SavedVariables (AzerothStats.lua) without changing them.
+// Legacy AZS Stats / AS Time Tracker files remain read-only fallback sources. Installing the replacement never
+// migrates, merges, or deletes those older records.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AzerothLauncher
 {
@@ -274,14 +272,14 @@ namespace AzerothLauncher
         }
     }
 
-    // play time: counted in game by AZS Stats (the launcher no longer counts it)
+    // Session play time, if supplied by a legacy file. Azeroth Stats reports run duration instead.
     public class PlayStats
     {
         public long Seconds, Sessions, Longest, LastSeconds;
         public string LastDate = "";
     }
 
-    // one class's hero as AZS Stats last saw it on the character pane: the gear worn and the numbers
+    // one class's latest recorded hero, gear and numbers
     public class ArmoryChar
     {
         public string ClassKey = "", Class = "", Hero = "", Race = "", Date = "";
@@ -314,7 +312,10 @@ namespace AzerothLauncher
     public class StatBlock
     {
         public string Key = "", Name = "";
-        public double Runs, Victories, Defeats, Left, Time, Kills, Elites, Guardians, Bosses, Damage, Taken, Gold, Chests,
+        public double ObservedDeaths;
+        public bool CoverageAware;
+        public readonly HashSet<string> AvailableMetrics = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        public double Runs, Victories, Defeats, Left, Time, Kills, Elites, Guardians, Bosses, Damage, Healing, Taken, Gold, Chests,
                       Magnets, Levels, BestTime, BestLevel, Legendary, Saves;   // legendaries collected, level-up saves
         public readonly Dictionary<string, StatRecord> Best = new Dictionary<string, StatRecord>();
         public readonly List<AbilityStat> Abilities = new List<AbilityStat>();     // the most picked first
@@ -325,7 +326,7 @@ namespace AzerothLauncher
     public class NemesisStat
     {
         public string Name = "", Last = "";
-        public double Kills, Damage;
+        public double Kills, Damage, Confirmed, Probable;
     }
 
     // one death in the death log
@@ -339,7 +340,7 @@ namespace AzerothLauncher
     public class FriendStat
     {
         public string Name = "", ClassKey = "", Class = "", First = "", Last = "", FirstWin = "";
-        public double Runs, Wins, Time, Kills, Bosses, Damage, BestTime, BestLevel, MostBosses, FastestWin;
+        public double Runs, Wins, Time, Kills, Bosses, Damage, Dps, BestTime, BestLevel, MostBosses, FastestWin;
     }
 
     // co-op runs: totals, records together and the friends (most runs first)
@@ -363,16 +364,27 @@ namespace AzerothLauncher
     {
         public string Result = "", Kind = "", Date = "", Hero = "", ClassKey = "", Class = "", Race = "", Zone = "", Party = "", Killer = "";
         public string Affixes = "";                          // the run's Heroic affixes as the game names them ("sanguine,explosive"), since 0.124.0
-        public double Time, Level, Kills, Damage, Gold, Bosses, Dps;          // Dps: from the game's damage meter
-        public double Elites, Guardians, Taken, Chests, Legendary, Saves;
+        public double Time, Level, Kills, Damage, Healing, Gold, Bosses, Dps; // Dps: from the game's damage meter
+        public double Elites, Guardians, Taken, Chests, Magnets, Legendary, Saves;
         public readonly Dictionary<string, double> Highs = new Dictionary<string, double>();   // the run's highlights (crit, hit, heal, burst1, burst5)
         public readonly List<AbilityStat> Abilities = new List<AbilityStat>();     // Picks = its rank here
+        // Fields retained from Azeroth Stats. They are observations from its bounded local run journal,
+        // not fields inferred from the game's older aggregate format.
+        public string Id = "", Status = "", Phase = "", ZoneName = "";
+        public bool Partial, HeroicKnown, Heroic, AzerothStatsSource;
+        public readonly Dictionary<string, double> ObservedValues = new Dictionary<string, double>();
+        public readonly List<KeyValuePair<string, string>> Observations = new List<KeyValuePair<string, string>>();
+        public readonly List<AbilityStat> ObservedSpells = new List<AbilityStat>();
+        public readonly List<KeyValuePair<string, double>> DamageSources = new List<KeyValuePair<string, double>>();
+        public readonly List<KeyValuePair<string, double>> HealingSources = new List<KeyValuePair<string, double>>();
+        public readonly List<KeyValuePair<string, double>> TakenSources = new List<KeyValuePair<string, double>>();
+        public readonly List<FriendStat> PartySnapshot = new List<FriendStat>();
     }
 
-    // what the AZS Stats addon has recorded
+    // parsed data from the active or retained legacy addon file
     public class RunStats
     {
-        public string FilePath = "", First = "", Last = "";
+        public string FilePath = "", First = "", Last = "", Source = "AZS Stats";
         public DateTime Written;
         public int Version;
         public StatBlock Total = new StatBlock();
@@ -397,18 +409,19 @@ namespace AzerothLauncher
 
     public static class Stats
     {
-        public const string AddonFolder = "AZSStats", DbName = "AZSStatsDB";
+        public const string AddonFolder = "AzerothStats", DbName = "AzerothStatsDB";
         public const string FileName = AddonFolder + ".lua";
-        public const string FacesFile = AddonFolder + "Faces.lua";
-        static readonly string[] AddonFiles = { AddonFolder + ".toc", AddonFolder + ".lua", AddonFolder + "Live.lua", AddonFolder + "Icons.lua", AddonFolder + "UI.lua", AddonFolder + "Bounty.lua" };
-        // its earlier name ("AS Time Tracker"): replaced, and its records carried over, when AZS Stats is installed;
-        // until then its file is read. Any other addon's folders and saved data are never touched.
+        const string LegacyAddonFolder = "AZSStats", LegacyDbName = "AZSStatsDB", LegacyFileName = "AZSStats.lua";
+        public const string FacesFile = LegacyAddonFolder + "Faces.lua"; // legacy-only icon cache name
+        // Retired tracker format. Its file is a legacy read-only fallback; no other addon's data is touched.
         static readonly string[][] OldNames = { new[] { "ASTimeTracker", "ASTimeTrackerDB" } };
 
-        // the newest AZSStats.lua (else an earlier version's file) in the addon settings folder
+        // Prefer the replacement addon's file. Legacy data remains readable when the replacement has not
+        // produced SavedVariables yet; no files are moved, merged or deleted by reading them.
         public static string FindFile(string savedDir)
         {
             string f = FindNamed(savedDir, FileName);
+            if (f == null) f = FindNamed(savedDir, LegacyFileName);
             foreach (var o in OldNames) if (f == null) f = FindNamed(savedDir, o[0] + ".lua");
             return f;
         }
@@ -451,9 +464,13 @@ namespace AzerothLauncher
             using (var r = new StreamReader(fs, Encoding.UTF8)) text = r.ReadToEnd();
             var vars = LuaReader.ParseFile(text);
             var db = LuaReader.Tab(vars, DbName);
+            bool replacement = db != null;
+            if (db == null) db = LuaReader.Tab(vars, LegacyDbName);
             foreach (var o in OldNames) if (db == null) db = LuaReader.Tab(vars, o[1]);
             if (db == null) return null;
+            if (replacement) return LoadAzeroth(path, db);
             var st = new RunStats();
+            st.Source = "AZS Stats (legacy)";
             st.FilePath = path;
             st.Written = File.GetLastWriteTime(path);
             st.Version = (int)LuaReader.Num(db, "version");
@@ -542,7 +559,7 @@ namespace AzerothLauncher
                         it.Name = LuaReader.Text(g, "name");
                         it.Color = LuaReader.Text(g, "color");
                         if (it.Color.Length != 6) it.Color = "ffffff";
-                        it.Icon = "";                                // AZS Stats no longer collects icons
+                        it.Icon = "";                                // Legacy data did not retain item icons
                         it.Id = LuaReader.Num(g, "id");
                         ac.Gear.Add(it);
                     }
@@ -551,18 +568,6 @@ namespace AzerothLauncher
                     st.Armory.Add(ac);
                 }
             st.Armory.Sort(delegate(ArmoryChar x, ArmoryChar y) { return string.CompareOrdinal(y.Date, x.Date); });
-
-            // the same creature faces for the addon's own Nemesis tab (in the background)
-            try
-            {
-                var who = new List<string>();
-                foreach (var n in st.Nemesis) who.Add(n.Name);
-                foreach (var d in st.Deaths) who.Add(d.Killer);
-                foreach (var kv in st.BossKills) who.Add(kv.Key);
-                NpcFaces.Sync(AddonDirNear(savedDir), who);
-            }
-            catch (Exception) { }
-
             // co-op
             var co = LuaReader.Tab(db, "coop");
             st.Coop.Runs = LuaReader.Num(co, "runs");
@@ -605,6 +610,286 @@ namespace AzerothLauncher
                 }
             st.Coop.Friends.Sort(delegate(FriendStat a, FriendStat b) { return b.Runs.CompareTo(a.Runs); });
             return st;
+        }
+
+        // Adapter for Maidenhead's schema-1 SavedVariables. Keep the original observed fields and provenance;
+        // only fields with a direct equivalent are mapped into the launcher's older summary cards.
+        static RunStats LoadAzeroth(string path, Dictionary<string, object> db)
+        {
+            var st = new RunStats();
+            st.Source = "Azeroth Stats";
+            st.FilePath = path;
+            st.Written = File.GetLastWriteTime(path);
+            st.Version = (int)LuaReader.Num(db, "schema");
+            var totals = LuaReader.Tab(db, "totals");
+            st.Total = NewBlock("", totals);
+            var classes = LuaReader.Tab(db, "classes");
+            if (classes != null)
+                foreach (var kv in classes)
+                {
+                    var c = kv.Value as Dictionary<string, object>;
+                    if (c == null) continue;
+                    st.Classes.Add(NewBlock(kv.Key, c));
+                }
+            st.Classes.Sort(delegate(StatBlock a, StatBlock b)
+            {
+                int n = b.Runs.CompareTo(a.Runs);
+                return n != 0 ? n : string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase);
+            });
+
+            var storedRuns = LuaReader.List(LuaReader.Tab(db, "runs"));
+            for (int i = storedRuns.Count - 1; i >= 0; i--)
+                st.History.Add(ReadAzerothRun(storedRuns[i]));
+            var seenArmory = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = storedRuns.Count - 1; i >= 0; i--)
+            {
+                var rawRun = storedRuns[i];
+                string key = LuaReader.Text(rawRun, "class");
+                if (key.Length == 0 || !seenArmory.Add(key)) continue;
+                ArmoryChar character = ReadAzerothArmory(rawRun);
+                if (character.Gear.Count > 0 || character.Numbers.Count > 0) st.Armory.Add(character);
+            }
+
+            // Azeroth Stats companion/death evidence is explicitly observational; do not present it as proof
+            // of shared victories or confirmed killing blows.
+            ReadNewCompanions(totals, st.Coop.Friends);
+            st.Coop.Friends.Sort(delegate(FriendStat a, FriendStat b) { return b.Runs.CompareTo(a.Runs); });
+
+            // Build retained-sample race/zone summaries explicitly as samples; these are not lifetime totals.
+            // The UI currently avoids displaying these as aggregates to prevent implying otherwise.
+            return st;
+        }
+
+        static StatBlock NewBlock(string key, Dictionary<string, object> group)
+        {
+            var b = new StatBlock();
+            b.Key = key;
+            b.CoverageAware = true;
+            b.Name = LuaReader.Text(group, "name");
+            if (b.Name.Length == 0) b.Name = Pretty(key);
+            b.Runs = LuaReader.Num(group, "runs");
+            b.Victories = LuaReader.Num(group, "wins");
+            var evidence = LuaReader.Tab(group, "deathEvidence");
+            b.ObservedDeaths = LuaReader.Num(evidence, "deaths");
+            var sources = LuaReader.Tab(evidence, "sources");
+            if (sources != null)
+                foreach (var kv in sources)
+                {
+                    var s = kv.Value as Dictionary<string, object>;
+                    if (s == null) continue;
+                    double confirmed = LuaReader.Num(s, "confirmed"), probable = LuaReader.Num(s, "probable");
+                    if (confirmed + probable > 0)
+                        b.Nemesis.Add(new NemesisStat { Name = kv.Key, Confirmed = confirmed, Probable = probable,
+                            Kills = confirmed + probable });
+                }
+            b.Nemesis.Sort(delegate(NemesisStat a, NemesisStat c) { return c.Kills.CompareTo(a.Kills); });
+            var sums = LuaReader.Tab(group, "sum");
+            var coverage = LuaReader.Tab(group, "coverage");
+            if (coverage != null)
+                foreach (var kv in coverage) if (Number(kv.Value) > 0) b.AvailableMetrics.Add(kv.Key);
+            b.Time = LuaReader.Num(sums, "duration");
+            b.Kills = LuaReader.Num(sums, "kills");
+            b.Gold = LuaReader.Num(sums, "gold");
+            b.Damage = LuaReader.Num(sums, "damage");
+            b.Healing = LuaReader.Num(sums, "healing");
+            b.Taken = LuaReader.Num(sums, "taken");
+            b.Bosses = LuaReader.Num(sums, "bosses");
+            b.Elites = LuaReader.Num(sums, "elites");
+            b.Guardians = LuaReader.Num(sums, "guardians");
+            b.Chests = LuaReader.Num(sums, "chests");
+            b.Magnets = LuaReader.Num(sums, "magnets");
+            b.BestLevel = LuaReader.Num(sums, "level");
+            var records = LuaReader.Tab(group, "records");
+            if (records != null)
+                foreach (var kv in records)
+                {
+                    var item = kv.Value as Dictionary<string, object>;
+                    if (item == null) continue;
+                    var rec = new StatRecord { Key = kv.Key, Value = LuaReader.Num(item, "value"), Date = LuaReader.Text(item, "at") };
+                    b.Best[kv.Key] = rec;
+                    if (kv.Key == "level") b.BestLevel = rec.Value;
+                    if (kv.Key == "duration") b.BestTime = rec.Value;
+                }
+            // These are bounded observed totals, distinct from native run summaries.
+            var spellUsage = LuaReader.Tab(LuaReader.Tab(group, "usage"), "spells");
+            if (spellUsage != null)
+                foreach (var kv in spellUsage)
+                {
+                    var s = kv.Value as Dictionary<string, object>;
+                    if (s == null) continue;
+                    string name = LuaReader.Text(s, "name");
+                    if (name.Length == 0) name = Pretty(kv.Key);
+                    b.Abilities.Add(new AbilityStat { Key = kv.Key, Name = name, Picks = LuaReader.Num(s, "runs"),
+                        Ranks = LuaReader.Num(s, "gains"), BestRank = LuaReader.Num(s, "maxRank") });
+                }
+            b.Abilities.Sort(delegate(AbilityStat x, AbilityStat y) { return y.Ranks.CompareTo(x.Ranks); });
+            return b;
+        }
+
+        static double Number(object value)
+        {
+            if (value is double) return (double)value;
+            double d;
+            return double.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture), NumberStyles.Float,
+                                   CultureInfo.InvariantCulture, out d) ? d : 0;
+        }
+
+        static void ReadNewCompanions(Dictionary<string, object> group, List<FriendStat> into)
+        {
+            var companions = LuaReader.Tab(group, "companions");
+            if (companions == null) return;
+            foreach (var kv in companions)
+            {
+                var c = kv.Value as Dictionary<string, object>;
+                if (c == null) continue;
+                into.Add(new FriendStat { Name = LuaReader.Text(c, "name"), ClassKey = LuaReader.Text(c, "class"),
+                    Class = Pretty(LuaReader.Text(c, "class")), Runs = LuaReader.Num(c, "runs"), Wins = LuaReader.Num(c, "wins") });
+            }
+        }
+
+        static ArmoryChar ReadAzerothArmory(Dictionary<string, object> run)
+        {
+            var c = new ArmoryChar();
+            c.ClassKey = LuaReader.Text(run, "class");
+            c.Class = Pretty(c.ClassKey);
+            c.Hero = LuaReader.Text(run, "hero");
+            c.Race = LuaReader.Text(run, "race");
+            c.Date = LuaReader.Text(run, "startedAt");
+            c.Level = LuaReader.Num(LuaReader.Tab(run, "values"), "level");
+            var gear = LuaReader.Tab(run, "equipment");
+            var icons = LuaReader.Tab(run, "equipmentIcons");
+            if (gear != null)
+                foreach (var kv in gear)
+                {
+                    var link = kv.Value as string;
+                    if (string.IsNullOrEmpty(link)) continue;
+                    var name = Regex.Match(link, @"\[([^\]]+)\]");
+                    var id = Regex.Match(link, @"Hitem:(\d+)");
+                    var item = new ArmoryItem { Slot = kv.Key, Name = name.Success ? name.Groups[1].Value : link };
+                    int itemId;
+                    if (id.Success && int.TryParse(id.Groups[1].Value, out itemId)) item.Id = itemId;
+                    item.Icon = LuaReader.Text(icons, kv.Key);
+                    c.Gear.Add(item);
+                }
+            var stats = LuaReader.Tab(run, "stats");
+            if (stats != null) foreach (var kv in stats) c.Numbers[kv.Key] = Number(kv.Value);
+            return c;
+        }
+
+        static StatRun ReadAzerothRun(Dictionary<string, object> row)
+        {
+            var run = new StatRun();
+            run.AzerothStatsSource = true;
+            run.Id = LuaReader.Text(row, "id");
+            run.Status = LuaReader.Text(row, "status");
+            run.Phase = LuaReader.Text(row, "phase");
+            run.Result = LuaReader.Text(row, "result");
+            run.Kind = run.Result.Length > 0 ? run.Result : run.Status;
+            run.Date = LuaReader.Text(row, "startedAt");
+            run.Hero = LuaReader.Text(row, "hero");
+            run.ClassKey = LuaReader.Text(row, "class");
+            run.Class = Pretty(run.ClassKey);
+            run.Race = LuaReader.Text(row, "race");
+            run.Zone = LuaReader.Text(row, "zoneName");
+            if (run.Zone.Length == 0) run.Zone = LuaReader.Text(row, "zone");
+            run.ZoneName = run.Zone;
+            run.Partial = row.ContainsKey("partial") && row["partial"] is bool && (bool)row["partial"];
+            run.HeroicKnown = row.ContainsKey("heroic") && row["heroic"] is bool;
+            run.Heroic = run.HeroicKnown && (bool)row["heroic"];
+            var values = LuaReader.Tab(row, "values");
+            if (values != null)
+                foreach (var kv in values) run.ObservedValues[kv.Key] = Number(kv.Value);
+            run.Time = Metric(run, "duration");
+            run.Level = Metric(run, "level");
+            run.Kills = Metric(run, "kills");
+            run.Gold = Metric(run, "gold");
+            run.Damage = Metric(run, "damage");
+            run.Healing = Metric(run, "healing");
+            run.Taken = Metric(run, "taken");
+            run.Bosses = Metric(run, "bosses");
+            run.Elites = Metric(run, "elites");
+            run.Guardians = Metric(run, "guardians");
+            run.Chests = Metric(run, "chests");
+            run.Magnets = Metric(run, "magnets");
+            run.Dps = Metric(run, "peakDps");
+
+            foreach (var spell in LuaReader.List(LuaReader.Tab(row, "spells")))
+            {
+                string name = LuaReader.Text(spell, "name");
+                if (name.Length == 0) name = LuaReader.Text(spell, "spell");
+                if (name.Length == 0) name = LuaReader.Text(spell, "key");
+                double rank = LuaReader.Num(spell, "rank");
+                if (name.Length > 0)
+                {
+                    run.ObservedSpells.Add(new AbilityStat { Key = LuaReader.Text(spell, "key"), Name = name, Picks = rank });
+                    run.Observations.Add(new KeyValuePair<string, string>("Spell rank", name + (rank > 0 ? " · " + Math.Floor(rank).ToString("#,0", CultureInfo.InvariantCulture) : "")));
+                }
+            }
+            var journal = LuaReader.Tab(row, "buildJournal");
+            foreach (var entry in LuaReader.List(LuaReader.Tab(journal, "entries")))
+            {
+                string kind = LuaReader.Text(entry, "kind");
+                double at = LuaReader.Num(entry, "t");
+                foreach (var change in LuaReader.List(LuaReader.Tab(entry, "changes")))
+                {
+                    string key = LuaReader.Text(change, "key");
+                    string before = change.ContainsKey("before") ? Convert.ToString(change["before"], CultureInfo.InvariantCulture) : "start";
+                    string after = change.ContainsKey("after") ? Convert.ToString(change["after"], CultureInfo.InvariantCulture) : "removed";
+                    run.Observations.Add(new KeyValuePair<string, string>(kind + " · " + Clock(at), key + ": " + before + " → " + after));
+                }
+            }
+            ReadMeter(row, "damage", run.DamageSources);
+            ReadMeter(row, "healing", run.HealingSources);
+            ReadMeter(row, "taken", run.TakenSources);
+            var party = LuaReader.Tab(LuaReader.Tab(row, "coop"), "comparison");
+            foreach (var member in LuaReader.List(LuaReader.Tab(party, "rows")))
+            {
+                var friend = new FriendStat();
+                friend.Name = LuaReader.Text(member, "name");
+                friend.ClassKey = LuaReader.Text(member, "class");
+                friend.Class = Pretty(friend.ClassKey);
+                friend.Damage = LuaReader.Num(member, "damage");
+                friend.Dps = LuaReader.Num(member, "dps");
+                friend.First = LuaReader.Text(member, "top");
+                if (friend.Name.Length > 0) run.PartySnapshot.Add(friend);
+            }
+            var deaths = LuaReader.List(LuaReader.Tab(row, "deaths"));
+            foreach (var death in deaths)
+            {
+                string source = LuaReader.Text(death, "source");
+                string confidence = LuaReader.Text(death, "confidence");
+                run.Observations.Add(new KeyValuePair<string, string>("Death evidence",
+                    (source.Length > 0 ? source : "Unattributed") + " · " + (confidence.Length > 0 ? confidence : "unknown")));
+            }
+            return run;
+        }
+
+        static double Metric(StatRun run, string key)
+        {
+            double value;
+            return run.ObservedValues.TryGetValue(key, out value) ? value : 0;
+        }
+
+        static string Clock(double seconds)
+        {
+            long s = (long)Math.Max(0, Math.Floor(seconds));
+            long h = s / 3600, m = s % 3600 / 60, sec = s % 60;
+            return h > 0 ? h + ":" + m.ToString("00", CultureInfo.InvariantCulture) + ":" + sec.ToString("00", CultureInfo.InvariantCulture)
+                         : m + ":" + sec.ToString("00", CultureInfo.InvariantCulture);
+        }
+
+        static void ReadMeter(Dictionary<string, object> run, string key, List<KeyValuePair<string, double>> into)
+        {
+            var meters = LuaReader.Tab(run, "meters");
+            var meter = LuaReader.Tab(meters, key);
+            foreach (var source in LuaReader.List(LuaReader.Tab(meter, "rows")))
+            {
+                string name = LuaReader.Text(source, "name");
+                if (name.Length == 0) name = LuaReader.Text(source, "source");
+                double amount = LuaReader.Num(source, "dmg");
+                if (name.Length > 0) into.Add(new KeyValuePair<string, double>(name, amount));
+            }
+            into.Sort(delegate(KeyValuePair<string, double> a, KeyValuePair<string, double> b) { return b.Value.CompareTo(a.Value); });
         }
 
         static StatBlock Block(string key, Dictionary<string, object> t)
@@ -735,7 +1020,7 @@ namespace AzerothLauncher
             run.Kills = LuaReader.Num(h, "kills");
             run.Damage = LuaReader.Num(h, "dmg");
             run.Dps = LuaReader.Num(h, "dps");
-            if (run.Dps <= 0 && run.Time > 0) run.Dps = Math.Round(run.Damage / run.Time);   // runs from before AZS Stats kept DPS
+            if (run.Dps <= 0 && run.Time > 0) run.Dps = Math.Round(run.Damage / run.Time);   // older records did not keep DPS
             run.Gold = LuaReader.Num(h, "gold");
             run.Bosses = LuaReader.Num(h, "bosses");
             run.Elites = LuaReader.Num(h, "elites");
@@ -777,6 +1062,7 @@ namespace AzerothLauncher
         public static string AddonPath(string addonsDir)
         {
             string f = Folder(addonsDir, AddonFolder);
+            if (f == null) f = Folder(addonsDir, LegacyAddonFolder);
             foreach (var o in OldNames) if (f == null) f = Folder(addonsDir, o[0]);
             return f;
         }
@@ -791,104 +1077,7 @@ namespace AzerothLauncher
         }
 
         public static bool AddonInstalled(string addonsDir) { return AddonPath(addonsDir) != null; }
+        public static bool ReplacementInstalled(string addonsDir) { return Folder(addonsDir, AddonFolder) != null; }
 
-        // the installed addon's folder, found from the saved-variables folder: an AddOns (or Interface\AddOns) folder
-        // beside it or a few folders up (benilla-config\saved -> benilla-config\AddOns; WTF\Account\... -> Interface\AddOns)
-        static string AddonDirNear(string savedDir)
-        {
-            try
-            {
-                string d = savedDir;
-                for (int up = 0; up < 5 && !string.IsNullOrEmpty(d); up++)
-                {
-                    foreach (string a in new[] { Path.Combine(d, "AddOns"), Path.Combine(d, "Interface", "AddOns") })
-                    {
-                        string f = Directory.Exists(a) ? Folder(a, AddonFolder) : null;
-                        if (f != null) return f;
-                    }
-                    d = Path.GetDirectoryName(d);
-                }
-            }
-            catch (Exception) { }
-            return null;
-        }
-
-        // installed, but not the version built into this launcher (or still the old "AS Time Tracker")
-        public static bool AddonOutdated(string addonsDir)
-        {
-            string dir = AddonPath(addonsDir);
-            if (dir == null) return false;
-            if (Folder(addonsDir, AddonFolder) == null) return true;     // still an earlier version
-            foreach (var o in OldNames) if (Folder(addonsDir, o[0]) != null) return true;
-            foreach (string f in AddonFiles)
-            {
-                string p = Path.Combine(dir, f);
-                try
-                {
-                    if (!File.Exists(p) || Norm(File.ReadAllText(p, Encoding.UTF8)) != Norm(Embedded(f))) return true;
-                }
-                catch (Exception) { return true; }
-            }
-            return false;
-        }
-
-        static string Norm(string t) { return (t ?? "").Replace("\r\n", "\n").TrimEnd(); }
-
-        // writes the addon into AddOns (or updates it where it is, turned off or not); its saved stats are kept.
-        // Earlier versions are replaced: their folders go, their records move to the new name.
-        public static void InstallAddon(string addonsDir, string savedDir)
-        {
-            if (string.IsNullOrEmpty(addonsDir)) throw new UserError("The AddOns folder is not set. Set the game config folder in Options.");
-            var olds = new List<string>();
-            foreach (var o in OldNames)
-            {
-                string f = Folder(addonsDir, o[0]);
-                if (f != null) olds.Add(f);
-            }
-            string dir = Folder(addonsDir, AddonFolder);
-            if (dir == null)                                 // keep it turned off if the old one was
-                dir = Path.Combine(addonsDir, AddonFolder) +
-                      (olds.Count > 0 && olds[0].EndsWith(Addons.DisabledSuffix) ? Addons.DisabledSuffix : "");
-            Directory.CreateDirectory(dir);
-            foreach (string f in AddonFiles)
-            {
-                string text = Embedded(f);
-                if (text.Length == 0) throw new UserError("This launcher was built without the AZS Stats addon.");
-                File.WriteAllText(Path.Combine(dir, f), text.Replace("\r\n", "\n").Replace("\n", "\r\n"), new UTF8Encoding(false));
-            }
-            // the faces list is the launcher's own (NpcFaces writes it); the empty one only where there is none yet
-            string faces = Path.Combine(dir, FacesFile);
-            if (!File.Exists(faces))
-                File.WriteAllText(faces, Embedded(FacesFile).Replace("\r\n", "\n").Replace("\n", "\r\n"), new UTF8Encoding(false));
-            MoveOldRecords(savedDir);
-            foreach (string o in olds) Util.DeleteTreeQuiet(o);
-        }
-
-        // ASTimeTracker.lua -> AZSStats.lua next to it (the variable renamed), where there is none
-        // yet; the newest name first
-        static void MoveOldRecords(string savedDir)
-        {
-            if (string.IsNullOrEmpty(savedDir) || !Directory.Exists(savedDir)) return;
-            foreach (var o in OldNames)
-            {
-                string[] files;
-                try { files = Directory.GetFiles(savedDir, o[0] + ".lua", SearchOption.AllDirectories); }
-                catch (Exception) { continue; }
-                foreach (string f in files)
-                    try
-                    {
-                        string target = Path.Combine(Path.GetDirectoryName(f), FileName);
-                        if (!File.Exists(target))
-                        {
-                            string text = File.ReadAllText(f, Encoding.UTF8);
-                            text = System.Text.RegularExpressions.Regex.Replace(text, @"^(\s*)" + o[1] + @"\b", "$1" + DbName,
-                                                                                 System.Text.RegularExpressions.RegexOptions.Multiline);
-                            File.WriteAllText(target, text, new UTF8Encoding(false));
-                        }
-                        File.Delete(f);
-                    }
-                    catch (Exception) { }
-            }
-        }
     }
 }

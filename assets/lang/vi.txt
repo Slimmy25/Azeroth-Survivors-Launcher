@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Hiện thời gian chơi trên màn hình chính
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Hướng dẫn người mới
 {#0} of {#1} topics read
 = Đã đọc {#0}/{#1} chủ đề
@@ -1067,10 +1067,6 @@ Download cancelled.
 = Đã hủy tải xuống.
 The download server did not accept the launcher's login.
 = Máy chủ tải xuống không chấp nhận đăng nhập của launcher.
-The backup host's page has no download link right now.
-= Trang máy chủ dự phòng hiện không có liên kết tải.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Tệp từ máy chủ dự phòng bị hỏng (checksum không khớp). Hãy thử lại.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Launcher đã đang chạy.\n\nHãy tìm biểu tượng của nó ở khay hệ thống (gần đồng hồ).
 INSTALL FROM A FILE
@@ -1484,7 +1480,7 @@ Most level-up saves in a run
 = Nhiều lần được cứu nhờ lên cấp nhất trong một lượt
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Mọi thống kê của bạn trong game (/azs) và trên trang THỐNG KÊ: lượt chơi, kỷ lục, kỹ năng, lớp nhân vật, thời gian chơi, Kẻ thù truyền kiếp của bạn và co-op với bạn bè.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Toàn bộ Hướng dẫn người chơi mới của launcher ngay trong game (/handbook): mọi chủ đề và trang, phép của từng lớp kèm biểu tượng và thiên phú thay đổi chúng, cùng tất cả cây thiên phú.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Những thay đổi nhỏ, mỗi cái bật hoặc tắt riêng (/azsmods hoặc nút trên bản đồ nhỏ): không còn dòng lên cấp, thưởng chỉ số hay phép mới trong chat, dấu trùm (Đầu lâu, Dấu chéo, Kim cương), dấu trùm nhỏ (Ngôi sao, Tam giác, Kim cương), dấu nhấp nháy trên đầu mỗi bạn đồng hành gục ngã, thanh hành động đơn giản chỉ có sáu ô, di chuyển và khóa giao diện, ẩn khung mục tiêu và camera ở mức 50.
@@ -1524,8 +1520,8 @@ switched off: the two conflict.
 = đã tắt: hai addon này xung đột.
 these two can't be on together. Switching one on switches the other off.
 = hai addon này không thể bật cùng lúc. Bật cái này thì cái kia sẽ tắt.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Khung đơn vị phẳng, tối và thanh hành động gọn, bảng tên kiểu Plater (Survivor Plates), may mắn và tỉ lệ thẻ trên thanh XP, khung chat có thẻ và dấu raid tự động. Không thể bật cùng AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Khung đơn vị phẳng, tối và thanh hành động gọn, bảng tên kiểu Plater (Survivor Plates), may mắn và tỉ lệ thẻ trên thanh XP, khung chat có thẻ và dấu raid tự động. Không thể bật cùng Slim Suite.
 The game updated itself and is opening again...
 = Trò chơi đã tự cập nhật và đang mở lại...
 The game updated itself and opened again.

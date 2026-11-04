@@ -18,8 +18,8 @@
       <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
     </application>
   </compatibility>
-  <!-- This launcher mixes custom GDI+ drawing with WinForms/GDI controls and uses fixed-size layout coordinates.
-       Keep Windows' uniform DPI bitmap scaling so text, hit targets, dropdowns, and custom drawing stay aligned. -->
+  <!-- NativeDisplay.Enable opts into PerMonitorV2 before any HWND exists (with older-Windows fallbacks).
+       AutoScaleMode.None plus DisplayLayout own child geometry; do not add a second WinForms autoscaler. -->
   <dependency>
     <dependentAssembly>
       <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0"

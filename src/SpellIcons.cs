@@ -146,8 +146,8 @@ namespace AzerothLauncher
             return Picture("icon_" + icon, IconHost + icon + ".jpg", repaint);
         }
 
-        // the 3D model picture of a real item (a Transmog look): assets\item-models.txt gives its display id, Wowhead's
-        // model viewer host has the picture
+        // a real item's 3D preview (gear, jewelry or a Transmog look): assets\item-models.txt gives its display id;
+        // the Wowhead model-viewer image is fetched and cached when first hovered
         static Dictionary<string, int> itemModels;
 
         static int ItemDisplay(string name)
@@ -334,8 +334,32 @@ namespace AzerothLauncher
             try
             {
                 Directory.CreateDirectory(CacheDir);
-                string path = Path.Combine(CacheDir, Regex.Replace(key, "[^A-Za-z0-9_.-]", "_") + ".jpg");
-                if (!File.Exists(path))
+                string safeKey = Regex.Replace(key, "[^A-Za-z0-9_.-]", "_");
+                string path = Path.Combine(CacheDir, safeKey + ".jpg");
+                if (key.StartsWith("item3d_", StringComparison.Ordinal))
+                {
+                    string stem = url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ? url.Substring(0, url.Length - 4) : url;
+                    string[] extensions = { ".jpg", ".png" };
+                    path = null;
+                    foreach (string ext in extensions)
+                    {
+                        string cached = Path.Combine(CacheDir, safeKey + ext);
+                        if (File.Exists(cached)) { path = cached; break; }
+                    }
+                    if (path == null)
+                        foreach (string ext in extensions)
+                        {
+                            byte[] data = null;
+                            try { data = Get(stem + ext); } catch (Exception) { }
+                            if (data == null || data.Length == 0) continue;
+                            path = Path.Combine(CacheDir, safeKey + ext);
+                            File.WriteAllBytes(path + ".part", data);
+                            if (File.Exists(path)) File.Delete(path);
+                            File.Move(path + ".part", path);
+                            break;
+                        }
+                }
+                else if (!File.Exists(path))
                 {
                     byte[] data = Get(url);
                     if (data != null && data.Length > 0)
@@ -345,7 +369,7 @@ namespace AzerothLauncher
                         File.Move(path + ".part", path);
                     }
                 }
-                if (File.Exists(path))
+                if (path != null && File.Exists(path))
                     using (var tmp = Image.FromFile(path)) img = new Bitmap(tmp);
                 if (face && img != null)
                 {

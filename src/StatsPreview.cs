@@ -1,5 +1,5 @@
 // A developer tool, not used by players: "--preview-stats <saved folder> <out folder>" renders the STATS page for
-// the AZS Stats file in <saved folder> into PNG pictures (every tab, overall and for the most played class),
+// the Azeroth Stats or legacy saved-variable file in <saved folder> into PNG pictures (every tab, overall and for the most played class),
 // so the layout can be checked without the game. Settings are only changed in memory, nothing is saved.
 using System;
 using System.Drawing;
@@ -72,7 +72,7 @@ namespace AzerothLauncher
                 }
                 if (topClass == null) break;
             }
-            // the New Player Guide: topic cards, a topic made of pages, and pages with video cards
+            // the New Player Handbook: topic cards, a topic made of pages, and pages with video cards
             {
                 var topics = Data.Guide;
                 int classes = 0;
@@ -292,10 +292,10 @@ namespace AzerothLauncher
                 app.Show();                                      // the preview starts as a visible launcher window
             app.Invalidate(true);
             Application.DoEvents();
-            using (var home = new Bitmap(W, H))
+            using (var home = new Bitmap(app.W, app.H))
             {
                 using (var g = Graphics.FromImage(home))
-                    app.OnPaint(new PaintEventArgs(g, new Rectangle(0, 0, W, H)));
+                    app.OnPaint(new PaintEventArgs(g, new Rectangle(0, 0, app.W, app.H)));
                 for (int i = app.Controls.Count - 1; i >= 0; i--)
                 {
                     Control c = app.Controls[i];

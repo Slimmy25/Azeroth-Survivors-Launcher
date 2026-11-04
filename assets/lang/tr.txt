@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Oyun süresini ana ekranda göster
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Yeni Oyuncu Rehberi
 {#0} of {#1} topics read
 = {#1} konudan {#0} tanesi okundu
@@ -1067,10 +1067,6 @@ Download cancelled.
 = İndirme iptal edildi.
 The download server did not accept the launcher's login.
 = İndirme sunucusu başlatıcının girişini kabul etmedi.
-The backup host's page has no download link right now.
-= Yedek sunucunun sayfasında şu an indirme bağlantısı yok.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Yedek sunucudan inen dosya bozuk (sağlama toplamı uyuşmuyor). Tekrar dene.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Başlatıcı zaten çalışıyor.\n\nSimgesini bildirim alanında (saatin yanında) ara.
 INSTALL FROM A FILE
@@ -1484,7 +1480,7 @@ Most level-up saves in a run
 = Bir koşuda en çok seviye kurtarışı
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Tüm istatistiklerin oyunda (/azs) ve İSTATİSTİK sayfasında: koşular, rekorlar, yetenekler, sınıflar, oynama süresi, Baş Düşmanın ve arkadaşlarla co-op.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Başlatıcının tüm Yeni Oyuncu Rehberi oyunun içinde (/handbook): her konu ve sayfa, her sınıfın büyüleri simgeleri ve onları değiştiren yeteneklerle, ve tüm yetenek ağaçları.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Küçük değişiklikler, her biri açık ya da kapalı (/azsmods ya da mini harita düğmesi): sohbette seviye atlama, stat bonusu ya da yeni büyü satırı yok, boss işaretleri (Kafatası, Çarpı, Elmas), mini boss işaretleri (Yıldız, Üçgen, Elmas), düşen her dostun üstünde yanıp sönen bir işaret, yalnızca altı kareli sade bir aksiyon çubuğu, arayüzü taşıma ve kilitleme, hedef çerçevesini gizleme ve 50'de kamera.
@@ -1524,8 +1520,8 @@ switched off: the two conflict.
 = kapatıldı: ikisi çakışıyor.
 these two can't be on together. Switching one on switches the other off.
 = bu ikisi aynı anda açık olamaz. Birini açınca diğeri kapanır.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Düz, koyu birim çerçeveleri ve kompakt bir aksiyon çubuğu, Plater tarzı isim plakaları (Survivor Plates), XP çubuğunda şans ve kart olasılıkları, sekmeli sohbet paneli ve otomatik raid işaretleri. AZS Minor Mods ile aynı anda açık olamaz.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Düz, koyu birim çerçeveleri ve kompakt bir aksiyon çubuğu, Plater tarzı isim plakaları (Survivor Plates), XP çubuğunda şans ve kart olasılıkları, sekmeli sohbet paneli ve otomatik raid işaretleri. Slim Suite ile aynı anda açık olamaz.
 The game updated itself and is opening again...
 = Oyun kendini güncelledi ve yeniden açılıyor...
 The game updated itself and opened again.

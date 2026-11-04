@@ -1,4 +1,4 @@
-// The New Player Guide's links and hover texts. Every name the guide knows (its topics and pages, the classes,
+// The New Player Handbook's links and hover texts. Every name the guide knows (its topics and pages, the classes,
 // every spell in a class's spell pool, the talents, the races and their racials, the zones) is found in the
 // guide's text: click it to go to the page about it, point at it to read what it does.
 //
@@ -53,30 +53,17 @@ namespace AzerothLauncher
                 if (matches(l.Term) || matches(entry.Key)) list.Add(l);
             }
 
-            // A spell search also offers the Codex item and any 8-piece set bonus that names it.
-            // These are separate destinations, while the spell itself remains the first result.
+            // A spell search also offers any 8-piece set bonus that names it. Codex stays out of search;
+            // the spell and item links in class guides lead to the class-specific passage.
             try
             {
                 List<GuideTopic> topics = Data.Guide;
                 int itemsTopic = topics.FindIndex(delegate(GuideTopic g) { return g.Title == "Items"; });
-                if (itemsTopic >= 0)
+                if (itemsTopic >= 0 && spellClasses != null)
                 {
                     List<GuidePage> pages = topics[itemsTopic].Pages;
-                    int codexPage = pages.FindIndex(delegate(GuidePage g) { return g.Title == "Codex"; });
-                    foreach (Jewel jewel in Items.Jewelry)
-                        if (jewel.IsCodex && jewel.Class != null && matches(jewel.Spell))
-                            list.Add(new GuideLink
-                            {
-                                Term = jewel.Spell + " · Codex — " + jewel.Name,
-                                FindText = jewel.Spell,
-                                Topic = itemsTopic,
-                                Page = codexPage,
-                                Tip = Items.Card(jewel)
-                            });
-
-                    if (spellClasses != null)
-                        foreach (var pair in spellClasses)
-                        {
+                    foreach (var pair in spellClasses)
+                    {
                             int split = pair.Key.IndexOf('|');
                             if (split < 0) continue;
                             string spell = pair.Key.Substring(0, split), cls = pair.Value;
@@ -98,7 +85,7 @@ namespace AzerothLauncher
                                     Tip = bonus
                                 });
                             }
-                        }
+                    }
                 }
             }
             catch (Exception) { }
@@ -115,7 +102,7 @@ namespace AzerothLauncher
             if (list.Count > max) list.RemoveRange(max, list.Count - max);
             return list;
         }
-        public static Func<Dictionary<string, string>> CapturedTips;   // set by the launcher: the game's tooltips AZS Stats saw
+        public static Func<Dictionary<string, string>> CapturedTips;   // optional game-captured tooltip provider; no stats addon is wired here
         static Dictionary<string, GuideLink> byKey;           // the same links by Norm(name): "shadowbolt" -> Shadow Bolt
 
         public static void Reset() { links = null; }        // read again (new tooltips from the game)
@@ -179,6 +166,7 @@ namespace AzerothLauncher
             }
             // pages first (a class page wins over a mention elsewhere), then the spells and talents on them
             for (int t = 0; t < topics.Count; t++)
+                if (!string.Equals(topics[t].Title, "Archive", StringComparison.OrdinalIgnoreCase))
                 for (int p = 0; p < topics[t].Pages.Count; p++)
                 {
                     GuidePage pg = topics[t].Pages[p];
@@ -187,6 +175,7 @@ namespace AzerothLauncher
                 }
             for (int t = 0; t < topics.Count; t++)
             {
+                if (string.Equals(topics[t].Title, "Archive", StringComparison.OrdinalIgnoreCase)) continue;
                 if (topics[t].Title.Length >= 6) Add(topics[t].Title, t, -1, topics[t].Desc);
                 for (int p = -1; p < topics[t].Pages.Count; p++)
                 {
@@ -267,7 +256,7 @@ namespace AzerothLauncher
             // the theorycrafting tools: a click opens them (-2 the Talent Tree Builder, -3 the Gear Planner)
             Add("Talent Tree Builder", -2, -1, "Pick a class and try out a build of up to 51 points on its three talent trees.");
             Add("Gear Planner", -3, -1, "Put gear and jewelry on a character sheet like the game's and see what they add.");
-            // every item: its card as the hover text; a click opens its page in the Items topic
+            // every item: gear and ordinary jewelry link to their guide; Codex links point to class-guide passages
             int itemsTopic = topics.FindIndex(delegate(GuideTopic g) { return g.Title == "Items"; });
             if (itemsTopic >= 0)
             {
@@ -281,8 +270,12 @@ namespace AzerothLauncher
                         if (!links.ContainsKey(piece.Name)) Add(piece.Name, itemsTopic, pg, Items.Card(piece));
                     }
                     int jp = pages.FindIndex(delegate(GuidePage g) { return g.Title.StartsWith("Rings"); });
-                    int cp = pages.FindIndex(delegate(GuidePage g) { return g.Title == "Codex"; });
-                    foreach (var j in Items.Jewelry) if (j.IsCodex && !links.ContainsKey(j.Name)) Add(j.Name, itemsTopic, cp, Items.Card(j));
+                    int codexClassesTopic = topics.FindIndex(delegate(GuideTopic g) { return g.Title == "Classes"; });
+                    foreach (var j in Items.Jewelry) if (j.IsCodex && !links.ContainsKey(j.Name) && codexClassesTopic >= 0)
+                    {
+                        int classPage = topics[codexClassesTopic].Pages.FindIndex(delegate(GuidePage g) { return g.Title == j.Class; });
+                        if (classPage >= 0) Add(j.Name, codexClassesTopic, classPage, Items.Card(j));
+                    }
                     foreach (var j in Items.Jewelry) if (!j.IsCodex && !links.ContainsKey(j.Name)) Add(j.Name, itemsTopic, jp, Items.Card(j));
                 }
                 catch (Exception) { }
@@ -298,7 +291,7 @@ namespace AzerothLauncher
                 Add(kv.Key, zone ? zonesTopic : racesTopic, -1, kv.Value);
             }
             foreach (string w in TreeWords) links.Remove(w);
-            // the game's own words win: a tooltip AZS Stats saw in game replaces the guide's line about that spell
+            // if a game-captured tooltip provider is supplied, its own words replace the guide's line about that spell
             Dictionary<string, string> seen = null;
             try { if (CapturedTips != null) seen = CapturedTips(); } catch (Exception) { }
             if (seen != null)
@@ -340,7 +333,7 @@ namespace AzerothLauncher
             return null;
         }
 
-        // what the game (or, until AZS Stats has seen it in game, the guide) says a name does; null if nothing
+        // what the game (or, until a captured tooltip is available, the guide) says a name does; null if nothing
         // the link is the page's (or topic's) own title: it goes to that page itself
         public static bool IsPage(GuideLink l)
         {
@@ -773,7 +766,7 @@ namespace AzerothLauncher
         }
     }
 
-    public class GuideHover : Form
+    public class GuideHover : Control, IMessageFilter
     {
         static GuideHover box;
         static Form hoverHost;
@@ -823,22 +816,29 @@ namespace AzerothLauncher
         }
         Image icon;                                           // the spell's or talent's icon, beside its name
         string model;                                         // a real item's name: its model picture under the text
+        bool modelLayout;
         Image picture, shownPicture;                          // a picture under the text (ShowPicture)
-        const int W = 300, ModelH = 230;
+        readonly List<Image> galleryImages = new List<Image>();
+        int galleryIndex, galleryHeight;
+        int galleryWidth;
+        Rectangle galleryPrevious, galleryNext, galleryClose;
+        bool galleryMode, galleryExpanded, galleryPinned;
+        Rectangle galleryImageViewport;
+        bool galleryZoomed, galleryPanning;
+        Point galleryPan, galleryPanStart, galleryMouseStart;
+        static int W { get { return box != null && box.galleryExpanded && box.galleryWidth > 0 ? box.galleryWidth : Theme.Px(300); } }
+        static int ModelH { get { return Theme.Px(230); } }
+        Font titleFont, bodyFont;
 
         GuideHover()
         {
-            FormBorderStyle = FormBorderStyle.None;
-            ShowInTaskbar = false;
-            StartPosition = FormStartPosition.Manual;
-            // A hover card must never become a desktop-wide always-on-top window. ShowCore
-            // assigns the launcher as its owner so Windows keeps it above the launcher only.
-            TopMost = false;
+            // Keep hover cards in the launcher's client area instead of creating another top-level
+            // window. On mixed-DPI desktops, screen-coordinate conversion for owned popup windows
+            // can put the card on a different monitor from the launcher.
+            TabStop = false;
             BackColor = Theme.Hex("#120f18");
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
-
-        protected override bool ShowWithoutActivation { get { return true; } }
 
         protected override CreateParams CreateParams
         {
@@ -858,6 +858,7 @@ namespace AzerothLauncher
         public static void ShowPicture(Control owner, string title, string body, Image picture)
         {
             if (box == null || box.IsDisposed) box = new GuideHover();
+            box.ClearGallery();
             box.picture = picture;
             ShowCore(owner, title, body, null, null, false);
         }
@@ -865,12 +866,35 @@ namespace AzerothLauncher
         public static void ShowPictureAt(Control owner, string title, string body, Image picture, Point screenAnchor)
         {
             if (box == null || box.IsDisposed) box = new GuideHover();
+            box.ClearGallery();
             box.picture = picture;
             ShowCore(owner, title, body, null, null, false, screenAnchor);
         }
 
+        public static void ShowGallery(Control owner, string title, string body, IList<Image> images)
+        {
+            ShowGallery(owner, title, body, images, false);
+        }
+
+        public static void ShowGallery(Control owner, string title, string body, IList<Image> images, bool expanded)
+        {
+            if (images == null || images.Count == 0) { Hide(owner); return; }
+            if (box == null || box.IsDisposed) box = new GuideHover();
+            box.ClearGallery();
+            foreach (Image image in images) if (image != null) box.galleryImages.Add((Image)image.Clone());
+            if (box.galleryImages.Count == 0) return;
+            box.galleryMode = true;
+            box.galleryExpanded = expanded;
+            box.galleryPinned = expanded;
+            if (expanded) Application.AddMessageFilter(box);
+            box.picture = null;
+            box.galleryIndex = 0;
+            ShowCore(owner, title, body, null, null, false);
+        }
+
         public static void ShowHelp(Control owner, string title, string body)
         {
+            if (box != null) box.ClearGallery();
             ShowCore(owner, title, body, null, null, false);
         }
 
@@ -972,6 +996,7 @@ namespace AzerothLauncher
         // under the text (it loads the first time, then comes from the cache)
         public static void Show(Control owner, string title, string body, Image icon, string model)
         {
+            if (box != null) box.ClearGallery();
             ShowCore(owner, title, body, icon, model, true);
         }
 
@@ -982,34 +1007,42 @@ namespace AzerothLauncher
 
         static void ShowCore(Control owner, string title, string body, Image icon, string model, bool applyGear, Point? screenAnchor)
         {
-            if (!CanShow(owner)) { Hide(owner); return; }
+            if (!CanShow(owner) && !LauncherApp.PreviewMode) { Hide(owner); return; }
             if (box == null || box.IsDisposed) box = new GuideHover();
             HookHost(owner);
             Form host = RootHost(owner);
             if (host == null) { Hide(); return; }
-            // Assign ownership while hidden; owned windows follow the launcher in z-order and
-            // minimize/close with it, but cannot cover unrelated applications.
-            if (box.Owner != host)
+            Rectangle ownerBounds = host.RectangleToScreen(host.ClientRectangle);
+            if (ownerBounds.Width < 40 || ownerBounds.Height < 40) { Hide(); return; }
+            // Parent the card to the actual launcher HWND. Its position is then expressed in the
+            // same client-coordinate space as the launcher, even when monitors use different DPI.
+            if (box.Parent != host)
             {
-                if (box.Visible) ((Form)box).Hide();
-                box.Owner = host;
+                if (box.Visible) box.HideCard();
+                if (box.Parent != null) box.Parent.Controls.Remove(box);
+                host.Controls.Add(box);
             }
             box.icon = icon;
             box.model = model;
+            Image modelImage = model == null ? null : SpellIcons.ItemModel(model, box);
+            box.modelLayout = modelImage != null;
             Image pic = box.picture;
             box.picture = null;                               // a picture is for the one note that passed it
             box.shownPicture = pic;
             box.title = title;
             box.hoverOwner = owner;
+            const int margin = 6;
+            box.galleryWidth = box.galleryExpanded
+                ? Math.Min(ownerBounds.Width - margin * 2, Math.Max(Theme.Px(320), (int)(ownerBounds.Width * .70f)))
+                : 0;
             if (applyGear) body = GearEffect.Apply(title, body); // only content hovers get the planner's live totals
+            if (model != null || IsItemTitle(title)) body = ShortItemExplanation(body);
             box.body = body;
-            Font tf = Theme.F(10.5f, FontStyle.Bold), bf = Theme.F(9.5f);
+            Font tf = box.titleFont=Theme.F(10.5f, FontStyle.Bold), bf = box.bodyFont=Theme.F(9.5f);
             int th = title.Length == 0 ? 0 : TextRenderer.MeasureText(title, tf, new Size(W - 20 - (icon != null ? 40 : 0), 0), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height;
             if (icon != null) th = Math.Max(th, 36);
             int bh;
             using (var mg = Graphics.FromImage(measure)) bh = box.Flow(mg, bf, false);
-            Rectangle ownerBounds = host.RectangleToScreen(host.ClientRectangle);
-            if (ownerBounds.Width < 40 || ownerBounds.Height < 40) { Hide(); return; }
             Point p;
             if (screenAnchor.HasValue) p = screenAnchor.Value;
             else if (owner.ClientRectangle.Contains(owner.PointToClient(Cursor.Position)) && owner.IsHandleCreated) p = Cursor.Position;
@@ -1017,31 +1050,214 @@ namespace AzerothLauncher
 
             // Confine every tooltip to its launcher window. Clamping to the monitor's working area alone lets
             // bottom-edge hovers spill over other apps (the launcher can sit above another window).
-            const int margin = 6;
             int availableWidth = ownerBounds.Width - margin * 2;
             int availableHeight = ownerBounds.Height - margin * 2;
             int width = Math.Min(W, availableWidth);
-            int height = Math.Min(th + bh + 22 + (model != null ? ModelH + 8 : 0) + (pic != null ? pic.Height + 10 : 0), availableHeight);
+            if (box.galleryMode && box.galleryExpanded)
+            {
+                int chromeHeight = th + bh + Theme.Px(64);
+                int desiredHeight = Math.Min(availableHeight, (int)(availableHeight * .90f));
+                box.galleryHeight = Math.Max(Theme.Px(80), desiredHeight - chromeHeight);
+                box.galleryHeight = Math.Min(box.galleryHeight, Math.Max(Theme.Px(1), availableHeight - chromeHeight));
+            }
+            else if (box.galleryMode)
+                box.galleryHeight = Math.Max(Theme.Px(72), Math.Min(Theme.Px(180), availableHeight - th - bh - Theme.Px(42)));
+            else box.galleryHeight = 0;
+            int galleryExtra = box.galleryMode ? box.galleryHeight + Theme.Px(box.galleryExpanded ? 42 : 12) : 0;
+            int height = Math.Min(th + bh + 22 + galleryExtra + (box.modelLayout ? ModelH + 8 : 0) + (pic != null ? pic.Height + 10 : 0), availableHeight);
             var size = new Size(width, height);
             int x = p.X + 16, y = p.Y + 20;
-            if (x + size.Width > ownerBounds.Right - margin) x = p.X - size.Width - 8;
-            if (y + size.Height > ownerBounds.Bottom - margin) y = p.Y - size.Height - 8;
+            if (box.galleryExpanded)
+            {
+                x = ownerBounds.Left + (ownerBounds.Width - size.Width) / 2;
+                y = ownerBounds.Top + (ownerBounds.Height - size.Height) / 2;
+            }
+            else
+            {
+                if (x + size.Width > ownerBounds.Right - margin) x = p.X - size.Width - 8;
+                if (y + size.Height > ownerBounds.Bottom - margin) y = p.Y - size.Height - 8;
+            }
             x = Math.Max(ownerBounds.Left + margin, Math.Min(x, ownerBounds.Right - size.Width - margin));
             y = Math.Max(ownerBounds.Top + margin, Math.Min(y, ownerBounds.Bottom - size.Height - margin));
-            box.Bounds = new Rectangle(x, y, size.Width, size.Height);
+            box.Bounds = host.RectangleToClient(new Rectangle(x, y, size.Width, size.Height));
             box.Invalidate();
-            if (!box.Visible) box.Show(host);
+            if (!box.Visible) box.Show();
+            box.BringToFront();
         }
 
         public static new void Hide()
         {
-            if (box != null && !box.IsDisposed && box.Visible) ((Form)box).Hide();
-            if (box != null) box.hoverOwner = null;
+            if (box == null) return;
+            if (!box.IsDisposed && box.Visible) box.HideCard();
+            box.hoverOwner = null;
+            box.ClearGallery();
+        }
+
+        void HideCard() { base.Hide(); }
+
+        void ClearGallery()
+        {
+            Application.RemoveMessageFilter(this);
+            galleryMode = false;
+            galleryExpanded = false;
+            galleryPinned = false;
+            galleryZoomed = galleryPanning = false;
+            galleryPan = Point.Empty;
+            galleryIndex = 0;
+            galleryHeight = 0;
+            galleryWidth = 0;
+            galleryPrevious = galleryNext = galleryClose = galleryImageViewport = Rectangle.Empty;
+            foreach (Image image in galleryImages) try { image.Dispose(); } catch (Exception) { }
+            galleryImages.Clear();
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (galleryMode && galleryExpanded)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (galleryZoomed) { galleryZoomed = false; galleryPan = Point.Empty; Invalidate(); }
+                    else Hide();
+                    return;
+                }
+                if (e.Button == MouseButtons.Left && galleryClose.Contains(e.Location)) { Hide(); return; }
+                if (e.Button == MouseButtons.Left && galleryPrevious.Contains(e.Location) && galleryImages.Count > 1)
+                {
+                    galleryIndex = (galleryIndex + galleryImages.Count - 1) % galleryImages.Count;
+                    galleryZoomed = galleryPanning = false; galleryPan = Point.Empty; Invalidate(); return;
+                }
+                if (e.Button == MouseButtons.Left && galleryNext.Contains(e.Location) && galleryImages.Count > 1)
+                {
+                    galleryIndex = (galleryIndex + 1) % galleryImages.Count;
+                    galleryZoomed = galleryPanning = false; galleryPan = Point.Empty; Invalidate(); return;
+                }
+                if (e.Button == MouseButtons.Left && galleryImageViewport.Contains(e.Location))
+                {
+                    if (e.Clicks > 1) { galleryZoomed = galleryPanning = false; galleryPan = Point.Empty; }
+                    else if (galleryZoomed)
+                    {
+                        galleryPanning = true; galleryMouseStart = e.Location; galleryPanStart = galleryPan; Capture = true;
+                    }
+                    else
+                    {
+                        galleryZoomed = true; SetGalleryZoomFocus(e.Location);
+                    }
+                    Invalidate(); return;
+                }
+                if (e.Button == MouseButtons.Left) { Hide(); return; }
+            }
+            if (e.Button == MouseButtons.Left && galleryExpanded && galleryClose.Contains(e.Location))
+            {
+                Hide();
+                return;
+            }
+            if (e.Button == MouseButtons.Left && galleryMode && galleryImages.Count > 1)
+            {
+                if (galleryPrevious.Contains(e.Location)) galleryIndex = (galleryIndex + galleryImages.Count - 1) % galleryImages.Count;
+                else if (galleryNext.Contains(e.Location)) galleryIndex = (galleryIndex + 1) % galleryImages.Count;
+                Invalidate();
+            }
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (galleryPanning)
+            {
+                galleryPan = new Point(galleryPanStart.X + e.X - galleryMouseStart.X, galleryPanStart.Y + e.Y - galleryMouseStart.Y);
+                ClampGalleryPan(); Invalidate(); return;
+            }
+            Cursor = galleryMode && (galleryPrevious.Contains(e.Location) || galleryNext.Contains(e.Location) || galleryClose.Contains(e.Location))
+                ? Cursors.Hand : galleryZoomed && galleryImageViewport.Contains(e.Location) ? Cursors.SizeAll : Cursors.Default;
+            base.OnMouseMove(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            if (galleryPanning && e.Button == MouseButtons.Left) { galleryPanning = false; Capture = false; }
+            base.OnMouseUp(e);
+        }
+
+        bool IMessageFilter.PreFilterMessage(ref Message m)
+        {
+            if (!galleryMode || !galleryExpanded || !Visible || (m.Msg != 0x0201 && m.Msg != 0x0204)) return false;
+            Point screen = Control.MousePosition;
+            if (!RectangleToScreen(ClientRectangle).Contains(screen)) Hide();
+            return false;
+        }
+
+        void SetGalleryZoomFocus(Point pointer)
+        {
+            if (galleryImages.Count == 0 || galleryImageViewport.IsEmpty) return;
+            Image image = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
+            float fit = Math.Min((float)galleryImageViewport.Width / Math.Max(1, image.Width), (float)galleryImageViewport.Height / Math.Max(1, image.Height));
+            float fitW = image.Width * fit, fitH = image.Height * fit;
+            float fitCenterX = galleryImageViewport.X + (galleryImageViewport.Width - fitW) / 2f + fitW / 2f;
+            float fitCenterY = galleryImageViewport.Y + (galleryImageViewport.Height - fitH) / 2f + fitH / 2f;
+            float viewCenterX = galleryImageViewport.Left + galleryImageViewport.Width / 2f;
+            float viewCenterY = galleryImageViewport.Top + galleryImageViewport.Height / 2f;
+            galleryPan = new Point((int)Math.Round(pointer.X - viewCenterX - 2f * (pointer.X - fitCenterX)),
+                                   (int)Math.Round(pointer.Y - viewCenterY - 2f * (pointer.Y - fitCenterY)));
+            ClampGalleryPan();
+        }
+
+        void ClampGalleryPan()
+        {
+            if (galleryImages.Count == 0 || galleryImageViewport.IsEmpty) return;
+            Image image = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
+            float fit = Math.Min((float)galleryImageViewport.Width / Math.Max(1, image.Width), (float)galleryImageViewport.Height / Math.Max(1, image.Height));
+            float extraX = Math.Max(0, image.Width * fit * 2f - galleryImageViewport.Width) / 2f;
+            float extraY = Math.Max(0, image.Height * fit * 2f - galleryImageViewport.Height) / 2f;
+            galleryPan = new Point((int)Math.Max(-extraX, Math.Min(extraX, galleryPan.X)), (int)Math.Max(-extraY, Math.Min(extraY, galleryPan.Y)));
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            Control owner = hoverOwner;
+            if (galleryMode && !galleryPinned && (owner == null || owner.IsDisposed ||
+                !owner.RectangleToScreen(owner.ClientRectangle).Contains(Cursor.Position))) Hide();
+            base.OnMouseLeave(e);
+        }
+
+        static bool IsItemTitle(string title)
+        {
+            if (string.IsNullOrEmpty(title)) return false;
+            foreach (var item in Items.Gear) if (string.Equals(item.Name, title, StringComparison.OrdinalIgnoreCase)) return true;
+            foreach (var item in Items.Jewelry) if (string.Equals(item.Name, title, StringComparison.OrdinalIgnoreCase)) return true;
+            foreach (var item in Transmog.All) if (string.Equals(item.Name, title, StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
+
+        // Keep item cards readable: at most two complete sentences, or two short lines for stat-style cards.
+        static string ShortItemExplanation(string value)
+        {
+            string body = (value ?? "").Trim();
+            if (body.Length == 0) return body;
+            int sentences = 0;
+            for (int i = 0; i < body.Length; i++)
+            {
+                char c = body[i];
+                if (c != '.' && c != '!' && c != '?') continue;
+                if (c == '.' && i > 0 && i + 1 < body.Length && char.IsDigit(body[i - 1]) && char.IsDigit(body[i + 1])) continue;
+                if (i + 1 < body.Length && !char.IsWhiteSpace(body[i + 1])) continue;
+                if (++sentences == 2) return body.Substring(0, i + 1).Trim();
+            }
+            if (sentences == 0)
+            {
+                string[] lines = body.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Length > 2) return lines[0].Trim() + "\n" + lines[1].Trim();
+            }
+            return body;
         }
 
         public static void Hide(Control owner)
         {
-            if (box != null && !box.IsDisposed && box.hoverOwner == owner) Hide();
+            if (box == null || box.IsDisposed || box.hoverOwner != owner) return;
+            // Keep an addon gallery alive as the pointer moves from the name into its arrows.
+            if (box.galleryPinned) return;
+            if (box.galleryMode && box.Visible && box.RectangleToScreen(box.ClientRectangle).Contains(Cursor.Position)) return;
+            Hide();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -1049,7 +1265,7 @@ namespace AzerothLauncher
             Graphics g = e.Graphics;
             g.Clear(BackColor);
             using (var p = new Pen(Theme.Hex("#c49a48"), 1)) g.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
-            Font tf = Theme.F(10.5f, FontStyle.Bold), bf = Theme.F(9.5f);
+            Font tf = titleFont ?? Theme.F(10.5f, FontStyle.Bold), bf = bodyFont ?? Theme.F(9.5f);
             int ix = icon != null ? 40 : 0;
             int th = title.Length == 0 ? 0 : TextRenderer.MeasureText(title, tf, new Size(W - 20 - ix, 0), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height;
             if (icon != null)
@@ -1067,20 +1283,75 @@ namespace AzerothLauncher
             g.Restore(st);
             if (shownPicture != null)
                 g.DrawImage(shownPicture, (Width - shownPicture.Width) / 2, Height - shownPicture.Height - 10, shownPicture.Width, shownPicture.Height);
+            if (galleryMode && galleryImages.Count > 0)
+            {
+                int bodyHeight = Flow(g, bf, false);
+                int top = Math.Min(Height - galleryHeight - Theme.Px(galleryExpanded ? 42 : 24) - 8, 10 + th + bodyHeight + 8);
+                var imageRect = new Rectangle(10, top, Width - 20, galleryHeight);
+                galleryImageViewport = imageRect;
+                using (var b = new SolidBrush(Theme.Hex("#0b0910"))) g.FillRectangle(b, imageRect);
+                Image current = galleryImages[Math.Max(0, Math.Min(galleryIndex, galleryImages.Count - 1))];
+                float k = Math.Min((float)imageRect.Width / Math.Max(1, current.Width), (float)imageRect.Height / Math.Max(1, current.Height));
+                float zoom = galleryZoomed ? 2f : 1f;
+                int iw = Math.Max(1, (int)(current.Width * k * zoom)), ih = Math.Max(1, (int)(current.Height * k * zoom));
+                int imageX = imageRect.X + (imageRect.Width - iw) / 2 + (galleryZoomed ? galleryPan.X : 0);
+                int imageY = imageRect.Y + (imageRect.Height - ih) / 2 + (galleryZoomed ? galleryPan.Y : 0);
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                System.Drawing.Drawing2D.GraphicsState galleryState = g.Save();
+                g.SetClip(imageRect);
+                g.DrawImage(current, new Rectangle(imageX, imageY, iw, ih));
+                g.Restore(galleryState);
+                using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, imageRect);
+                int footerY = imageRect.Bottom + 3, footerH = Theme.Px(galleryExpanded ? 26 : 18), arrowW = Theme.Px(galleryExpanded ? 48 : 30);
+                galleryPrevious = new Rectangle(10, footerY, arrowW, footerH);
+                galleryNext = new Rectangle(Width - 10 - arrowW, footerY, arrowW, footerH);
+                galleryClose = galleryExpanded ? new Rectangle(Width - Theme.Px(22), Theme.Px(4), Theme.Px(18), Theme.Px(18)) : Rectangle.Empty;
+                if (galleryExpanded)
+                    TextRenderer.DrawText(g, "×", Theme.F(10, FontStyle.Bold), galleryClose, Theme.Gold,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                if (galleryImages.Count > 1)
+                {
+                    TextRenderer.DrawText(g, "‹", Theme.F(galleryExpanded ? 14 : 11, FontStyle.Bold), galleryPrevious, Theme.Gold,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, (galleryIndex + 1).ToString(CultureInfo.InvariantCulture) + " / " + galleryImages.Count.ToString(CultureInfo.InvariantCulture),
+                        Theme.F(galleryExpanded ? 9 : 8, FontStyle.Regular), new Rectangle(galleryPrevious.Right, footerY, Math.Max(1, galleryNext.Left - galleryPrevious.Right), footerH), Theme.GoldDim,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, "›", Theme.F(galleryExpanded ? 14 : 11, FontStyle.Bold), galleryNext, Theme.Gold,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                }
+                else
+                {
+                    galleryPrevious = galleryNext = Rectangle.Empty;
+                    TextRenderer.DrawText(g, "1 / 1", Theme.F(8, FontStyle.Regular), new Rectangle(10, footerY, Width - 20, footerH), Theme.GoldDim,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+                }
+            }
             if (model != null)
             {
-                var r = new Rectangle(10, Height - ModelH - 10, W - 20, ModelH);
-                using (var b = new SolidBrush(Theme.Hex("#0b0910"))) g.FillRectangle(b, r);
                 Image pic = SpellIcons.ItemModel(model, this);
                 if (pic != null)
                 {
+                    if (!modelLayout)
+                    {
+                        modelLayout = true;
+                        int targetHeight = Height + ModelH + 8;
+                        if (Parent != null)
+                        {
+                            targetHeight = Math.Min(targetHeight, Parent.ClientSize.Height - 12);
+                            Top = Math.Max(6, Math.Min(Top, Parent.ClientSize.Height - targetHeight - 6));
+                        }
+                        Height = Math.Max(Height, targetHeight);
+                        Invalidate();
+                        return;
+                    }
+                    var r = new Rectangle(10, Height - ModelH - 10, W - 20, ModelH);
+                    using (var b = new SolidBrush(Theme.Hex("#0b0910"))) g.FillRectangle(b, r);
                     float k = Math.Min((float)r.Width / pic.Width, (float)r.Height / pic.Height);
                     int w = (int)(pic.Width * k), h = (int)(pic.Height * k);
                     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                     g.DrawImage(pic, new Rectangle(r.X + (r.Width - w) / 2, r.Y + (r.Height - h) / 2, w, h));
+                    using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, r);
                 }
-                else TextRenderer.DrawText(g, Lang.T("Loading the 3D model…"), Theme.F(9), r, Theme.GoldDim, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-                using (var p = new Pen(Theme.Hex("#8a7040"), 1)) g.DrawRectangle(p, r);
             }
         }
     }
@@ -1089,6 +1360,8 @@ namespace AzerothLauncher
     public sealed class ThemedToolTip : IDisposable
     {
         readonly Dictionary<Control, string> text = new Dictionary<Control, string>();
+        sealed class ItemHover { public string Name, Icon; }
+        readonly Dictionary<Control, ItemHover> itemHover = new Dictionary<Control, ItemHover>();
         readonly Dictionary<Control, Timer> timers = new Dictionary<Control, Timer>();
         readonly Dictionary<Control, bool> showing = new Dictionary<Control, bool>();
         readonly HashSet<Control> hooked = new HashSet<Control>();
@@ -1096,14 +1369,34 @@ namespace AzerothLauncher
 
         public void SetToolTip(Control control, string value)
         {
+            SetToolTip(control, value, null);
+        }
+
+        // Item hovers use the same themed card, plus the item icon and an available Wowhead model image.
+        public void SetItemToolTip(Control control, string name, string value, string icon)
+        {
+            SetToolTip(control, value, string.IsNullOrEmpty(value) || string.IsNullOrEmpty(name)
+                ? null : new ItemHover { Name = name, Icon = icon });
+        }
+
+        void SetToolTip(Control control, string value, ItemHover item)
+        {
             if (control == null) return;
             string old;
             bool changed = !text.TryGetValue(control, out old) || old != value;
+            ItemHover oldItem;
+            bool hadItem = itemHover.TryGetValue(control, out oldItem);
+            if (item == null) itemHover.Remove(control);
+            else itemHover[control] = item;
+            if (hadItem != (item != null) || (hadItem && item != null &&
+                (!string.Equals(oldItem.Name, item.Name, StringComparison.Ordinal) ||
+                 !string.Equals(oldItem.Icon, item.Icon, StringComparison.Ordinal)))) changed = true;
             if (string.IsNullOrEmpty(value))
             {
                 text.Remove(control);
                 Stop(control);
                 GuideHover.Hide(control);
+                itemHover.Remove(control);
                 return;
             }
             text[control] = value;
@@ -1127,6 +1420,7 @@ namespace AzerothLauncher
             {
                 Stop(control);
                 text.Remove(control);
+                itemHover.Remove(control);
                 hooked.Remove(control);
             };
         }
@@ -1163,7 +1457,13 @@ namespace AzerothLauncher
                     string tip;
                     if (!control.IsDisposed && IsUnderPointer(control) && GuideHover.CanShow(control) && text.TryGetValue(control, out tip))
                     {
-                        GuideHover.ShowTip(control, Lang.T(tip));
+                        ItemHover item;
+                        if (itemHover.TryGetValue(control, out item))
+                        {
+                            string model = SpellIcons.HasItemModel(item.Name) ? item.Name : null;
+                            GuideHover.Show(control, Lang.T(item.Name), Lang.T(tip), SpellIcons.Icon(item.Icon, control), model);
+                        }
+                        else GuideHover.ShowTip(control, Lang.T(tip));
                         if (AutoPopDelay > 0)
                         {
                             showing[control] = true;
@@ -1194,6 +1494,7 @@ namespace AzerothLauncher
             timers.Clear();
             showing.Clear();
             text.Clear();
+            itemHover.Clear();
             hooked.Clear();
         }
     }

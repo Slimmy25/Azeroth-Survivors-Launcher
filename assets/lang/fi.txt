@@ -977,8 +977,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Näytä peliaika aloitusnäytössä
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Uuden pelaajan opas
 {#0} of {#1} topics read
 = {#0}/{#1} aihetta luettu
@@ -1066,10 +1066,6 @@ Download cancelled.
 = Lataus peruttiin.
 The download server did not accept the launcher's login.
 = Latauspalvelin ei hyväksynyt käynnistimen kirjautumista.
-The backup host's page has no download link right now.
-= Varapalvelimen sivulla ei ole juuri nyt latauslinkkiä.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Varapalvelimelta ladattu tiedosto on vioittunut (tarkistussumma ei täsmää). Yritä uudelleen.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Käynnistin on jo käynnissä.\n\nEtsi sen kuvake ilmaisinalueelta (kellon vierestä).
 INSTALL FROM A FILE
@@ -1483,7 +1479,7 @@ Most level-up saves in a run
 = Eniten tasonnousupelastuksia yhdessä juoksussa
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = Kaikki tilastosi pelissä (/azs) ja TILASTOT-sivulla: juoksut, ennätykset, kyvyt, luokat, peliaika, Nemesiksesi ja co-op ystävien kanssa.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Käynnistimen koko Uuden pelaajan opas pelin sisällä (/handbook): jokainen aihe ja sivu, jokaisen luokan loitsut kuvakkeineen ja niitä muuttavat kyvyt, ja kaikki kykypuut.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Pieniä muutoksia, kukin päälle tai pois (/azsmods tai sen minikarttapainike): ei tason nousun, ominaisuusbonuksen tai uuden loitsun rivejä chatissa, pomojen merkit (kallo, risti, timantti), minipomojen merkit (tähti, kolmio, timantti), vilkkuva merkki jokaisen kaatuneen ystävän yllä, pelkistetty toimintopalkki vain kuudella ruudulla, käyttöliittymän siirto ja lukitus, kohdekehyksen piilotus ja kamera 50:ssä.
@@ -1523,8 +1519,8 @@ switched off: the two conflict.
 = poistettu käytöstä: nämä kaksi ovat ristiriidassa.
 these two can't be on together. Switching one on switches the other off.
 = näitä kahta ei voi käyttää yhtä aikaa. Kun otat toisen käyttöön, toinen poistuu käytöstä.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Litteät, tummat yksikkökehykset ja kompakti toimintopalkki, Plater-tyyliset nimikyltit (Survivor Plates), onni ja korttien todennäköisyydet XP-palkissa, välilehdellinen chat-paneeli ja automaattiset raid-merkit. Ei voi olla käytössä yhtä aikaa AZS Minor Modsin kanssa.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Litteät, tummat yksikkökehykset ja kompakti toimintopalkki, Plater-tyyliset nimikyltit (Survivor Plates), onni ja korttien todennäköisyydet XP-palkissa, välilehdellinen chat-paneeli ja automaattiset raid-merkit. Ei voi olla käytössä yhtä aikaa Slim Suitein kanssa.
 The game updated itself and is opening again...
 = Peli päivitti itsensä ja avautuu uudelleen...
 The game updated itself and opened again.

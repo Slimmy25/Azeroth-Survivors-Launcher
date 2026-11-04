@@ -978,8 +978,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = 在主界面显示游戏时长
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = 新手指南
 {#0} of {#1} topics read
 = 已读 {#0}/{#1} 个主题
@@ -1067,10 +1067,6 @@ Download cancelled.
 = 下载已取消。
 The download server did not accept the launcher's login.
 = 下载服务器不接受启动器的登录。
-The backup host's page has no download link right now.
-= 备用服务器页面目前没有下载链接。
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= 从备用服务器下载的文件已损坏（校验和不匹配）。请重试。
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = 启动器已在运行。\n\n请在系统托盘（时钟旁）找到它的图标。
 INSTALL FROM A FILE
@@ -1484,7 +1480,7 @@ Most level-up saves in a run
 = 单局最多升级救命
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = 你在游戏内（/azs）和统计页面的全部数据：对局、纪录、技能、职业、游戏时间、你的宿敌以及与好友的合作。
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = 在游戏内查看启动器完整的新手指南（/handbook）：每个主题和页面，各职业的法术及其图标和改变它们的天赋，以及所有天赋树。
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = 一些小改动，每项可单独开关（/azsmods 或其小地图按钮）：聊天中不显示升级、属性加成和新法术的行，首领标记（骷髅、叉、菱形），小首领标记（星星、三角、菱形），每位倒下的队友头上各自闪烁的标记，只有六个格子的简洁动作条，移动并锁定界面，隐藏目标框体，镜头距离50。
@@ -1524,8 +1520,8 @@ switched off: the two conflict.
 = 已关闭：两者冲突。
 these two can't be on together. Switching one on switches the other off.
 = 这两个插件不能同时开启。开启其中一个，另一个就会关闭。
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= 扁平暗色的单位框体和紧凑的动作条，Plater 风格的姓名板（Survivor Plates），经验条上的幸运值和卡牌概率，带标签页的聊天面板，以及自动团队标记。不能与 AZS Minor Mods 同时开启。
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= 扁平暗色的单位框体和紧凑的动作条，Plater 风格的姓名板（Survivor Plates），经验条上的幸运值和卡牌概率，带标签页的聊天面板，以及自动团队标记。不能与 Slim Suite 同时开启。
 The game updated itself and is opening again...
 = 游戏已自行更新，正在重新打开...
 The game updated itself and opened again.

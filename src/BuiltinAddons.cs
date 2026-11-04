@@ -1,6 +1,7 @@
-// The AZS addons the launcher carries inside itself (besides AZS Stats, Stats.cs): AZS Handbook and AZS Minor Mods.
+// The AZS addons the launcher carries inside itself: AZS Handbook and AZS Minor Mods. Stats are provided by
+// Maidenhead's separately maintained Azeroth Stats addon from Download More.
 // (AZS Transparency was a test and is gone: Retired lists it, and its folder is taken out of AddOns.) Download More lists them as "builtin:<folder>"; INSTALL writes their files from the launcher, and
-// an installed one is brought up to the launcher's version right before the game starts (as AZS Stats is).
+// an installed one is brought up to the launcher's version right before the game starts.
 // Each one gets its own copy of AZSKit.lua, the look all AZS addons share (addons\AZSKit).
 // AZS Handbook also gets AZSHandbookData.lua, made here from the launcher's own guide and talent trees, so the
 // guide in game is always the one in the launcher.
@@ -15,6 +16,7 @@ namespace AzerothLauncher
     {
         public string Folder;                                 // the folder in AddOns
         public string[] Files;                                // its own files (resources AS.addon.<Folder>.<file>)
+        public string[] BinaryFiles;                          // non-text resources (same name convention)
         public string Generated;                              // a file the launcher makes (null: none)
     }
 
@@ -26,7 +28,8 @@ namespace AzerothLauncher
         public static readonly BuiltinAddon[] All =
         {
             new BuiltinAddon { Folder = "AZSHandbook", Files = new[] { "AZSHandbook.toc", "AZSHandbook.lua" }, Generated = "AZSHandbookData.lua" },
-            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua" } },
+            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua", "AZSMinorModsItems.lua", "AZSMinorModsMeter.lua" },
+                BinaryFiles = new[] { "Baby Crying.mp3" } },
         };
 
         public static BuiltinAddon Find(string url)
@@ -43,6 +46,29 @@ namespace AzerothLauncher
             yield return new KeyValuePair<string, string>(Kit, Util.ReadResource("AS.addon.kit." + Kit));
             if (a.Generated != null)
                 yield return new KeyValuePair<string, string>(a.Generated, HandbookData.Lua());
+        }
+
+        static byte[] BinaryResource(string name)
+        {
+            using (Stream stream = Util.ResourceStream(name))
+            {
+                if (stream == null) return new byte[0];
+                using (var memory = new MemoryStream()) { stream.CopyTo(memory); return memory.ToArray(); }
+            }
+        }
+
+        static IEnumerable<KeyValuePair<string, byte[]>> BinaryContents(BuiltinAddon a)
+        {
+            if (a.BinaryFiles == null) yield break;
+            foreach (string f in a.BinaryFiles)
+                yield return new KeyValuePair<string, byte[]>(f, BinaryResource("AS.addon." + a.Folder + "." + f));
+        }
+
+        static bool SameBytes(byte[] left, byte[] right)
+        {
+            if (left == null || right == null || left.Length != right.Length) return false;
+            for (int i = 0; i < left.Length; i++) if (left[i] != right[i]) return false;
+            return true;
         }
 
         // its folder in AddOns, turned on or off, or null
@@ -67,6 +93,12 @@ namespace AzerothLauncher
                 try { if (!File.Exists(p) || Norm(File.ReadAllText(p, Encoding.UTF8)) != Norm(kv.Value)) return true; }
                 catch (Exception) { return true; }
             }
+            foreach (var kv in BinaryContents(a))
+            {
+                string p = Path.Combine(dir, kv.Key);
+                try { if (kv.Value.Length == 0 || !File.Exists(p) || !SameBytes(File.ReadAllBytes(p), kv.Value)) return true; }
+                catch (Exception) { return true; }
+            }
             return false;
         }
 
@@ -80,6 +112,11 @@ namespace AzerothLauncher
             {
                 if (kv.Value.Length == 0) throw new UserError("This launcher was built without " + a.Folder + ".");
                 File.WriteAllText(Path.Combine(dir, kv.Key), kv.Value.Replace("\r\n", "\n").Replace("\n", "\r\n"), new UTF8Encoding(false));
+            }
+            foreach (var kv in BinaryContents(a))
+            {
+                if (kv.Value.Length == 0) throw new UserError("This launcher was built without " + a.Folder + ".");
+                File.WriteAllBytes(Path.Combine(dir, kv.Key), kv.Value);
             }
         }
 
@@ -142,7 +179,7 @@ namespace AzerothLauncher
         {
             if (cached != null) return cached;
             var s = new StringBuilder();
-            s.Append("-- AZS Handbook: the launcher's New Player Guide and talent trees, written by the launcher when it installs or\n");
+            s.Append("-- AZS Handbook: the launcher's New Player Handbook and talent trees, written by the launcher when it installs or\n");
             s.Append("-- updates the addon (so the guide in game is always the launcher's). Do not edit: the launcher writes it again.\n");
             s.Append("AZSHANDBOOK_DATA = {\n");
             s.Append("topics = {\n");
@@ -179,7 +216,7 @@ namespace AzerothLauncher
                 s.Append("},\n");
             }
             s.Append("},\n");
-            // every spell's icon by its name without case, spaces or punctuation (as AZS Stats matches them)
+            // every spell's icon by its name without case, spaces or punctuation
             s.Append("icons = {\n");
             var seen = new HashSet<string>();
             foreach (string raw in Util.ReadResource("AS.spell-icons.txt").Replace("\r\n", "\n").Split('\n'))

@@ -977,8 +977,8 @@ Counted in game by AZS Stats. Turn on cloud saving to take it to your other PCs.
 Show play time on the home screen
 = Visa speltid på startskärmen
 
-# New Player Guide
-New Player Guide
+# New Player Handbook
+New Player Handbook
 = Guide för nya spelare
 {#0} of {#1} topics read
 = {#0} av {#1} ämnen lästa
@@ -1066,10 +1066,6 @@ Download cancelled.
 = Nedladdningen avbröts.
 The download server did not accept the launcher's login.
 = Nedladdningsservern godkände inte launcherns inloggning.
-The backup host's page has no download link right now.
-= Reservserverns sida har ingen nedladdningslänk just nu.
-The download from the backup host is damaged (its checksum does not match). Please try again.
-= Nedladdningen från reservservern är skadad (kontrollsumman stämmer inte). Försök igen.
 The launcher is already running.\n\nLook for its icon in the system tray (near the clock).
 = Launchern körs redan.\n\nLeta efter dess ikon i meddelandefältet (vid klockan).
 INSTALL FROM A FILE
@@ -1483,7 +1479,7 @@ Most level-up saves in a run
 = Flest räddningar genom nivåhöjning i en runda
 All your stats in game (/azs) and on the STATS page: runs, records, abilities, classes, play time, your Nemesis and co-op with friends.
 = All din statistik i spelet (/azs) och på STATISTIK-sidan: rundor, rekord, förmågor, klasser, speltid, din Nemesis och co-op med vänner.
-The launcher's whole New Player Guide inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
+The launcher's whole New Player Handbook inside the game (/handbook): every topic and page, each class's spells with their icons and the talents that change them, and all the talent trees.
 = Startprogrammets hela guide för nya spelare inne i spelet (/handbook): varje ämne och sida, varje klass besvärjelser med ikoner och talangerna som ändrar dem, och alla talangträd.
 Small changes, each on or off (/azsmods or its minimap button): no level-up, stat bonus or new spell lines in chat, boss markers (Skull, Cross, Diamond), miniboss markers (Star, Triangle, Diamond), a blinking marker over each friend who falls, a plain action bar with just the six squares, move and lock the UI, hide the target frame and the camera at 50.
 = Små ändringar, var och en av eller på (/azsmods eller dess minikartknapp): inga rader om ny nivå, statbonus eller ny besvärjelse i chatten, bossmarkörer (dödskalle, kryss, diamant), miniboss-markörer (stjärna, triangel, diamant), en blinkande markör över varje vän som faller, en enkel åtgärdsrad med bara de sex rutorna, flytta och lås gränssnittet, dölj målramen och kameran på 50.
@@ -1523,8 +1519,8 @@ switched off: the two conflict.
 = avstängt: de två krockar.
 these two can't be on together. Switching one on switches the other off.
 = de här två kan inte vara på samtidigt. Slår du på det ena stängs det andra av.
-Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with AZS Minor Mods.
-= Platta, mörka enhetsramar och en kompakt åtgärdsrad, namnskyltar i Plater-stil (Survivor Plates), tur och kortens odds på XP-raden, en chattpanel med flikar och automatiska raidmarkörer. Kan inte vara på samtidigt som AZS Minor Mods.
+Flat, dark unit frames and a compact action bar, Plater-style nameplates (Survivor Plates), luck and card odds on the XP bar, a tabbed chat panel and automatic raid marks. Can't be on together with Slim Suite.
+= Platta, mörka enhetsramar och en kompakt åtgärdsrad, namnskyltar i Plater-stil (Survivor Plates), tur och kortens odds på XP-raden, en chattpanel med flikar och automatiska raidmarkörer. Kan inte vara på samtidigt som Slim Suite.
 The game updated itself and is opening again...
 = Spelet uppdaterade sig självt och öppnas igen...
 The game updated itself and opened again.

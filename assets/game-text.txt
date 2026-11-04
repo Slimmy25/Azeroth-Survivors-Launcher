@@ -1,4 +1,4 @@
-Hover texts for the New Player Guide: what the game itself says about a talent, a race, a racial, a class or a zone.
+Hover texts for the New Player Handbook: what the game itself says about a talent, a race, a racial, a class or a zone.
 Taken from the game at https://wow.aethus.pl/ (version 0.116.0), and from nowhere else.
 One entry per line:   Name | text
 "X" stands for a number that grows with each talent rank. Lines starting with # and everything above the first
@@ -16,9 +16,9 @@ Warlock | Curses and fire. Damage over time stacks up on everything that chases 
 Druid | Moon, storm and growth. Roots, hurricanes and the steadiest self-healing.
 
 # races
-Human | Perception: every 30 sec, +15% damage for 10 sec. The Human Spirit: +10% experience. Diplomacy: +20% gold.
+Human | Perception: every 30 sec, +15% damage for 10 sec. The Human Spirit: +20% experience. Diplomacy: +20% gold.
 Orc | Blood Fury: every 40 sec, +35% damage for 12 sec. Hardiness: +10% max health.
-Dwarf | Stoneform: every 45 sec, a shield absorbing 30% of max health. Gun Specialization: +6% damage. Treasure Finding: +30% pickup range.
+Dwarf | Stoneform: every 30 sec, a shield absorbing 45% of max health. Gun Specialization: +6% damage. Treasure Finding: +30% pickup range.
 Night Elf | Shadowmeld: near death, 3 sec of immunity (75 sec cooldown). Quickness: +8% movement speed. Nature Resistance: +5% damage reduction.
 Undead | Will of the Forsaken: near death, 4 sec of immunity (60 sec cooldown). Cannibalize: every kill heals 1 health. Shadow Resistance: +4% damage reduction.
 Tauren | War Stomp: every 15 sec, stuns nearby enemies for 2 sec. Endurance: +15% max health.
@@ -27,11 +27,11 @@ Troll | Berserking: every 35 sec, cooldowns recover 30% faster for 10 sec. Regen
 
 # racials
 Perception | Every 30 sec, +15% damage for 10 sec.
-The Human Spirit | +10% experience.
+The Human Spirit | +20% experience.
 Diplomacy | +20% gold.
 Blood Fury | Every 40 sec, +35% damage for 12 sec.
 Hardiness | +10% max health.
-Stoneform | Every 45 sec, a shield absorbing 30% of max health.
+Stoneform | Every 30 sec, a shield absorbing 45% of max health.
 Gun Specialization | +6% damage.
 Treasure Finding | +30% pickup range.
 Shadowmeld | Near death, 3 sec of immunity (75 sec cooldown).

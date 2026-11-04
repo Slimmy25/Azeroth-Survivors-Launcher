@@ -1,3 +1,111 @@
+# v3.20 (2026-11-02)
+
+- Verify mirrored addon ZIPs against the exact asset's GitHub SHA-256 digest in the repository hosting the download. Missing assets, missing digests and mismatches stop installation before extraction.
+- Accept release ZIP version names both with and without a leading v, fixing ASBuilder downloads while preserving ASTinyPlates support.
+- SurvivorsForge remains an artwork and trust-label source only.
+
+# v3.19 (2026-11-02)
+
+- Fixed addon installs incorrectly comparing launcher-hosted ZIPs against unrelated SurvivorsForge release hashes. SurvivorsForge remains an artwork and trust-label source only.
+
+# v3.18 (2026-11-02)
+
+- SurvivorsForge provides artwork and trust/Verified labels only; addon installation no longer uses its release hashes or approval gates. Configured repository downloads and GitHub digest checks remain in place.
+- Fixed ASTinyPlates downloads to match the creator's release ZIP filename, including its v prefix. SHA-256 verification remains enabled.
+
+# v3.17 (2026-11-01)
+
+- Added Azeroth Hub to Download More with the note “A full collection of addons featured in Survivorsforge - INGAME!”.
+- Slim Suite adds separate movable spell and equipped-jewelry rows, orientation controls, clickable encounter targets, and a standard resizable tooltip. Reset positions is now in the UI settings category.
+- Continued the display-scaling and guide layout work for this preview branch.
+
+===
+# v3.16 (2026-11-01)
+
+- Rewrote every Download More addon description as a one-word sentence based on the feature its GitHub project promises.
+
+===
+# v3.15 (2026-11-01)
+
+- Renamed AZS Minor Mods to Slim Suite, moved it to Gameplay, and added separate interface and minor-feature settings pages. The interface page includes a 32, 64, 128, or 256 pixel layout grid; the enabled-addon manager lets you disable addons and reload to apply the change.
+- Download More now uses the supplied addon screenshots until matching SurvivorsForge screenshots are available. Source screenshots take priority when present. Addon cards remain text-first, with screenshot previews and a gallery on hover/click.
+- Added one-word descriptions for addon listings, and updated the Handbook and Slim Suite descriptions.
+- Added a wiki favorite choice for saving the current reading position or the top of the page.
+- Gear Planner now shows separate effects for the selected amulet and the selected rings and trinkets. Added model references for the listed classic necklaces.
+- Updated README documentation and replaced its six screenshots with captures from the local display preview.
+
+===
+# v3.14 (2026-11-01)
+
+- Added AZS Max Hit and AZS MoveAnything to Download More. AZS Max Hit and AZSSpellMeter cannot be enabled together; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.
+- Renamed the existing Move UI catalog entry to MoveAnything By JamieeLee and added AZS MoveAnything By kodfod with the user's static SurvivorsForge verification.
+- Renamed the damage meter entry and mirrored package to AZSSpellMeter.
+- Addon cards show text and descriptions without screenshot thumbnails. Hovering an addon name shows a larger screenshot preview; clicking opens a centered, client-sized gallery with previous/next controls. The Verified label now follows the SurvivorsForge logo.
+- Shared addon bundles merge pictures from each linked SurvivorsForge listing. Review labels remain fixed in the local addon catalog.
+- Updated the Guide and talent data through game patch 0.137.0, including the reworked Enhancement Shaman tree and its new spells and effects.
+- AZS Minor Mods adds a separate worn-ring and trinket row. It orders items by when they are first observed equipped, with row position saved across reloads.
+
+===
+# v3.13 (2026-11-01)
+
+- Added ASTinyPlates by Valorless to Download More > UI, using its v1.3.4 release and ASTinyPlates folder.
+- Addon names with matching SurvivorsForge records now open an in-launcher photo gallery on hover; previous/next controls browse all cached source images. WebP art is decoded by the launcher's bundled codec. The SurvivorsForge mark is shown separately from the exact-version review status.
+- ASTinyPlates v1.3.4 carries the launcher's static Verified mark, separately from SurvivorsForge's API scan status.
+
+===
+# v3.12 (2026-11-01)
+
+- Added SurvivorsForge addon pictures and version-specific review status for exact catalog matches. Artwork is cached locally and shown only for matching releases marked Verified; the launcher keeps its own download sources.
+- Expanded AZS Minor Mods UI controls with vertical clock and buff layouts, configurable padding, screen-edge placement, optional feature hiding and saved positions across `/reload`.
+- The replacement Level Up button now appears only when an unspent level is available and shows the number waiting to be spent.
+- Removed the extra heading above the home page's next-video preview.
+
+===
+# v3.11 (2026-11-01)
+
+- Added ASBuilder by Cadoky to Download More > Misc, using the creator's latest published addon release.
+- Expanded AZS Minor Mods UI controls with movable and resizable XP, buff, encounter, chat and tooltip elements; added vertical layouts, persistent placement, and optional empty Action Bar 1 slots.
+- Fixed vertical encounter bars to use their selected width and remain resizable at compact heights.
+- Removed the retired developer backup game mirror; the launcher now tries its two regular hosts and keeps the official game download page as a last resort.
+
+===
+# v3.10 (2026-11-01)
+
+- Fixed a Vanilla FontString API mismatch that stopped AZS Minor Mods from loading its event announcement and encounter-bar text.
+
+===
+# v3.09 (2026-11-01)
+
+- AZS Minor Mods adds independently movable and resizable HUD controls for the XP bar, chat, stored-level button, clock, encounter bars and event announcements. Supported bars can change orientation and scale.
+- The run clock keeps its next-boss countdown together; encounter bars show live target health and grow as targets appear. Event announcements use localized banner text, last 10 seconds and fade in and out.
+- Fresh AZS Minor Mods installs include the bundled Baby Crying sound, Source Serif fonts and their license.
+
+===
+# v3.08 (2026-10-30)
+
+- Redesigned paired talent and gear tools: shared class selection, temporary class drafts, compact saves and import/export overlays, scrollable equipment and class-video links.
+- Replaced the bundled AZS Stats tracker with optional Azeroth Stats integration, preserving legacy files as read-only fallback data.
+
+- About Launcher now prominently credits ASBuilder by Cadoky, Azeroth Stats by Maidenhead, and Keijin's ASDataSync cloud-save foundation, with project links.
+- The Guide button now opens the Wiki introduction. A separate New Player Guide button opens the new-player section.
+- The Wiki introduction can be collapsed for navigation testing. Classes, Items and Transmog appear as peer sections, with class trees opening and closing interactively.
+- Items open directly to the shared rings, trinkets and amulets passage. Transmog's related passages are combined into one Wiki page.
+- Updated guide navigation, item and talent visuals, launcher documentation, screenshots and the game changelog, including patch 0.130.1.
+
+===
+# v3.07 (2026-10-30)
+
+- Class guides now share a nested passage with working links among spells, talents, gear and Codex entries.
+- Codex passages remain in Archive for reference; Archive is excluded from search, and Codex links lead to the related class guide.
+
+===
+# v3.06 (2026-10-30)
+
+- Launcher questions and warnings now appear over the secondary section without replacing its contents.
+- Oversized prompt content can scroll to fit the secondary section, while Windows file and folder pickers remain unchanged.
+- Existing players confirm their game folder during setup and finish without seeing the game-download slide.
+
+===
 # v3.05 (2026-10-29)
 
 - First-time setup is now required while its marker file remains beside the launcher; only successful setup moves it into that install's state folder.
@@ -382,7 +490,7 @@ the launcher is to use.
 ## Addons
 - New in Download More under UI: AetherHUD by Rehabrocket, a complete interface (run clock with the boss timeline, boss
   bars, enemy plates, unit frames, skill bar, combat meter, ring minimap). Like the other interfaces it is pick-one:
-  switching it on switches Survivor UI, SurvivorsDragonUi, Keijin UI, Bordo UI or BlackwellUI off.
+  switching it on switches Survivor UI, SurvivorsDragonUi, Keijin UI or BlackwellUI off.
 
 ## First-time setup (Major Update)
 - Setup no longer opens with "Welcome, Adventurer": each page sits at the top of the window like every other section,
@@ -586,13 +694,13 @@ the launcher is to use.
 
         static readonly Random hostDice = new Random();
 
-        // One of the hosts at random; when it fails (not when you cancel), the next one.
+        // Try the two regular hosts in random order; if one fails (not when cancelled), try the other.
         static void DownloadClient(string file, Action<long, long> progress, ManualResetEvent cancel, Action<string> say)
         {
-            var hosts = new List<int> { 0, 1, 2 };            // 0 main, 1 backup, 2 Google Drive
+            var hosts = new List<int> { 0, 1 };               // 0 main, 1 Google Drive
             lock (hostDice)
                 for (int i = hosts.Count - 1; i > 0; i--) { int j = hostDice.Next(i + 1); int t = hosts[i]; hosts[i] = hosts[j]; hosts[j] = t; }
-            string[] names = { "main host", "backup host", "Google Drive host" };
+            string[] names = { "main host", "Google Drive host" };
             var errors = new List<string>();
             for (int i = 0; i < hosts.Count; i++)
             {
@@ -602,7 +710,6 @@ the launcher is to use.
                 try
                 {
                     if (h == 0) DownloadFromMain(file, progress, cancel);
-                    else if (h == 1) DownloadFromMirror(file, progress, cancel);
                     else DownloadFromDrive(file, progress, cancel);
                     return;
                 }
@@ -665,29 +772,6 @@ the launcher is to use.
             if (Archive.Kind(file) != null) return;
             try { File.Delete(file); } catch (Exception) { }
             throw new UserError("The game's download page did not give a game archive.");
-        }
-
-        // the backup host: its page names the newest archive (the link changes with every upload) and its SHA-256;
-        // the download must match the game's known checksums (and the page's, when it shows one)
-        static void DownloadFromMirror(string file, Action<long, long> progress, ManualResetEvent cancel)
-        {
-            string html;
-            using (HttpWebResponse resp = Net.Open(ClientMirrorUrl, 30000, true, "backup download", "text/html"))
-            using (var rd = new StreamReader(resp.GetResponseStream(), Encoding.UTF8))
-                html = rd.ReadToEnd();
-            var link = System.Text.RegularExpressions.Regex.Match(html,
-                "href\\s*=\\s*[\"']([^\"']*/downloads/[^\"']+\\.(?:rar|zip|7z))[\"']", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            if (!link.Success) throw new UserError("The backup host's page has no download link right now.");
-            string url = new Uri(new Uri(ClientMirrorUrl), System.Net.WebUtility.HtmlDecode(link.Groups[1].Value)).AbsoluteUri;
-            var sum = System.Text.RegularExpressions.Regex.Match(html, "SHA-?256.{0,300}?\\b([0-9a-fA-F]{64})\\b",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Singleline);
-            string sha = Net.Download(url, file, true, "backup download", progress, cancel, 0);
-            if (sum.Success && !string.Equals(sum.Groups[1].Value, sha, StringComparison.OrdinalIgnoreCase))
-            {
-                try { File.Delete(file); } catch (Exception) { }
-                throw new UserError("The download from the backup host is damaged (its checksum does not match). Please try again.");
-            }
-            CheckClient(file, sha, Net.LastMd5, false, "backup host");
         }
 
         // Google Drive: a large file first gives a "can't scan this file for viruses" page whose form holds the real
