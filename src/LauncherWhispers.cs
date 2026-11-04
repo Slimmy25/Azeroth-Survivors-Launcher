@@ -167,7 +167,7 @@ namespace AzerothLauncher
             Controls.Add(feedbackReplyPanel);
         }
 
-        int whisperScroll, whisperScrollLimit;
+        int whisperScroll, whisperScrollLimit, whisperWheelRemainder;
 
         Rectangle WhisperArea
         {
@@ -182,7 +182,11 @@ namespace AzerothLauncher
         {
             if (CompactDisplay || ReadLauncherWhispers().Count == 0 || !WhisperArea.Contains(point))
                 return false;
-            whisperScroll = Math.Max(0, Math.Min(whisperScrollLimit, whisperScroll - delta * U(30) / 120));
+            // Small touchpad deltas add up until they make a whole notch, so they scroll too.
+            whisperWheelRemainder += delta;
+            int notches = whisperWheelRemainder / 120;
+            whisperWheelRemainder -= notches * 120;
+            whisperScroll = Math.Max(0, Math.Min(whisperScrollLimit, whisperScroll - notches * U(30)));
             Invalidate(WhisperArea);
             return true;
         }
@@ -193,7 +197,7 @@ namespace AzerothLauncher
             var posts = ReadLauncherWhispers();
             if (CompactDisplay || posts.Count == 0 || area.Width < U(60) || area.Height < U(28)) return;
 
-            Font font = Theme.F(9), heading = Theme.F(9, FontStyle.Bold);
+            Font font = Theme.F(7);
             int bodyWidth = Math.Max(20, area.Width - U(20));
             int headerHeight = Math.Min(U(29), area.Height / 2);
             int bodyHeight = area.Height - headerHeight - U(4);
@@ -202,7 +206,7 @@ namespace AzerothLauncher
             float contentHeight = 0;
             foreach (var post in posts)
             {
-                string line = post.At.ToLocalTime().ToString("yyyy-MM-dd HH:mm zzz", CultureInfo.InvariantCulture)
+                string line = post.At.ToLocalTime().ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
                     + "  Whisper From [" + post.Author + "]: " + post.Message;
                 float height = graphics.MeasureString(line, font, bodyWidth).Height + U(6);
                 lines.Add(line);
@@ -215,15 +219,39 @@ namespace AzerothLauncher
 
             using (var purple = new SolidBrush(Theme.Hex("#e58bdf")))
             using (var gold = new SolidBrush(Theme.Gold))
-            using (var background = new SolidBrush(Theme.Hex("#100e17")))
-            using (var border = new Pen(Theme.Bronze))
+            using (var headerFill = new SolidBrush(Color.FromArgb(232, Theme.Card)))
+            using (var track = new SolidBrush(Color.FromArgb(90, Theme.CardEdge)))
+            using (var circleFill = new SolidBrush(Theme.Hex("#0b0a10")))
+            using (var backdrop = new System.Drawing.Drawing2D.LinearGradientBrush(area, Theme.Card, Theme.Hex("#08070c"), 90f))
+            using (var bronze = new Pen(Theme.Bronze))
+            using (var innerGold = new Pen(Color.FromArgb(70, Theme.Gold)))
+            using (var rule = new Pen(Color.FromArgb(150, Theme.Gold)))
             {
-                graphics.FillRectangle(background, area);
-                graphics.DrawRectangle(border, area.X, area.Y, area.Width - 1, area.Height - 1);
+                graphics.FillRectangle(backdrop, area);
+                graphics.FillRectangle(headerFill, area.X, area.Y, area.Width, headerHeight);
+                graphics.DrawLine(rule, area.X + U(4), area.Y + headerHeight - 1, area.Right - U(4), area.Y + headerHeight - 1);
+                graphics.DrawRectangle(bronze, area.X, area.Y, area.Width - 1, area.Height - 1);
+                graphics.DrawRectangle(innerGold, area.X + U(2), area.Y + U(2), area.Width - U(5), area.Height - U(5));
+
+                // Your portrait fills a circle; the image is cropped square and clipped to the circle.
                 Image avatar = whisperAvatar ?? (whisperAvatar = Theme.LoadImage("AS.slimjim-avatar.png"));
+                int d = Math.Min(U(26), headerHeight - U(4));
+                var circle = new Rectangle(area.X + U(6), area.Y + (headerHeight - d) / 2, d, d);
+                graphics.FillEllipse(circleFill, circle);
                 if (avatar != null)
-                    graphics.DrawImage(avatar, new Rectangle(area.X + U(5), area.Y + U(4), U(24), Math.Min(U(21), headerHeight - U(5))));
-                graphics.DrawString("Slimjim", heading, gold, area.X + U(39), area.Y + U(8));
+                {
+                    int side = Math.Min(avatar.Width, avatar.Height);
+                    var source = new Rectangle((avatar.Width - side) / 2, (avatar.Height - side) / 2, side, side);
+                    using (var clip = new System.Drawing.Drawing2D.GraphicsPath())
+                    {
+                        clip.AddEllipse(circle);
+                        var portraitState = graphics.Save();
+                        graphics.SetClip(clip);
+                        graphics.DrawImage(avatar, circle, source, GraphicsUnit.Pixel);
+                        graphics.Restore(portraitState);
+                    }
+                }
+                graphics.DrawEllipse(rule, circle);
 
                 var body = new Rectangle(area.X + U(6), area.Y + headerHeight, bodyWidth, area.Height - headerHeight - U(4));
                 var state = graphics.Save();
@@ -241,7 +269,8 @@ namespace AzerothLauncher
                 {
                     int thumbHeight = Math.Min(body.Height, Math.Max(U(8), (int)(body.Height * body.Height / contentHeight)));
                     int thumbTop = body.Top + (body.Height - thumbHeight) * whisperScroll / whisperScrollLimit;
-                    graphics.FillRectangle(gold, area.Right - U(7), thumbTop, U(3), thumbHeight);
+                    graphics.FillRectangle(track, area.Right - U(9), body.Top, U(5), body.Height);
+                    graphics.FillRectangle(gold, area.Right - U(9), thumbTop, U(5), thumbHeight);
                 }
             }
         }
