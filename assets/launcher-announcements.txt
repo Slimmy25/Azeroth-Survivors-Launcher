@@ -1,0 +1,2 @@
+# Timestamp (ISO 8601 with offset) | Author | Message. Newest first; preserve historical timestamps.
+2026-11-03T21:11:41-05:00 | Slimjim | The launcher now extracts the game client automatically, using its built-in extractor.
