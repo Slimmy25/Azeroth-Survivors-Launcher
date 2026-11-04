@@ -581,6 +581,7 @@ namespace AzerothLauncher
             if (string.Equals(id, "creedui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "creedui.png" : null;
             if (string.Equals(id, "azerothcursor", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "azerothcursor.png" : null;
             if (string.Equals(id, "bigcursor", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "bigcursor.png" : null;
+            if (string.Equals(id, "cursorreticle", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "cursorreticle.gif" : null;
             return null;
         }
 
