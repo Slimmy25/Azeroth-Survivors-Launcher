@@ -1,3 +1,12 @@
+# v3.25 (2026-11-04)
+
+- Launcher: the header buttons read LOST, Favorites, Close from left to right; the close X is larger and the star is centred.
+- Launcher: the whisper box is slightly see-through, its text is smaller with the newest post at the bottom, and dates show as Month/Day.
+- Launcher: the whisper portrait hangs a little further off the top-left corner.
+- Guide: the Lost? button sits beside the favorites button, and the per-page star is gone.
+- Addons: Survivor UI and Survivor UI (Classic) use the single ZIP on their latest release.
+- Game patch notes: 0.139.1, 0.139.2 and 0.140.0 are added, with matching Controls and addon notes and the Scholomance zone in the guide.
+
 # v3.24 (2026-11-04)
 
 - Launcher: the footer status line is clickable and opens a Status Log of the last 250 messages.
