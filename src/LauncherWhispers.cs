@@ -210,7 +210,7 @@ namespace AzerothLauncher
             float contentHeight = 0;
             foreach (var post in posts)
             {
-                string line = post.At.ToLocalTime().ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                string line = post.At.ToLocalTime().ToString("M/d", CultureInfo.InvariantCulture)
                     + "  Whisper From [" + post.Author + "]: " + post.Message;
                 float height = graphics.MeasureString(line, font, bodyWidth).Height + U(6);
                 lines.Add(line);
