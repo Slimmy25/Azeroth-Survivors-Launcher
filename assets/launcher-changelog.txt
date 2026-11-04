@@ -4,6 +4,7 @@
 - Addons: 12 catalog entries now point at their author's release page (Azerloot, LuckyOdds, AZSSpellMeter, AZS Max Hit, Big Cursor, Move UI, MoveAnything, Azeroth Cursor, AetherHUD, BlackwellUI, LocalClock, Cursor Reticle).
 - Addons: a catalog line may set asset=<start of the ZIP name> when a release has several ZIPs.
 - Download More: addon descriptions are the full descriptions from the addon list (no longer one-word).
+- Download More: Slim Suite downloads from its GitHub repository's latest release (Slimmy25/SlimSuite) instead of the launcher's built-in copy.
 - Download More: Azerloot is by Kindagrey; Survivor UI + Classic is by Kraatos; Cursor Reticle is by Mufflan; Azeroth Hub is by Maidenhead.
 - Survivor UI + Classic stays on the launcher mirror until its two repositories are supported together.
 
