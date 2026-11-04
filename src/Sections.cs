@@ -1981,7 +1981,7 @@ namespace AzerothLauncher
             {
                 if (!string.Equals(e.Name, name, StringComparison.Ordinal)) continue;
                 if (e.Folders.Contains("AZSSpellMeter")) return "Damage Meter By Kexo";
-                if (e.Folders.Contains("MoveUI")) return "Move UI By JamieeLee";
+                if (e.Folders.Contains("MoveUI")) return "Move UI By Jamie";
             }
             return null;
         }

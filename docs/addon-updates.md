@@ -28,7 +28,7 @@ The prior updater fetched release metadata once per launcher session, silently d
 | LuckyOdds By Cadoky | Launcher mirror: addons release |
 | AZSSpellMeter By Kexo | Launcher mirror: addons release |
 | AZS Max Hit By ghoulcompiler | Launcher mirror: addons release |
-| Big Cursor By JamieeLee | Launcher mirror: addons release |
+| Big Cursor By Jamie | Launcher mirror: addons release |
 | Move UI By Jamie | Launcher mirror: addons release |
 | MoveAnything By kodfod | Launcher mirror: addons release |
 | SurvivorsDragonUi By Mxgwyn | Creator releases/latest |
@@ -40,7 +40,7 @@ The prior updater fetched release metadata once per launcher session, silently d
 | BlackwellUI (BUI) By Blackwell | Launcher mirror: addons release |
 | Azeroth FieldKit By Maidenhead | Creator releases/latest |
 | Azeroth Stats By Maidenhead | Creator releases/latest |
-| LocalClock By JamieeLee | Launcher mirror: addons release |
+| LocalClock By Jamie | Launcher mirror: addons release |
 | Cursor Reticle By Muffla | Launcher mirror: addons release |
 | ASBuilder By Cadoky | Creator releases/latest |
 | Azeroth Hub By Maidenquinn | Creator releases/latest |
