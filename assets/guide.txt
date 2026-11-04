@@ -205,7 +205,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Plays best: close to the horde, with heals and a shield to fall back on.
 
 # Spell pool
-- Consecration (starting spell): blesses the ground where you stand; every enemy on it takes Holy damage over time.
+- Consecration (starting spell): blesses the ground where you stand; every enemy on it takes Holy damage over time. It deals 50% more damage for every Paladin.
 - Exorcism: a strong strike on the nearest enemy.
 - Hammer of Wrath: strikes the nearest enemy from range.
 - Holy Shock: fires missiles at random enemies; each hit heals you.
@@ -213,7 +213,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Judgement: a very heavy strike on the nearest enemy.
 - Hammer of Justice: strikes the 2 nearest enemies and stuns them.
 - Holy Light: a big heal when your health falls low.
-- Divine Shield: makes you immune to all damage for a few seconds when your health falls low.
+- Divine Shield: makes you immune to all damage for a few seconds when your health falls low. The Eternal Talisman doubles its length, to 12 seconds at the base necklace.
 - Holy Shield: for a while, enemies that hit you in melee take damage.
 - Redemption: slain enemies sometimes burst in holy light, damaging everything near them.
 
@@ -234,7 +234,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Multi-Shot: shoots the 3 nearest enemies.
 - Serpent Sting: poisons the healthiest enemies over time.
 - Volley: rains arrows on the thickest group of enemies.
-- Explosive Trap: damages every enemy around you.
+- Kill Command: each of your pets charges its own target, bosses and elites first (the Wolf bites, the Raptor strikes three times, the Devilsaur Matriarch lands a crushing blow). Offered once you have a pet. Counterattack still sets off a free Explosive Trap.
 - Concussive Shot: hits the 2 nearest enemies and slows them a lot.
 - Aimed Shot: a huge shot at the nearest enemy (your Hunter's Mark target comes first).
 - Immolation Trap: sets the ground where you stand on fire.
@@ -279,7 +279,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 # Spell pool
 - Smite (starting spell): strikes the nearest enemy.
 - Shadow Word: Pain: shadow damage over time on the healthiest enemies.
-- Mind Blast: a strong strike on the nearest enemy.
+- Mind Blast: a strong strike on the nearest enemy. Its base damage is 184, and Improved Mind Blast adds 6% damage per rank.
 - Holy Nova: hits every enemy around you and heals you for each one hit.
 - Power Word: Shield: absorbs a large part of your health in damage, recast when it breaks.
 - Renew: heals you over time when your health drops.
@@ -323,12 +323,12 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
   - Resonant Shocks: every Shock hits up to 3 additional nearby enemies for 35% damage.
   - Shattering Elements: your next different Shock within 6 seconds deals extra damage.
   - Rockbiter Initiation: start each run with Rockbiter Weapon instead of Lightning Bolt.
-  - Windfury Weapon: Rockbiter and Stormstrike can strike twice more.
-  - Flametongue Weapon: Rockbiter can trigger a free, stronger Fire Nova.
+  - Windfury Weapon: Rockbiter and Stormstrike can strike again: at rank 3, a 25% chance of two extra strikes or a 12.5% chance of three.
+  - Flametongue Weapon: Rockbiter can trigger a free, stronger Fire Nova. At rank 3 the Fire Nova deals 50% more damage.
   - Frostbrand Weapon: Stormstrike can trigger a free Frost Shock against up to 3 enemies.
   - Ancestral Fortitude: repeated Stormstrikes can cast a free Healing Wave at 50% effectiveness.
   - Flurry: melee critical strikes speed up Rockbiter and Stormstrike cooldown recovery for 4 seconds.
-  - Sweeping Storm: Stormstrike hits additional nearby enemies.
+  - Sweeping Storm: Stormstrike hits additional nearby enemies. At rank 3, Stormstrike and Windfury deal 20% more damage.
   - Elemental Sunder: Rockbiter and Stormstrike make targets take 10% more Fire and Nature damage for 4 seconds.
   - Stormbound Echoes: Enhancement procs can repeat; your damage also heals you, and you start each run with Stormstrike.
 - Restoration: Call of the Elements, Reincarnation, Totemic Wrath
@@ -352,7 +352,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Cone of Cold: hits every enemy in a cone in front of you and slows them a lot.
 - Blast Wave: hits every enemy around you and slows them.
 - Pyroblast: a huge strike on the nearest enemy.
-- Ice Barrier: absorbs a large part of your health in damage, recast when it breaks.
+- Ice Barrier: absorbs a large part of your health in damage, recast when it breaks. With the Eternal Talisman, its absorb cap doubles to 200% of your max health.
 
 # Talent trees
 - Arcane: Arcane Concentration, Presence of Mind, Arcane Power
@@ -446,7 +446,8 @@ Every zone ends with a final boss. Beat it to open the next zone, for that class
 # Long zones (final boss at 20:00)
 - Alterac Valley (PvP gear): Korrak the Bloodrager 4:00, Ivus the Forest Lord 8:00, Lokholar the Ice Lord 12:00, Glacius the Frozen Titan 16:00, Azuregos 20:00. Beat Whitemane to open.
 - Blackrock Mountain (PvP gear): General Angerforge 4:00, Warchief Rend Blackhand 8:00, Emperor Dagran Thaurissan 12:00, Majordomo Executus 16:00, Nefarian 20:00. Beat Azuregos to open.
-- Gates of Ahn'Qiraj (legendary gear): Kurinnaxx 4:00, General Rajaxx 8:00, Princess Huhuran 12:00, Ossirian the Unscarred 16:00, C'Thun 20:00. Beat Nefarian to open.
+- Scholomance (Tier 0.5 gear): Kirtonos the Herald 4:00, Ras Frostwhisper 8:00, Doctor Theolen Krastinov 12:00, Lord Alexei Barov 16:00, Darkmaster Gandling 20:00. Beat Nefarian to open.
+- Gates of Ahn'Qiraj (legendary gear): Kurinnaxx 4:00, General Rajaxx 8:00, Princess Huhuran 12:00, Ossirian the Unscarred 16:00, C'Thun 20:00. Beat Darkmaster Gandling to open.
 - Naxxramas (legendary gear): Anub'Rekhan 4:00, Noth the Plaguebringer 8:00, Patchwerk 12:00, Sapphiron 16:00, Kel'Thuzad 20:00. Beat C'Thun to open.
 
 # Boss fights
@@ -536,7 +537,7 @@ Every boss you kill pays your class marks: more in harder zones and on higher He
 # Stars
 Spend marks in the armory to raise a piece, weapons included, from 0 to 5 stars. Each star adds to the piece's own bonuses.
 - A set's stars open as your class beats Heroic levels in that set's zones: Heroic I opens the 1st star, Heroic II the 2nd, Heroic III the 3rd (and with it the 8-piece bonuses, which need 3 stars), Heroic IV the 4th and Heroic V the 5th.
-- 5 stars make the legendary sets 60% stronger (the patch notes call them tier 3: the sets from Gates of Ahn'Qiraj and Naxxramas).
+- 5 stars make the legendary sets 60% stronger (the patch notes call them tier 3: the sets from Gates of Ahn'Qiraj and Naxxramas). The Tier 0.5 sets from Scholomance follow the same star rules.
 - Lower sets gain more from each star, and their 5th star is a big one: it gives their armor the stats the legendary sets have and they lack (echo on every set; common pieces also get the legendary sets' extra stat), and lifts them close to a 5-star legendary set: 90% for common, 92% uncommon, 94% rare, 96% epic and 98% PvP, so your favourite set stays viable at the end and keeps the spells you like.
 - Lower sets are cheaper to upgrade. The last star costs what a legendary set's does: 30 marks.
 - Every other class that has a set's armor at a star rank makes that rank 5% cheaper for yours, up to 40%.
@@ -548,6 +549,8 @@ Spend marks in the armory to raise a piece, weapons included, from 0 to 5 stars.
 - 8-piece: all eight armor pieces of one set at 3 stars or more change how one of your class's spells plays, a different spell for each set. For example, Fireball splits, Aimed Shot pierces, and Consecration, Blizzard and Volley move with you. At 5 stars on all eight the bonus is empowered: half again as strong.
 - Most PvP sets are built around crowd control: their 8-piece bonus makes your stun, root, slow or fear spell (Hammer of Justice, Concussive Shot, Kidney Shot, Psychic Scream, Frost Nova, Death Coil, Shred) hit more enemies, harder and more often, and all your damage higher against enemies you stun, root, slow or fear. The warrior's is built around Mortal Strike and the shaman's around Earth Shock instead.
 - An armor piece's tooltip (character pane, C) shows its set: the set's name with how many pieces you wear, its pieces, and its 4-piece and 8-piece bonuses with the stars they need. Each class's sets and their bonuses are listed under its gear in the Items topic.
+
+- Tier 0.5 sets (Scholomance): every class has one, eight pieces with their own stats and new 4-piece, 8-piece and five-star bonuses (Heroism, Soulforge, Beastmaster, Darkmantle, Virtuous, The Five Thunders, Sorcerer's, Deathmist and Feralheart). Their bonuses are listed under each class's gear in the Items topic.
 
 # Looks
 Appearances, tabards and weapon glows only change how your hero looks: see the Transmog topic.
