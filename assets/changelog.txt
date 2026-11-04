@@ -2,6 +2,15 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.139.2
+-------
+Addons can now find and mark what is in the world: friends who are down, enemies, caches, guardians, bosses and lairs, in dungeons and raids too.
+
+* New for addons: AZS_GetDownedPartyMembers gives where each downed friend can be brought back, on every map, so an addon can point you to them.
+* New for addons: AZS_GetWorldAnchors and AZS_ProjectWorldAnchors put a marker on any enemy, on the spot it fell, or on a cache, guardian, boss or lair, without selecting it or showing its nameplate, and lift it any number of yards above that spot.
+* New for addons: combat text and world markers now tell the distance from your hero, so an addon can size text by how far the enemy is whatever the camera does.
+===
+
 0.139.1
 -------
 Fixes the old WoW menu opening behind the pause menu, where a click could hit its Exit Game and close the game. Menus and windows now stop your clicks and scrolling from reaching what's behind them. The Windows version no longer crashes after alt-tabbing when run on Linux through Proton or Wine.
