@@ -451,6 +451,18 @@ namespace AzerothLauncher
                     using (var text = new SolidBrush(Theme.Text))
                     {
                         Font titleFont = Theme.F(11, FontStyle.Bold), bodyFont = Theme.F(9);
+                        // Short patch notes sit at the bottom of the news column, just above Navigation:
+                        // measure the block first, then start it lower by the space it leaves over.
+                        float measured = titleFont.GetHeight(graphics) + U(5);
+                        for (int i = 1; i < lines.Length; i++)
+                        {
+                            string probe = lines[i].Trim();
+                            if (probe.Length == 0 || probe.Trim('-', '=', '_').Length == 0) continue;
+                            if (probe.StartsWith("- ") || probe.StartsWith("* ")) probe = "• " + probe.Substring(2);
+                            measured += graphics.MeasureString(probe, bodyFont, NewsTextW).Height + U(2);
+                        }
+                        float pad = Math.Max(0, NewsArea.Height - measured - U(4));
+                        y += pad;
                         graphics.DrawString(Lang.T("Patch") + " " + lines[0].Trim(), titleFont, gold, NewsArea.Left, y);
                         y += titleFont.GetHeight(graphics) + U(5);
                         for (int i = 1; i < lines.Length; i++)
@@ -462,7 +474,7 @@ namespace AzerothLauncher
                             graphics.DrawString(line, bodyFont, text, new RectangleF(NewsArea.Left, y, NewsTextW, size.Height + 1));
                             y += size.Height + U(2);
                         }
-                        newsHeight = (int)(y + newsScroll - NewsArea.Top) + U(4);
+                        newsHeight = (int)(y - pad + newsScroll - NewsArea.Top) + U(4);
                     }
                     graphics.Restore(state);
                     Rectangle thumb = NewsThumb();
