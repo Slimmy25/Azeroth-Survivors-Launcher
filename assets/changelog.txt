@@ -2,6 +2,20 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.139.1
+-------
+Fixes the old WoW menu opening behind the pause menu, where a click could hit its Exit Game and close the game. Menus and windows now stop your clicks and scrolling from reaching what's behind them. The Windows version no longer crashes after alt-tabbing when run on Linux through Proton or Wine.
+
+* The Windows version run on Linux (Proton, Wine, Steam, Lutris and the like) no longer crashes after alt-tabbing.
+* Escape no longer opens the old WoW game menu behind the pause menu, so clicking Options or the space between the buttons can't press Exit Game.
+* Clicks and the mouse wheel on any menu or window stay on it: nothing behind it gets clicked, and the camera no longer zooms while you scroll over the pause menu.
+* Moving the HUD or the damage meter no longer clicks what's behind them.
+* Enter on the hero picker no longer reaches the character select behind it.
+* Binding a key in the options no longer also runs that key's old action.
+* Gamepad: Back opens the character pane again.
+* Chinese, Japanese and Korean input methods in the downloaded game: finished text reaches the chat box again, and Enter or Space choosing a character no longer also acts on the chat line or your key bindings.
+===
+
 0.139.0
 -------
 Engine update: the game now runs on a newer version of the client it is built on. Everything should play as it did before. Addons can now tell a proc's hit from the spell it borrows.
