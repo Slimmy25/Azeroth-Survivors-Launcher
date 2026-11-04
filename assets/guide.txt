@@ -643,6 +643,9 @@ Addon authors can use AZS_SetOnTopOfScreens to keep their frames above the level
 # World-anchored combat text
 Addons that draw their own combat numbers can use AZS_GetCombatTextEvents() to read each hit, including its target and source. AZS_ProjectCombatTextAnchors() provides a screen position over a living enemy or where it fell, and AZS_RegisterCombatTextFrameHandler() keeps those positions aligned after the camera moves. The anchor data includes distance for sizing, and works even without a nameplate. These APIs affect addon-drawn numbers; the game's own combat numbers stay unchanged.
 
+# World markers and downed friends
+Addons can find what is in the world. AZS_GetDownedPartyMembers() gives where each downed friend can be brought back, on every map. AZS_GetWorldAnchors() and AZS_ProjectWorldAnchors() place a marker on an enemy, on the spot one fell, or on a cache, guardian, boss or lair, without selecting it or showing its nameplate, and can lift it any distance above that spot. Dungeons and raids included.
+
 @topic Tips for New Players | Small things that make a big difference
 - Never stop moving. Walk in wide circles so the horde follows you in a line instead of surrounding you.
 - Learn your starting spell's range. Melee classes want to be close; casters and hunters want room.
