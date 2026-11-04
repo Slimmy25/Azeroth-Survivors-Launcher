@@ -463,6 +463,7 @@ namespace AzerothLauncher
         public void Wheel(int delta)
         {
             Point p = PointToClient(Cursor.Position);
+            if (WheelWhispers(p, delta)) return;
             Rectangle hot = Rectangle.Union(NewsArea, NewsBar);
             if (hot.Contains(p)) ScrollNews(newsScroll - delta / 120 * 40);
         }

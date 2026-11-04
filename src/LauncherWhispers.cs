@@ -33,36 +33,82 @@ namespace AzerothLauncher
             launcherWhispers.Sort(delegate(LauncherWhisper a,LauncherWhisper b) {return b.At.CompareTo(a.At);});
             return launcherWhispers;
         }
-        float DrawLauncherWhispers(Graphics graphics,float y)
+        int whisperScroll, whisperScrollLimit;
+
+        Rectangle WhisperArea
         {
-            int width=NewsTextW; var posts=ReadLauncherWhispers();
-            if(posts.Count==0 || width<U(60)) return y;
-            Font font=Theme.F(9), heading=Theme.F(9,FontStyle.Bold);
-            using(var purple=new SolidBrush(Theme.Hex("#e58bdf")))
-            using(var gold=new SolidBrush(Theme.Gold))
-            using(var bg=new SolidBrush(Theme.Hex("#100e17")))
-            using(var border=new Pen(Theme.Bronze))
+            get
             {
-                float x=NewsArea.Left, bodyY=y+U(34), content=bodyY;
-                foreach(var post in posts)
+                int top = Math.Min(HeaderBottom / 3, U(55)) + U(5);
+                return new Rectangle(NewsArea.Left, top, NewsTextW, Math.Max(0, HeaderBottom - U(10) - top));
+            }
+        }
+
+        bool WheelWhispers(Point point, int delta)
+        {
+            if (CompactDisplay || ReadLauncherWhispers().Count == 0 || !WhisperArea.Contains(point))
+                return false;
+            whisperScroll = Math.Max(0, Math.Min(whisperScrollLimit, whisperScroll - delta * U(30) / 120));
+            Invalidate(WhisperArea);
+            return true;
+        }
+
+        void DrawLauncherWhispers(Graphics graphics)
+        {
+            Rectangle area = WhisperArea;
+            var posts = ReadLauncherWhispers();
+            if (CompactDisplay || posts.Count == 0 || area.Width < U(60) || area.Height < U(40)) return;
+
+            Font font = Theme.F(9), heading = Theme.F(9, FontStyle.Bold);
+            int bodyWidth = Math.Max(20, area.Width - U(20));
+            int headerHeight = U(34);
+            int bodyHeight = area.Height - headerHeight - U(4);
+            var lines = new List<string>();
+            var heights = new List<float>();
+            float contentHeight = 0;
+            foreach (var post in posts)
+            {
+                string line = post.At.ToLocalTime().ToString("yyyy-MM-dd HH:mm zzz", CultureInfo.InvariantCulture)
+                    + "  Whisper From [" + post.Author + "]: " + post.Message;
+                float height = graphics.MeasureString(line, font, bodyWidth).Height + U(6);
+                lines.Add(line);
+                heights.Add(height);
+                contentHeight += height;
+            }
+            whisperScrollLimit = Math.Max(0, (int)Math.Ceiling(contentHeight) - bodyHeight);
+            whisperScroll = Math.Min(whisperScroll, whisperScrollLimit);
+            area.Height = Math.Min(area.Height, headerHeight + (int)Math.Ceiling(contentHeight) + U(4));
+
+            using (var purple = new SolidBrush(Theme.Hex("#e58bdf")))
+            using (var gold = new SolidBrush(Theme.Gold))
+            using (var background = new SolidBrush(Theme.Hex("#100e17")))
+            using (var border = new Pen(Theme.Bronze))
+            {
+                graphics.FillRectangle(background, area);
+                graphics.DrawRectangle(border, area.X, area.Y, area.Width - 1, area.Height - 1);
+                Image avatar = whisperAvatar ?? (whisperAvatar = Theme.LoadImage("AS.slimjim-avatar.png"));
+                if (avatar != null)
+                    graphics.DrawImage(avatar, new Rectangle(area.X + U(5), area.Y + U(4), U(28), U(25)));
+                graphics.DrawString("Slimjim", heading, gold, area.X + U(39), area.Y + U(8));
+
+                var body = new Rectangle(area.X + U(6), area.Y + headerHeight, bodyWidth, area.Height - headerHeight - U(4));
+                var state = graphics.Save();
+                graphics.SetClip(body, System.Drawing.Drawing2D.CombineMode.Intersect);
+                float y = body.Top - whisperScroll;
+                for (int i = 0; i < lines.Count && y < body.Bottom; i++)
                 {
-                    string text=post.At.ToLocalTime().ToString("yyyy-MM-dd HH:mm zzz",CultureInfo.InvariantCulture)+"  Whisper From ["+post.Author+"]: "+post.Message;
-                    var size=graphics.MeasureString(text,font,Math.Max(20,width-U(12)));
-                    content+=size.Height+U(8);
+                    if (y + heights[i] > body.Top)
+                        graphics.DrawString(lines[i], font, purple, new RectangleF(body.X, y, body.Width, heights[i]));
+                    y += heights[i];
                 }
-                graphics.FillRectangle(bg,x,y,width,content-y+U(5));
-                graphics.DrawRectangle(border,x,y,width,content-y+U(5));
-                Image avatar=whisperAvatar ?? (whisperAvatar=Theme.LoadImage("AS.slimjim-avatar.png"));
-                if(avatar!=null) graphics.DrawImage(avatar,new Rectangle((int)x+U(5),(int)y+U(4),U(28),U(25)));
-                graphics.DrawString("Slimjim",heading,gold,x+U(39),y+U(8));
-                foreach(var post in posts)
+                graphics.Restore(state);
+
+                if (whisperScrollLimit > 0)
                 {
-                    string text=post.At.ToLocalTime().ToString("yyyy-MM-dd HH:mm zzz",CultureInfo.InvariantCulture)+"  Whisper From ["+post.Author+"]: "+post.Message;
-                    var size=graphics.MeasureString(text,font,Math.Max(20,width-U(12)));
-                    graphics.DrawString(text,font,purple,new RectangleF(x+U(6),bodyY,width-U(12),size.Height+1));
-                    bodyY+=size.Height+U(8);
+                    int thumbHeight = Math.Min(body.Height, Math.Max(U(8), (int)(body.Height * body.Height / contentHeight)));
+                    int thumbTop = body.Top + (body.Height - thumbHeight) * whisperScroll / whisperScrollLimit;
+                    graphics.FillRectangle(gold, area.Right - U(7), thumbTop, U(3), thumbHeight);
                 }
-                return content+U(16);
             }
         }
     }

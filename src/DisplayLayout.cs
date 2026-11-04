@@ -438,11 +438,12 @@ namespace AzerothLauncher
                     }
                     graphics.DrawString(Lang.T("Game version") + ": " + Data.GameVersion, Theme.F(9), gold, U(10), H - U(23));
                 }
+                DrawLauncherWhispers(graphics);
                 if (!CompactDisplay && Data.Changelog.Count > 0)
                 {
                     string[] lines = Data.Changelog[0].Trim().Split('\n');
                     var state = graphics.Save(); graphics.SetClip(NewsArea);
-                    float y = DrawLauncherWhispers(graphics, NewsArea.Top - newsScroll);
+                    float y = NewsArea.Top - newsScroll;
                     using (var gold = new SolidBrush(Theme.Gold))
                     using (var text = new SolidBrush(Theme.Text))
                     {
