@@ -32,6 +32,9 @@ jobs:
         shell: pwsh
         env:
           RELEASE_BUILD: 'true'
+          # Google Drive sign-in for Cloud Save (src/GoogleDrive.cs): repository secrets, never in the code
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
           # the compiler's messages also become annotations of the run, so a failed build says why
           cmd /c build.bat 2>&1 | Tee-Object -FilePath build.log

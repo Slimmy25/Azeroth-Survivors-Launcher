@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $arguments = New-Object 'System.Collections.Generic.List[string]'
 foreach ($value in @('/nologo','/target:winexe','/platform:anycpu','/optimize+','/langversion:5','/warn:3','/nowarn:162,429','/win32icon:assets\AzerothSurvivors.ico','/win32manifest:app.manifest')) { $arguments.Add($value) }
 $arguments.Add('/out:"' + $Output + '"')
-foreach ($value in @('System.dll','System.Core.dll','System.Drawing.dll','System.Windows.Forms.dll','System.Management.dll','System.IO.Compression.dll','System.IO.Compression.FileSystem.dll')) { $arguments.Add('/reference:' + $value) }
+foreach ($value in @('System.dll','System.Core.dll','System.Drawing.dll','System.Windows.Forms.dll','System.Management.dll','System.IO.Compression.dll','System.IO.Compression.FileSystem.dll','System.Security.dll')) { $arguments.Add('/reference:' + $value) }
 foreach ($value in @($env:BUILD_KIND, $env:EXTRA_CSC_FLAGS)) {
     if ($value) { foreach ($match in [regex]::Matches($value, '(?:[^\s"]|"[^"]*")+')) { $arguments.Add($match.Value) } }
 }
@@ -53,6 +53,16 @@ $resources = @(
     'addons\AZSMinorMods\Baby Crying.mp3,AS.addon.AZSMinorMods.Baby Crying.mp3'
 )
 foreach ($value in $resources) { $arguments.Add('"/resource:' + $value + '"') }
+# Google Drive sign-in (src\GoogleDrive.cs): the launcher's Google app ID and secret come from the environment (GitHub's
+# Actions secrets GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the release build), never from the code. Without them the
+# launcher is built without Google Drive's sign-in.
+if ($env:GOOGLE_CLIENT_ID -and $env:GOOGLE_CLIENT_SECRET) {
+    New-Item -ItemType Directory -Path 'build' -Force | Out-Null
+    $googleClient = Join-Path (Get-Location) 'build\google-oauth.txt'
+    [IO.File]::WriteAllText($googleClient, $env:GOOGLE_CLIENT_ID.Trim() + "`n" + $env:GOOGLE_CLIENT_SECRET.Trim(), (New-Object Text.UTF8Encoding($false)))
+    $arguments.Add('"/resource:' + $googleClient + ',AS.google-oauth.txt"')
+    Write-Output 'Google Drive sign-in: included.'
+} else { Write-Output 'Google Drive sign-in: not included (no GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET).' }
 foreach ($file in Get-ChildItem 'vendor\SharpCompress\*.dll' -File) {
     $arguments.Add('"/reference:' + $file.FullName + '"')
     $arguments.Add('"/resource:' + $file.FullName + ',AS.extractor.' + $file.Name + '"')

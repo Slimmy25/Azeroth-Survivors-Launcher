@@ -1,3 +1,10 @@
+# v3.32 (2026-11-06)
+
+- Cloud Save with Google Drive (Steam Deck experimental): Options > Cloud Save > SIGN IN WITH GOOGLE. You sign in on a phone or PC with a short code, and the launcher syncs with Google Drive itself, so a Steam Deck in Game Mode needs no sync app.
+- The launcher only uses its own folder in your Drive, "Azeroth Survivors Launcher Cloud Save". The cloud sync itself is unchanged: download before PLAY, upload after, the same conflict questions and backups.
+- If Google Drive can't be reached at PLAY, the launcher asks whether to play without syncing. An upload that fails is sent first at the next sync; if Drive changed in between, you choose whose progress to keep and the other is kept on the device.
+- Signing in with an existing sync folder copies that folder's saves and history into Google Drive. CHANGE FOLDER goes back to a sync folder, and USE GOOGLE DRIVE returns without signing in again.
+
 # v3.31 (2026-11-06)
 
 - Steam Deck experimental: the launcher comes back the moment the game closes, instead of after its 3-second check for the game reopening, so Steam's black "Abort game" screen no longer shows in between. If the game reopens to update itself, the launcher steps aside again.

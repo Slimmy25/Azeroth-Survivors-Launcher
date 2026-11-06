@@ -299,7 +299,7 @@ namespace AzerothLauncher
         // InstallClient sets Installing, so the catalog is rejected and the user lands home.
         public bool GateOpen() { return !RequireLauncherInstall || ClientPresent() || setupBrowseWhileInstalling; }
 
-        public bool CloudEnabled() { return Cfg.Bool("cloud_enabled", Cfg.Str("cloud_dir").Trim().Length > 0); }
+        public bool CloudEnabled() { return !GoogleDrivePaused() && Cfg.Bool("cloud_enabled", Cfg.Str("cloud_dir").Trim().Length > 0); }
 
         public SyncSettings SyncSettings()
         {
@@ -924,6 +924,7 @@ namespace AzerothLauncher
             string d = PickCloudDir(this, null);
             if (d != null)
             {
+                Cfg.Remove("cloud_provider");                // a sync folder again, not Google Drive
                 Cfg.Set("cloud_dir", d);
                 Cfg.Save();
                 RebuildCurrent();
@@ -1019,8 +1020,13 @@ namespace AzerothLauncher
                 string err = null;
                 try
                 {
+                    string driveDown = DriveDown();          // Google Drive: its local copy first
+                    if (driveDown != null) throw new UserError("Google Drive could not be reached: " + driveDown);
                     ok = kind == "status" ? eng.Status() : kind == "pull" ? eng.Pull(force) :
                          kind == "restore" ? eng.RestoreDownload(stamp) : eng.Push(force);
+                    string driveUp = DriveUp();              // and what changed in it, sent back
+                    if (driveUp != null) throw new UserError("Saved in the launcher's copy, but Google Drive could not be reached: " + driveUp +
+                                                             " It is uploaded at the next sync.");
                 }
                 catch (Exception e)
                 {
@@ -1224,6 +1230,27 @@ namespace AzerothLauncher
             {
                 if (eng != null)
                 {
+                    string driveProblem = DriveDown();       // Google Drive: its local copy brought up to date first
+                    if (driveProblem != null)
+                    {
+                        bool playAnyway = UiCall<bool>(delegate
+                        {
+                            ShowWindowFront();
+                            return Ask("Cloud Save", "Google Drive could not be reached:\n" + driveProblem + "\n\nPlay anyway with the save on " +
+                                                     "this device? Nothing is synced this time; the next sync compares both and asks if they differ.");
+                        });
+                        if (!playAnyway)
+                        {
+                            problems.Add("Google Drive could not be reached, so the game was not launched.\n\n" + driveProblem);
+                            Ui(delegate { SetCloudNote("Google Drive not reached - game not launched"); SetStatus("Ready."); });
+                            return;
+                        }
+                        eng = null;                          // no download now and no upload after
+                        Ui(delegate { SetCloudNote("Playing without cloud sync this time"); });
+                    }
+                }
+                if (eng != null)
+                {
                     bool complete;
                     try
                     {
@@ -1321,12 +1348,28 @@ namespace AzerothLauncher
                     SyncLog("Game closed." + (sessionCrashed ? " (it did not close normally)" : ""), Level.Info);
                     if (eng == null) Ui(delegate { SetCloudNote("Game has closed."); });
                 }
-                if (launched && eng != null)
+                string driveBefore = launched && eng != null ? DriveDown() : null;
+                if (driveBefore != null)
+                {
+                    problems.Add("Google Drive could not be reached, so your progress was not uploaded. It stays on this device " +
+                                 "and is uploaded at the next sync.\n\n" + driveBefore);
+                    Ui(delegate { SetCloudNote("Google Drive not reached - progress kept on this device"); });
+                }
+                else if (launched && eng != null)
                 {
                     try
                     {
                         if (eng.Push(false))
-                            Ui(delegate { SetStatus("Ready."); SetCloudNote(""); });
+                        {
+                            string driveAfter = DriveUp();
+                            if (driveAfter == null) Ui(delegate { SetStatus("Ready."); SetCloudNote(""); });
+                            else
+                            {
+                                problems.Add("Your progress is saved on this device, but Google Drive could not be reached. " +
+                                             "It is uploaded at the next sync.\n\n" + driveAfter);
+                                Ui(delegate { SetCloudNote("Google Drive upload waiting - see the Cloud Save log"); });
+                            }
+                        }
                         else
                         {
                             problems.Add("Some of your progress was NOT uploaded. See the log in Cloud Save.");
