@@ -1274,6 +1274,8 @@ namespace AzerothLauncher
                     var psi = new ProcessStartInfo(exe);
                     psi.WorkingDirectory = Path.GetDirectoryName(exe);
                     psi.UseShellExecute = false;
+                    string environmentNote = PrepareGameEnvironment(psi);   // Steam Deck experimental: WGPU_BACKEND=vulkan
+                    if (environmentNote != null) LogStatusOnly(environmentNote);
                     string gameDir = Path.GetDirectoryName(exe);
                     DateTime stamp = GameFilesStamp(gameDir);
                     sessionUpdated = false;

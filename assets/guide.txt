@@ -667,6 +667,7 @@ Steam Deck support is experimental and off until you press STEAM DECK EXPERIMENT
 - Switch to Desktop Mode and put the launcher's folder somewhere in your home folder.
 - In Steam, choose Games > Add a Non-Steam Game to My Library and pick Azeroth Survivors Launcher.exe.
 - Open the new entry's Properties > Compatibility, tick "Force the use of a specific Steam Play compatibility tool" and choose Proton Experimental or the newest Proton.
+- No launch options are needed: with Steam Deck experimental on, the launcher starts the game with WGPU_BACKEND=vulkan itself.
 - Switch back to Game Mode and start the launcher from your library. Press STEAM DECK EXPERIMENTAL, then choose Steam Deck / Handheld on setup's first page.
 
 # Playing in Game Mode

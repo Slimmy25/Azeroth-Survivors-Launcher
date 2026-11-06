@@ -1,3 +1,7 @@
+# v3.30 (2026-11-06)
+
+- Steam Deck experimental: under Proton the launcher starts the game with WGPU_BACKEND=vulkan, so the Steam entry needs no launch options. A WGPU_BACKEND already set in Steam is kept, and Windows PCs are never affected. The Status Log says which happened.
+
 # v3.29 (2026-11-06)
 
 - Steam Deck support, experimental and opt-in: press STEAM DECK EXPERIMENTAL in Options > Launcher (setup's first page offers it on a Steam Deck). Until then nothing changes.

@@ -6,8 +6,10 @@
 //              when the game closes, so the cloud upload is seen. On by default for Steam Deck / Handheld, off on a PC
 //              (a Windows PC keeps the launcher in its window, as since v3.05). Options > Launcher changes both.
 //   After:     optionally the launcher closes once the game has closed and the cloud save is uploaded (back to Steam).
+//   Proton:    the game is started with WGPU_BACKEND=vulkan (what it needs there), so the Steam entry needs no launch options.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -26,6 +28,18 @@ namespace AzerothLauncher
         }
 
         public bool CloseAfterPlaying() { return DeckFeaturesOn && Cfg.Bool("close_after_playing", false); }
+
+        // STEAM DECK EXPERIMENTAL under Proton or Wine: the game starts with WGPU_BACKEND=vulkan, unless the player already set
+        // WGPU_BACKEND (in the Steam entry's launch options): theirs is kept. Never on Windows. Returns the Status Log's line.
+        static string PrepareGameEnvironment(ProcessStartInfo psi)
+        {
+            if (!Handheld.Experimental || !Handheld.Wine) return null;
+            string existing = Environment.GetEnvironmentVariable("WGPU_BACKEND");
+            if (!string.IsNullOrEmpty(existing))
+                return "WGPU_BACKEND=" + existing + " was already set, so the launcher kept it for the game.";
+            psi.EnvironmentVariables["WGPU_BACKEND"] = "vulkan";
+            return "The game starts with WGPU_BACKEND=vulkan (Steam Deck experimental, under Proton).";
+        }
 
         // STEAM DECK EXPERIMENTAL: on or off at once (full screen in Game Mode follows), remembered
         void ToggleSteamDeckExperimental()
