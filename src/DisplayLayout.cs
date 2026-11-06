@@ -271,13 +271,17 @@ namespace AzerothLauncher
             {
                 displayLayout = next;
                 Theme.DisplayScale = next.Scale; Theme.DisplayDpi = next.Dpi; Theme.Zoom = next.Scale;
-                MinimumSize = MinimumWindowSize();
-                if (WindowState == FormWindowState.Normal)
+                if (gameModeScreen) FitGameModeScreen();      // Steam Game Mode: the whole screen, no frame
+                else
                 {
-                    // Setting MinimumSize can resize the native window immediately. Scale the
-                    // captured bounds, not that already-grown size, or a DPI increase scales twice.
-                    Size size = resize ? new Size((int)Math.Round(previousBounds.Width*next.Scale/oldScale), (int)Math.Round(previousBounds.Height*next.Scale/oldScale)) : previousBounds.Size;
-                    Bounds = next.Clamp(new Rectangle(suggestedOrigin ?? previousBounds.Location, size));
+                    MinimumSize = MinimumWindowSize();
+                    if (WindowState == FormWindowState.Normal)
+                    {
+                        // Setting MinimumSize can resize the native window immediately. Scale the
+                        // captured bounds, not that already-grown size, or a DPI increase scales twice.
+                        Size size = resize ? new Size((int)Math.Round(previousBounds.Width*next.Scale/oldScale), (int)Math.Round(previousBounds.Height*next.Scale/oldScale)) : previousBounds.Size;
+                        Bounds = next.Clamp(new Rectangle(suggestedOrigin ?? previousBounds.Location, size));
+                    }
                 }
             }
             finally { changingDisplay=false; }

@@ -318,7 +318,7 @@ namespace AzerothLauncher
                 if (inMenu || s == openMenuStep) return;
                 openMenu.Close();
             }
-            if (s >= 0 && s == hoverStep && s != quietStep) ShowMenu(s, StepRect(s));
+            if (s >= 0 && s == hoverStep && s != quietStep && !Handheld.GameMode) ShowMenu(s, StepRect(s));   // Game Mode: by tap only
         }
 
         int ArrowAt(Point pt)
@@ -370,6 +370,14 @@ namespace AzerothLauncher
         {
             List<KeyValuePair<string, Action>> items;
             if (!menus.TryGetValue(i, out items)) return;
+            if (Handheld.GameMode)                           // a list inside the launcher (Game Mode: one window at a time)
+            {
+                var picks = new List<KeyValuePair<string, Action>>();
+                foreach (var kv in items)
+                    picks.Add(new KeyValuePair<string, Action>(Lang.T(kv.Key) + (kv.Key == crumbs[i].Key ? "  ‹" : ""), kv.Value));
+                MenuChooser.Open(Lang.T(crumbs[i].Key), picks);
+                return;
+            }
             if (openMenu != null && !openMenu.IsDisposed) { if (openMenuStep == i) return; openMenu.Close(); }
             var m = ThemeMenus.Create(false);
             // not AutoClose: path clicks still go to the breadcrumb. HoverTick closes the list off-path; host deactivation
@@ -3878,11 +3886,27 @@ namespace AzerothLauncher
                 var t = PutText(note, 9.5f, FontStyle.Italic, Theme.GoldDim, 20 + b.Width + 12, y + 2, PW - 40 - b.Width - 12);
                 y = Math.Max(BottomOf(b), BottomOf(t)) + 8;
             };
-            // Closing the launcher exits it; it stays visible while the game runs and has no tray/minimize-on-play mode.
+            // Closing the launcher exits it (no tray) and it stays in its window while the game runs. With STEAM DECK
+            // EXPERIMENTAL on, a Steam Deck / Handheld steps aside and comes back instead (LauncherHandheld.cs).
             y = OptionCheck("Show the Stats section (run records and available play time)", StatsEnabled(), y,
                             delegate(bool on) { SetStatsEnabled(on); });
             y = OptionCheck("Show play time on the home screen", Cfg.Bool("home_playtime", true), y,
                             delegate(bool on) { Cfg.Set("home_playtime", on); Cfg.Save(); Invalidate(); });
+            // STEAM DECK EXPERIMENTAL: the Steam Deck support, opt-in; its two choices show while it is on
+            var deckButton = Put(new WowButton("STEAM DECK EXPERIMENTAL", ToggleSteamDeckExperimental, 240, 30, 9), 20, y);
+            deckButton.Selected = Handheld.Experimental;
+            var deckNote = PutText(Handheld.Experimental
+                    ? "On. In Steam's Game Mode the launcher fills the screen and its lists open inside it; it steps aside while you play. Press again to turn it off."
+                    : "Off. Turns on Steam Deck support: full screen in Game Mode, one Steam entry for launcher and game, and the launcher stepping aside while you play.",
+                9.5f, FontStyle.Italic, Theme.GoldDim, 20 + deckButton.Width + 12, y + 2, PW - 40 - deckButton.Width - 12);
+            y = Math.Max(BottomOf(deckButton), BottomOf(deckNote)) + 8;
+            if (Handheld.Experimental)
+            {
+                y = OptionCheck("Hide the launcher while the game runs (it comes back when the game closes)", HideWhilePlaying(), y,
+                                delegate(bool on) { Cfg.Set("hide_while_playing", on); Cfg.Save(); });
+                y = OptionCheck("Close the launcher after the game, once the cloud save is uploaded (back to Steam on a Steam Deck)", CloseAfterPlaying(), y,
+                                delegate(bool on) { Cfg.Set("close_after_playing", on); Cfg.Save(); });
+            }
             y += Theme.Px(6);
             var scaleTitle = PutText("Interface size", 10, FontStyle.Bold, Theme.Gold, 20, y, PW-40);
             y=BottomOf(scaleTitle)+Theme.Px(4);

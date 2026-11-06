@@ -13,7 +13,7 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("Azeroth Survivors")]
 [assembly: AssemblyProduct("Azeroth Survivors Launcher")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 Azeroth Survivors")]
-[assembly: AssemblyVersion("3.28.0.0")]
+[assembly: AssemblyVersion("3.29.0.0")]
 [assembly: AssemblyFileVersion("3.20.0.0")]
 [assembly: AssemblyInformationalVersion("3.20")]
 [assembly: ComVisible(false)]
@@ -51,6 +51,7 @@ namespace AzerothLauncher
         {
             EmbeddedLibraries.Register();
             NativeDisplay.Enable();
+            Handheld.ForceGameMode = Array.IndexOf(args, "--game-mode") >= 0;   // try Steam Game Mode's behaviour on a PC
             int scalingPreview = Array.IndexOf(args, "--preview-scaling");
             if (scalingPreview >= 0 && args.Length > scalingPreview + 1)
             {

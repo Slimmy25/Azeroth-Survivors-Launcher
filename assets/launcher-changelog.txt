@@ -1,3 +1,13 @@
+# v3.29 (2026-11-06)
+
+- Steam Deck support, experimental and opt-in: press STEAM DECK EXPERIMENTAL in Options > Launcher (setup's first page offers it on a Steam Deck). Until then nothing changes.
+- With it on, the launcher runs as one "Add a Non-Steam Game" entry under Proton: PLAY starts the game inside that same entry, so no second shortcut is needed.
+- With it on, Steam's Game Mode gets a full-screen launcher without a frame, and the launcher's drop-down lists (the path's lists, language, Gear Planner pickers) open as a list inside it.
+- With it on, the launcher steps aside while the game runs (hidden in Game Mode, minimized on Windows) and comes back when the game closes, before the cloud upload. Options > Launcher can turn that off, or close the launcher after the game instead (back to Steam).
+- With it on, setup's first page asks "Steam Deck / Handheld, or Windows PC?", suggested from what the launcher runs on.
+- New Player Handbook: a Steam Deck & Handhelds page (turning it on, adding the launcher to Steam, Proton, the keyboard, Switch Windows).
+- The Status Log's first line says what the launcher runs on and whether Steam Deck experimental is on. Starting the launcher with --game-mode tries Game Mode's behaviour on a PC.
+
 # v3.28 (2026-11-05)
 
 - Addons: downloads no longer depend on how a creator names their ZIP. The launcher opens each file of the latest release in turn and installs the first that holds the addon's folder (its .toc file); when none does, it uses the release's source code.

@@ -93,6 +93,9 @@ namespace AzerothLauncher
             WowDialog.Host = this;                           // questions and messages open inside the launcher
             Theme.PickFont();
             Cfg = Config.Load();
+            Handheld.Device = Cfg.Str("device") ?? "";              // setup's Steam Deck / Handheld or Windows PC answer
+            Handheld.Experimental = Cfg.Bool("steam_deck_experimental", false);   // Steam Deck support is opt-in
+            WowDialog.RevealHost = RevealForQuestion;
             if (!PreviewMode) FixNestedAddonsFolder();
             InitializeDisplay();
             // Create the first-run marker beside this exe before Shown can start the automatic updater. It remains
@@ -144,6 +147,7 @@ namespace AzerothLauncher
 
             BuildSide();
             EnableResponsiveDisplay();
+            ApplyGameModeScreen();                           // Steam Game Mode: the whole screen, no frame
             RefreshPlayLabel();
 
             FormClosing += OnClosingWindow;
@@ -190,6 +194,7 @@ namespace AzerothLauncher
             };
             Shown += delegate
             {
+                if (!PreviewMode) LogStatusOnly(Handheld.Describe());
                 if (!PreviewMode) LoadPublishedWhispers();
                 if (!PreviewMode && !Program.LocalDevelopmentBuild) After(300, StartupUpdateCheck);
                 if (!PreviewMode && !Program.DisplayPreviewBuild) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
@@ -1276,6 +1281,7 @@ namespace AzerothLauncher
                     using (Process p = Process.Start(psi))
                     {
                         launched = true;
+                        Ui(StepAsideForGame);                // hidden (Game Mode) or minimized while it runs, if chosen
                         p.WaitForExit();                     // returns on normal exit or crash
                         try { sessionCrashed = p.ExitCode != 0; } catch (Exception) { }
                     }
@@ -1307,6 +1313,7 @@ namespace AzerothLauncher
                 }
                 if (launched)
                 {
+                    Ui(ReturnAfterGame);                     // back before the upload, so it is seen
                     SyncLog("Game closed." + (sessionCrashed ? " (it did not close normally)" : ""), Level.Info);
                     if (eng == null) Ui(delegate { SetCloudNote("Game has closed."); });
                 }
@@ -1425,6 +1432,8 @@ namespace AzerothLauncher
         void SessionDone(List<string> problems)
         {
             GameRunningFlag = false;
+            ReturnAfterGame();                               // (if it was still out of the way)
+            if (CloseAfterSession(problems)) return;          // chosen in Options: back to Steam once all is saved
             After(3000, AutoUpdateAddons);                    // updates that waited for the game to close
             Invalidate();                                    // the play time the game just saved
             RefreshPlayLabel();

@@ -243,7 +243,7 @@ namespace AzerothLauncher
         const int WikiTab = -5, BuildVideosTab = -6, CombinedBuilderTab = -8;
         static readonly string[][] GuideGroups =
         {
-            new[] { "New Player Handbook", "Getting Started", "Controls", "Your First Run", "Tips for New Players", "Pickups, Caches & Guardians",
+            new[] { "New Player Handbook", "Getting Started", "Controls", "Steam Deck & Handhelds", "Your First Run", "Tips for New Players", "Pickups, Caches & Guardians",
                     "Zones & Bosses", "Heroic & Endless", "Talents", "Gear & the Armory", "Addons", "Achievements & Rewards", "Level-Ups & Cards", "Co-op", "Races" },
             new[] { "Wiki", "Classes", "Items", "Transmog" },
             new[] { "THEORYCRAFTING", CombinedBuilder, "Build Guides" },

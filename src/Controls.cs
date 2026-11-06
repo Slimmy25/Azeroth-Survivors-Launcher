@@ -339,6 +339,15 @@ namespace AzerothLauncher
             };
             menu.Closed+=delegate { detach(); };
             menu.Disposed+=delegate { detach(); };
+            // Steam Game Mode draws one window at a time: the list opens inside the launcher instead (after every
+            // Opening handler has filled it)
+            menu.Opening+=delegate(object sender,System.ComponentModel.CancelEventArgs e)
+            {
+                if(!Handheld.GameMode||host==null||host.IsDisposed)return;
+                e.Cancel=true;
+                detach();
+                host.BeginInvoke(new Action(delegate { MenuChooser.OpenFor(menu); }));
+            };
             return menu;
         }
     }
@@ -1578,6 +1587,7 @@ namespace AzerothLauncher
         // ---- shown inside the launcher: over a darkened picture of it, and nothing behind it can be clicked until it
         // is answered. No window of its own (when the launcher is hidden or minimized, it opens as a window instead).
         public static Form Host;                              // the launcher, set when it starts
+        public static Action RevealHost;                      // brings back a launcher that stepped aside for the game
         public static Form SecondaryHost;                     // section window, without changing its contents
         ShadePanel shade;
         bool closedInside;
@@ -1602,6 +1612,7 @@ namespace AzerothLauncher
 
         public bool PutInLauncher()
         {
+            if (RevealHost != null) try { RevealHost(); } catch (Exception) { }
             if (!HostUsable()) return false;
             Form h = ActiveHost();
             var bmp = new Bitmap(Math.Max(1, h.ClientSize.Width), Math.Max(1, h.ClientSize.Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb);

@@ -27,6 +27,7 @@ namespace AzerothLauncher
         string setupImportFile;                               // selected save is validated now, imported only when setup finishes
         string setupGameDir;
         string setupLanguage;
+        string setupDevice;                                   // "handheld" (Steam Deck / Handheld) or "pc"; null until shown
         Dictionary<string, string> setupVals, setupDefaults;
         Dictionary<string, object> setupResult;
         readonly HashSet<string> setupManualFolderDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -78,6 +79,7 @@ namespace AzerothLauncher
             setupResult = null;
             setupStats = null;
             setupAddons = null;
+            setupDevice = null;
             setupPage = 0;
             setupOpen = true;
             SetStatus("First Time Setup");
@@ -218,7 +220,46 @@ namespace AzerothLauncher
             var p = PutText("Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n" +
                             "During your first time setup please go through this next line of slides that will help set the game up for an existing user, or even help out if you are new\n\n" +
                             "Please follow this step by step guide to help get ready to play", 12, FontStyle.Regular, Theme.Text, x, BottomOf(title) + 12, w);
-            return BottomOf(p);
+            int end = BottomOf(p);
+            if (Handheld.Experimental) end = SetupDevice(x, end + 18, w);
+            else if (Handheld.OfferExperimental) end = SetupDeckOffer(x, end + 18, w);
+            return end;
+        }
+
+        // on a Steam Deck (or under Proton) with STEAM DECK EXPERIMENTAL still off: offered here, opt-in
+        int SetupDeckOffer(int x, int y, int w)
+        {
+            var q = PutText("Playing on a Steam Deck?", 13, FontStyle.Bold, Theme.Gold, x, y, w);
+            y = BottomOf(q) + 10;
+            var b = Put(new WowButton("STEAM DECK EXPERIMENTAL", ToggleSteamDeckExperimental, 260, 42, 11), x, y);
+            var n = PutText("Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry " +
+                            "and steps aside while you play. Options > Launcher turns it off again.", 10.5f, FontStyle.Italic, Theme.GoldDim, x, b.Bottom + 10, w);
+            return BottomOf(n);
+        }
+
+        // the welcome page's question: Steam Deck / Handheld or Windows PC. Suggested from what the launcher runs on;
+        // the answer is kept with the other setup choices and saved when setup finishes.
+        int SetupDevice(int x, int y, int w)
+        {
+            if (setupDevice == null)
+                setupDevice = Handheld.Device.Length > 0 ? Handheld.Device : (Handheld.LooksHandheld ? "handheld" : "pc");
+            var q = PutText("Steam Deck / Handheld, or Windows PC?", 13, FontStyle.Bold, Theme.Gold, x, y, w);
+            y = BottomOf(q) + 10;
+            var deck = Put(new WowButton("STEAM DECK / HANDHELD", delegate { setupDevice = "handheld"; BuildPanel("Setup"); }, 250, 42, 11), x, y);
+            deck.Selected = setupDevice == "handheld";
+            int pcWidth = (int)(200 * Theme.Zoom);
+            bool below = deck.Right + 12 + pcWidth > x + w;
+            var pc = Put(new WowButton("WINDOWS PC", delegate { setupDevice = "pc"; BuildPanel("Setup"); }, 200, 42, 11),
+                         below ? x : deck.Right + 12, below ? deck.Bottom + 8 : y);
+            pc.Selected = setupDevice == "pc";
+            y = Math.Max(deck.Bottom, pc.Bottom) + 10;
+            string note = setupDevice == "handheld"
+                ? "The launcher steps aside while you play and comes back when the game closes. In a Steam Deck's Game Mode it fills " +
+                  "the screen: Steam + X opens the keyboard, and the Steam button's Switch Windows brings back a window that ends up behind. " +
+                  "The New Player Handbook has a Steam Deck & Handhelds page."
+                : "The launcher stays in its window while you play.";
+            var n = PutText(note + " Options > Launcher changes this later.", 10.5f, FontStyle.Italic, Theme.GoldDim, x, y, w);
+            return BottomOf(n);
         }
 
         // page 2: the language, every one the launcher speaks; the choice is shown at once
@@ -811,6 +852,7 @@ namespace AzerothLauncher
             {
                 if (!string.IsNullOrWhiteSpace(setupLanguage)) Cfg.Set("language", setupLanguage);
                 foreach (var kv in setupResult) Cfg.Set(kv.Key, kv.Value);
+                if (setupDevice != null) { Cfg.Set("device", setupDevice); Handheld.Device = setupDevice; }
                 foreach (string key in new[] { "addons_dir", "saved_dir", "save_dir" })
                     if (!setupResult.ContainsKey(key)) Cfg.Remove(key);   // leave unset until the player chooses a folder
                 Cfg.Set("setup_done", true);
