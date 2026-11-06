@@ -1,3 +1,7 @@
+# v3.34 (2026-11-06)
+
+- Fixed: Cloud Save with Google Drive or Dropbox stopped at "The sync folder overlaps the launcher data folder" on every upload and download. The launcher keeps its own copy of the cloud saves in its data folder on purpose, and the safety check now allows exactly those copies.
+
 # v3.33 (2026-11-06)
 
 - Cloud Save with Dropbox (Steam Deck experimental): Options > Cloud Save > SIGN IN WITH DROPBOX. The launcher shows a short code; on your phone, open the address it shows, enter the code and approve on Dropbox's page. The launcher picks up the sign-in by itself, so everything stays in Game Mode.

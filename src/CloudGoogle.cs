@@ -14,8 +14,8 @@ namespace AzerothLauncher
 {
     public partial class LauncherApp
     {
-        static string GoogleCopyDir { get { return Path.Combine(Util.StateDir, "google-drive"); } }
-        static string DropboxCopyDir { get { return Path.Combine(Util.StateDir, "dropbox"); } }
+        static string GoogleCopyDir { get { return Path.Combine(Util.StateDir, SyncSettings.ServiceCopies[0]); } }   // google-drive
+        static string DropboxCopyDir { get { return Path.Combine(Util.StateDir, SyncSettings.ServiceCopies[1]); } }   // dropbox
 
         public bool UsingDropbox()
         {

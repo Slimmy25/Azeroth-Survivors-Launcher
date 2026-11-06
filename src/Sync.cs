@@ -48,6 +48,17 @@ namespace AzerothLauncher
 
         public string GameExe, CloudDir, SaveDir, ConfigDir, StateDir, AddonsDir, SavedDir;
 
+        // Google Drive's and Dropbox's local copies (CloudGoogle.cs): the launcher keeps them inside its data folder on
+        // purpose, so they are the one sync folder allowed there. Nothing else of the data folder is inside them.
+        public static readonly string[] ServiceCopies = { "google-drive", "dropbox" };
+
+        public static bool IsServiceCopy(string cloud, string state)
+        {
+            foreach (string name in ServiceCopies)
+                if (string.Equals(Util.Canon(Path.Combine(state, name)), cloud, StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
+
         public SyncSettings(string gameExe, string cloudDir, string saveDir, string configDir, string stateDir,
                             string addonsDir, string savedDir)
         {
@@ -231,7 +242,8 @@ namespace AzerothLauncher
                     if (Util.Overlap(local[i].Value, local[j].Value))
                         throw new SyncError(local[i].Key + " and " + local[j].Key + " folders overlap (" + local[i].Value +
                                             " / " + local[j].Value + ").");
-            if (Util.Overlap(cloud, state)) throw new SyncError("The sync folder overlaps the launcher data folder " + state + ".");
+            if (Util.Overlap(cloud, state) && !SyncSettings.IsServiceCopy(cloud, state))
+                throw new SyncError("The sync folder overlaps the launcher data folder " + state + ".");
             var all = new List<string>();
             foreach (var kv in local) all.Add(kv.Value);
             all.Add(cloud);
