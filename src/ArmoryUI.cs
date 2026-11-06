@@ -12,8 +12,10 @@ namespace AzerothLauncher
 {
     public static class Armory
     {
-        public static readonly Color Page = Theme.Hex("#0e0d14"), Card = Theme.Hex("#16151e"), CardEdge = Theme.Hex("#34323f"),
-            Slot = Theme.Hex("#1b1a24"), SlotHover = Theme.Hex("#252331"), SlotEdge = Theme.Hex("#45414f"),
+        // Card and Slot are dark glass: the launcher's picture shows through them (the section is see-through)
+        public static readonly Color Page = Theme.Hex("#0e0d14"), Card = Color.FromArgb(150, 20, 18, 30), CardEdge = Theme.Hex("#5a4626"),
+            Slot = Color.FromArgb(140, 12, 11, 18), SlotHover = Color.FromArgb(200, 40, 36, 52), SlotEdge = Theme.Hex("#4a3c22"),
+            Plate = Theme.Hex("#6b5326"),                    // the bronze edge of a stat plate
             Dim = Theme.Hex("#9c8a64"), Bright = Theme.Hex("#f5e9c8"), Green = Theme.Hex("#5fd35f"),
             Poor = Theme.Hex("#9d9d9d"), Common = Theme.Hex("#ffffff"), Uncommon = Theme.Hex("#1eff00"),
             Rare = Theme.Hex("#3b8ff0"), Epic = Theme.Hex("#b35cf5"), Legendary = Theme.Hex("#ff8000");
@@ -226,7 +228,7 @@ namespace AzerothLauncher
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.Clear(BackColor);
+            if (!LauncherApp.PaintBackdropBehind(g, this)) g.Clear(BackColor);   // the launcher's picture behind the glass
             Theme.Smooth(g);
             g.ScaleTransform(Zm, Zm);
             Armory.Z = Zm;
@@ -260,8 +262,9 @@ namespace AzerothLauncher
         public string Letters;                               // shown in the frame instead of the emblem
         public string ClassPic;                              // or the class's icon (from Wowhead), when it has arrived
         public readonly List<string[]> Chips = new List<string[]>();     // { glyph, value, label }
+        public double WinRate = -1;                          // 0..1: a gold ring on the right (-1: none)
         int chipRows = 1;
-        const int Pic = 76;
+        const int Pic = 76, Ring = 80;
 
         List<Rectangle> ChipRects(int x0, int y0, int right)
         {
@@ -276,6 +279,20 @@ namespace AzerothLauncher
                 x += w + 8;
             }
             return list;
+        }
+
+        // the win rate as a gold medallion: a bronze rim, a dark track, the gold part as far round as the win rate
+        void WinRing(Graphics g, Rectangle box)
+        {
+            using (var rim = new Pen(Armory.Plate, 2)) g.DrawEllipse(rim, box.X + 1, box.Y + 1, box.Width - 2, box.Height - 2);
+            var arc = Rectangle.Inflate(box, -11, -11);
+            using (var track = new Pen(Theme.Hex("#262019"), 8)) g.DrawEllipse(track, arc);
+            if (WinRate > 0)
+                using (var gold = new Pen(Theme.Gold, 8)) g.DrawArc(gold, arc, -90, (float)(360 * Math.Min(1, WinRate)));
+            Armory.Text(g, Math.Round(WinRate * 100) + "%", Theme.F(13, FontStyle.Bold), Theme.Gold, new Rectangle(box.X, box.Y + 22, box.Width, 24),
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine);
+            Armory.Text(g, Lang.T("WINS"), Theme.F(7), Armory.Dim, new Rectangle(box.X, box.Y + 46, box.Width, 14),
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine);
         }
 
         protected override int ContentHeight(int w)
@@ -295,11 +312,22 @@ namespace AzerothLauncher
             else if (Theme.Portrait != null) Theme.Draw(g, Theme.Portrait, Rectangle.Inflate(frame, -4, -4));
             using (var p = new Pen(Accent, 2)) using (var path = Armory.Round(frame, 6)) g.DrawPath(p, path);
             int x = r.X + Pic + 16;
-            Armory.Text(g, Heading, Theme.F(18, FontStyle.Bold), Accent, new Rectangle(x, r.Y + 8, r.Right - x, 30),
+            int right = r.Right;
+            if (WinRate >= 0)
+            {
+                right -= Ring + 14;
+                WinRing(g, new Rectangle(r.Right - Ring, r.Y - 2, Ring, Ring));
+            }
+            Armory.Text(g, Heading, Theme.F(18, FontStyle.Bold), Color.FromArgb(200, 0, 0, 0), new Rectangle(x + 1, r.Y + 9, right - x, 30),
                         TextFormatFlags.Left | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
-            Armory.Text(g, Line, Theme.F(10), Armory.Bright, new Rectangle(x, r.Y + 42, r.Right - x, 20),
+            Armory.Text(g, Heading, Theme.F(18, FontStyle.Bold), Accent, new Rectangle(x, r.Y + 8, right - x, 30),
                         TextFormatFlags.Left | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
-            if (Note.Length > 0)
+            Armory.Text(g, Line, Theme.F(10), Armory.Bright, new Rectangle(x, r.Y + 42, right - x, 20),
+                        TextFormatFlags.Left | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
+            if (Note.Length > 0 && WinRate >= 0)             // the ring has the top right: the note goes under the line
+                Armory.Text(g, Note, Theme.F(8.5f, FontStyle.Italic), Armory.Dim, new Rectangle(x, r.Y + 60, right - x, 18),
+                            TextFormatFlags.Left | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
+            else if (Note.Length > 0)
             {
                 int nw = r.Right - x;                    // right-aligned: the whole width is free above the heading
                 Armory.Text(g, Note, Theme.F(8.5f, FontStyle.Italic), Armory.Dim, new Rectangle(r.Right - nw, r.Y + 2, nw, 18),
@@ -394,6 +422,7 @@ namespace AzerothLauncher
     public class TilesBlock : ArmoryBlock
     {
         public readonly List<string[]> Items = new List<string[]>();     // { value, translated label }
+        public readonly Dictionary<int, Color> ValueColors = new Dictionary<int, Color>();   // a tile's own number color (else gold)
         public int Cols = 4;
         const int Th = 62, Gap = 8;
 
@@ -409,11 +438,20 @@ namespace AzerothLauncher
             for (int i = 0; i < Items.Count; i++)
             {
                 var t = new Rectangle(r.X + (i % Cols) * (tw + Gap), r.Y + (i / Cols) * (Th + Gap), tw, Th);
-                Armory.Box(g, t, 6, Armory.Slot, Armory.SlotEdge);
-                using (var b = new SolidBrush(Theme.Mix(Theme.Gold, Armory.Slot, 0.35))) g.FillRectangle(b, t.X + 10, t.Y + 1, t.Width - 20, 2);
-                Armory.Text(g, Items[i][0], Theme.F(15, FontStyle.Bold), Armory.Bright, new Rectangle(t.X + 2, t.Y + 8, t.Width - 4, 28),
+                using (var path = Armory.Round(t, 4))       // an engraved bronze plate: dark glass, warm at the top
+                {
+                    using (var lg = new LinearGradientBrush(t, Color.FromArgb(150, 46, 36, 20), Color.FromArgb(150, 14, 11, 7), LinearGradientMode.Vertical))
+                        g.FillPath(lg, path);
+                    using (var p = new Pen(Armory.Plate, 1)) g.DrawPath(p, path);
+                }
+                using (var b = new SolidBrush(Color.FromArgb(90, Theme.Gold))) g.FillRectangle(b, t.X + 10, t.Y + 1, t.Width - 20, 1);
+                Color vc = ValueColors.ContainsKey(i) ? ValueColors[i] : Theme.Gold;
+                var vr = new Rectangle(t.X + 2, t.Y + 7, t.Width - 4, 28);
+                Armory.Text(g, Items[i][0], Theme.F(16, FontStyle.Bold), Color.FromArgb(210, 0, 0, 0), new Rectangle(vr.X + 1, vr.Y + 1, vr.Width, vr.Height),
                             TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
-                Armory.Text(g, Items[i][1], Theme.F(8.5f), Armory.Dim, new Rectangle(t.X + 2, t.Y + 37, t.Width - 4, 18),
+                Armory.Text(g, Items[i][0], Theme.F(16, FontStyle.Bold), vc, vr,
+                            TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
+                Armory.Text(g, Items[i][1].ToUpper(), Theme.F(7.5f), Armory.Dim, new Rectangle(t.X + 2, t.Y + 38, t.Width - 4, 18),
                             TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
             }
         }
@@ -573,6 +611,72 @@ namespace AzerothLauncher
                         g.FillPath(lg, path);
                 }
             }
+        }
+    }
+
+    // one bar a class, in its class color: the faint part is every run of that class, the bright part its victories
+    public class ClassBarsBlock : ArmoryBlock
+    {
+        public readonly List<object[]> Classes = new List<object[]>();   // { name, Color, double runs, double victories, translated right text }
+        const int Bh = 26;
+
+        protected override int ContentHeight(int w) { return Classes.Count * Bh - 6 + 22; }
+
+        protected override void PaintContent(Graphics g, Rectangle r)
+        {
+            double most = 1;
+            foreach (var c in Classes) most = Math.Max(most, (double)c[2]);
+            Font fn = Theme.F(10, FontStyle.Bold), fr = Theme.F(8.5f);
+            int nameW = 0, rightW = 0;
+            foreach (var c in Classes) { nameW = Math.Max(nameW, Armory.TextWidth((string)c[0], fn)); rightW = Math.Max(rightW, Armory.TextWidth((string)c[4], fr)); }
+            nameW += 10; rightW += 8;
+            for (int i = 0; i < Classes.Count; i++)
+            {
+                var c = Classes[i];
+                int y = r.Y + i * Bh;
+                Color col = (Color)c[1];
+                Armory.Text(g, (string)c[0], fn, col, new Rectangle(r.X, y, nameW, 20), TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
+                var track = new Rectangle(r.X + nameW, y + 3, Math.Max(10, r.Width - nameW - rightW), 14);
+                using (var b = new SolidBrush(Armory.Slot)) g.FillRectangle(b, track);
+                int all = (int)(track.Width * (double)c[2] / most), won = (int)(track.Width * (double)c[3] / most);
+                if (all > 0) using (var b = new SolidBrush(Color.FromArgb(80, col))) g.FillRectangle(b, track.X, track.Y, all, track.Height);
+                if (won > 0)
+                    using (var lg = new LinearGradientBrush(new Rectangle(track.X, track.Y, won, track.Height), col, Theme.Mix(col, Color.Black, 0.45), LinearGradientMode.Vertical))
+                        g.FillRectangle(lg, track.X, track.Y, won, track.Height);
+                using (var p = new Pen(Armory.SlotEdge, 1)) g.DrawRectangle(p, track);
+                Armory.Text(g, (string)c[4], fr, Armory.Dim, new Rectangle(r.Right - rightW, y, rightW, 20), TextFormatFlags.Right | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
+            }
+            Armory.Text(g, Lang.T("Bright: victories · faint: all runs"), Theme.F(8.5f, FontStyle.Italic), Armory.Dim,
+                        new Rectangle(r.X, r.Y + Classes.Count * Bh, r.Width, 18), TextFormatFlags.Left | TextFormatFlags.SingleLine);
+        }
+    }
+
+    // the last days as a strip of squares, brighter on days with more recorded runs; the newest on the right
+    public class CalendarBlock : ArmoryBlock
+    {
+        public int[] Days = new int[35];                     // runs a day, the oldest first
+        static readonly Color[] Shades = { Color.FromArgb(150, 22, 19, 28), Theme.Hex("#3d2f16"), Theme.Hex("#6e5420"), Theme.Hex("#a8822c"), Theme.Gold };
+
+        protected override int ContentHeight(int w) { return 24 + 6 + 18; }
+
+        protected override void PaintContent(Graphics g, Rectangle r)
+        {
+            int n = Days.Length, gap = 4;
+            int s = Math.Max(6, Math.Min(24, (r.Width - (n - 1) * gap) / n));
+            int x0 = r.X + Math.Max(0, (r.Width - (n * s + (n - 1) * gap)) / 2);
+            for (int i = 0; i < n; i++)
+            {
+                int k = Days[i] <= 0 ? 0 : Days[i] == 1 ? 1 : Days[i] == 2 ? 2 : Days[i] <= 4 ? 3 : 4;
+                var sq = new Rectangle(x0 + i * (s + gap), r.Y, s, s);
+                using (var b = new SolidBrush(Shades[k])) g.FillRectangle(b, sq);
+                using (var p = new Pen(i == n - 1 ? Theme.GoldDim : Theme.Hex("#2a2318"), 1)) g.DrawRectangle(p, sq);
+            }
+            int ly = r.Y + s + 6;
+            Armory.Text(g, Lang.T(n / 7 + " weeks ago"), Theme.F(8.5f, FontStyle.Italic), Armory.Dim, new Rectangle(x0, ly, 200, 18), TextFormatFlags.Left | TextFormatFlags.SingleLine);
+            int right = x0 + n * s + (n - 1) * gap;
+            Armory.Text(g, Lang.T("Today"), Theme.F(8.5f, FontStyle.Italic), Armory.Dim, new Rectangle(right - 200, ly, 200, 18), TextFormatFlags.Right | TextFormatFlags.SingleLine);
+            Armory.Text(g, Lang.T("Brighter: more runs that day"), Theme.F(8.5f, FontStyle.Italic), Armory.Dim, new Rectangle(x0, ly, right - x0, 18),
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine);
         }
     }
 

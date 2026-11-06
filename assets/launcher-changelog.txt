@@ -1,3 +1,10 @@
+# v3.35 (2026-11-06)
+
+- Stats has a new look, in the launcher's classic style: the section is see-through, so the launcher's night-sky picture shows behind it, and its cards are dark glass with bronze edges.
+- The numbers sit on engraved bronze plates in big gold digits (victories in green), and the header shows your win rate as a gold ring.
+- Overview: new "Classes you play" bars (a bar a class in its class color, the bright part its victories) and a "Last 5 weeks" strip that is brighter on days with more runs.
+- History: runs are grouped into a card a day (Today, Yesterday, 31 Oct ...), and "Your last 10 runs" sums up victories, defeats, average time and best level.
+
 # v3.34 (2026-11-06)
 
 - Fixed: Cloud Save with Google Drive or Dropbox stopped at "The sync folder overlaps the launcher data folder" on every upload and download. The launcher keeps its own copy of the cloud saves in its data folder on purpose, and the safety check now allows exactly those copies.

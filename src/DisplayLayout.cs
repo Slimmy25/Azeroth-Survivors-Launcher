@@ -384,6 +384,68 @@ namespace AzerothLauncher
             Marshal.WriteInt32(pointer, 20, bounds.Top - monitor.Top);
         }
 
+        // ---- see-through sections (Stats): the launcher's own background picture, painted behind a control as if the
+        // control were not there. The picture is laid out exactly as DrawResponsiveLauncher lays it out, once per window
+        // size. Inside a scrolling panel it moves with the content (Windows moves the panel's pixels when it scrolls, so a
+        // picture fixed to the window would tear); past the window's bottom it continues mirrored.
+        public bool SeeThroughSection;
+        Bitmap backdropPicture;
+        TextureBrush backdropBrush;
+        Size backdropSize;
+        public const int BackdropVeil = 96;                  // the dark glass over the picture: text stays readable
+
+        TextureBrush BackdropBrush()
+        {
+            if (W < 1 || H < 1) return null;
+            var size = new Size(W, H);
+            if (backdropBrush != null && backdropSize == size) return backdropBrush;
+            Image background = Retro.Get("background");
+            if (background == null) return null;
+            if (backdropBrush != null) backdropBrush.Dispose();
+            if (backdropPicture != null) backdropPicture.Dispose();
+            backdropPicture = new Bitmap(W, H);
+            using (var g = Graphics.FromImage(backdropPicture))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                int stone = Math.Min(HeaderBottom / 3, U(55));
+                g.DrawImage(background, new Rectangle(0, 0, W, stone), new Rectangle(0, 0, 1100, 55), GraphicsUnit.Pixel);
+                g.DrawImage(background, new Rectangle(0, stone, W, Math.Max(1, FooterTop - stone)), new Rectangle(0, 60, 680, 515), GraphicsUnit.Pixel);
+                g.DrawImage(background, new Rectangle(0, FooterTop, W, H - FooterTop), new Rectangle(0, 582, 900, 108), GraphicsUnit.Pixel);
+            }
+            backdropBrush = new TextureBrush(backdropPicture, WrapMode.TileFlipY);
+            backdropSize = size;
+            return backdropBrush;
+        }
+
+        // paints the picture (and the veil) over the whole of c; false when the section is not see-through
+        public bool PaintBackdrop(Graphics g, Control c)
+        {
+            if (!SeeThroughSection || c == null || !c.IsHandleCreated || !IsHandleCreated) return false;
+            TextureBrush brush = BackdropBrush();
+            if (brush == null) return false;
+            Point p = PointToClient(c.PointToScreen(Point.Empty));
+            for (Control a = c; a != null; a = a.Parent)
+            {
+                var scroll = a as ScrollPanel;
+                if (scroll != null) { p.Y -= scroll.AutoScrollPosition.Y; break; }
+            }
+            var state = g.Save();
+            g.ResetTransform();
+            brush.ResetTransform();
+            brush.TranslateTransform(-p.X, -p.Y);
+            g.FillRectangle(brush, c.ClientRectangle);
+            using (var veil = new SolidBrush(Color.FromArgb(BackdropVeil, 7, 6, 14))) g.FillRectangle(veil, c.ClientRectangle);
+            g.Restore(state);
+            return true;
+        }
+
+        // for a control inside a section: the launcher behind it
+        public static bool PaintBackdropBehind(Graphics g, Control c)
+        {
+            var app = c == null ? null : c.FindForm() as LauncherApp;
+            return app != null && app.PaintBackdrop(g, c);
+        }
+
         void DrawResponsiveLauncher(Graphics graphics)
         {
             if (W < 1 || H < 1) return;

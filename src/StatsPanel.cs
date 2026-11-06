@@ -141,6 +141,10 @@ namespace AzerothLauncher
 
             var sp = MakeThinScroll(panel, new Rectangle(20, pageTop, PW - 40, PH - 12 - pageTop), Armory.Page, Theme.Bronze,
                                     Armory.SlotEdge, Theme.GoldDim);
+            // see-through: the launcher's picture behind the page, the cards dark glass over it (ArmoryUI.cs)
+            SeeThroughSection = true;
+            panel.Invalidate();
+            sp.Paint += delegate(object s, PaintEventArgs e) { PaintBackdrop(e.Graphics, sp); };
             int w = sp.ClientSize.Width - 10;
             int y = 4;
             PlayStats ps = ShownPlayStats();
@@ -154,6 +158,7 @@ namespace AzerothLauncher
                 hero.Accent = ClassColor(cls.Key);
                 hero.Letters = Armory.Initials(cls.Name);
                 hero.ClassPic = cls.Key;
+                if (cls.Runs > 0) hero.WinRate = cls.Victories / cls.Runs;
                 hero.Line = Lang.T("Runs " + Big(cls.Runs) + " · Victories " + Big(cls.Victories)) +
                             (cls.CoverageAware && !cls.AvailableMetrics.Contains("level") ? "" : " · " + Lang.T("Best level " + Big(cls.BestLevel))) +
                             "   " + Lang.T("Picked in " + Pct(cls.Runs, st.Total.Runs) + "% of your runs");
@@ -162,6 +167,7 @@ namespace AzerothLauncher
             else
             {
                 hero.Heading = Lang.T("Your Survivor");
+                if (data) hero.WinRate = st.Total.Victories / st.Total.Runs;
                 hero.Line = data ? Lang.T("Runs " + Big(st.Total.Runs) + " · Victories " + Big(st.Total.Victories)) +
                                           (st.Total.CoverageAware && !st.Total.AvailableMetrics.Contains("level") ? "" : " · " + Lang.T("Best level " + Big(st.Total.BestLevel)))
                                  : Lang.T("No runs recorded yet.");
@@ -234,6 +240,9 @@ namespace AzerothLauncher
             if (statsTab == 0)                               // Overview
             {
                 y = Place(sp, Totals(b, st.Source == "Azeroth Stats"), w, y);
+                if (cls == null && st.Classes.Count > 0) y = Place(sp, ClassBars(st), w, y);
+                var days = Calendar(runs);
+                if (days != null) y = Place(sp, days, w, y);
                 var chart = new DpsChartBlock(runs, 40);       // DPS per run: are you getting better?
                 chart.Title = Lang.T(st.Source == "Azeroth Stats" ? "Peak run-average DPS by run" : "DPS over time") + (cls != null ? " · " + cls.Name : "");
                 y = Place(sp, chart, w, y);
@@ -331,8 +340,11 @@ namespace AzerothLauncher
                 y = AzerothCombatTab(sp, w, y, runs);
             else if (statsTab == 9)                          // sampled ranks, stats and equipment checkpoints
                 y = AzerothJournalTab(sp, w, y, runs);
-            else                                             // History
-                y = Place(sp, History(runs), w, y);
+            else                                             // History: a card a day, then the last ten runs at a glance
+            {
+                foreach (var day in History(runs)) y = Place(sp, day, w, y);
+                if (runs.Count > 0) y = Place(sp, LastRuns(runs), w, y);
+            }
 
             var foot = Note(null, "Azeroth Stats in game: /azstats. Run details are saved by the game when you close it.", Armory.Dim);
             foot.Lines[0][2] = 9f;
@@ -852,7 +864,75 @@ namespace AzerothLauncher
             if (!respectCoverage || b.AvailableMetrics.Contains("chests")) items.Add(new KeyValuePair<string, string>(Big(b.Chests), "Caches opened"));
             if (!respectCoverage || b.AvailableMetrics.Contains("magnets")) items.Add(new KeyValuePair<string, string>(Big(b.Magnets), "Magnets collected"));
             foreach (var i in items) t.Items.Add(new[] { i.Key, Lang.T(i.Value) });
+            t.ValueColors[1] = Armory.Green;                 // victories in the launcher's green
             return t;
+        }
+
+        // Overview: how often each class is played, and won
+        ClassBarsBlock ClassBars(RunStats st)
+        {
+            var bars = new ClassBarsBlock();
+            bars.Title = Lang.T("Classes you play");
+            foreach (var c in st.Classes)
+                bars.Classes.Add(new object[] { c.Name, ClassColor(c.Key), c.Runs, c.Victories,
+                                                Lang.T(Big(c.Runs) + " runs · " + Big(c.Victories) + " wins") });
+            return bars;
+        }
+
+        // Overview: the last 5 weeks, from the recorded runs' dates; none in that time: no block
+        static CalendarBlock Calendar(List<StatRun> runs)
+        {
+            var cal = new CalendarBlock();
+            int n = cal.Days.Length, any = 0;
+            foreach (var r in runs)
+            {
+                DateTime d;
+                if (r.Date.Length < 10 || !DateTime.TryParseExact(r.Date.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                                                                  DateTimeStyles.None, out d)) continue;
+                int ago = (int)(DateTime.Today - d.Date).TotalDays;
+                if (ago < 0 || ago >= n) continue;
+                cal.Days[n - 1 - ago]++;
+                any++;
+            }
+            if (any == 0) return null;
+            cal.Title = Lang.T("Last 5 weeks");
+            return cal;
+        }
+
+        // History: the newest ten runs in four plates
+        static TilesBlock LastRuns(List<StatRun> runs)
+        {
+            int n = Math.Min(10, runs.Count), wins = 0, losses = 0, timed = 0;
+            double time = 0, best = 0;
+            for (int i = 0; i < n; i++)
+            {
+                StatRun r = runs[i];
+                if (r.Kind == "victory") wins++;
+                else if (r.Kind == "defeat") losses++;
+                if (r.Time > 0 && (!r.AzerothStatsSource || r.ObservedValues.ContainsKey("duration"))) { time += r.Time; timed++; }
+                if (!r.AzerothStatsSource || r.ObservedValues.ContainsKey("level")) best = Math.Max(best, r.Level);
+            }
+            var t = new TilesBlock();
+            t.Title = Lang.T(n == 1 ? "Your last run" : "Your last " + n + " runs");
+            t.Items.Add(new[] { Big(wins), Lang.T("Victories") });
+            t.ValueColors[0] = Armory.Green;
+            t.Items.Add(new[] { Big(losses), Lang.T("Defeats") });
+            t.ValueColors[1] = Theme.Bad;
+            t.Items.Add(new[] { timed > 0 ? Clock(time / timed) : "—", Lang.T("Average time") });
+            t.Items.Add(new[] { best > 0 ? Big(best) : "—", Lang.T("Best level") });
+            return t;
+        }
+
+        // History's day headings: "Today", "Yesterday", else the date (31 Oct)
+        static string DayName(string date)
+        {
+            DateTime d;
+            if (date.Length < 10 || !DateTime.TryParseExact(date.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                                                            DateTimeStyles.None, out d)) return Lang.T("Undated");
+            int ago = (int)(DateTime.Today - d.Date).TotalDays;
+            if (ago == 0) return Lang.T("Today");
+            if (ago == 1) return Lang.T("Yesterday");
+            return d.ToString(d.Year == DateTime.Today.Year ? "d MMM" : "d MMM yyyy", CultureInfo.CurrentCulture);
         }
 
         static BarsBlock Milestones(RunStats st, PlayStats ps)
@@ -982,14 +1062,23 @@ namespace AzerothLauncher
             return Lang.T((days / 365) + " years ago");
         }
 
-        static RowsBlock History(List<StatRun> runs)
+        // the newest 20 runs, a card for each day they were played on (the first card says a run can be clicked)
+        static List<RowsBlock> History(List<StatRun> runs)
         {
-            var rows = new RowsBlock();
-            rows.Title = Lang.T("Recent runs") + "  ·  " + Lang.T("click a run for its summary");
-            rows.Empty = Lang.T("No runs recorded yet.");
+            var days = new List<RowsBlock>();
+            RowsBlock rows = null;
+            string shownDay = null;
             for (int i = 0; i < Math.Min(20, runs.Count); i++)
             {
                 StatRun r = runs[i];
+                string day = DayName(r.Date);
+                if (rows == null || day != shownDay)
+                {
+                    rows = new RowsBlock();
+                    rows.Title = days.Count == 0 ? day + "  ·  " + Lang.T("click a run for its summary") : day;
+                    days.Add(rows);
+                    shownDay = day;
+                }
                 var row = new ArmoryRow();
                 Color rc = r.Kind == "victory" ? Armory.Green : r.Kind == "defeat" ? Theme.Bad : Armory.Dim;
                 row.Icon = Armory.Initials(r.Class);
@@ -1033,7 +1122,14 @@ namespace AzerothLauncher
                 row.Click = delegate { App.RunSummary(shared); };   // its post-game summary, with fun highlights
                 rows.Rows.Add(row);
             }
-            return rows;
+            if (days.Count == 0)
+            {
+                var none = new RowsBlock();
+                none.Title = Lang.T("Recent runs");
+                none.Empty = Lang.T("No runs recorded yet.");
+                days.Add(none);
+            }
+            return days;
         }
 
         static RowsBlock GroupRows(string title, List<StatBlock> list, Color color, bool races)

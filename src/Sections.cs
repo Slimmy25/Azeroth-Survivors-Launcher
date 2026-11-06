@@ -811,6 +811,7 @@ namespace AzerothLauncher
             panel = new Panel();
             panel.Dock = DockStyle.Fill;
             panel.BackColor = Theme.Panel;
+            panel.Paint += delegate(object s, PaintEventArgs e) { PaintBackdrop(e.Graphics, panel); };   // Stats: see-through
             chat.Controls.Add(panel);
             lostHelpCard = new ScrollPanel();
             lostHelpCard.BackColor = Theme.Hex("#120f18");
@@ -1423,6 +1424,7 @@ namespace AzerothLauncher
                 try { c.Dispose(); }
                 catch(Exception error) { throw new InvalidOperationException("Disposing "+c.GetType().FullName+" while opening "+title+"\n"+snapshot,error); }
             }
+            if (SeeThroughSection) { SeeThroughSection = false; panel.Invalidate(); }
             SetSideTitle(title);
             // the back arrow and the trail live in the title bar: "Addons › Download More"
             bool back = current == "Setup" ? setupPage > 0 : current != "Community" || communityPlaying != null || communityMore;
