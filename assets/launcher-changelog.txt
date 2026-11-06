@@ -1,3 +1,7 @@
+# v3.31 (2026-11-06)
+
+- Steam Deck experimental: the launcher comes back the moment the game closes, instead of after its 3-second check for the game reopening, so Steam's black "Abort game" screen no longer shows in between. If the game reopens to update itself, the launcher steps aside again.
+
 # v3.30 (2026-11-06)
 
 - Steam Deck experimental: under Proton the launcher starts the game with WGPU_BACKEND=vulkan, so the Steam entry needs no launch options. A WGPU_BACKEND already set in Steam is kept, and Windows PCs are never affected. The Status Log says which happened.

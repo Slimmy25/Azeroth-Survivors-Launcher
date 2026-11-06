@@ -1285,6 +1285,7 @@ namespace AzerothLauncher
                         launched = true;
                         Ui(StepAsideForGame);                // hidden (Game Mode) or minimized while it runs, if chosen
                         p.WaitForExit();                     // returns on normal exit or crash
+                        Ui(ReturnAfterGame);                 // back at once (no black screen while it waits below)
                         try { sessionCrashed = p.ExitCode != 0; } catch (Exception) { }
                     }
                     // The game updates itself when it starts: it closes and opens again (possibly through a helper in its
@@ -1304,6 +1305,7 @@ namespace AzerothLauncher
                             back = GameProcessRunning(gameDir);
                         }
                         if (!back) break;
+                        Ui(StepAsideForGame);                // the game opened again (its update): out of its way again
                         stamp = GameFilesStamp(gameDir);
                         SyncLog(patched ? "The game updated itself and opened again." : "The game opened again.", Level.Info);
                         Ui(delegate { SetStatus("Game running."); });
