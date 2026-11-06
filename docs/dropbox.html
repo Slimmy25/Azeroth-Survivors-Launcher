@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Dropbox sign-in · Azeroth Survivors Launcher</title>
+<style>
+  body { margin: 0; background: #0e0d14; color: #e8dcc0; font: 18px/1.6 Georgia, "Times New Roman", serif; }
+  main { max-width: 520px; margin: 0 auto; padding: 40px 22px 56px; }
+  h1 { color: #f0c050; font-size: 1.6em; margin: 0 0 12px; }
+  a { color: #8fb8ff; }
+  .muted { color: #8f856f; font-size: 0.9em; }
+  input { width: 100%; box-sizing: border-box; font: bold 30px/1.2 monospace; letter-spacing: 4px; text-align: center; text-transform: uppercase;
+          padding: 14px; margin: 14px 0; background: #1b1926; color: #f0c050; border: 2px solid #c49a48; border-radius: 8px; }
+  button { width: 100%; font: bold 20px Georgia, serif; padding: 14px; background: #c49a48; color: #0e0d14; border: 0; border-radius: 8px; cursor: pointer; }
+  button:disabled { opacity: 0.5; }
+  #msg { min-height: 1.6em; margin-top: 14px; }
+  .bad { color: #ff8f80; }
+  .good { color: #9fe0a0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Sign in to Dropbox</h1>
+  <div id="ask">
+    <p>Enter the code your launcher shows (on your Steam Deck or PC).</p>
+    <form id="form" autocomplete="off">
+      <input id="code" maxlength="9" placeholder="ABCD-EFGH" autocapitalize="characters" spellcheck="false" inputmode="text">
+      <button id="go" type="submit">CONTINUE TO DROPBOX</button>
+    </form>
+  </div>
+  <p id="msg"></p>
+  <p class="muted">Dropbox then asks you to allow Azeroth Survivors Launcher. It only gets its own folder in your Dropbox
+     (Apps › Azeroth Survivors Launcher), for your game save and addon settings. This page passes the sign-in to your launcher
+     through the free relay ntfy.sh; it is useless without the launcher that showed the code.
+     <a href="privacy.html">Privacy policy</a></p>
+</main>
+<script>
+(function () {
+  var APP_KEY = "qunu64q01u2eg1u";
+  var RELAY = "https://ntfy.sh/";
+  var HERE = "https://slimmy25.github.io/Azeroth-Survivors-Launcher/dropbox.html";
+  var msg = document.getElementById("msg");
+  function say(text, cls) { msg.textContent = text; msg.className = cls || ""; }
+  function clean(v) { return (v || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+  function valid(c) { return /^[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{8}$/.test(c); }
+
+  var q = new URLSearchParams(location.search);
+  var state = (q.get("state") || "").toLowerCase();
+
+  // back from Dropbox: hand the result to the launcher, then say so
+  if (q.has("code") || q.has("error")) {
+    document.getElementById("ask").style.display = "none";
+    history.replaceState(null, "", location.pathname);
+    if (!valid(state.toUpperCase())) { say("This sign-in link is incomplete. Start again from the launcher.", "bad"); return; }
+    var denied = !q.has("code");
+    say("Sending the sign-in to your launcher...");
+    fetch(RELAY + "asl-dbx-" + state + "-ret", { method: "POST", body: denied ? "denied" : q.get("code") })
+      .then(function (r) {
+        if (!r.ok) throw new Error("relay " + r.status);
+        say(denied ? "Sign-in declined. Your launcher has been told; you can close this page."
+                   : "Done! Go back to your launcher and confirm your account there. You can close this page.", denied ? "" : "good");
+      })
+      .catch(function () { say("Could not reach your launcher through the relay. Check your connection and start again from the launcher.", "bad"); });
+    return;
+  }
+
+  var input = document.getElementById("code");
+  input.addEventListener("input", function () {
+    var c = clean(input.value).slice(0, 8);
+    input.value = c.length > 4 ? c.slice(0, 4) + "-" + c.slice(4) : c;
+  });
+
+  document.getElementById("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var c = clean(input.value);
+    if (!valid(c)) { say("That code does not look right: 8 letters and numbers, like ABCD-EFGH.", "bad"); return; }
+    var topic = "asl-dbx-" + c.toLowerCase();
+    var button = document.getElementById("go");
+    button.disabled = true;
+    say("Looking for your launcher...");
+    fetch(RELAY + topic + "-req/json?poll=1&since=20m")
+      .then(function (r) { if (!r.ok) throw new Error("relay " + r.status); return r.text(); })
+      .then(function (text) {
+        var challenge = null;
+        text.split("\n").forEach(function (line) {
+          if (!line.trim()) return;
+          try {
+            var m = JSON.parse(line);
+            if (m.event === "message") {
+              var body = JSON.parse(m.message);
+              if (body && /^[A-Za-z0-9_-]{43}$/.test(body.challenge || "")) challenge = body.challenge;
+            }
+          } catch (err) { }
+        });
+        if (!challenge) { button.disabled = false; say("No launcher is waiting for that code. Check it, or start the sign-in again in the launcher.", "bad"); return; }
+        var p = new URLSearchParams({
+          client_id: APP_KEY, response_type: "code", token_access_type: "offline",
+          code_challenge: challenge, code_challenge_method: "S256", redirect_uri: HERE, state: c.toLowerCase()
+        });
+        location.href = "https://www.dropbox.com/oauth2/authorize?" + p.toString();
+      })
+      .catch(function () { button.disabled = false; say("Could not reach the relay. Check your connection and try again.", "bad"); });
+  });
+})();
+</script>
+</body>
+</html>

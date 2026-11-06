@@ -1021,11 +1021,11 @@ namespace AzerothLauncher
                 try
                 {
                     string driveDown = DriveDown();          // Google Drive: its local copy first
-                    if (driveDown != null) throw new UserError("Google Drive could not be reached: " + driveDown);
+                    if (driveDown != null) throw new UserError(CloudServiceName() + " could not be reached: " + driveDown);
                     ok = kind == "status" ? eng.Status() : kind == "pull" ? eng.Pull(force) :
                          kind == "restore" ? eng.RestoreDownload(stamp) : eng.Push(force);
                     string driveUp = DriveUp();              // and what changed in it, sent back
-                    if (driveUp != null) throw new UserError("Saved in the launcher's copy, but Google Drive could not be reached: " + driveUp +
+                    if (driveUp != null) throw new UserError("Saved in the launcher's copy, but " + CloudServiceName() + " could not be reached: " + driveUp +
                                                              " It is uploaded at the next sync.");
                 }
                 catch (Exception e)
@@ -1236,13 +1236,13 @@ namespace AzerothLauncher
                         bool playAnyway = UiCall<bool>(delegate
                         {
                             ShowWindowFront();
-                            return Ask("Cloud Save", "Google Drive could not be reached:\n" + driveProblem + "\n\nPlay anyway with the save on " +
+                            return Ask("Cloud Save", CloudServiceName() + " could not be reached:\n" + driveProblem + "\n\nPlay anyway with the save on " +
                                                      "this device? Nothing is synced this time; the next sync compares both and asks if they differ.");
                         });
                         if (!playAnyway)
                         {
-                            problems.Add("Google Drive could not be reached, so the game was not launched.\n\n" + driveProblem);
-                            Ui(delegate { SetCloudNote("Google Drive not reached - game not launched"); SetStatus("Ready."); });
+                            problems.Add(CloudServiceName() + " could not be reached, so the game was not launched.\n\n" + driveProblem);
+                            Ui(delegate { SetCloudNote(CloudServiceName() + " not reached - game not launched"); SetStatus("Ready."); });
                             return;
                         }
                         eng = null;                          // no download now and no upload after
@@ -1351,9 +1351,9 @@ namespace AzerothLauncher
                 string driveBefore = launched && eng != null ? DriveDown() : null;
                 if (driveBefore != null)
                 {
-                    problems.Add("Google Drive could not be reached, so your progress was not uploaded. It stays on this device " +
+                    problems.Add(CloudServiceName() + " could not be reached, so your progress was not uploaded. It stays on this device " +
                                  "and is uploaded at the next sync.\n\n" + driveBefore);
-                    Ui(delegate { SetCloudNote("Google Drive not reached - progress kept on this device"); });
+                    Ui(delegate { SetCloudNote(CloudServiceName() + " not reached - progress kept on this device"); });
                 }
                 else if (launched && eng != null)
                 {
@@ -1365,9 +1365,9 @@ namespace AzerothLauncher
                             if (driveAfter == null) Ui(delegate { SetStatus("Ready."); SetCloudNote(""); });
                             else
                             {
-                                problems.Add("Your progress is saved on this device, but Google Drive could not be reached. " +
+                                problems.Add("Your progress is saved on this device, but " + CloudServiceName() + " could not be reached. " +
                                              "It is uploaded at the next sync.\n\n" + driveAfter);
-                                Ui(delegate { SetCloudNote("Google Drive upload waiting - see the Cloud Save log"); });
+                                Ui(delegate { SetCloudNote(CloudServiceName() + " upload waiting - see the Cloud Save log"); });
                             }
                         }
                         else

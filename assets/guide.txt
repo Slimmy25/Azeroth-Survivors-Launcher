@@ -675,7 +675,7 @@ Steam Deck support is experimental and off until you press STEAM DECK EXPERIMENT
 - While you play, the launcher hides. When the game closes it comes back and uploads your cloud save.
 - Steam + X opens the keyboard for any text box. Tap the screen to press the launcher's buttons.
 - If a window ever ends up behind another, press the Steam button and pick it under Switch Windows.
-- Cloud Save: in Options > Cloud Save, press SIGN IN WITH GOOGLE and enter the code on your phone. Your saves then sync with Google Drive in Game Mode too, with no sync app. Sign in the same way on your PC to share them.
+- Cloud Save: in Options > Cloud Save, press SIGN IN WITH GOOGLE or SIGN IN WITH DROPBOX and enter the code on your phone. Your saves then sync with Google Drive or Dropbox in Game Mode too, with no sync app. Sign in the same way on your PC to share them.
 - To leave, press the Steam button and choose Exit Game, or turn on Options > Launcher > "Close the launcher after the game" to go straight back to Steam after playing.
 - The game itself runs under Proton and supports gamepads there.
 

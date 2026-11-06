@@ -1,3 +1,10 @@
+# v3.33 (2026-11-06)
+
+- Cloud Save with Dropbox (Steam Deck experimental): Options > Cloud Save > SIGN IN WITH DROPBOX. The launcher shows a short code; on your phone, open the address it shows, enter the code and approve on Dropbox's page. The launcher picks up the sign-in by itself, so everything stays in Game Mode.
+- Before Dropbox is used, the launcher asks you to confirm the account email that was connected. It only uses its own folder, Apps > Azeroth Survivors Launcher.
+- The cloud sync works the same as with Google Drive: download before PLAY, upload after, the same conflict questions and backups. USE DROPBOX switches back without signing in again.
+- Cloud Save's messages now name the service in use (Google Drive or Dropbox).
+
 # v3.32 (2026-11-06)
 
 - Cloud Save with Google Drive (Steam Deck experimental): Options > Cloud Save > SIGN IN WITH GOOGLE. You sign in on a phone or PC with a short code, and the launcher syncs with Google Drive itself, so a Steam Deck in Game Mode needs no sync app.

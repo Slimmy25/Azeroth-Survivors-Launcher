@@ -27,11 +27,15 @@
     <li><strong>Your email address</strong> (<code>email</code>), only to show which Google account is signed in.</li>
   </ul>
 
+  <h2>Dropbox (only if you sign in)</h2>
+  <p>Cloud Save can also sync with Dropbox. This is optional and off until you choose SIGN IN WITH DROPBOX. The launcher uses Dropbox's <em>App folder</em> access: Dropbox gives it one folder, <em>Apps › Azeroth Survivors Launcher</em>, and it cannot see or change anything else in your Dropbox. It also reads your account's email address, only so you can confirm that the right account was connected.</p>
+  <p>You sign in on your phone, on the launcher's <a href="dropbox.html">sign-in page</a>. To pass the sign-in from your phone to your launcher, the page and the launcher use <a href="https://ntfy.sh">ntfy.sh</a>, a free public message relay, under a topic named after the one-time code the launcher shows. Only two short messages go through it: a one-time key check from the launcher, and the one-time sign-in code from Dropbox back to it. That sign-in code cannot be used without a secret key that never leaves your launcher, and it expires within minutes.</p>
+
   <h2>Where your data goes</h2>
   <ul>
-    <li>Your save files travel only between your device and your own Google Drive.</li>
-    <li>The launcher's sign-in to Google is stored only on your device, in the launcher's settings, protected with your operating system's data protection for your user account. Your email address is stored there too, for display.</li>
-    <li>Nothing from your Google account is sent to the developer or to anyone else, sold, used for advertising, or used to train AI models.</li>
+    <li>Your save files travel only between your device and your own Google Drive or Dropbox.</li>
+    <li>The launcher's sign-in to Google or Dropbox is stored only on your device, in the launcher's settings, protected with your operating system's data protection for your user account. Your email address is stored there too, for display.</li>
+    <li>Nothing from your Google or Dropbox account is sent to the developer or to anyone else, sold, used for advertising, or used to train AI models.</li>
   </ul>
   <p>Azeroth Survivors Launcher's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
 
@@ -39,7 +43,8 @@
   <ul>
     <li>In the launcher: Options › Cloud Save › SIGN OUT. This removes the sign-in from your device and asks Google to end the launcher's access.</li>
     <li>In your Google account: <a href="https://myaccount.google.com/connections">Third-party connections</a>, then remove Azeroth Survivors Launcher.</li>
-    <li>Your saves stay in your Drive folder until you delete them; you can delete that folder at any time.</li>
+    <li>In Dropbox: Settings › <a href="https://www.dropbox.com/account/connected_apps">Connected apps</a>, then disconnect Azeroth Survivors Launcher. SIGN OUT in the launcher's Dropbox section does this too.</li>
+    <li>Your saves stay in your Drive or Dropbox folder until you delete them; you can delete that folder at any time.</li>
   </ul>
 
   <h2>Other connections the launcher makes</h2>

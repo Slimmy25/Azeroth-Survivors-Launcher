@@ -3679,10 +3679,10 @@ namespace AzerothLauncher
         {
             int y = 6;
             y = OptionCheck("Cloud saving", CloudEnabled(), y, delegate(bool on) { SetCloudEnabled(on); });
-            if (Handheld.Experimental) y = OptionsGoogleDrive(PW, y + 6);   // Steam Deck experimental: Google Drive itself
+            if (Handheld.Experimental) y = OptionsCloudServices(PW, y + 6);   // Steam Deck experimental: Google Drive, Dropbox
             else if (GoogleDrivePaused())
             {
-                var paused = PutText("Cloud Save is set to Google Drive, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). " +
+                var paused = PutText("Cloud Save is set to " + CloudServiceName() + ", which needs STEAM DECK EXPERIMENTAL (Options > Launcher). " +
                                      "Turn it on again, or choose a sync folder below.", 9.5f, FontStyle.Italic, Theme.GoldDim, 20, y + 2, PW - 40);
                 y = BottomOf(paused) + 8;
             }
@@ -3694,7 +3694,7 @@ namespace AzerothLauncher
             }
             y += 6;
             int cbw = (int)(140 * Theme.Zoom), cgap = (int)(8 * Theme.Zoom);
-            var lab = PutText(UsingGoogleDrive() ? "Google Drive's copy on this device" : "Sync folder (inside your cloud drive)", 11, FontStyle.Bold, Theme.Gold, 20, y, PW - 50 - 2 * cbw - cgap);
+            var lab = PutText(UsingGoogleDrive() || UsingDropbox() ? CloudServiceName() + "'s copy on this device" : "Sync folder (inside your cloud drive)", 11, FontStyle.Bold, Theme.Gold, 20, y, PW - 50 - 2 * cbw - cgap);
             string v = Cfg.Str("cloud_dir");
             var val = PutText(string.IsNullOrEmpty(v) ? Lang.T("(not set)") : v, 9, FontStyle.Regular, Theme.LinkBlue, 20, BottomOf(lab), PW - 50 - 2 * cbw - cgap, false);
             int cby = y + Math.Max(0, (BottomOf(val) - y - 28) / 2);
