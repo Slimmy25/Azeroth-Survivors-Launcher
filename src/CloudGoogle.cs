@@ -343,9 +343,7 @@ namespace AzerothLauncher
                     }
                     // the account the approval came from, confirmed: a sign-in nobody here approved is thrown away
                     if (!Ask("Dropbox", "Signed in to the Dropbox account " + (email.Length > 0 ? email : "(its email could not be read)") +
-                                        ".
-
-Is that your account? Choose NO if you did not just approve the launcher on your phone."))
+                                        ".\n\nIs that your account? Choose NO if you did not just approve the launcher on your phone."))
                     {
                         string unwanted = refresh;
                         Bg(delegate { Dropbox.Revoke(unwanted); });
