@@ -51,7 +51,7 @@ namespace AzerothLauncher
             new KeyValuePair<string[], string>(new[] { "could not be resolved" },
                 "The launcher could not find the internet address it needed. Check your connection, then try again."),
             new KeyValuePair<string[], string>(new[] { "work in progress" },
-                "This addon is not ready yet and cannot be installed."),
+                "This addon is not ready for release yet. Install it with its Work in Progress button in Download More and accept the warning."),
             new KeyValuePair<string[], string>(new[] { "pinned to an older copy" },
                 "This addon is pinned to an older copy, so its automatic updates are paused. Use UPDATE to replace it with the newest release."),
             new KeyValuePair<string[], string>(new[] { "conflicts with another addon" },

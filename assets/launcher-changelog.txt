@@ -1,3 +1,7 @@
+# v3.36 (2026-11-06)
+
+- Download More: work-in-progress addons can now be installed. Their Work in Progress button asks first: the addon is not ready for release, may change or break between versions, and is not updated automatically. Agree, and it installs like any other addon; UNINSTALL removes it.
+
 # v3.35 (2026-11-06)
 
 - Stats has a new look, in the launcher's classic style: the section is see-through, so the launcher's night-sky picture shows behind it, and its cards are dark glass with bronze edges.

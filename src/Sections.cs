@@ -2555,11 +2555,12 @@ namespace AzerothLauncher
                 // decision in the shipped catalog; do not infer it from rolling API status.
                 Image watermark = it.ForgeVerified ? SurvivorsForge.LoadWatermark(forge) : null;
                 bool verified = it.ForgeVerified;
-                var btn = it.WorkInProgress ? new WowButton("Work in Progress", delegate { }, bw, 30, 9)
-                        : update ? new WowButton("UPDATE", delegate { CheckAddonUpdates(it, true); }, bw, 30, 9)
+                // a work-in-progress addon installs only after its warning is accepted (InstallWorkInProgress)
+                var btn = it.WorkInProgress && !haveIt ? new WowButton("Work in Progress", delegate { InstallWorkInProgress(it); }, bw, 30, 9)
+                        : update && !it.WorkInProgress ? new WowButton("UPDATE", delegate { CheckAddonUpdates(it, true); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
-                if (it.WorkInProgress) btn.Enabled = false;
+                if (it.WorkInProgress && !haveIt) WowButton.Tips.SetToolTip(btn, Lang.T("Not ready for release yet. Click to install it anyway."));
                 if (update) btn.Selected = true;
                 if (btn.Width > cw - 14) btn.Width = cw - 14;  // never wider than its block
                 int ty = 6;
@@ -2720,7 +2721,19 @@ namespace AzerothLauncher
         }
 
         // quiet: an automatic update (no message box on a failure; the log says it and the next one goes on)
-        void DownloadAddon(string name, string url, Action after = null, bool quiet = false)
+        // Download More's Work in Progress button: the addon is not finished, so it is installed only after the player
+        // agrees to that. It is not updated automatically; UNINSTALL removes it as usual.
+        void InstallWorkInProgress(AddonEntry it)
+        {
+            if (!Ask("Work in Progress", it.Name + " is a work in progress. It is not ready for release yet.\n\n" +
+                     "It may be unfinished, change a lot or stop working between versions, and it can cause errors in the game. " +
+                     "The launcher does not update it automatically and gives no support for it until it is released.\n\n" +
+                     "Install it anyway?"))
+                return;
+            DownloadAddon(it.Name, it.Url, null, false, true);
+        }
+
+        void DownloadAddon(string name, string url, Action after = null, bool quiet = false, bool workInProgressAccepted = false)
         {
             if (AddonsLocked()) { if (after != null) after(); return; }
             AddonEntry catalogEntry = null;
@@ -2730,7 +2743,7 @@ namespace AzerothLauncher
                     catalogEntry = candidate;
                     break;
                 }
-            if (catalogEntry != null && catalogEntry.WorkInProgress)
+            if (catalogEntry != null && catalogEntry.WorkInProgress && !workInProgressAccepted)
             {
                 SetStatus(name + " is temporarily unavailable: work in progress.");
                 if (after != null) after();
