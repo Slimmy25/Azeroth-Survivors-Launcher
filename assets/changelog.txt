@@ -2,6 +2,42 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.142.0
+-------
+Azeroth Survivors now runs on Macs with Apple silicon (M1 and later). Download it from the site, and it keeps itself up to date like the Windows and Linux versions.
+
+* macOS: a native version for Apple silicon Macs on macOS 11 or newer, with the same game data as the other versions. The first time, macOS asks you to allow it under System Settings > Privacy & Security ("Open Anyway"); the README in the download explains how.
+* macOS: the game updates itself, offering new versions and data patches when it starts, as on Windows and Linux.
+===
+
+0.141.1
+-------
+Bug fixes: Every Bauble now unlocks only when you have truly seen the whole codex, the Ahn'Qiraj Rifle fires like a gun, and the Tabard of Lordaeron shows its design. In co-op, Battle Shout now gives allies the warrior's Horn of the Warchief bonus.
+
+* Every Bauble: it now counts only the pieces the codex lists, against the codex's real total of 141, so it can no longer unlock with pieces still missing. Players who had seen everything but were stuck at 141/142 now get it.
+* Co-op guests playing a Rockbiter Shaman now record Rockbiter Weapon's legendary amulet in their codex.
+* Ahn'Qiraj Rifle: it now aims and fires like a real gun, with its muzzle blast and bullets, and its tooltip says Gun. Its damage is unchanged.
+* Tabard of Lordaeron: it now shows its blue-and-white Lordaeron crest instead of a blank tabard.
+* Co-op Battle Shout: allies now get the warrior's Horn of the Warchief and Bloodlust bonus, as the warrior does, and an ally's own Horn no longer strengthens someone else's shout. The buff tooltip shows each player the bonus they really get.
+* Windows: if the game ever crashes outright, it now saves a crash report and dump in its Diagnostics folder. Sending them in helps track the crash down.
+===
+
+0.141.0
+-------
+Scholomance's bosses now drop more often, one piece at a time, and give you what you are missing first. Kill Command and Heart of the Packlord's damage now shows under each pet on the meter, and Tranquility counts all of your healing again.
+
+* Scholomance loot: each of a boss's two pieces has a 25% chance (it was 12.5%), so a kill gives you a piece half the time. You never get two from one kill, and while you are missing one of the two, a drop is always the one you are missing. Once you own both, either can drop again. The Armory shows the chance you really have.
+* Darkmaster Gandling is unchanged: a 25% chance per kill for your class's weapons, and a class with two gets both together.
+* Tranquility: its strike now counts all of the healing from your heals again, overhealing included, even at full health or with Tree of Life's shield already full. Tree of Life's shield keeps its cap.
+* Heart of the Packlord and Kill Command no longer have their own damage meter lines. Each pet's strikes, the Raptor's bleed, the Matriarch's shockwave and the extra damage from the Wolf's howl now count under that pet. Your total damage is the same.
+* Soulfire: extra target upgrades now work past three targets, and its tooltip shows the real number.
+* Counterattack: now sets off a free Immolation Trap instead of the removed Explosive Trap, with the same 15% and 30% chance and your trap upgrades.
+* Resonant Shocks: your Shocks now strike 1 extra nearby enemy at every rank, for 10%, 20% or 30% of their damage.
+* Improved Mind Blast: the tooltip now shows the real total at each rank, from 6% to 30%. The spell itself has not changed.
+* Ras Frostwhisper: while his shield is up he takes 75% less damage (it was 45%), and its two runes now stand as towers like Sapphiron's, rising as the shield runs out. Touching one still breaks the shield and leaves him weakened.
+* Damage meter: the list now scrolls, so no line is cut off at the bottom of the window, including after a Reset.
+===
+
 0.140.0
 -------
 A new zone opens after Blackrock Mountain: Scholomance, fought in Rattlegore's Great Ossuary. Five new bosses bring twenty new mechanics with exact warnings on the ground, and they drop the Tier 0.5 sets and a weapon for every class.

@@ -234,7 +234,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Multi-Shot: shoots the 3 nearest enemies.
 - Serpent Sting: poisons the healthiest enemies over time.
 - Volley: rains arrows on the thickest group of enemies.
-- Kill Command: each of your pets charges its own target, bosses and elites first (the Wolf bites, the Raptor strikes three times, the Devilsaur Matriarch lands a crushing blow). Offered once you have a pet. Counterattack still sets off a free Explosive Trap.
+- Kill Command: each of your pets charges its own target, bosses and elites first (the Wolf bites, the Raptor strikes three times, the Devilsaur Matriarch lands a crushing blow). Offered once you have a pet. Counterattack sets off a free Immolation Trap (Explosive Trap was removed).
 - Concussive Shot: hits the 2 nearest enemies and slows them a lot.
 - Aimed Shot: a huge shot at the nearest enemy (your Hunter's Mark target comes first).
 - Immolation Trap: sets the ground where you stand on fire.
@@ -320,7 +320,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 - Enhancement uses a new melee-focused tree; points from the former tree were refunded.
   - Thundering Strikes: Rockbiter and Stormstrike gain critical chance.
   - Stormguard: while Lightning Shield is active, you take less damage (up to 15%).
-  - Resonant Shocks: every Shock hits up to 3 additional nearby enemies for 35% damage.
+  - Resonant Shocks: every Shock also strikes 1 extra nearby enemy, for 10%, 20% or 30% of its damage at ranks 1 to 3.
   - Shattering Elements: your next different Shock within 6 seconds deals extra damage.
   - Rockbiter Initiation: start each run with Rockbiter Weapon instead of Lightning Bolt.
   - Windfury Weapon: Rockbiter and Stormstrike can strike again: at rank 3, a 25% chance of two extra strikes or a 12.5% chance of three.
@@ -446,7 +446,7 @@ Every zone ends with a final boss. Beat it to open the next zone, for that class
 # Long zones (final boss at 20:00)
 - Alterac Valley (PvP gear): Korrak the Bloodrager 4:00, Ivus the Forest Lord 8:00, Lokholar the Ice Lord 12:00, Glacius the Frozen Titan 16:00, Azuregos 20:00. Beat Whitemane to open.
 - Blackrock Mountain (PvP gear): General Angerforge 4:00, Warchief Rend Blackhand 8:00, Emperor Dagran Thaurissan 12:00, Majordomo Executus 16:00, Nefarian 20:00. Beat Azuregos to open.
-- Scholomance (Tier 0.5 gear): Kirtonos the Herald 4:00, Ras Frostwhisper 8:00, Doctor Theolen Krastinov 12:00, Lord Alexei Barov 16:00, Darkmaster Gandling 20:00. Beat Nefarian to open.
+- Scholomance (Tier 0.5 gear): Kirtonos the Herald 4:00, Ras Frostwhisper 8:00 (his shield cuts his damage taken by 75% until you touch one of its two rune towers), Doctor Theolen Krastinov 12:00, Lord Alexei Barov 16:00, Darkmaster Gandling 20:00. Beat Nefarian to open.
 - Gates of Ahn'Qiraj (legendary gear): Kurinnaxx 4:00, General Rajaxx 8:00, Princess Huhuran 12:00, Ossirian the Unscarred 16:00, C'Thun 20:00. Beat Darkmaster Gandling to open.
 - Naxxramas (legendary gear): Anub'Rekhan 4:00, Noth the Plaguebringer 8:00, Patchwerk 12:00, Sapphiron 16:00, Kel'Thuzad 20:00. Beat C'Thun to open.
 
