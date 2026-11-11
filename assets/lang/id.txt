@@ -1631,8 +1631,8 @@ Switch {0} off and turn {1} on?
 = Matikan {0} dan nyalakan {1}?
 both replace the game's interface
 = keduanya mengganti antarmuka game
-both set raid marks on bosses and party members
-= keduanya memasang penanda raid pada bos dan anggota party
+both add a full HUD with a damage meter and build list
+= keduanya menambahkan HUD lengkap dengan pengukur damage dan daftar build
 UI
 = UI
 MISC

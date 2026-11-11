@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = 关闭 {0} 并开启 {1}？
 both replace the game's interface
 = 两者都会替换游戏界面
-both set raid marks on bosses and party members
-= 两者都会给首领和队友加上团队标记
+both add a full HUD with a damage meter and build list
+= 两者都会添加完整的 HUD，包含伤害统计和构筑列表
 UI
 = 界面
 MISC

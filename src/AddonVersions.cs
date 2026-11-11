@@ -37,7 +37,7 @@ namespace AzerothLauncher
             var pending = new List<string>();
             foreach (AddonEntry entry in Data.Addons)
             {
-                if (!IsDynamicGitHubAddonUrl(entry.Url) || entry.WorkInProgress) continue;
+                if (!IsDynamicGitHubAddonUrl(entry.Url)) continue;
                 string key = entry.Url.TrimEnd('/');
                 if (dynamicAddonReleaseChecked.Contains(key) || catalogVersionsTried.Contains(key) || pending.Contains(key)) continue;
                 pending.Add(key);

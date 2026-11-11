@@ -54,8 +54,8 @@ namespace AzerothLauncher
             // enabled and switch off AZS Stats. The legacy folder and its SavedVariables are preserved.
             new Conflict { Preferred = new[] { "AzerothStats" }, Other = new[] { "AZSStats" },
                            Why = "both record your runs and statistics" },
-            new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "AZSMinorMods" },
-                           Why = "both set raid marks on bosses and party members" },
+            new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "SlimSuite" },
+                           Why = "both add a full HUD with a damage meter and build list" },
             // The interfaces (Download More > UI) that replace the same parts of the game conflict. Survivor UI and
             // SurvivorUI Classic are the one exception: they work together, so no pair below joins them.
             new Conflict { Preferred = new[] { "SurvivorUI", "SurvivorsUI" }, Other = new[] { "SurvivorsDragonUi" },

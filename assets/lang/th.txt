@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = ปิด {0} แล้วเปิด {1} ไหม?
 both replace the game's interface
 = ทั้งสองแทนที่อินเทอร์เฟซของเกม
-both set raid marks on bosses and party members
-= ทั้งสองติดเครื่องหมายเรดให้บอสและสมาชิกปาร์ตี้
+both add a full HUD with a damage meter and build list
+= ทั้งสองเพิ่ม HUD เต็มรูปแบบพร้อมตัววัดดาเมจและรายการบิลด์
 UI
 = UI
 MISC

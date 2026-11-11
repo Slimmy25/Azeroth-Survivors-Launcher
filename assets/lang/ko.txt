@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = {0}을(를) 끄고 {1}을(를) 켤까요?
 both replace the game's interface
 = 둘 다 게임의 인터페이스를 바꿉니다
-both set raid marks on bosses and party members
-= 둘 다 우두머리와 파티원에게 공격대 징표를 붙입니다
+both add a full HUD with a damage meter and build list
+= 둘 다 피해 측정기와 빌드 목록이 있는 전체 HUD를 추가합니다
 UI
 = UI
 MISC

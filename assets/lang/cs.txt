@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = Vypnout {0} a zapnout {1}?
 both replace the game's interface
 = obě nahrazují rozhraní hry
-both set raid marks on bosses and party members
-= obě dávají raidové značky na bossy a členy skupiny
+both add a full HUD with a damage meter and build list
+= obě přidávají kompletní HUD s měřičem poškození a seznamem buildu
 UI
 = UI
 MISC

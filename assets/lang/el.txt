@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = Απενεργοποίηση του {0} και ενεργοποίηση του {1};
 both replace the game's interface
 = και τα δύο αντικαθιστούν τη διεπαφή του παιχνιδιού
-both set raid marks on bosses and party members
-= και τα δύο βάζουν σημάδια raid σε αρχηγούς και μέλη της ομάδας
+both add a full HUD with a damage meter and build list
+= και τα δύο προσθέτουν πλήρες HUD με μετρητή ζημιάς και λίστα build
 UI
 = UI
 MISC

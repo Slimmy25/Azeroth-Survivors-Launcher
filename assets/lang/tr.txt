@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = {0} kapatılıp {1} açılsın mı?
 both replace the game's interface
 = ikisi de oyunun arayüzünü değiştirir
-both set raid marks on bosses and party members
-= ikisi de bosslara ve grup üyelerine raid işareti koyar
+both add a full HUD with a damage meter and build list
+= ikisi de hasar ölçer ve build listesi içeren tam bir HUD ekler
 UI
 = Arayüz
 MISC

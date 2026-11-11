@@ -25,7 +25,7 @@ These projects deserve a place up front:
 - **Addons:** browse community addons, check individual updates or Update All, and review source-specific update errors. A diagonal badge flags confirmed updates. See [how addon updates work](docs/addon-updates.md).
   - **Download More** shows available SurvivorsForge pictures and the launcher’s static Verified marks; it does not download addons from SurvivorsForge.
   - AZSSpellMeter and AZS Max Hit are alternatives; Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive.
-  - **Slim Suite** (`/azsmods`) provides UI movement, sizing, scaling and gameplay helpers. Its settings are grouped into “Modifying the User Interface” and “New/Unique, but Minor Features.”
+  - **Slim Suite** (`/slimsuite`) provides UI movement, sizing, scaling and gameplay helpers. Its settings are grouped into “Modifying the User Interface” and “New/Unique, but Minor Features.”
 - **Guide:** beginner help, class guides, items, and links between related topics.
 - **Theorycrafting:** explore talent trees and compare gear and set bonuses.
 - **Display:** resize the window while preserving its proportions, or maximize it in a centered, ratio-fitted size. Adjust interface size under Options > Launcher without changing Windows scaling.

@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = {0} बंद करके {1} चालू करें?
 both replace the game's interface
 = दोनों गेम का इंटरफ़ेस बदल देते हैं
-both set raid marks on bosses and party members
-= दोनों बॉस और पार्टी सदस्यों पर रेड निशान लगाते हैं
+both add a full HUD with a damage meter and build list
+= दोनों डैमेज मीटर और बिल्ड सूची के साथ पूरा HUD जोड़ते हैं
 UI
 = UI
 MISC

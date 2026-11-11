@@ -46,11 +46,6 @@ $resources = @(
     'addons\AZSKit\AZSKit.lua,AS.addon.kit.AZSKit.lua'
     'addons\AZSHandbook\AZSHandbook.toc,AS.addon.AZSHandbook.AZSHandbook.toc'
     'addons\AZSHandbook\AZSHandbook.lua,AS.addon.AZSHandbook.AZSHandbook.lua'
-    'addons\AZSMinorMods\AZSMinorMods.toc,AS.addon.AZSMinorMods.AZSMinorMods.toc'
-    'addons\AZSMinorMods\AZSMinorMods.lua,AS.addon.AZSMinorMods.AZSMinorMods.lua'
-    'addons\AZSMinorMods\AZSMinorModsItems.lua,AS.addon.AZSMinorMods.AZSMinorModsItems.lua'
-    'addons\AZSMinorMods\AZSMinorModsMeter.lua,AS.addon.AZSMinorMods.AZSMinorModsMeter.lua'
-    'addons\AZSMinorMods\Baby Crying.mp3,AS.addon.AZSMinorMods.Baby Crying.mp3'
 )
 foreach ($value in $resources) { $arguments.Add('"/resource:' + $value + '"') }
 # Google Drive sign-in (src\GoogleDrive.cs): the launcher's Google app ID and secret come from the environment (GitHub's

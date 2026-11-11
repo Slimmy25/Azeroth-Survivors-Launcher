@@ -1631,8 +1631,8 @@ Switch {0} off and turn {1} on?
 = {0} ausschalten und {1} einschalten?
 both replace the game's interface
 = beide ersetzen die Oberfläche des Spiels
-both set raid marks on bosses and party members
-= beide setzen Schlachtzugsmarkierungen auf Bosse und Gruppenmitglieder
+both add a full HUD with a damage meter and build list
+= beide fügen ein komplettes HUD mit Schadensmesser und Build-Liste hinzu
 UI
 = UI
 MISC

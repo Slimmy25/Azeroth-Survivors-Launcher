@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = Tắt {0} và bật {1}?
 both replace the game's interface
 = cả hai đều thay giao diện của game
-both set raid marks on bosses and party members
-= cả hai đều đặt dấu raid lên trùm và thành viên nhóm
+both add a full HUD with a damage meter and build list
+= cả hai đều thêm HUD đầy đủ với đồng hồ sát thương và danh sách build
 UI
 = UI
 MISC

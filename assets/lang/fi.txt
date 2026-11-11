@@ -1631,8 +1631,8 @@ Switch {0} off and turn {1} on?
 = Poistetaanko {0} käytöstä ja otetaanko {1} käyttöön?
 both replace the game's interface
 = molemmat korvaavat pelin käyttöliittymän
-both set raid marks on bosses and party members
-= molemmat asettavat raid-merkit pomoihin ja ryhmän jäseniin
+both add a full HUD with a damage meter and build list
+= molemmat lisäävät täyden HUD:n, jossa on vahinkomittari ja buildilista
 UI
 = UI
 MISC

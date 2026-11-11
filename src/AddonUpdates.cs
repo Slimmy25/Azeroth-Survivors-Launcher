@@ -39,7 +39,7 @@ namespace AzerothLauncher
         {
             var result = new List<AddonEntry>();
             foreach (var entry in Data.Addons)
-                if (!entry.WorkInProgress && Net.IsWebAddress(entry.Url) && AddonFoldersOf(entry.Name).Count > 0) result.Add(entry);
+                if (Net.IsWebAddress(entry.Url) && AddonFoldersOf(entry.Name).Count > 0) result.Add(entry);   // a work-in-progress addon updates too once installed
             return result;
         }
         // Download and verify before touching an installed folder. Keep a rollback copy until all

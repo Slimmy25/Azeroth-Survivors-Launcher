@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = Oprești {0} și pornești {1}?
 both replace the game's interface
 = amândouă înlocuiesc interfața jocului
-both set raid marks on bosses and party members
-= amândouă pun marcaje de raid pe boși și pe membrii grupului
+both add a full HUD with a damage meter and build list
+= amândouă adaugă un HUD complet cu contor de daune și listă de build
 UI
 = UI
 MISC

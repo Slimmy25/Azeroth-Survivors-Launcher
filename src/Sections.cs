@@ -2414,7 +2414,7 @@ namespace AzerothLauncher
         // true when the copy on GitHub is newer than the one installed
         bool AddonHasUpdate(AddonEntry it)
         {
-            if (it.WorkInProgress || addonUpdateProblems.ContainsKey(it.Name)) return false;
+            if (addonUpdateProblems.ContainsKey(it.Name)) return false;   // work in progress too: its warning is only for the first install
             if (mirrorDates == null || it.Category == Data.MyAddonsCategory || !Net.IsWebAddress(it.Url)) return false;
             if (AddonSetting(AddonPins(), it.Name) != null) return false;   // rolled back on purpose: left as it is
             if (IsDynamicGitHubAddonUrl(it.Url))
@@ -2557,7 +2557,7 @@ namespace AzerothLauncher
                 bool verified = it.ForgeVerified;
                 // a work-in-progress addon installs only after its warning is accepted (InstallWorkInProgress)
                 var btn = it.WorkInProgress && !haveIt ? new WowButton("Work in Progress", delegate { InstallWorkInProgress(it); }, bw, 30, 9)
-                        : update && !it.WorkInProgress ? new WowButton("UPDATE", delegate { CheckAddonUpdates(it, true); }, bw, 30, 9)
+                        : update ? new WowButton("UPDATE", delegate { CheckAddonUpdates(it, true); }, bw, 30, 9)
                         : haveIt ? new WowButton("UNINSTALL", delegate { UninstallAddon(it.Name); }, bw, 30, 9)
                                  : new WowButton("INSTALL", delegate { DownloadAddon(it.Name, it.Url); }, bw, 30, 9);
                 if (it.WorkInProgress && !haveIt) WowButton.Tips.SetToolTip(btn, Lang.T("Not ready for release yet. Click to install it anyway."));
@@ -2743,7 +2743,8 @@ namespace AzerothLauncher
                     catalogEntry = candidate;
                     break;
                 }
-            if (catalogEntry != null && catalogEntry.WorkInProgress && !workInProgressAccepted)
+            // a work-in-progress addon's warning is accepted once, at its first install; an installed copy updates as usual
+            if (catalogEntry != null && catalogEntry.WorkInProgress && !workInProgressAccepted && AddonFoldersOf(name).Count == 0)
             {
                 SetStatus(name + " is temporarily unavailable: work in progress.");
                 if (after != null) after();
@@ -3224,8 +3225,8 @@ namespace AzerothLauncher
                 AddonEntry updateEntry = CatalogAddonForFolder(name);
                 var update = new WowButton("UPDATE", delegate { CheckAddonUpdates(updateEntry, true); }, 66, 22, 8);
                 update.Location = new Point(del.Left - update.Width - Theme.Px(4), del.Top);
-                update.Grayed = updateEntry == null || updateEntry.WorkInProgress || addonDlBusy || autoAddonsBusy || mirrorAsking;
-                update.GrayedTip = updateEntry == null ? "No managed release source is known for this addon." : "Updates are unavailable while another operation is running or the addon is work in progress.";
+                update.Grayed = updateEntry == null || addonDlBusy || autoAddonsBusy || mirrorAsking;
+                update.GrayedTip = updateEntry == null ? "No managed release source is known for this addon." : "Updates are unavailable while another operation is running.";
                 update.Tip = "Check this addon's release source and install an available update.";
                 sp.Controls.Add(update);
                 addonRows[name] = cb;

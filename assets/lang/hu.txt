@@ -1632,8 +1632,8 @@ Switch {0} off and turn {1} on?
 = Kikapcsolod: {0}, és bekapcsolod: {1}?
 both replace the game's interface
 = mindkettő lecseréli a játék felületét
-both set raid marks on bosses and party members
-= mindkettő raidjelölőt tesz a főellenségekre és a csapattagokra
+both add a full HUD with a damage meter and build list
+= mindkettő teljes HUD-ot ad sebzésmérővel és buildlistával
 UI
 = UI
 MISC

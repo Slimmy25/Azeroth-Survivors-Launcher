@@ -1279,8 +1279,8 @@ namespace AzerothLauncher
                 BackupStats(SyncSettings().SavedDir);
                 // Azeroth Stats is installed and updated through Download More; the launcher does not overwrite
                 // its files at game start. Legacy AZS Stats SavedVariables are read-only and are never removed.
-                // the other AZS addons the launcher carries (AZS Handbook, AZS Minor Mods): the installed ones brought up
-                // to the launcher's version too, and the retired ones (AZS Transparency) taken out
+                // the AZS addon the launcher carries (AZS Handbook): an installed one brought up to the launcher's
+                // version too, and the retired ones (AZS Transparency, AZS Minor Mods: Slim Suite's old folder) taken out
                 try
                 {
                     foreach (string f in BuiltinAddons.RemoveRetired(SyncSettings().AddonsDir, SyncSettings().SavedDir))

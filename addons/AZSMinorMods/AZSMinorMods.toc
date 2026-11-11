@@ -1,9 +1,0 @@
-## Interface: 11200
-## Title: Slim Suite
-## Notes: A Swiss-army knife of useful gameplay tools and movable, resizable interface controls. /azsmods or the minimap button.
-## Author: Slimjim
-## SavedVariables: AZSMinorModsDB
-AZSKit.lua
-AZSMinorModsItems.lua
-AZSMinorModsMeter.lua
-AZSMinorMods.lua

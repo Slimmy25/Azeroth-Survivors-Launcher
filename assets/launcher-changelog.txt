@@ -1,3 +1,11 @@
+# v3.38 (2026-11-10)
+
+- Download More: Slim Suite (Slimjim's movable default UI, formerly AZS Minor Mods) installs from its own GitHub releases into a SlimSuite folder. It is still marked Work in Progress, so its button asks first.
+- Work in Progress addons now update like any other once installed: the warning is only asked at the first install.
+- AZS Minor Mods is retired: the launcher no longer carries it, and an AZSMinorMods folder left in AddOns is taken out once, with its old settings.
+- Slim Suite's settings open with /slimsuite (or /slim).
+- Survivor UI and Slim Suite still can't be on together; the reason now says both add a full HUD with a damage meter and build list.
+
 # v3.37 (2026-11-08)
 
 - Changelog: the game's patch notes 0.141.0, 0.141.1 and 0.142.0 are added, word for word.

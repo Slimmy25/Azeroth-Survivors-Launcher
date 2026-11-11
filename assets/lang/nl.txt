@@ -1631,8 +1631,8 @@ Switch {0} off and turn {1} on?
 = {0} uitzetten en {1} aanzetten?
 both replace the game's interface
 = beide vervangen de interface van de game
-both set raid marks on bosses and party members
-= beide zetten raidmarkeringen op bazen en groepsleden
+both add a full HUD with a damage meter and build list
+= beide voegen een volledige HUD toe met een schademeter en buildlijst
 UI
 = UI
 MISC

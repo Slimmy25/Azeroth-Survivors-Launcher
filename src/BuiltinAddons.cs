@@ -1,4 +1,5 @@
-// The AZS addons the launcher carries inside itself: AZS Handbook and AZS Minor Mods. Stats are provided by
+// The AZS addons the launcher carries inside itself: AZS Handbook. Slim Suite (once AZS Minor Mods) comes from its own
+// GitHub releases through Download More, like the community addons, so it is always its newest version. Stats are provided by
 // Maidenhead's separately maintained Azeroth Stats addon from Download More.
 // (AZS Transparency was a test and is gone: Retired lists it, and its folder is taken out of AddOns.) Download More lists them as "builtin:<folder>"; INSTALL writes their files from the launcher, and
 // an installed one is brought up to the launcher's version right before the game starts.
@@ -28,8 +29,6 @@ namespace AzerothLauncher
         public static readonly BuiltinAddon[] All =
         {
             new BuiltinAddon { Folder = "AZSHandbook", Files = new[] { "AZSHandbook.toc", "AZSHandbook.lua" }, Generated = "AZSHandbookData.lua" },
-            new BuiltinAddon { Folder = "AZSMinorMods", Files = new[] { "AZSMinorMods.toc", "AZSMinorMods.lua", "AZSMinorModsItems.lua", "AZSMinorModsMeter.lua" },
-                BinaryFiles = new[] { "Baby Crying.mp3" } },
         };
 
         public static BuiltinAddon Find(string url)
@@ -122,7 +121,8 @@ namespace AzerothLauncher
 
         // the installed ones that are not the launcher's version, brought up to it (before the game starts)
         // addons that are gone from the launcher: their folders (on or off) come out of AddOns
-        public static readonly string[] Retired = { "AZSTransparency" };
+        // AZSMinorMods is Slim Suite's old name: Slim Suite installs into its own SlimSuite folder, so the old copy goes
+        public static readonly string[] Retired = { "AZSTransparency", "AZSMinorMods" };
 
         public static List<string> RemoveRetired(string addonsDir, string savedDir)
         {

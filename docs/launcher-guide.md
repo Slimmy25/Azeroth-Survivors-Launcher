@@ -137,7 +137,7 @@ YouTube in a launcher-managed video window and are not saved as video files. Eac
 | **ASBuilder** | Cadoky's build-sharing tool. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
 | **Azeroth Hub** | Maidenhead's in-game addon hub. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
 | **AZS Handbook** (`/handbook`) | The launcher's whole Guide, inside the game. |
-| **Slim Suite** (`/azsmods`) | Movable UI frames, grid alignment, frame sizing and scale, gameplay helpers, and optional interface features. The settings are split between “Modifying the User Interface” and “New/Unique, but Minor Features.” |
+| **Slim Suite** (`/slimsuite`) | Movable UI frames, grid alignment, frame sizing and scale, gameplay helpers, and optional interface features. The settings are split between “Modifying the User Interface” and “New/Unique, but Minor Features.” |
 
 They use the game's addon API and share one look (`addons/AZSKit`).
 
@@ -178,7 +178,7 @@ be installed. The exe appears in `dist`. Every push is also built on GitHub (**A
 | Community videos | `Headlines` in `src/Community.cs`, then the Build Guides videos |
 | Talent trees | `assets/talents.txt` |
 | Translations | `assets/lang/<code>.txt` (see `assets/lang/README.md`) |
-| The AZS addons | `addons/AZSHandbook`, `addons/AZSMinorMods`, shared look `addons/AZSKit`; Azeroth Stats is maintained separately and downloaded from its author |
+| The AZS addons | `addons/AZSHandbook`, shared look `addons/AZSKit`; Slim Suite comes from its own repository (Slimmy25/SlimSuite) through Download More; Azeroth Stats is maintained separately and downloaded from its author |
 | Where launcher updates come from | `Repos` in `src/SelfUpdate.cs` |
 
 Code signing is optional: `sign_build.bat` explains it. Never commit `sign_config.bat` or a certificate
