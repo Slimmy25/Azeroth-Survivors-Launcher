@@ -27,7 +27,7 @@ namespace AzerothLauncher
         static readonly HashSet<string> loading = new HashSet<string>();
         static readonly List<Control> waiting = new List<Control>();
 
-        static string CacheDir { get { return Path.Combine(Util.TempDir, "spell-icons"); } }
+        static string CacheDir { get { return Path.Combine(Util.CacheDir, "spell-icons"); } }
         static string FoundFile { get { return Path.Combine(CacheDir, "looked-up.txt"); } }   // name|answer, "" = none
 
         static void Load()
@@ -49,6 +49,9 @@ namespace AzerothLauncher
             catch (Exception) { }
             try
             {
+                // the lookups are kept between starts, but looked up again weekly (a picture missing then may exist now)
+                if (File.Exists(FoundFile) && DateTime.UtcNow - File.GetCreationTimeUtc(FoundFile) > TimeSpan.FromDays(7))
+                    File.Delete(FoundFile);
                 if (File.Exists(FoundFile))
                     foreach (string raw in File.ReadAllLines(FoundFile))
                     {

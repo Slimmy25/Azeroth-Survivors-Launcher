@@ -230,6 +230,8 @@ namespace AzerothLauncher
         readonly Dictionary<string, Control> classGearItemTargets = new Dictionary<string, Control>(StringComparer.OrdinalIgnoreCase);
         readonly Dictionary<string, Control> classCodexItemTargets = new Dictionary<string, Control>(StringComparer.OrdinalIgnoreCase);
         readonly Dictionary<string, Control> classCodexSpellTargets = new Dictionary<string, Control>(StringComparer.OrdinalIgnoreCase);
+        const string PatchHighlightMark = "patch-highlight";
+        static readonly Color PatchHighlightColor = Color.FromArgb(0x9f, 0xe0, 0x8a);
         readonly Dictionary<string, Label> classNavLinks = new Dictionary<string, Label>(StringComparer.OrdinalIgnoreCase);
         readonly HashSet<string> classNavActiveBranch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         string classNavCurrent;
@@ -2403,7 +2405,9 @@ namespace AzerothLauncher
                                 string.Equals(pair.Key, "ItemsCatalog", StringComparison.OrdinalIgnoreCase) ||
                                 string.Equals(pair.Key, "TransmogCatalog", StringComparison.OrdinalIgnoreCase) ||
                                 current;
+                bool patched = pair.Value.AccessibleDescription == PatchHighlightMark;   // changed in a recent patch
                 pair.Value.ForeColor = current || branchRoot ? Theme.Hex("#fff2b0") :
+                                       patched ? PatchHighlightColor :
                                        inClassBranch ? Theme.Hex("#e9bd62") :
                                        selected ? Theme.Hex("#fff2b0") : Theme.GoldDim;
                 pair.Value.BackColor = current && inClassBranch ? Theme.Hex("#382914") :
@@ -2456,6 +2460,7 @@ namespace AzerothLauncher
             // One complete wheel notch jumps one in-article section; resource links
             // (builder/build guides) still require a click, so scrolling cannot leave the page.
             if(className!=null) nav.SectionStep = delegate(int direction) { StepClassSection(sp, direction); };
+            controllerTree = nav;                            // the controller's right stick steps through this tree (Controller.cs)
             var treeRows = new List<GuideTreeRow>();
             nav.Paint += delegate(object sender, PaintEventArgs e)
             {
@@ -2534,6 +2539,14 @@ namespace AzerothLauncher
                         bool current = string.Equals(key, classNavCurrent, StringComparison.OrdinalIgnoreCase);
                         link.BackColor = inBranch ? (current ? Theme.Hex("#382914") : Theme.Hex("#241e19")) : Color.Transparent;
                     };
+                    // patch highlight: an entry a recent game patch names stays marked for 3 patches (WhatsNew.cs)
+                    PatchHighlights.Hit changed = PatchHighlights.For(label);
+                    if (changed != null)
+                    {
+                        link.ForeColor = PatchHighlightColor;
+                        link.AccessibleDescription = PatchHighlightMark;
+                        WowButton.Tips.SetToolTip(link, PatchHighlights.Tip(changed));
+                    }
                     nav.Controls.Add(link); classNavLinks[key] = link;
                     treeRows.Add(new GuideTreeRow { Key = key, Parent = parentKey, Level = level, Top = y, Height = labelHeight });
                     y += labelHeight + 1;
@@ -4029,7 +4042,7 @@ draw();wake();
                 Image img = null;
                 try
                 {
-                    string cache = Path.Combine(Util.TempDir, "guide-thumbs");
+                    string cache = Path.Combine(Util.CacheDir, "guide-thumbs");
                     Directory.CreateDirectory(cache);
                     string path = Path.Combine(cache, id + ".jpg");
                     if (!File.Exists(path) && !LauncherApp.PreviewMode)

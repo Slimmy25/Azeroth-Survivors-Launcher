@@ -13,9 +13,9 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("Azeroth Survivors")]
 [assembly: AssemblyProduct("Azeroth Survivors Launcher")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 Azeroth Survivors")]
-[assembly: AssemblyVersion("3.38.0.0")]
-[assembly: AssemblyFileVersion("3.20.0.0")]
-[assembly: AssemblyInformationalVersion("3.20")]
+[assembly: AssemblyVersion("3.39.0.0")]
+[assembly: AssemblyFileVersion("3.39.0.0")]
+[assembly: AssemblyInformationalVersion("3.39")]
 [assembly: ComVisible(false)]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName = ".NET Framework 4.8")]
 
@@ -47,6 +47,17 @@ namespace AzerothLauncher
         static extern int SetCurrentProcessExplicitAppUserModelID(string appId);
 
         [STAThread]
+        static void LogCrash(string what, Exception e)
+        {
+            try
+            {
+                System.IO.File.AppendAllText(System.IO.Path.Combine(Util.StateDir, "log.txt"),
+                    "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) + "] ERROR " +
+                    what + ": " + (e != null ? e.ToString() : "(no details)") + Environment.NewLine);
+            }
+            catch (Exception) { }
+        }
+
         static void Main(string[] args)
         {
             EmbeddedLibraries.Register();
@@ -116,6 +127,16 @@ namespace AzerothLauncher
                 SelfUpdate.CleanUp();                        // the previous exe after a launcher update
                 try { SetCurrentProcessExplicitAppUserModelID(DisplayPreviewBuild ? "Aethus.AzerothSurvivors.DisplayPreview" : "Aethus.AzerothSurvivors.Launcher"); }   // own taskbar identity
                 catch (Exception) { }
+                // an error nothing else caught: written to log.txt (so it can be found), instead of vanishing with the launcher
+                AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+                {
+                    LogCrash("A background task failed and the launcher had to close", e.ExceptionObject as Exception);
+                };
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs e)
+                {
+                    LogCrash("Unexpected error (the launcher kept running)", e.Exception);
+                };
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.AddMessageFilter(new WheelRouter());

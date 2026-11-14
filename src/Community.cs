@@ -361,7 +361,6 @@ namespace AzerothLauncher
                 PutText("No community videos yet.", 11, FontStyle.Italic, Theme.GoldDim, 24, top + 8, 0);
                 return;
             }
-            Put(new WowButton("SKIP VIDEO", delegate { SkipCommunityVideo(v); }, skipWidth, rowHeight, 8.5f), skipX, skipY);
             // the video's title as the heading, the credit under it, then its picture with a play button
             var title = PutText(v.Title.Length > 0 ? v.Title : "Video", 13, FontStyle.Bold, Theme.Gold, 24, top, PW - 48, false);
             int y = BottomOf(title) + 2;
@@ -382,6 +381,12 @@ namespace AzerothLauncher
             pic.Click += delegate { PlayYouTube(v); };
             panel.Controls.Add(pic);
             pic.BringToFront();
+            // Skip/Stop: an X in the poster's top right corner; its tooltip says what it does
+            var skip = new SkipCorner(delegate { SkipCommunityVideo(v); });
+            skip.Location = new Point(pic.Right - skip.Width - Theme.Px(8), pic.Top + Theme.Px(8));
+            panel.Controls.Add(skip);
+            skip.BringToFront();
+            WowButton.Tips.SetToolTip(skip, Lang.T("Skip/Stop"));
             if (MoreVideos().Count > 1)
                 Put(new WowButton("MORE VIDEOS ›", delegate { communityMore = true; moreOrder = null; BuildPanel("Community"); }, moreWidth, rowHeight, 9), moreX, moreY);
 
@@ -997,6 +1002,45 @@ namespace AzerothLauncher
     }
 
     // the round X that closes a playing video
+    // the Skip/Stop X over a poster's top right corner (idle Community page); a small control, not a window
+    public class SkipCorner : Control
+    {
+        readonly Action pressed;
+        bool hover;
+
+        public SkipCorner(Action pressed)
+        {
+            this.pressed = pressed;
+            Size = new Size(Theme.Px(26), Theme.Px(26));
+            Cursor = Cursors.Hand;
+            BackColor = Color.Transparent;
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
+        }
+
+        protected override void OnMouseEnter(EventArgs e) { hover = true; Invalidate(); base.OnMouseEnter(e); }
+        protected override void OnMouseLeave(EventArgs e) { hover = false; Invalidate(); base.OnMouseLeave(e); }
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            if (e.Button == MouseButtons.Left && ClientRectangle.Contains(e.Location)) WowButton.Fire(pressed);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            Theme.Smooth(g);
+            var r = new Rectangle(1, 1, Width - 3, Height - 3);
+            using (var b = new SolidBrush(hover ? Theme.Hex("#c8442f") : Color.FromArgb(170, 22, 18, 30))) g.FillEllipse(b, r);
+            using (var p = new Pen(Theme.Gold, 1.5f)) g.DrawEllipse(p, r);
+            int c = Width / 2, d = Math.Max(3, Width / 5);
+            using (var p = new Pen(Color.White, 2f))
+            {
+                g.DrawLine(p, c - d, c - d, c + d, c + d);
+                g.DrawLine(p, c - d, c + d, c + d, c - d);
+            }
+        }
+    }
+
     public class VideoClose : Form
     {
         public event Action Pressed;

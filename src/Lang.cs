@@ -177,7 +177,13 @@ namespace AzerothLauncher
             string v;
             if (exact.TryGetValue(s, out v)) return v;
             string trimmed = s.Trim();
-            if (trimmed != s && exact.TryGetValue(trimmed, out v)) return s.Substring(0, s.IndexOf(trimmed, StringComparison.Ordinal)) + v;
+            if (trimmed != s && trimmed.Length > 0)
+            {
+                // spaces around a text (indented lines, pieces joined together) are kept around its translation
+                int at = s.IndexOf(trimmed, StringComparison.Ordinal);
+                string inner = Lookup(trimmed, depth);
+                return inner == null ? null : s.Substring(0, at) + inner + s.Substring(at + trimmed.Length);
+            }
             if (depth > 3) return null;
             foreach (Pattern p in patterns)
             {

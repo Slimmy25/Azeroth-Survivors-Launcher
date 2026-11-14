@@ -47,6 +47,7 @@ namespace AzerothLauncher
         }
 
         public string GameExe, CloudDir, SaveDir, ConfigDir, StateDir, AddonsDir, SavedDir;
+        public string CloudIdentity = "";                    // the cloud service and account behind CloudDir ("" for a sync folder)
 
         // Google Drive's and Dropbox's local copies (CloudGoogle.cs): the launcher keeps them inside its data folder on
         // purpose, so they are the one sync folder allowed there. Nothing else of the data folder is inside them.
@@ -139,6 +140,14 @@ namespace AzerothLauncher
         string History { get { return Path.Combine(S.CloudDir, "history"); } }
         string ManifestPath { get { return Path.Combine(S.CloudDir, "manifest.json"); } }
         string StateFile { get { return Path.Combine(S.StateDir, "state.json"); } }
+
+        // the memory of the last sync set aside (kept as state.json.old): the next sync treats every area as never synced,
+        // so it asks instead of assuming which side is newer
+        public static void ForgetLastSync(string stateDir)
+        {
+            string f = Path.Combine(stateDir, "state.json");
+            try { if (File.Exists(f)) { File.Copy(f, f + ".old", true); File.Delete(f); } } catch (Exception) { }
+        }
         string DownloadsDir { get { return Path.Combine(S.StateDir, "downloads"); } }
 
         // ---------- listing ----------
@@ -594,6 +603,18 @@ namespace AzerothLauncher
         }
 
         // ---------- state (this PC) and manifest (cloud) ----------
+        // which cloud the sync memory belongs to: the sync folder, plus the service and account for Google Drive / Dropbox
+        string CloudKey
+        {
+            get
+            {
+                string dir = S.CloudDir ?? "";
+                try { if (dir.Trim().Length > 0) dir = Util.Canon(dir); } catch (Exception) { }
+                return dir + "|" + (S.CloudIdentity ?? "");
+            }
+        }
+        bool cloudSwitchLogged;
+
         Dictionary<string, string> LoadState()
         {
             var h = new Dictionary<string, string>();
@@ -601,6 +622,15 @@ namespace AzerothLauncher
             try
             {
                 var j = Json.AsDict(Json.Parse(File.ReadAllText(StateFile, Encoding.UTF8)));
+                // the memory of another sync folder, service or account says nothing about this one: the first sync asks
+                string cloud = Json.Str(j, "Cloud");
+                if (cloud.Length > 0 && !string.Equals(cloud, CloudKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!cloudSwitchLogged)
+                        Log("  Cloud Save now uses another sync folder or account, so this first sync compares everything again.", Level.Info);
+                    cloudSwitchLogged = true;
+                    return h;
+                }
                 var hashes = Json.AsDict(Json.Get(j, "Hashes"));
                 if (hashes != null)
                     foreach (var kv in hashes) h[kv.Key] = kv.Value == null ? null : Convert.ToString(kv.Value);
@@ -636,6 +666,7 @@ namespace AzerothLauncher
             foreach (var kv in h) hashes[kv.Key] = kv.Value;
             var root = new Dictionary<string, object>();
             root["Hashes"] = hashes;
+            root["Cloud"] = CloudKey;
             root["LastSync"] = NowIso();
             root["Device"] = Machine;
             Util.WriteAtomic(StateFile, Json.Write(root, false));

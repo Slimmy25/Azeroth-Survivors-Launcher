@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Előbb zárd be a játékot, fejezd be a telepítést vagy a felhőszinkronizálást, majd keresd újra a frissítést.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = A(z) Launcher {0} készen áll. Válaszd a Frissítés telepítése lehetőséget a Beállítások > Launcher oldalon.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= A képességek a statisztika-addonnal játszott menetekben kerülnek rögzítésre.
+Addon release check complete.
+= Az addon-kiadások ellenőrzése kész.
+Affects
+= Hatással van
+All 8 armor pieces at 3+ stars
+= Mind a 8 páncéldarab 3+ csillagon
+All ten Quick Access favorites are full. Remove one before adding another.
+= Mind a tíz Gyorselérés-kedvenc foglalt. Távolíts el egyet, mielőtt újat adsz hozzá.
+An addon operation is already running.
+= Már fut egy addon-művelet.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Mind a 8 darab 5 csillagán ez a bónusz másfélszer erősebb.
+Average time
+= Átlagos idő
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Az Azeroth Stats hiányzik a További letöltése részből.
+BACK
+= VISSZA
+Back to Top
+= Vissza a tetejére
+Best level
+= Legjobb szint
+Bright: victories · faint: all runs
+= Világos: győzelmek · halvány: minden menet
+Brighter: more runs that day
+= Világosabb: több menet aznap
+Browse class build videos already featured in the guide.
+= Az útmutatóban már szereplő kaszt-build videók böngészése.
+Browse class, item, and transmog references in the Wiki.
+= Kaszt-, tárgy- és transzmog-adatok böngészése a Wikiben.
+Build Videos
+= Build videók
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Állíts össze tehetségeket, tervezd meg a felszerelést, és válts a két eszköz között a választott kaszt megtartásával.
+Build class
+= Build kaszt
+CANCEL DOWNLOAD & CLOSE
+= LETÖLTÉS MEGSZAKÍTÁSA ÉS BEZÁRÁS
+CHECK AGAIN
+= ÚJRAELLENŐRZÉS
+CHOOSE FOLDER
+= MAPPA KIVÁLASZTÁSA
+CHOOSE GAME FOLDER
+= JÁTÉKMAPPA KIVÁLASZTÁSA
+CLEAR
+= TÖRLÉS
+COPY
+= MÁSOLÁS
+Checking addon releases...
+= Addon-kiadások ellenőrzése...
+Choose an option on this setup step to continue.
+= A folytatáshoz válassz egy lehetőséget ebben a lépésben.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= A folytatáshoz válaszd ki az AzerothSurvivors.exe-t tartalmazó mappát.
+Choose the folder that contains the existing game client before continuing.
+= Folytatás előtt válaszd ki a meglévő játékkliens mappáját.
+Classes you play
+= Játszott kasztjaid
+Close the game first: it saves its own settings when it closes.
+= Előbb zárd be a játékot: bezáráskor menti a saját beállításait.
+Cloud Save uses Dropbox again.
+= A felhőmentés ismét a Dropboxot használja.
+Cloud Save uses Google Drive again.
+= A felhőmentés ismét a Google Drive-ot használja.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= A felhőmentéshez kell egy játékmentés-mappa, vagy kapcsold ki.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= A felhőmentéshez kell egy szinkronmappa, vagy kapcsold ki.
+Code copied.
+= Kód másolva.
+Codex
+= Codex
+Companions observed in runs
+= Menetekben megfigyelt társak
+Connecting Dropbox...
+= Csatlakozás a Dropboxhoz...
+Connecting Google Drive...
+= Csatlakozás a Google Drive-hoz...
+Contacting Google...
+= Kapcsolódás a Google-hoz...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Az alapértékek ki vannak töltve. Változtass mappát, ha a fájljaid máshol vannak.
+Defeats
+= Vereségek
+Display Preview uses local builds; public updates stay separate.
+= A kijelző-előnézet helyi buildeket használ; a nyilvános frissítések külön maradnak.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Letöltötted már az Azeroth Survivorst erre a gépre?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Megvan már az Azeroth Survivors játékkliens ezen a gépen?
+Downloading the game
+= Játék letöltése
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck, kísérleti)
+Dropbox connected
+= Dropbox csatlakoztatva
+Dropbox sign-in discarded.
+= Dropbox-bejelentkezés elvetve.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= A Dropbox bejelentkeztetett, de nem adott tartós hozzáférést az indítónak. Próbáld újra.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= A Dropbox-bejelentkezés megszűnt (eltávolították vagy lejárt). Jelentkezz be újra: Beállítások > Felhőmentés.
+EXPORT ASBUILDS
+= ASBUILDS EXPORTÁLÁSA
+EXPORT PROFILE
+= PROFIL EXPORTÁLÁSA
+Ended
+= Befejezve
+Error log copied.
+= Hibanapló másolva.
+Every addon is on its latest release.
+= Minden addon a legújabb kiadáson van.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= A meglévő AZS Stats fájlok megmaradnak. Előzményeik nem kerülnek át az Azeroth Statsba.
+Existing game folder needs attention
+= A meglévő játékmappa figyelmet igényel
+Existing save kept. Setup is still open; you can finish without importing it.
+= A meglévő mentés megmaradt. A beállítás még nyitva van; befejezheted importálás nélkül.
+FINISH SETUP
+= BEÁLLÍTÁS BEFEJEZÉSE
+Feedback copied.
+= Visszajelzés másolva.
+Finish the current update, install, or game session before continuing setup.
+= A beállítás folytatása előtt fejezd be a folyamatban lévő frissítést, telepítést vagy játékmenetet.
+First Time Setup
+= Első beállítás
+Game client
+= Játékkliens
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= A játék letöltése megszakítva. Válaszd a TELEPÍTÉS gombot, ha újra próbálnád.
+Gear section
+= Felszerelés rész
+GitHub returned invalid release information. Nothing was installed.
+= A GitHub érvénytelen kiadási adatokat adott. Semmi sem lett telepítve.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Elérted a GitHub kéréskorlátját. Várj, majd próbáld újra. Semmi sem lett telepítve.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck, kísérleti)
+Google Drive connected
+= Google Drive csatlakoztatva
+Google Drive did not offer the file right now (it may have hit its download limit).
+= A Google Drive most nem kínálta fel a fájlt (lehet, hogy elérte a letöltési korlátot).
+Google Drive made a folder but did not say which.
+= A Google Drive létrehozott egy mappát, de nem mondta meg, melyiket.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= A Google Drive-bejelentkezés megszűnt (eltávolították vagy lejárt). Jelentkezz be újra: Beállítások > Felhőmentés.
+Google signed you in but did not give the launcher lasting access. Try again.
+= A Google bejelentkeztetett, de nem adott tartós hozzáférést az indítónak. Próbáld újra.
+Google's sign-in answer was incomplete. Try again.
+= A Google bejelentkezési válasza hiányos volt. Próbáld újra.
+Guide links
+= Útmutató-linkek
+Healing
+= Gyógyítás
+Heroic
+= Hősies
+IMPORT ASBUILDS
+= ASBUILDS IMPORTÁLÁSA
+IMPORT BUILD
+= BUILD IMPORTÁLÁSA
+INSTALL AZEROTH STATS
+= AZEROTH STATS TELEPÍTÉSE
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Ha igen, kiválaszthatod, hol van a meglévő játék és az AddOnjai. Ha nem, a játék ennek az indítónak a mappájába töltődik le.
+Interface size
+= Felület mérete
+Interrupted
+= Megszakítva
+Items
+= Tárgyak
+Last 5 weeks
+= Utolsó 5 hét
+Last step: download the game?
+= Utolsó lépés: letöltöd a játékot?
+Latest retained spell build
+= Legutóbbi megőrzött varázslat-build
+Locations validated. Continuing setup...
+= Helyek ellenőrizve. A beállítás folytatódik...
+MENU ▾
+= MENÜ ▾
+More entries are available on the Build Journal tab.
+= További bejegyzések a Build-napló lapon.
+NO, DOWNLOAD IT
+= NEM, TÖLTSD LE
+Navigation
+= Navigáció
+No build journal entries are stored in the retained runs yet.
+= A megőrzött menetekben még nincs build-napló bejegyzés.
+No companion samples are recorded yet.
+= Még nincs rögzített társ-adat.
+No death evidence recorded yet.
+= Még nincs rögzített halálok.
+No download host worked.\n\n
+= Egyik letöltési szerver sem működött.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= A megőrzött menetekben még nincs megfigyelt varázslat-állapot.
+No source samples are available in retained runs.
+= A megőrzött menetekben nincs forrásadat.
+No spell rank trends are stored yet.
+= Még nincs mentett varázslatrang-trend.
+No status messages yet.
+= Még nincs állapotüzenet.
+None selected
+= Nincs kiválasztva
+Normal
+= Normál
+Not ready for release yet. Click to install it anyway.
+= Még nem kész a kiadásra. Kattints, ha mégis telepítenéd.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Nem vagy bejelentkezve a Dropboxba. Jelentkezz be: Beállítások > Felhőmentés.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Nem vagy bejelentkezve a Google Drive-ba. Jelentkezz be: Beállítások > Felhőmentés.
+OPEN FOLDER
+= MAPPA MEGNYITÁSA
+Observed attributions
+= Megfigyelt hozzárendelések
+Observed build and equipment changes
+= Megfigyelt build- és felszerelésváltozások
+Observed build journal
+= Megfigyelt build-napló
+Observed death sources
+= Megfigyelt halálokok
+Observed in the most recent retained run
+= A legutóbbi megőrzött menetben megfigyelve
+Observed party sample
+= Megfigyelt csapatminta
+Observed run
+= Megfigyelt menet
+Observed status
+= Megfigyelt állapot
+On your phone or computer, open
+= Telefonon vagy számítógépen nyisd meg
+On your phone, open
+= Telefonon nyisd meg
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Egy teljes állapot nyer, a másikról előbb biztonsági mentés készül.\nElőször ezen a gépen? Válaszd a FELHŐ HASZNÁLATA gombot.\n
+Open on your phone
+= Megnyitás telefonon
+Partial
+= Részleges
+Partial observation
+= Részleges megfigyelés
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Illessz be alább egy tehetség-build kódot. Ha van a vágólapon, automatikusan kitöltjük.
+Peel this corner to switch theorycrafting tools.
+= Hajtsd fel ezt a sarkot a theorycraft-eszköz váltásához.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Játssz néhány menetet az Azeroth Statsszal, hogy lásd a DPS-ed időbeli alakulását.
+Playing on a Steam Deck?
+= Steam Decken játszol?
+Playing without cloud sync this time
+= Ezúttal felhőszinkron nélkül játszol
+Preparing the Dropbox sign-in...
+= Dropbox-bejelentkezés előkészítése...
+Priest
+= Pap
+Priest guide
+= Pap útmutató
+QUICK ACCESS
+= GYORSELÉRÉS
+Rings & Trinkets
+= Gyűrűk és ékszerek
+Runs observed
+= Megfigyelt menetek
+SIGN IN WITH DROPBOX
+= BEJELENTKEZÉS DROPBOXSZAL
+SIGN IN WITH GOOGLE
+= BEJELENTKEZÉS GOOGLE-LAL
+SIGN OUT
+= KIJELENTKEZÉS
+START OVER
+= ÚJRAKEZDÉS
+STAY & FINISH
+= MARADOK ÉS BEFEJEZEM
+STEAM DECK / HANDHELD
+= STEAM DECK / KÉZI GÉP
+STEAM DECK EXPERIMENTAL
+= STEAM DECK KÍSÉRLETI
+Save favorite
+= Kedvenc mentése
+Save this location to Quick Access.
+= Hely mentése a Gyorselérésbe.
+Save to Quick Access
+= Mentés a Gyorselérésbe
+Save where? The current location, the top of this page, or the closest category header.
+= Hova mentsük? Jelenlegi hely, az oldal teteje vagy a legközelebbi kategóriafejléc.
+Saved in
+= Mentve ide
+Scaling video fixture
+= Méretezési tesztvideó
+Setup is only available while the setup guide is open.
+= A beállítás csak nyitott beállítási útmutató mellett érhető el.
+Sign in to Google Drive
+= Bejelentkezés a Google Drive-ba
+Signed out of Dropbox.
+= Kijelentkeztél a Dropboxból.
+Signed out of Google Drive.
+= Kijelentkeztél a Google Drive-ból.
+Skip/Stop
+= Kihagyás/Leállítás
+Some addons could not be changed:\n\n
+= Néhány addont nem sikerült módosítani:\n\n
+Spell pool
+= Varázslatkészlet
+Spell rank trends · observed, not exact card picks
+= Varázslatrang-trendek · megfigyelt, nem pontos kártyaválasztások
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Kezdd itt: ismerd meg az irányítást, az első meneted és a kezdést segítő rendszereket.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / kézi gép vagy Windows PC?
+Stopping the game download before closing...
+= A játék letöltésének leállítása bezárás előtt...
+Support the Dev
+= Támogasd a fejlesztőt
+Talent build code
+= Tehetség-build kód
+Temporarily unavailable while work is in progress.
+= Átmenetileg nem érhető el, amíg folyik a munka.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Köszönöm, hogy a közösségi indítómat használod. Azért készült, hogy megünnepelje, milyen menő ez a játék, és egy helyen legyen minden, ami Azeroth Survivors\n\n
+That file does not exist.
+= Ez a fájl nem létezik.
+That is not an Azeroth Survivors save file.
+= Ez nem Azeroth Survivors mentésfájl.
+That is not an Azeroth Survivors save file.\n\n
+= Ez nem Azeroth Survivors mentésfájl.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Az archívum tartalma kicsomagolás közben megváltozott. Semmi sem lett telepítve.
+The clipboard is busy. Try copying again.
+= A vágólap foglalt. Próbáld újra a másolást.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= A meglévő játék nem található abban a mappában. Válaszd az AzerothSurvivors.exe-t tartalmazó mappát.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= A játékarchívum fenntartott Windows-fájlnevet tartalmaz. Semmi sem lett telepítve.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= A játékarchívum üres elérési utat vagy szimbolikus linket tartalmaz. Semmi sem lett telepítve.
+The game archive contains an unsafe path. Nothing was installed.
+= A játékarchívum nem biztonságos elérési utat tartalmaz. Semmi sem lett telepítve.
+The game archive contains conflicting file paths. Nothing was installed.
+= A játékarchívum ütköző fájlutakat tartalmaz. Semmi sem lett telepítve.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= A játékarchívum ismétlődő vagy ütköző fájlutakat tartalmaz. Semmi sem lett telepítve.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= A játékarchívumot nem sikerült kicsomagolni. Lehet, hogy sérült, titkosított, hiányos vagy nem támogatott módszert használ. Semmi sem lett telepítve.
+The game archive format is not supported by the built-in extractor.
+= A beépített kicsomagoló nem támogatja a játékarchívum formátumát.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= A játékarchívum hiányos, vagy kell hozzá egy másik rész. Semmi sem lett telepítve.
+The game archive is password-protected. Please use an unencrypted game download.
+= A játékarchívum jelszóval védett. Használj titkosítatlan letöltést.
+The game config folder is not set. Set it in Options > FOLDERS.
+= A játék beállítási mappája nincs megadva. Add meg itt: Beállítások > MAPPÁK.
+The game files are being installed. The launcher will close when that finishes.
+= A játékfájlok telepítése folyik. Az indító ennek végén bezárul.
+The game is running: close it first, it saves its own settings when it closes.
+= A játék fut: előbb zárd be, bezáráskor menti a saját beállításait.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Az addon letöltése közben elindult a játék vagy a szinkron. A telepített fájlok változatlanok maradtak; próbáld újra, ha bezárult.
+The launcher closes by itself once your progress is saved.
+= Az indító magától bezárul, amint a haladásod mentve van.
+The launcher is already running. Look for its window on the taskbar.
+= Az indító már fut. Keresd az ablakát a tálcán.
+The save could not be imported:\n\n
+= A mentést nem sikerült importálni:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= A bejelentkezési kód felhasználás előtt lejárt. Nyomd meg újra a BEJELENTKEZÉS DROPBOXSZAL gombot.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= A bejelentkezési kód felhasználás előtt lejárt. Nyomd meg újra a BEJELENTKEZÉS GOOGLE-LAL gombot.
+The sign-in was declined on Dropbox's page.
+= A bejelentkezést elutasították a Dropbox oldalán.
+The sign-in was declined on Google's page.
+= A bejelentkezést elutasították a Google oldalán.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Ezután engedélyezd az Azeroth Survivors Launchernek, hogy saját mappát használjon a Google Drive-odban. Az oldal bejelentkezés után magától bezárul.
+This Codex entry's class guide is unavailable.
+= Ennek a Codex-bejegyzésnek a kaszt-útmutatója nem érhető el.
+This Guide location no longer exists.
+= Ez az útmutató-hely már nem létezik.
+This Guide video is no longer available.
+= Ez az útmutató-videó már nem érhető el.
+This add-on is not configured for direct GitHub release updates.
+= Ez az add-on nincs beállítva közvetlen GitHub-kiadásfrissítésre.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Ez az addon egy régebbi példányhoz van rögzítve. Lecseréled a legújabb kiadásra?
+This class talent page is no longer available.
+= Ez a kaszt-tehetségoldal már nem érhető el.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Ez a kedvenc már nem illik egyik útmutató-oldalhoz sem. Kösd újra az oldalt a frissítéshez.
+Today
+= Ma
+UPDATE ALL
+= ÖSSZES FRISSÍTÉSE
+USE DROPBOX
+= DROPBOX HASZNÁLATA
+USE GOOGLE DRIVE
+= GOOGLE DRIVE HASZNÁLATA
+Undated
+= Dátum nélkül
+Use the arrow keys to browse links and Enter to open one.
+= A nyilakkal böngészd a linkeket, Enterrel nyisd meg.
+Use the star on a guide page to save its reading position to Quick Access.
+= Egy útmutató-oldal csillagával mentheted az olvasási helyet a Gyorselérésbe.
+WINDOWS PC
+= WINDOWS PC
+WINS
+= GYŐZELMEK
+Waiting for the Dropbox sign-in...
+= Várakozás a Dropbox-bejelentkezésre...
+Waiting for the Google sign-in...
+= Várakozás a Google-bejelentkezésre...
+Wiki
+= Wiki
+Work in Progress
+= Fejlesztés alatt
+Written Guides
+= Írott útmutatók
+YES, I HAVE THE CLIENT
+= IGEN, MEGVAN A KLIENS
+Yesterday
+= Tegnap
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Azt választottad, hogy már megvan a játék, de az AzerothSurvivors.exe már nincs a kiválasztott mappában. A folytatáshoz válaszd a helyes játékmappát. Meglévő kliens esetén a beállítás nem ajánl játékletöltést.
+ranks
+= rang
+times
+= alkalom
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Ha a játék összeomlott, összeomlási jelentést mentett a Diagnostics mappájába. Ha elküldöd a játék fejlesztőjének, segít kijavítani a hibát.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Nem frissített AZS addonok: {0}
+  Addons for the synced settings not checked: {0}
+= Nem ellenőrzött addonok a szinkronizált beállításokhoz: {0}
+1  FOLLOW THE PATH
+= 1  KÖVESD AZ UTAT
+2  SAVE A FAVORITE
+= 2  MENTS EGY KEDVENCET
+4 armor pieces at 1+ stars
+= 4 páncéldarab 1+ csillagon
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Először egy új indító ({0}) települ; újraindulás után nyomd meg ismét a JÁTÉK gombot.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Frissített addonok: {0}. Sikertelen: {1}. Ellenőrzési hibák: {2}.
+All addons {0}
+= Minden addon {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Az Azeroth Stats rögzíti a meneteket és a build-változásokat a játékban (/azstats). Az indító mutatja a mentett összesítéseket, kasztokat, legutóbbi menetjelentéseket, harci mintákat és a megfigyelt build-naplót. A saját jelentések, összevetések és a testreszabható HUD az addonban maradnak.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Az Azeroth Stats rögzíti a meneteket és a megfigyelt build-változásokat a játékban (/azstats). Az indító mutatja a mentett összesítéseket, kasztokat, legutóbbi menetjelentéseket, harci mintákat és a build-naplót. Az addon jelentései, összevetései és testreszabható HUD-ja ott maradnak.
+Best level {#0}
+= Legjobb szint {#0}
+Best level: {#0}
+= Legjobb szint: {#0}
+Best together: {0}, level {#1}
+= Legjobb együtt: {0}, szint {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Felhőmentés szüneteltetve: a(z) {0} a STEAM DECK KÍSÉRLETI módot igényli (Beállítások > Indító). Ez a munkamenet nincs szinkronizálva.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= A felhőmentés beállítása: {0}, ami a STEAM DECK KÍSÉRLETI módot igényli (Beállítások > Indító). Kapcsold be újra, vagy válassz lent szinkronmappát.
+Confirmed {#0} · probable {#1}
+= Megerősített {#0} · valószínű {#1}
+Could not install {0}:\n\n{1}
+= Nem sikerült telepíteni: {0}\n\n{1}
+Could not save the game setting:
+= Nem sikerült menteni a játékbeállítást:
+Could not uninstall {0}:\n\n{1}
+= Nem sikerült eltávolítani: {0}\n\n{1}
+Dropbox could not be reached ({0}).
+= A Dropbox nem érhető el ({0}).
+Dropbox did not accept the sign-in: {0}
+= A Dropbox nem fogadta el a bejelentkezést: {0}
+Dropbox refused the sign-in: {0}
+= A Dropbox elutasította a bejelentkezést: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Kísérleti Steam Deck-támogatás: az indító játékmódban kitölti a képernyőt, ugyanabban a Steam-bejegyzésben indítja a játékot, és félreáll játék közben. Beállítások > Indító kikapcsolja.
+Game setting saved:
+= Játékbeállítás mentve:
+Google Drive refused the sign-in: {0}
+= A Google Drive elutasította a bejelentkezést: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} A feltöltés a következő szinkronnál megy el.
+Google could not be reached ({0}).
+= A Google nem érhető el ({0}).
+Google did not start the sign-in: {0}
+= A Google nem indította el a bejelentkezést: {0}
+Google sign-in failed: {0}
+= A Google-bejelentkezés sikertelen: {0}
+Highest observed rank {#0}
+= Legmagasabb megfigyelt rang {#0}
+Installing {0} ({1})...
+= {0} telepítése ({1})...
+It killed you {#0} times
+= {#0} alkalommal ölt meg
+Longest: {0}
+= Leghosszabb: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= A kiadás egyik fájlja sem tartalmazza ezt: {0} (mappa a .toc fájljával), még a forráskód sem. Semmi sem lett telepítve.
+Observed in {#0} runs · rank gains {#1}
+= Megfigyelve {#0} menetben · rangemelkedés {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Böngészőben játszottál az Azeroth Survivorsszal? Hozd magaddal a haladásod: hősöket, megnyitott zónákat, felszerelést, tehetségeket és a codexet.\n\nA weboldalon nyisd meg az Options > Saves menüt, és nyomd meg az Export Save gombot. Aztán válaszd itt azt a .sav fájlt. A játék a haladásoddal nyílik meg.
+Quick Access {0}
+= Gyorselérés {0}
+Rank {#0}
+= Rang {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} eltávolítva a Gyorselérésből. Az útmutató csillagával vagy a szakasz kedvenc gombjával adhatod hozzá újra.
+Runs {#0} · Victories {#1}
+= Menetek {#0} · Győzelmek {#1}
+Runs: {#0}
+= Menetek: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Elmentve az indító másolatába, de a(z) {0} nem érhető el: {1} A következő szinkronnál feltöltődik.
+Survived {0} · Level {1}
+= Túlélt {0} · Szint {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Túlélt {0} · Szint {1} · Ölések {2} · Arany {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Ez a felhőtárhelyed legfelső szintje.\n\nLétrehozzunk és használjunk benne egy Azeroth Survivor Launcher nevű almappát?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Az addon frissítése sikertelen. A korábbi fájlokat megőriztük itt: {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= A(z) {0} letöltés sérült vagy nem a megfelelő fájl (az ellenőrzőösszeg nem egyezik). Próbáld újra.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Az indító nem tudta lecserélni magát ebben a mappában ({0}).\n\nTöltsd le az új verziót a GitHubról:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= A bejelentkezési közvetítő (ntfy.sh) nem érhető el ({0}). Próbáld újra kicsit később.
+The {0} offers a different file than expected ({1} instead of {2}).
+= A(z) {0} más fájlt kínál, mint várt ({1} a(z) {2} helyett).
+The {0} server answered with error {1}.
+= A(z) {0} szerver hibával válaszolt: {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Ezek a mappák nem találhatók:\n\n  {0}\n\nBefejezed mégis? Később a Beállításokban módosíthatod őket.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Ezen a gépen már van haladás a játékban.\n\nLecseréled erre: {0}?\nA mostani biztonsági mentésként megmarad a játék Saves mappájában.
+This launcher was built without {0}.
+= Ez az indító ennélkül készült: {0}.
+Time {0}
+= Idő {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= A Windows nem tudta védeni a bejelentkezést ezen az eszközön, ezért nem maradt meg ({0}).
+Won: {#0}
+= Győzelmek: {#0}
+You beat it {#0} times
+= {#0} alkalommal győzted le
+and enter this code:
+= és add meg ezt a kódot:
+since {0}
+= {0} óta
+✓ Imported: {0}
+= ✓ Importálva: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Mentés kiválasztva: {0} (a beállítás végén importáljuk)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Módosult a játék {0} javításában
+What changed since you last played
+= Mi változott a legutóbbi játékod óta
+THE GAME
+= A JÁTÉK
+THE LAUNCHER
+= AZ INDÍTÓ
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= További javítások a Hírek oldalon.
+Patch {0}
+= Javítás: {0}
+Launcher {0}
+= Indító {0}
+Updated from {0} to {1}.
+= Frissítve: {0} → {1}.
+Personal records
+= Személyes rekordok
+Play a few runs with Azeroth Stats to see your records here.
+= Játssz néhány menetet az Azeroth Statsszal, hogy itt lásd a rekordjaidat.
+Fastest victory {0}
+= Leggyorsabb győzelem {0}
+Highest level {0}
+= Legmagasabb szint {0}
+Most kills {0}
+= Legtöbb ölés {0}
+best DPS
+= legjobb DPS
+Solo and co-op runs
+= Egyéni és kooperatív menetek
+Runs (solo / co-op)
+= Menetek (egyéni / koop)
+Win rate (solo / co-op)
+= Győzelmi arány (egyéni / koop)
+Average run (solo / co-op)
+= Átlagos menet (egyéni / koop)
+Average level (solo / co-op)
+= Átlagos szint (egyéni / koop)
+Average DPS (solo / co-op)
+= Átlagos DPS (egyéni / koop)

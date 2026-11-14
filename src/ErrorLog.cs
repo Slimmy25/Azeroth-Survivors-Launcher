@@ -35,7 +35,7 @@ namespace AzerothLauncher
             new KeyValuePair<string[], string>(new[] { "no published", "zip" },
                 "The author has not published a release with a matching ZIP yet, so the addon was not installed."),
             new KeyValuePair<string[], string>(new[] { "did not publish", "sha-256" },
-                "GitHub did not publish a checksum for this download, so it was not installed, for your safety."),
+                "GitHub did not publish a checksum for this download, so it could not be checked against one."),
             new KeyValuePair<string[], string>(new[] { "mismatch" },
                 "The downloaded file did not match its published checksum, so it was not installed."),
             new KeyValuePair<string[], string>(new[] { "missing from the launcher's mirror" },

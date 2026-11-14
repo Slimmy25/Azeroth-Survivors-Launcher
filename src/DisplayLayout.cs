@@ -391,29 +391,43 @@ namespace AzerothLauncher
         public bool SeeThroughSection;
         Bitmap backdropPicture;
         TextureBrush backdropBrush;
-        Size backdropSize;
+        string backdropKey;                                  // the layout the picture was made for
         public const int BackdropVeil = 96;                  // the dark glass over the picture: text stays readable
 
-        TextureBrush BackdropBrush()
+        // the background artwork laid out for the current window, made once per layout and shared by the home screen
+        // (DrawResponsiveLauncher) and the see-through sections. Call with Theme.Zoom = Theme.DisplayScale, as the
+        // home screen's paint does; null when there is no artwork.
+        Bitmap BackdropPicture()
         {
             if (W < 1 || H < 1) return null;
-            var size = new Size(W, H);
-            if (backdropBrush != null && backdropSize == size) return backdropBrush;
+            int stone = Math.Min(HeaderBottom / 3, U(55));
+            string key = W + "x" + H + "/" + stone + "/" + FooterTop;
+            if (backdropPicture != null && backdropKey == key) return backdropPicture;
             Image background = Retro.Get("background");
             if (background == null) return null;
-            if (backdropBrush != null) backdropBrush.Dispose();
+            if (backdropBrush != null) { backdropBrush.Dispose(); backdropBrush = null; }
             if (backdropPicture != null) backdropPicture.Dispose();
             backdropPicture = new Bitmap(W, H);
             using (var g = Graphics.FromImage(backdropPicture))
             {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                int stone = Math.Min(HeaderBottom / 3, U(55));
                 g.DrawImage(background, new Rectangle(0, 0, W, stone), new Rectangle(0, 0, 1100, 55), GraphicsUnit.Pixel);
                 g.DrawImage(background, new Rectangle(0, stone, W, Math.Max(1, FooterTop - stone)), new Rectangle(0, 60, 680, 515), GraphicsUnit.Pixel);
                 g.DrawImage(background, new Rectangle(0, FooterTop, W, H - FooterTop), new Rectangle(0, 582, 900, 108), GraphicsUnit.Pixel);
             }
-            backdropBrush = new TextureBrush(backdropPicture, WrapMode.TileFlipY);
-            backdropSize = size;
+            backdropKey = key;
+            return backdropPicture;
+        }
+
+        TextureBrush BackdropBrush()
+        {
+            float oldZoom = Theme.Zoom;
+            Theme.Zoom = Theme.DisplayScale;                 // the same layout the home screen paints
+            Bitmap picture;
+            try { picture = BackdropPicture(); }
+            finally { Theme.Zoom = oldZoom; }
+            if (picture == null) return null;
+            if (backdropBrush == null) backdropBrush = new TextureBrush(picture, WrapMode.TileFlipY);
             return backdropBrush;
         }
 
@@ -455,15 +469,13 @@ namespace AzerothLauncher
             {
                 Theme.Smooth(graphics);
                 graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-                Image background = Retro.Get("background");
-                if (background == null) graphics.Clear(Theme.BgBottom);
+                // Reuse artwork, not its baked-in coordinates/Play frame. Text and controls stay native resolution. The laid-out
+                // artwork is made once per window layout (BackdropPicture) instead of rescaled on every repaint.
+                Bitmap backdrop = BackdropPicture();
+                if (backdrop == null) graphics.Clear(Theme.BgBottom);
                 else
                 {
-                    // Reuse artwork, not its baked-in coordinates/Play frame. Text and controls stay native resolution.
-                    int stone = Math.Min(HeaderBottom / 3, U(55));
-                    graphics.DrawImage(background, new Rectangle(0, 0, W, stone), new Rectangle(0, 0, 1100, 55), GraphicsUnit.Pixel);
-                    graphics.DrawImage(background, new Rectangle(0, stone, W, Math.Max(1, FooterTop-stone)), new Rectangle(0, 60, 680, 515), GraphicsUnit.Pixel);
-                    graphics.DrawImage(background, new Rectangle(0, FooterTop, W, H-FooterTop), new Rectangle(0, 582, 900, 108), GraphicsUnit.Pixel);
+                    graphics.DrawImage(backdrop, new Rectangle(0, 0, W, H), new Rectangle(0, 0, backdrop.Width, backdrop.Height), GraphicsUnit.Pixel);
                     using (var pen = new Pen(Theme.GoldDim, U(2))) graphics.DrawLine(pen, 0, FooterTop, W, FooterTop);
                 }
                 int titleWidth = CompactDisplay ? W - U(140) : ResponsiveSideRect.Right;
@@ -542,7 +554,7 @@ namespace AzerothLauncher
                     using (var fill = new SolidBrush(Theme.GoldDim)) graphics.FillRectangle(fill, bar.X, bar.Y, (int)(bar.Width*Math.Min(1, dlDone/(double)dlTotal)), bar.Height);
                 }
                 string message = Lang.T(setupOpen ? "First Time Setup" : status=="Ready."&&!ClientPresentPaint()
-                    ? (RequireLauncherInstall ? "Game client not found. Press INSTALL to download it first." : "Game client not found. Press INSTALL, or set the game folder in Options.") : status);
+                    ? "Game client not found. Press INSTALL, or set the game folder in Options." : status);
                 if (dlActive) message = dlTotal > 0
                     ? Lang.T("Downloading the game") + ": " + Math.Min(100, dlDone * 100 / dlTotal) + "% (" + Util.FmtSize(dlDone) + " / " + Util.FmtSize(dlTotal) + ")"
                     : Lang.T("Downloading the game") + ": " + Util.FmtSize(dlDone);

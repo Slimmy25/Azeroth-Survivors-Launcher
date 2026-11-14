@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = ゲーム、インストール、またはクラウド同期を終了してから、更新を再確認してください。
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} を利用できます。オプション > Launcher で「更新をインストール」を選んでください。
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= アビリティは統計アドオンを有効にしてプレイしたランで記録されます。
+Addon release check complete.
+= アドオンのリリース確認が完了しました。
+Affects
+= 対象
+All 8 armor pieces at 3+ stars
+= 防具8部位すべてが星3以上
+All ten Quick Access favorites are full. Remove one before adding another.
+= クイックアクセスのお気に入り10件がすべて埋まっています。追加する前に1件削除してください。
+An addon operation is already running.
+= アドオン処理がすでに実行中です。
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= 8部位すべてが星5のとき、このボーナスは1.5倍になります。
+Average time
+= 平均時間
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= 「さらにダウンロード」に Azeroth Stats がありません。
+BACK
+= 戻る
+Back to Top
+= トップへ
+Best level
+= 最高レベル
+Bright: victories · faint: all runs
+= 明るい: 勝利 · 薄い: 全ラン
+Brighter: more runs that day
+= より明るい: その日のラン数が多い
+Browse class build videos already featured in the guide.
+= ガイドで紹介済みのクラスビルド動画を見る。
+Browse class, item, and transmog references in the Wiki.
+= Wikiでクラス・アイテム・トランスモグの情報を見る。
+Build Videos
+= ビルド動画
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= 選択中のクラスを保ったまま、タレント構成を組み、装備を計画し、2つのツールを切り替えます。
+Build class
+= ビルドのクラス
+CANCEL DOWNLOAD & CLOSE
+= ダウンロードを中止して閉じる
+CHECK AGAIN
+= 再確認
+CHOOSE FOLDER
+= フォルダーを選択
+CHOOSE GAME FOLDER
+= ゲームフォルダーを選択
+CLEAR
+= クリア
+COPY
+= コピー
+Checking addon releases...
+= アドオンのリリースを確認中...
+Choose an option on this setup step to continue.
+= 続行するには、このステップでオプションを選んでください。
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= セットアップを続けるには AzerothSurvivors.exe があるフォルダーを選んでください。
+Choose the folder that contains the existing game client before continuing.
+= 続行する前に、既存のゲームクライアントがあるフォルダーを選んでください。
+Classes you play
+= プレイしたクラス
+Close the game first: it saves its own settings when it closes.
+= 先にゲームを閉じてください。ゲームは終了時に自身の設定を保存します。
+Cloud Save uses Dropbox again.
+= クラウドセーブが再び Dropbox を使用します。
+Cloud Save uses Google Drive again.
+= クラウドセーブが再び Google Drive を使用します。
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= クラウドセーブにはゲームのセーブフォルダーが必要です。またはクラウドセーブをオフにしてください。
+Cloud saving needs a sync folder, or turn cloud saving off.
+= クラウドセーブには同期フォルダーが必要です。またはクラウドセーブをオフにしてください。
+Code copied.
+= コードをコピーしました。
+Codex
+= コーデックス
+Companions observed in runs
+= ランで確認されたコンパニオン
+Connecting Dropbox...
+= Dropbox に接続中...
+Connecting Google Drive...
+= Google Drive に接続中...
+Contacting Google...
+= Google に問い合わせ中...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= 既定値が入力済みです。ファイルが別の場所にある場合はフォルダーを変更してください。
+Defeats
+= 敗北
+Display Preview uses local builds; public updates stay separate.
+= ディスプレイプレビューはローカルビルドを使います。公開アップデートとは別扱いです。
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= このPCにすでに Azeroth Survivors をダウンロードしていますか？\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= このPCにすでに Azeroth Survivors のゲームクライアントがありますか？
+Downloading the game
+= ゲームをダウンロード中
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck 試験的)
+Dropbox connected
+= Dropbox に接続しました
+Dropbox sign-in discarded.
+= Dropbox のサインインを破棄しました。
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox でサインインしましたが、ランチャーに継続的なアクセスが与えられませんでした。もう一度お試しください。
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Dropbox のサインインが終了しました (削除または期限切れ)。オプション > クラウドセーブで再度サインインしてください。
+EXPORT ASBUILDS
+= ASBUILDS をエクスポート
+EXPORT PROFILE
+= プロフィールをエクスポート
+Ended
+= 終了
+Error log copied.
+= エラーログをコピーしました。
+Every addon is on its latest release.
+= すべてのアドオンが最新リリースです。
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= 既存の AZS Stats ファイルは残ります。その履歴は Azeroth Stats には統合されません。
+Existing game folder needs attention
+= 既存のゲームフォルダーに確認が必要です
+Existing save kept. Setup is still open; you can finish without importing it.
+= 既存のセーブを保持しました。セットアップはまだ開いています。インポートせずに完了できます。
+FINISH SETUP
+= セットアップを完了
+Feedback copied.
+= フィードバックをコピーしました。
+Finish the current update, install, or game session before continuing setup.
+= セットアップを続ける前に、進行中のアップデート、インストール、またはゲームセッションを終えてください。
+First Time Setup
+= 初回セットアップ
+Game client
+= ゲームクライアント
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= ゲームのダウンロードを中止しました。再試行するときはインストールを選んでください。
+Gear section
+= 装備セクション
+GitHub returned invalid release information. Nothing was installed.
+= GitHub が無効なリリース情報を返しました。何もインストールされていません。
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= GitHub のリクエスト上限に達しました。しばらく待ってから再試行してください。何もインストールされていません。
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck 試験的)
+Google Drive connected
+= Google Drive に接続しました
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive が今はファイルを提供しませんでした (ダウンロード上限の可能性があります)。
+Google Drive made a folder but did not say which.
+= Google Drive はフォルダーを作成しましたが、どれかを示しませんでした。
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Google Drive のサインインが終了しました (削除または期限切れ)。オプション > クラウドセーブで再度サインインしてください。
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google でサインインしましたが、ランチャーに継続的なアクセスが与えられませんでした。もう一度お試しください。
+Google's sign-in answer was incomplete. Try again.
+= Google のサインイン応答が不完全でした。もう一度お試しください。
+Guide links
+= ガイドリンク
+Healing
+= 回復
+Heroic
+= ヒロイック
+IMPORT ASBUILDS
+= ASBUILDS をインポート
+IMPORT BUILD
+= ビルドをインポート
+INSTALL AZEROTH STATS
+= AZEROTH STATS をインストール
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= 「はい」の場合、既存のゲームとそのアドオンの場所を選べます。「いいえ」の場合、ゲームはこのランチャーのフォルダーにダウンロードされます。
+Interface size
+= インターフェースのサイズ
+Interrupted
+= 中断
+Items
+= アイテム
+Last 5 weeks
+= 過去5週間
+Last step: download the game?
+= 最後のステップ: ゲームをダウンロードしますか？
+Latest retained spell build
+= 保持中の最新の呪文ビルド
+Locations validated. Continuing setup...
+= 場所を確認しました。セットアップを続行中...
+MENU ▾
+= メニュー ▾
+More entries are available on the Build Journal tab.
+= ほかの項目はビルド日誌タブにあります。
+NO, DOWNLOAD IT
+= いいえ、ダウンロードする
+Navigation
+= ナビゲーション
+No build journal entries are stored in the retained runs yet.
+= 保持中のランにビルド日誌の項目はまだありません。
+No companion samples are recorded yet.
+= コンパニオンのデータはまだ記録されていません。
+No death evidence recorded yet.
+= 死因はまだ記録されていません。
+No download host worked.\n\n
+= どのダウンロードサーバーも利用できませんでした。\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= 保持中のランに確認済みの呪文スナップショットはまだありません。
+No source samples are available in retained runs.
+= 保持中のランにソースのデータはありません。
+No spell rank trends are stored yet.
+= 呪文ランクの推移はまだ保存されていません。
+No status messages yet.
+= ステータスメッセージはまだありません。
+None selected
+= 未選択
+Normal
+= ノーマル
+Not ready for release yet. Click to install it anyway.
+= まだリリースの準備ができていません。クリックするとそれでもインストールします。
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Dropbox にサインインしていません。オプション > クラウドセーブでサインインしてください。
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Google Drive にサインインしていません。オプション > クラウドセーブでサインインしてください。
+OPEN FOLDER
+= フォルダーを開く
+Observed attributions
+= 確認された帰属
+Observed build and equipment changes
+= 確認されたビルドと装備の変化
+Observed build journal
+= 確認されたビルド日誌
+Observed death sources
+= 確認された死因
+Observed in the most recent retained run
+= 保持中の最新ランで確認
+Observed party sample
+= 確認されたパーティーのサンプル
+Observed run
+= 確認されたラン
+Observed status
+= 確認された状態
+On your phone or computer, open
+= スマホまたはパソコンで開く
+On your phone, open
+= スマホで開く
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= 完全な状態の片方が採用され、もう片方は先にバックアップされます。\nこのPCで初めてですか？クラウドを使うを選んでください。\n
+Open on your phone
+= スマホで開く
+Partial
+= 一部
+Partial observation
+= 一部のみ確認
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= 下にタレントビルドコードを貼り付けてください。クリップボードにあれば自動で入力されます。
+Peel this corner to switch theorycrafting tools.
+= この角をめくると理論計算ツールを切り替えます。
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Azeroth Stats で何回かプレイすると、DPS の推移が表示されます。
+Playing on a Steam Deck?
+= Steam Deck でプレイしていますか？
+Playing without cloud sync this time
+= 今回はクラウド同期なしでプレイ中
+Preparing the Dropbox sign-in...
+= Dropbox のサインインを準備中...
+Priest
+= プリースト
+Priest guide
+= プリーストガイド
+QUICK ACCESS
+= クイックアクセス
+Rings & Trinkets
+= 指輪とトリンケット
+Runs observed
+= 確認されたラン
+SIGN IN WITH DROPBOX
+= DROPBOX でサインイン
+SIGN IN WITH GOOGLE
+= GOOGLE でサインイン
+SIGN OUT
+= サインアウト
+START OVER
+= 最初からやり直す
+STAY & FINISH
+= 残って完了する
+STEAM DECK / HANDHELD
+= STEAM DECK / 携帯機
+STEAM DECK EXPERIMENTAL
+= STEAM DECK 試験的
+Save favorite
+= お気に入りを保存
+Save this location to Quick Access.
+= この場所をクイックアクセスに保存します。
+Save to Quick Access
+= クイックアクセスに保存
+Save where? The current location, the top of this page, or the closest category header.
+= どこに保存しますか？現在の位置、ページの先頭、または最も近いカテゴリ見出し。
+Saved in
+= 保存先
+Scaling video fixture
+= スケーリング確認用ビデオ
+Setup is only available while the setup guide is open.
+= セットアップはセットアップガイドが開いている間のみ利用できます。
+Sign in to Google Drive
+= Google Drive にサインイン
+Signed out of Dropbox.
+= Dropbox からサインアウトしました。
+Signed out of Google Drive.
+= Google Drive からサインアウトしました。
+Skip/Stop
+= スキップ/停止
+Some addons could not be changed:\n\n
+= 一部のアドオンを変更できませんでした:\n\n
+Spell pool
+= 呪文プール
+Spell rank trends · observed, not exact card picks
+= 呪文ランクの推移 · 観測値であり正確なカード選択ではありません
+Start here: learn the controls, your first run, and the systems that help you get going.
+= ここから始めよう: 操作方法、最初のラン、そして序盤を助けるシステムを学びます。
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / 携帯機、それとも Windows PC？
+Stopping the game download before closing...
+= 閉じる前にゲームのダウンロードを停止中...
+Support the Dev
+= 開発者を支援
+Talent build code
+= タレントビルドコード
+Temporarily unavailable while work is in progress.
+= 作業中のため一時的に利用できません。
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= コミュニティ製の私のランチャーを使ってくれてありがとう。このゲームの素晴らしさを祝い、Azeroth Survivors に必要なものをすべて一か所にまとめるために作りました\n\n
+That file does not exist.
+= そのファイルは存在しません。
+That is not an Azeroth Survivors save file.
+= Azeroth Survivors のセーブファイルではありません。
+That is not an Azeroth Survivors save file.\n\n
+= Azeroth Survivors のセーブファイルではありません。\n\n
+The archive contents changed while extracting. Nothing was installed.
+= 展開中にアーカイブの内容が変わりました。何もインストールされていません。
+The clipboard is busy. Try copying again.
+= クリップボードが使用中です。もう一度コピーしてください。
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= そのフォルダーに既存のゲームが見つかりません。AzerothSurvivors.exe があるフォルダーを選んでください。
+The game archive contains a reserved Windows file name. Nothing was installed.
+= ゲームアーカイブに Windows の予約済みファイル名が含まれています。何もインストールされていません。
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= ゲームアーカイブに空のパスまたはシンボリックリンクが含まれています。何もインストールされていません。
+The game archive contains an unsafe path. Nothing was installed.
+= ゲームアーカイブに安全でないパスが含まれています。何もインストールされていません。
+The game archive contains conflicting file paths. Nothing was installed.
+= ゲームアーカイブに競合するファイルパスが含まれています。何もインストールされていません。
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= ゲームアーカイブに重複または競合するファイルパスが含まれています。何もインストールされていません。
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= ゲームアーカイブを展開できませんでした。破損、暗号化、不完全、または未対応の方式の可能性があります。何もインストールされていません。
+The game archive format is not supported by the built-in extractor.
+= このゲームアーカイブの形式は内蔵の展開機能に対応していません。
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= ゲームアーカイブが不完全か、別の分割ファイルが必要です。何もインストールされていません。
+The game archive is password-protected. Please use an unencrypted game download.
+= ゲームアーカイブはパスワードで保護されています。暗号化されていないダウンロードを使ってください。
+The game config folder is not set. Set it in Options > FOLDERS.
+= ゲームの設定フォルダーが未設定です。オプション > フォルダーで設定してください。
+The game files are being installed. The launcher will close when that finishes.
+= ゲームファイルをインストール中です。完了するとランチャーは閉じます。
+The game is running: close it first, it saves its own settings when it closes.
+= ゲームが実行中です。先に閉じてください。ゲームは終了時に自身の設定を保存します。
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= このアドオンのダウンロード中にゲームまたは同期が開始されました。インストール済みのファイルは変更していません。終了後に再試行してください。
+The launcher closes by itself once your progress is saved.
+= 進行状況が保存されると、ランチャーは自動で閉じます。
+The launcher is already running. Look for its window on the taskbar.
+= ランチャーはすでに起動しています。タスクバーでウィンドウを探してください。
+The save could not be imported:\n\n
+= セーブをインポートできませんでした:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= サインインコードが使用前に期限切れになりました。もう一度 DROPBOX でサインイン を押してください。
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= サインインコードが使用前に期限切れになりました。もう一度 GOOGLE でサインイン を押してください。
+The sign-in was declined on Dropbox's page.
+= Dropbox のページでサインインが拒否されました。
+The sign-in was declined on Google's page.
+= Google のページでサインインが拒否されました。
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= 次に、Azeroth Survivors Launcher が Google Drive 内の専用フォルダーを使うことを許可してください。サインインするとこのページは自動で閉じます。
+This Codex entry's class guide is unavailable.
+= このコーデックス項目のクラスガイドは利用できません。
+This Guide location no longer exists.
+= このガイドの場所はもう存在しません。
+This Guide video is no longer available.
+= このガイド動画はもう利用できません。
+This add-on is not configured for direct GitHub release updates.
+= このアドオンは GitHub リリースからの直接更新に設定されていません。
+This addon is pinned to an older copy. Replace it with the newest release?
+= このアドオンは古いコピーに固定されています。最新リリースに置き換えますか？
+This class talent page is no longer available.
+= このクラスのタレントページはもう利用できません。
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= このお気に入りはガイドのページと一致しなくなりました。更新するにはページを再度関連付けてください。
+Today
+= 今日
+UPDATE ALL
+= すべて更新
+USE DROPBOX
+= DROPBOX を使う
+USE GOOGLE DRIVE
+= GOOGLE DRIVE を使う
+Undated
+= 日付なし
+Use the arrow keys to browse links and Enter to open one.
+= 矢印キーでリンクを移動し、Enter で開きます。
+Use the star on a guide page to save its reading position to Quick Access.
+= ガイドページの星を押すと、読んでいる位置をクイックアクセスに保存できます。
+WINDOWS PC
+= WINDOWS PC
+WINS
+= 勝利
+Waiting for the Dropbox sign-in...
+= Dropbox のサインインを待っています...
+Waiting for the Google sign-in...
+= Google のサインインを待っています...
+Wiki
+= Wiki
+Work in Progress
+= 開発中
+Written Guides
+= 文章ガイド
+YES, I HAVE THE CLIENT
+= はい、クライアントがあります
+Yesterday
+= 昨日
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= ゲームがあると選択しましたが、選んだフォルダーに AzerothSurvivors.exe がもうありません。続行するには正しいゲームフォルダーを選んでください。既存のクライアントを選んだ場合、セットアップはゲームのダウンロードを提案しません。
+ranks
+= ランク
+times
+= 回
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= ゲームがクラッシュした場合、Diagnostics フォルダーにクラッシュレポートが保存されています。ゲームの開発者に送ると修正の助けになります。
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= 更新されなかった AZS アドオン: {0}
+  Addons for the synced settings not checked: {0}
+= 確認されなかった同期設定のアドオン: {0}
+1  FOLLOW THE PATH
+= 1  道をたどる
+2  SAVE A FAVORITE
+= 2  お気に入りを保存
+4 armor pieces at 1+ stars
+= 防具4部位が星1以上
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= 先に新しいランチャー ({0}) をインストールします。再起動後にもう一度プレイを押してください。
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= 更新したアドオン: {0}。失敗: {1}。確認エラー: {2}。
+All addons {0}
+= すべてのアドオン {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats はゲーム内のランとビルドの変化を記録します (/azstats)。ランチャーでは保存済みの合計、クラス、最近のランレポート、戦闘サンプル、確認されたビルド日誌を表示できます。独自のレポート、比較、設定可能なHUDはアドオン内で引き続き使えます。
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats はゲーム内のランと確認されたビルドの変化を記録します (/azstats)。ランチャーでは保存済みの合計、クラス、最近のランレポート、戦闘サンプル、ビルド日誌を表示できます。アドオンのレポート、比較、設定可能なHUDはそちらで引き続き使えます。
+Best level {#0}
+= 最高レベル {#0}
+Best level: {#0}
+= 最高レベル: {#0}
+Best together: {0}, level {#1}
+= 一緒だと最高: {0}、レベル {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= クラウドセーブ一時停止中: {0} には STEAM DECK 試験的 が必要です (オプション > ランチャー)。このセッションは同期されません。
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= クラウドセーブは {0} に設定されていますが、STEAM DECK 試験的 が必要です (オプション > ランチャー)。再度オンにするか、下で同期フォルダーを選んでください。
+Confirmed {#0} · probable {#1}
+= 確定 {#0} · 推定 {#1}
+Could not install {0}:\n\n{1}
+= {0} をインストールできませんでした:\n\n{1}
+Could not save the game setting:
+= ゲーム設定を保存できませんでした:
+Could not uninstall {0}:\n\n{1}
+= {0} をアンインストールできませんでした:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox に接続できませんでした ({0})。
+Dropbox did not accept the sign-in: {0}
+= Dropbox がサインインを受け付けませんでした: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox がサインインを拒否しました: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Steam Deck の試験的サポート: ゲームモードでランチャーが全画面になり、同じ Steam 項目内でゲームを起動し、プレイ中は退きます。オプション > ランチャーでオフにできます。
+Game setting saved:
+= ゲーム設定を保存しました:
+Google Drive refused the sign-in: {0}
+= Google Drive がサインインを拒否しました: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} アップロードは次回の同期で送信されます。
+Google could not be reached ({0}).
+= Google に接続できませんでした ({0})。
+Google did not start the sign-in: {0}
+= Google がサインインを開始しませんでした: {0}
+Google sign-in failed: {0}
+= Google のサインインに失敗しました: {0}
+Highest observed rank {#0}
+= 確認された最高ランク {#0}
+Installing {0} ({1})...
+= {0} をインストール中 ({1})...
+It killed you {#0} times
+= {#0} 回倒されました
+Longest: {0}
+= 最長: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= このリリースのどのファイルにも {0} (.toc ファイルを含むフォルダー) がなく、ソースコードにもありません。何もインストールされていません。
+Observed in {#0} runs · rank gains {#1}
+= {#0} 回のランで確認 · ランクアップ {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= ブラウザで Azeroth Survivors を遊びましたか？進行状況を持ってこられます: ヒーロー、開放したゾーン、装備、タレント、コーデックス。\n\nサイトで Options > Saves を開き、Export Save を押します。次にその .sav ファイルをここで選んでください。進行状況を引き継いでゲームが開きます。
+Quick Access {0}
+= クイックアクセス {0}
+Rank {#0}
+= ランク {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} をクイックアクセスから削除しました。ガイドの星かセクションのお気に入りで再追加できます。
+Runs {#0} · Victories {#1}
+= ラン {#0} · 勝利 {#1}
+Runs: {#0}
+= ラン: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= ランチャーのコピーには保存しましたが、{0} に接続できませんでした: {1} 次回の同期でアップロードされます。
+Survived {0} · Level {1}
+= 生存 {0} · レベル {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= 生存 {0} · レベル {1} · キル {2} · ゴールド {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= そこはクラウドドライブの最上位です。\n\nその中に Azeroth Survivor Launcher というサブフォルダーを作って使いますか？
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= アドオンの更新に失敗しました。以前のファイルは復元用に {0} に残しました。{1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= {0} からのダウンロードが壊れているか、正しいファイルではありません (チェックサム不一致)。もう一度お試しください。
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= ランチャーはこのフォルダーで自身を置き換えられませんでした ({0})。\n\n新しいバージョンを GitHub からダウンロードしてください:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= サインイン中継 (ntfy.sh) に接続できませんでした ({0})。少し待ってから再試行してください。
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} が想定と違うファイルを提供しています ({2} ではなく {1})。
+The {0} server answered with error {1}.
+= {0} サーバーがエラー {1} を返しました。
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= これらのフォルダーが見つかりません:\n\n  {0}\n\nそれでも完了しますか？後でオプションから変更できます。
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= このPCにはすでにゲームの進行状況があります。\n\n{0} で置き換えますか？\n現在のものはゲームの Saves フォルダーにバックアップとして残ります。
+This launcher was built without {0}.
+= このランチャーは {0} なしでビルドされています。
+Time {0}
+= 時間 {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows がこのデバイスでサインインを保護できなかったため、保持しませんでした ({0})。
+Won: {#0}
+= 勝利: {#0}
+You beat it {#0} times
+= {#0} 回倒しました
+and enter this code:
+= そしてこのコードを入力:
+since {0}
+= {0} から
+✓ Imported: {0}
+= ✓ インポート済み: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ セーブを選択: {0} (セットアップ完了時にインポート)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= ゲームパッチ {0} で変更
+What changed since you last played
+= 前回のプレイ以降の変更点
+THE GAME
+= ゲーム
+THE LAUNCHER
+= ランチャー
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= ほかのパッチはニュースページにあります。
+Patch {0}
+= パッチ {0}
+Launcher {0}
+= ランチャー {0}
+Updated from {0} to {1}.
+= {0} から {1} に更新しました。
+Personal records
+= 自己ベスト
+Play a few runs with Azeroth Stats to see your records here.
+= Azeroth Stats で何回かプレイすると、ここに記録が表示されます。
+Fastest victory {0}
+= 最速勝利 {0}
+Highest level {0}
+= 最高レベル {0}
+Most kills {0}
+= 最多キル {0}
+best DPS
+= 最高DPS
+Solo and co-op runs
+= ソロとマルチのラン
+Runs (solo / co-op)
+= ラン (ソロ / マルチ)
+Win rate (solo / co-op)
+= 勝率 (ソロ / マルチ)
+Average run (solo / co-op)
+= 平均ラン (ソロ / マルチ)
+Average level (solo / co-op)
+= 平均レベル (ソロ / マルチ)
+Average DPS (solo / co-op)
+= 平均DPS (ソロ / マルチ)

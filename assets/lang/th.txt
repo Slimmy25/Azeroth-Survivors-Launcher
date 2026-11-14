@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = ปิดเกม ติดตั้งให้เสร็จ หรือรอการซิงค์คลาวด์ก่อน แล้วตรวจสอบการอัปเดตอีกครั้ง
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} พร้อมแล้ว เลือกติดตั้งการอัปเดตใน ตัวเลือก > Launcher
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= ความสามารถจะถูกบันทึกสำหรับรอบที่เล่นโดยเปิดแอดออนสถิติ
+Addon release check complete.
+= ตรวจสอบรุ่นของแอดออนเสร็จแล้ว
+Affects
+= มีผลต่อ
+All 8 armor pieces at 3+ stars
+= ชุดเกราะครบ 8 ชิ้นที่ 3+ ดาว
+All ten Quick Access favorites are full. Remove one before adding another.
+= รายการโปรดของการเข้าถึงด่วนเต็มทั้งสิบช่องแล้ว ลบออกหนึ่งรายการก่อนเพิ่มใหม่
+An addon operation is already running.
+= มีการดำเนินการแอดออนกำลังทำงานอยู่
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= เมื่อได้ 5 ดาวครบทั้ง 8 ชิ้น โบนัสนี้จะแรงขึ้นอีกครึ่งหนึ่ง
+Average time
+= เวลาเฉลี่ย
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= ไม่พบ Azeroth Stats ในดาวน์โหลดเพิ่ม
+BACK
+= ย้อนกลับ
+Back to Top
+= กลับขึ้นด้านบน
+Best level
+= เลเวลสูงสุด
+Bright: victories · faint: all runs
+= สว่าง: ชนะ · จาง: ทุกรอบ
+Brighter: more runs that day
+= สว่างกว่า: เล่นมากขึ้นในวันนั้น
+Browse class build videos already featured in the guide.
+= ดูวิดีโอบิลด์อาชีพที่มีอยู่ในคู่มือแล้ว
+Browse class, item, and transmog references in the Wiki.
+= ดูข้อมูลอาชีพ ไอเทม และ transmog ใน Wiki
+Build Videos
+= วิดีโอบิลด์
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= จัดทาเลนต์ วางแผนอุปกรณ์ และสลับระหว่างสองเครื่องมือโดยคงอาชีพที่เลือกไว้
+Build class
+= อาชีพของบิลด์
+CANCEL DOWNLOAD & CLOSE
+= ยกเลิกดาวน์โหลดและปิด
+CHECK AGAIN
+= ตรวจสอบอีกครั้ง
+CHOOSE FOLDER
+= เลือกโฟลเดอร์
+CHOOSE GAME FOLDER
+= เลือกโฟลเดอร์เกม
+CLEAR
+= ล้าง
+COPY
+= คัดลอก
+Checking addon releases...
+= กำลังตรวจสอบรุ่นของแอดออน...
+Choose an option on this setup step to continue.
+= เลือกตัวเลือกในขั้นตอนนี้เพื่อดำเนินการต่อ
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= เลือกโฟลเดอร์ที่มี AzerothSurvivors.exe เพื่อตั้งค่าต่อ
+Choose the folder that contains the existing game client before continuing.
+= เลือกโฟลเดอร์ที่มีตัวเกมเดิมก่อนดำเนินการต่อ
+Classes you play
+= อาชีพที่คุณเล่น
+Close the game first: it saves its own settings when it closes.
+= ปิดเกมก่อน: เกมจะบันทึกการตั้งค่าของตัวเองเมื่อปิด
+Cloud Save uses Dropbox again.
+= เซฟบนคลาวด์กลับมาใช้ Dropbox แล้ว
+Cloud Save uses Google Drive again.
+= เซฟบนคลาวด์กลับมาใช้ Google Drive แล้ว
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= เซฟบนคลาวด์ต้องมีโฟลเดอร์เซฟเกม หรือปิดการเซฟบนคลาวด์
+Cloud saving needs a sync folder, or turn cloud saving off.
+= เซฟบนคลาวด์ต้องมีโฟลเดอร์ซิงก์ หรือปิดการเซฟบนคลาวด์
+Code copied.
+= คัดลอกโค้ดแล้ว
+Codex
+= Codex
+Companions observed in runs
+= ผู้ติดตามที่พบในรอบที่เล่น
+Connecting Dropbox...
+= กำลังเชื่อมต่อ Dropbox...
+Connecting Google Drive...
+= กำลังเชื่อมต่อ Google Drive...
+Contacting Google...
+= กำลังติดต่อ Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= กรอกค่าเริ่มต้นให้แล้ว เปลี่ยนโฟลเดอร์หากไฟล์ของคุณอยู่ที่อื่น
+Defeats
+= แพ้
+Display Preview uses local builds; public updates stay separate.
+= ตัวอย่างการแสดงผลใช้บิลด์ในเครื่อง อัปเดตสาธารณะแยกต่างหาก
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= คุณดาวน์โหลด Azeroth Survivors ไว้ในพีซีเครื่องนี้แล้วหรือยัง?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= คุณมีตัวเกม Azeroth Survivors ในพีซีเครื่องนี้แล้วหรือยัง?
+Downloading the game
+= กำลังดาวน์โหลดเกม
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck ทดลอง)
+Dropbox connected
+= เชื่อมต่อ Dropbox แล้ว
+Dropbox sign-in discarded.
+= ยกเลิกการลงชื่อเข้าใช้ Dropbox แล้ว
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox ลงชื่อเข้าใช้ให้แล้วแต่ไม่ได้ให้สิทธิ์ถาวรกับลันเชอร์ ลองอีกครั้ง
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= การลงชื่อเข้าใช้ Dropbox สิ้นสุดแล้ว (ถูกลบหรือหมดอายุ) ลงชื่อเข้าใช้อีกครั้งที่ ตัวเลือก > เซฟบนคลาวด์
+EXPORT ASBUILDS
+= ส่งออก ASBUILDS
+EXPORT PROFILE
+= ส่งออกโปรไฟล์
+Ended
+= จบแล้ว
+Error log copied.
+= คัดลอกบันทึกข้อผิดพลาดแล้ว
+Every addon is on its latest release.
+= แอดออนทุกตัวเป็นรุ่นล่าสุดแล้ว
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= ไฟล์ AZS Stats เดิมยังคงอยู่ ประวัติจะไม่ถูกรวมเข้ากับ Azeroth Stats
+Existing game folder needs attention
+= โฟลเดอร์เกมเดิมต้องตรวจสอบ
+Existing save kept. Setup is still open; you can finish without importing it.
+= เก็บเซฟเดิมไว้แล้ว การตั้งค่ายังเปิดอยู่ คุณจบได้โดยไม่ต้องนำเข้า
+FINISH SETUP
+= ตั้งค่าให้เสร็จ
+Feedback copied.
+= คัดลอกความคิดเห็นแล้ว
+Finish the current update, install, or game session before continuing setup.
+= ทำการอัปเดต ติดตั้ง หรือเซสชันเกมที่ทำอยู่ให้เสร็จก่อนตั้งค่าต่อ
+First Time Setup
+= ตั้งค่าครั้งแรก
+Game client
+= ตัวเกม
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= ยกเลิกการดาวน์โหลดเกมแล้ว เลือก ติดตั้ง เมื่อพร้อมลองใหม่
+Gear section
+= ส่วนอุปกรณ์
+GitHub returned invalid release information. Nothing was installed.
+= GitHub ส่งข้อมูลรุ่นที่ไม่ถูกต้อง ไม่มีการติดตั้งใดๆ
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= ถึงขีดจำกัดคำขอของ GitHub แล้ว โปรดรอแล้วลองใหม่ ไม่มีการติดตั้งใดๆ
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck ทดลอง)
+Google Drive connected
+= เชื่อมต่อ Google Drive แล้ว
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive ยังไม่ให้ไฟล์ในตอนนี้ (อาจถึงขีดจำกัดการดาวน์โหลด)
+Google Drive made a folder but did not say which.
+= Google Drive สร้างโฟลเดอร์แล้วแต่ไม่ได้บอกว่าโฟลเดอร์ใด
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= การลงชื่อเข้าใช้ Google Drive สิ้นสุดแล้ว (ถูกลบหรือหมดอายุ) ลงชื่อเข้าใช้อีกครั้งที่ ตัวเลือก > เซฟบนคลาวด์
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google ลงชื่อเข้าใช้ให้แล้วแต่ไม่ได้ให้สิทธิ์ถาวรกับลันเชอร์ ลองอีกครั้ง
+Google's sign-in answer was incomplete. Try again.
+= คำตอบการลงชื่อเข้าใช้จาก Google ไม่ครบ ลองอีกครั้ง
+Guide links
+= ลิงก์คู่มือ
+Healing
+= การรักษา
+Heroic
+= ฮีโรอิก
+IMPORT ASBUILDS
+= นำเข้า ASBUILDS
+IMPORT BUILD
+= นำเข้าบิลด์
+INSTALL AZEROTH STATS
+= ติดตั้ง AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= หากใช่ คุณจะเลือกตำแหน่งของเกมเดิมและ AddOns ได้ หากไม่ เกมจะถูกดาวน์โหลดลงในโฟลเดอร์ของลันเชอร์นี้
+Interface size
+= ขนาดอินเทอร์เฟซ
+Interrupted
+= ถูกขัดจังหวะ
+Items
+= ไอเทม
+Last 5 weeks
+= 5 สัปดาห์ล่าสุด
+Last step: download the game?
+= ขั้นตอนสุดท้าย: ดาวน์โหลดเกมไหม?
+Latest retained spell build
+= บิลด์สกิลล่าสุดที่เก็บไว้
+Locations validated. Continuing setup...
+= ตรวจสอบตำแหน่งแล้ว กำลังตั้งค่าต่อ...
+MENU ▾
+= เมนู ▾
+More entries are available on the Build Journal tab.
+= มีรายการเพิ่มเติมในแท็บบันทึกบิลด์
+NO, DOWNLOAD IT
+= ไม่ ดาวน์โหลดเลย
+Navigation
+= การนำทาง
+No build journal entries are stored in the retained runs yet.
+= ยังไม่มีรายการบันทึกบิลด์ในรอบที่เก็บไว้
+No companion samples are recorded yet.
+= ยังไม่มีข้อมูลผู้ติดตาม
+No death evidence recorded yet.
+= ยังไม่มีสาเหตุการตาย
+No download host worked.\n\n
+= ไม่มีเซิร์ฟเวอร์ดาวน์โหลดใดใช้งานได้\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= ยังไม่มีภาพรวมสกิลที่สังเกตได้ในรอบที่เก็บไว้
+No source samples are available in retained runs.
+= ไม่มีข้อมูลแหล่งที่มาในรอบที่เก็บไว้
+No spell rank trends are stored yet.
+= ยังไม่มีแนวโน้มระดับสกิล
+No status messages yet.
+= ยังไม่มีข้อความสถานะ
+None selected
+= ไม่ได้เลือก
+Normal
+= ปกติ
+Not ready for release yet. Click to install it anyway.
+= ยังไม่พร้อมเผยแพร่ คลิกเพื่อติดตั้งอยู่ดี
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= ยังไม่ได้ลงชื่อเข้าใช้ Dropbox ลงชื่อเข้าใช้ที่ ตัวเลือก > เซฟบนคลาวด์
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= ยังไม่ได้ลงชื่อเข้าใช้ Google Drive ลงชื่อเข้าใช้ที่ ตัวเลือก > เซฟบนคลาวด์
+OPEN FOLDER
+= เปิดโฟลเดอร์
+Observed attributions
+= การระบุที่สังเกตได้
+Observed build and equipment changes
+= การเปลี่ยนบิลด์และอุปกรณ์ที่สังเกตได้
+Observed build journal
+= บันทึกบิลด์ที่สังเกตได้
+Observed death sources
+= สาเหตุการตายที่สังเกตได้
+Observed in the most recent retained run
+= พบในรอบที่เก็บไว้ล่าสุด
+Observed party sample
+= ตัวอย่างปาร์ตี้ที่สังเกตได้
+Observed run
+= รอบที่สังเกตได้
+Observed status
+= สถานะที่สังเกตได้
+On your phone or computer, open
+= บนโทรศัพท์หรือคอมพิวเตอร์ ให้เปิด
+On your phone, open
+= บนโทรศัพท์ ให้เปิด
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= สถานะที่สมบูรณ์หนึ่งฝั่งจะชนะ อีกฝั่งจะถูกสำรองไว้ก่อน\nครั้งแรกบนพีซีนี้? เลือก ใช้คลาวด์\n
+Open on your phone
+= เปิดบนโทรศัพท์
+Partial
+= บางส่วน
+Partial observation
+= สังเกตได้บางส่วน
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= วางโค้ดบิลด์ทาเลนต์ด้านล่าง หากมีในคลิปบอร์ดจะถูกกรอกให้อัตโนมัติ
+Peel this corner to switch theorycrafting tools.
+= พับมุมนี้เพื่อสลับเครื่องมือ theorycrafting
+Play a few runs with Azeroth Stats to see your DPS over time.
+= เล่นสักสองสามรอบด้วย Azeroth Stats เพื่อดู DPS ของคุณตามเวลา
+Playing on a Steam Deck?
+= เล่นบน Steam Deck อยู่ไหม?
+Playing without cloud sync this time
+= ครั้งนี้เล่นโดยไม่ซิงก์คลาวด์
+Preparing the Dropbox sign-in...
+= กำลังเตรียมการลงชื่อเข้าใช้ Dropbox...
+Priest
+= นักบวช
+Priest guide
+= คู่มือนักบวช
+QUICK ACCESS
+= เข้าถึงด่วน
+Rings & Trinkets
+= แหวนและเครื่องประดับ
+Runs observed
+= รอบที่สังเกตได้
+SIGN IN WITH DROPBOX
+= ลงชื่อเข้าใช้ด้วย DROPBOX
+SIGN IN WITH GOOGLE
+= ลงชื่อเข้าใช้ด้วย GOOGLE
+SIGN OUT
+= ออกจากระบบ
+START OVER
+= เริ่มใหม่
+STAY & FINISH
+= อยู่ต่อและทำให้เสร็จ
+STEAM DECK / HANDHELD
+= STEAM DECK / เครื่องพกพา
+STEAM DECK EXPERIMENTAL
+= STEAM DECK ทดลอง
+Save favorite
+= บันทึกรายการโปรด
+Save this location to Quick Access.
+= บันทึกตำแหน่งนี้ไปยังการเข้าถึงด่วน
+Save to Quick Access
+= บันทึกไปยังการเข้าถึงด่วน
+Save where? The current location, the top of this page, or the closest category header.
+= บันทึกที่ไหน? ตำแหน่งปัจจุบัน ด้านบนของหน้านี้ หรือหัวข้อหมวดที่ใกล้ที่สุด
+Saved in
+= บันทึกไว้ใน
+Scaling video fixture
+= วิดีโอทดสอบการปรับขนาด
+Setup is only available while the setup guide is open.
+= การตั้งค่าใช้ได้เฉพาะเมื่อเปิดคู่มือการตั้งค่าอยู่
+Sign in to Google Drive
+= ลงชื่อเข้าใช้ Google Drive
+Signed out of Dropbox.
+= ออกจาก Dropbox แล้ว
+Signed out of Google Drive.
+= ออกจาก Google Drive แล้ว
+Skip/Stop
+= ข้าม/หยุด
+Some addons could not be changed:\n\n
+= บางแอดออนเปลี่ยนแปลงไม่ได้:\n\n
+Spell pool
+= กลุ่มสกิล
+Spell rank trends · observed, not exact card picks
+= แนวโน้มระดับสกิล · จากการสังเกต ไม่ใช่การเลือกการ์ดที่แน่นอน
+Start here: learn the controls, your first run, and the systems that help you get going.
+= เริ่มที่นี่: เรียนรู้การควบคุม รอบแรกของคุณ และระบบที่ช่วยให้เริ่มต้นได้
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / เครื่องพกพา หรือพีซี Windows?
+Stopping the game download before closing...
+= กำลังหยุดการดาวน์โหลดเกมก่อนปิด...
+Support the Dev
+= สนับสนุนผู้พัฒนา
+Talent build code
+= โค้ดบิลด์ทาเลนต์
+Temporarily unavailable while work is in progress.
+= ปิดใช้งานชั่วคราวระหว่างการพัฒนา
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= ขอบคุณที่ใช้ลันเชอร์ที่ทำโดยชุมชนของผม สร้างขึ้นเพื่อเฉลิมฉลองความเจ๋งของเกมนี้ และเป็นจุดเดียวสำหรับทุกอย่างของ Azeroth Survivors\n\n
+That file does not exist.
+= ไม่มีไฟล์นั้น
+That is not an Azeroth Survivors save file.
+= นั่นไม่ใช่ไฟล์เซฟของ Azeroth Survivors
+That is not an Azeroth Survivors save file.\n\n
+= นั่นไม่ใช่ไฟล์เซฟของ Azeroth Survivors\n\n
+The archive contents changed while extracting. Nothing was installed.
+= เนื้อหาในไฟล์บีบอัดเปลี่ยนระหว่างแตกไฟล์ ไม่มีการติดตั้งใดๆ
+The clipboard is busy. Try copying again.
+= คลิปบอร์ดไม่ว่าง ลองคัดลอกอีกครั้ง
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= ไม่พบเกมเดิมในโฟลเดอร์นั้น เลือกโฟลเดอร์ที่มี AzerothSurvivors.exe
+The game archive contains a reserved Windows file name. Nothing was installed.
+= ไฟล์บีบอัดเกมมีชื่อไฟล์ที่ Windows สงวนไว้ ไม่มีการติดตั้งใดๆ
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= ไฟล์บีบอัดเกมมีพาธว่างหรือลิงก์สัญลักษณ์ ไม่มีการติดตั้งใดๆ
+The game archive contains an unsafe path. Nothing was installed.
+= ไฟล์บีบอัดเกมมีพาธที่ไม่ปลอดภัย ไม่มีการติดตั้งใดๆ
+The game archive contains conflicting file paths. Nothing was installed.
+= ไฟล์บีบอัดเกมมีพาธไฟล์ที่ขัดกัน ไม่มีการติดตั้งใดๆ
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= ไฟล์บีบอัดเกมมีพาธไฟล์ซ้ำหรือขัดกัน ไม่มีการติดตั้งใดๆ
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= แตกไฟล์บีบอัดเกมไม่ได้ อาจเสียหาย เข้ารหัส ไม่ครบ หรือใช้วิธีที่ไม่รองรับ ไม่มีการติดตั้งใดๆ
+The game archive format is not supported by the built-in extractor.
+= ตัวแตกไฟล์ในตัวไม่รองรับรูปแบบไฟล์บีบอัดเกมนี้
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= ไฟล์บีบอัดเกมไม่ครบหรือต้องใช้อีกส่วนหนึ่ง ไม่มีการติดตั้งใดๆ
+The game archive is password-protected. Please use an unencrypted game download.
+= ไฟล์บีบอัดเกมมีรหัสผ่าน โปรดใช้ไฟล์ดาวน์โหลดที่ไม่เข้ารหัส
+The game config folder is not set. Set it in Options > FOLDERS.
+= ยังไม่ได้ตั้งโฟลเดอร์การตั้งค่าเกม ตั้งได้ที่ ตัวเลือก > โฟลเดอร์
+The game files are being installed. The launcher will close when that finishes.
+= กำลังติดตั้งไฟล์เกม ลันเชอร์จะปิดเมื่อเสร็จ
+The game is running: close it first, it saves its own settings when it closes.
+= เกมกำลังทำงาน: ปิดเกมก่อน เกมจะบันทึกการตั้งค่าของตัวเองเมื่อปิด
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= เกมหรือการซิงก์เริ่มทำงานขณะดาวน์โหลดแอดออนนี้ ไฟล์ที่ติดตั้งไว้ไม่ถูกเปลี่ยน ลองใหม่หลังปิด
+The launcher closes by itself once your progress is saved.
+= ลันเชอร์จะปิดเองเมื่อบันทึกความคืบหน้าแล้ว
+The launcher is already running. Look for its window on the taskbar.
+= ลันเชอร์เปิดอยู่แล้ว ดูหน้าต่างของมันที่แถบงาน
+The save could not be imported:\n\n
+= นำเข้าเซฟไม่ได้:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= โค้ดลงชื่อเข้าใช้หมดอายุก่อนใช้ กด ลงชื่อเข้าใช้ด้วย DROPBOX อีกครั้ง
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= โค้ดลงชื่อเข้าใช้หมดอายุก่อนใช้ กด ลงชื่อเข้าใช้ด้วย GOOGLE อีกครั้ง
+The sign-in was declined on Dropbox's page.
+= การลงชื่อเข้าใช้ถูกปฏิเสธที่หน้า Dropbox
+The sign-in was declined on Google's page.
+= การลงชื่อเข้าใช้ถูกปฏิเสธที่หน้า Google
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= จากนั้นอนุญาตให้ Azeroth Survivors Launcher ใช้โฟลเดอร์ของตัวเองใน Google Drive ของคุณ หน้านี้จะปิดเองเมื่อลงชื่อเข้าใช้แล้ว
+This Codex entry's class guide is unavailable.
+= คู่มืออาชีพของรายการ Codex นี้ไม่พร้อมใช้งาน
+This Guide location no longer exists.
+= ตำแหน่งนี้ในคู่มือไม่มีอยู่แล้ว
+This Guide video is no longer available.
+= วิดีโอคู่มือนี้ไม่มีให้ดูแล้ว
+This add-on is not configured for direct GitHub release updates.
+= แอดออนนี้ไม่ได้ตั้งค่าให้อัปเดตตรงจากรุ่นบน GitHub
+This addon is pinned to an older copy. Replace it with the newest release?
+= แอดออนนี้ถูกตรึงไว้กับสำเนาเก่า แทนที่ด้วยรุ่นล่าสุดไหม?
+This class talent page is no longer available.
+= หน้าทาเลนต์ของอาชีพนี้ไม่มีแล้ว
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= รายการโปรดนี้ไม่ตรงกับหน้าคู่มือใดแล้ว ผูกหน้าใหม่เพื่ออัปเดต
+Today
+= วันนี้
+UPDATE ALL
+= อัปเดตทั้งหมด
+USE DROPBOX
+= ใช้ DROPBOX
+USE GOOGLE DRIVE
+= ใช้ GOOGLE DRIVE
+Undated
+= ไม่มีวันที่
+Use the arrow keys to browse links and Enter to open one.
+= ใช้ปุ่มลูกศรเพื่อเลื่อนดูลิงก์ และ Enter เพื่อเปิด
+Use the star on a guide page to save its reading position to Quick Access.
+= ใช้ดาวบนหน้าคู่มือเพื่อบันทึกตำแหน่งการอ่านไปยังการเข้าถึงด่วน
+WINDOWS PC
+= พีซี WINDOWS
+WINS
+= ชนะ
+Waiting for the Dropbox sign-in...
+= กำลังรอการลงชื่อเข้าใช้ Dropbox...
+Waiting for the Google sign-in...
+= กำลังรอการลงชื่อเข้าใช้ Google...
+Wiki
+= Wiki
+Work in Progress
+= กำลังพัฒนา
+Written Guides
+= คู่มือแบบข้อความ
+YES, I HAVE THE CLIENT
+= ใช่ ฉันมีตัวเกม
+Yesterday
+= เมื่อวาน
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= คุณเลือกว่ามีเกมอยู่แล้ว แต่ไม่พบ AzerothSurvivors.exe ในโฟลเดอร์ที่เลือก เลือกโฟลเดอร์เกมที่ถูกต้องเพื่อดำเนินการต่อ การตั้งค่าจะไม่เสนอดาวน์โหลดเกมเมื่อเลือกตัวเกมที่มีอยู่
+ranks
+= ระดับ
+times
+= ครั้ง
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= หากเกมแครช เกมได้บันทึกรายงานการแครชไว้ในโฟลเดอร์ Diagnostics การส่งรายงานให้ผู้พัฒนาเกมช่วยแก้ปัญหาได้
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= แอดออน AZS ที่ไม่ได้อัปเดต: {0}
+  Addons for the synced settings not checked: {0}
+= แอดออนสำหรับการตั้งค่าที่ซิงก์ซึ่งไม่ได้ตรวจสอบ: {0}
+1  FOLLOW THE PATH
+= 1  เดินตามเส้นทาง
+2  SAVE A FAVORITE
+= 2  บันทึกรายการโปรด
+4 armor pieces at 1+ stars
+= ชุดเกราะ 4 ชิ้นที่ 1+ ดาว
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= ติดตั้งลันเชอร์ใหม่ ({0}) ก่อน กด เล่น อีกครั้งหลังรีสตาร์ท
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= อัปเดตแอดออนแล้ว: {0} ล้มเหลว: {1} ข้อผิดพลาดการตรวจสอบ: {2}
+All addons {0}
+= แอดออนทั้งหมด {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats บันทึกรอบการเล่นและการเปลี่ยนบิลด์ในเกม (/azstats) ลันเชอร์แสดงยอดรวมที่บันทึก อาชีพ รายงานรอบล่าสุด ตัวอย่างการต่อสู้ และบันทึกบิลด์ที่สังเกตได้ รายงาน การเปรียบเทียบ และ HUD ที่ปรับได้ยังอยู่ในแอดออน
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats บันทึกรอบการเล่นและการเปลี่ยนบิลด์ที่สังเกตได้ในเกม (/azstats) ลันเชอร์แสดงยอดรวมที่บันทึก อาชีพ รายงานรอบล่าสุด ตัวอย่างการต่อสู้ และบันทึกบิลด์ รายงาน การเปรียบเทียบ และ HUD ของแอดออนยังอยู่ที่นั่น
+Best level {#0}
+= เลเวลดีที่สุด {#0}
+Best level: {#0}
+= เลเวลดีที่สุด: {#0}
+Best together: {0}, level {#1}
+= ดีที่สุดเมื่อเล่นด้วยกัน: {0}, เลเวล {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= เซฟบนคลาวด์หยุดชั่วคราว: {0} ต้องใช้ STEAM DECK ทดลอง (ตัวเลือก > ลันเชอร์) เซสชันนี้ไม่ถูกซิงก์
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= เซฟบนคลาวด์ตั้งไว้ที่ {0} ซึ่งต้องใช้ STEAM DECK ทดลอง (ตัวเลือก > ลันเชอร์) เปิดใหม่อีกครั้ง หรือเลือกโฟลเดอร์ซิงก์ด้านล่าง
+Confirmed {#0} · probable {#1}
+= ยืนยัน {#0} · น่าจะ {#1}
+Could not install {0}:\n\n{1}
+= ติดตั้ง {0} ไม่ได้:\n\n{1}
+Could not save the game setting:
+= บันทึกการตั้งค่าเกมไม่ได้:
+Could not uninstall {0}:\n\n{1}
+= ถอนการติดตั้ง {0} ไม่ได้:\n\n{1}
+Dropbox could not be reached ({0}).
+= ติดต่อ Dropbox ไม่ได้ ({0})
+Dropbox did not accept the sign-in: {0}
+= Dropbox ไม่ยอมรับการลงชื่อเข้าใช้: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox ปฏิเสธการลงชื่อเข้าใช้: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= รองรับ Steam Deck แบบทดลอง: ลันเชอร์เต็มหน้าจอในโหมดเกม เริ่มเกมในรายการ Steam เดียวกัน และหลบไปขณะคุณเล่น ตัวเลือก > ลันเชอร์ ใช้ปิด
+Game setting saved:
+= บันทึกการตั้งค่าเกมแล้ว:
+Google Drive refused the sign-in: {0}
+= Google Drive ปฏิเสธการลงชื่อเข้าใช้: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} จะอัปโหลดในการซิงก์ครั้งถัดไป
+Google could not be reached ({0}).
+= ติดต่อ Google ไม่ได้ ({0})
+Google did not start the sign-in: {0}
+= Google ไม่ได้เริ่มการลงชื่อเข้าใช้: {0}
+Google sign-in failed: {0}
+= ลงชื่อเข้าใช้ Google ล้มเหลว: {0}
+Highest observed rank {#0}
+= ระดับสูงสุดที่สังเกตได้ {#0}
+Installing {0} ({1})...
+= กำลังติดตั้ง {0} ({1})...
+It killed you {#0} times
+= มันฆ่าคุณ {#0} ครั้ง
+Longest: {0}
+= นานที่สุด: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= ไม่มีไฟล์ใดในรุ่นนี้ที่มี {0} (โฟลเดอร์ที่มีไฟล์ .toc) แม้แต่ซอร์สโค้ด ไม่มีการติดตั้งใดๆ
+Observed in {#0} runs · rank gains {#1}
+= พบใน {#0} รอบ · เลื่อนระดับ {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= เคยเล่น Azeroth Survivors บนเบราว์เซอร์ไหม? นำความคืบหน้ามาด้วย: ฮีโร่ โซนที่เปิด อุปกรณ์ ทาเลนต์ และ codex\n\nบนเว็บไซต์ เปิด Options > Saves แล้วกด Export Save จากนั้นเลือกไฟล์ .sav นั้นที่นี่ เกมจะเปิดพร้อมความคืบหน้าของคุณ
+Quick Access {0}
+= เข้าถึงด่วน {0}
+Rank {#0}
+= ระดับ {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= ลบ {0} ออกจากการเข้าถึงด่วนแล้ว ใช้ดาวในคู่มือหรือปุ่มรายการโปรดของส่วนเพื่อเพิ่มอีกครั้ง
+Runs {#0} · Victories {#1}
+= รอบ {#0} · ชนะ {#1}
+Runs: {#0}
+= รอบ: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= บันทึกไว้ในสำเนาของลันเชอร์ แต่ติดต่อ {0} ไม่ได้: {1} จะอัปโหลดในการซิงก์ครั้งถัดไป
+Survived {0} · Level {1}
+= รอด {0} · เลเวล {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= รอด {0} · เลเวล {1} · สังหาร {2} · ทอง {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= นี่คือระดับบนสุดของไดรฟ์คลาวด์ของคุณ\n\nสร้างและใช้โฟลเดอร์ย่อยชื่อ Azeroth Survivor Launcher ในนั้นไหม?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= อัปเดตแอดออนล้มเหลว เก็บไฟล์เดิมไว้กู้คืนใน {0} {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= ไฟล์ที่ดาวน์โหลดจาก {0} เสียหายหรือไม่ใช่ไฟล์ที่ถูกต้อง (checksum ไม่ตรง) โปรดลองใหม่
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= ลันเชอร์แทนที่ตัวเองในโฟลเดอร์นี้ไม่ได้ ({0})\n\nดาวน์โหลดเวอร์ชันใหม่จาก GitHub แทน:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= ติดต่อตัวส่งต่อการลงชื่อเข้าใช้ (ntfy.sh) ไม่ได้ ({0}) ลองใหม่อีกครู่
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} เสนอไฟล์ต่างจากที่คาด ({1} แทน {2})
+The {0} server answered with error {1}.
+= เซิร์ฟเวอร์ {0} ตอบกลับด้วยข้อผิดพลาด {1}
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= ไม่พบโฟลเดอร์เหล่านี้:\n\n  {0}\n\nทำให้เสร็จอยู่ดีไหม? เปลี่ยนได้ภายหลังในตัวเลือก
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= พีซีนี้มีความคืบหน้าในเกมอยู่แล้ว\n\nแทนที่ด้วย {0} ไหม?\nข้อมูลปัจจุบันจะถูกเก็บเป็นสำรองในโฟลเดอร์ Saves ของเกม
+This launcher was built without {0}.
+= ลันเชอร์นี้ถูกสร้างโดยไม่มี {0}
+Time {0}
+= เวลา {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows ป้องกันการลงชื่อเข้าใช้บนอุปกรณ์นี้ไม่ได้ จึงไม่ได้เก็บไว้ ({0})
+Won: {#0}
+= ชนะ: {#0}
+You beat it {#0} times
+= คุณเอาชนะมัน {#0} ครั้ง
+and enter this code:
+= และใส่โค้ดนี้:
+since {0}
+= ตั้งแต่ {0}
+✓ Imported: {0}
+= ✓ นำเข้าแล้ว: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ เลือกเซฟแล้ว: {0} (จะนำเข้าเมื่อตั้งค่าเสร็จ)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= เปลี่ยนในแพตช์เกม {0}
+What changed since you last played
+= สิ่งที่เปลี่ยนไปตั้งแต่คุณเล่นครั้งล่าสุด
+THE GAME
+= เกม
+THE LAUNCHER
+= ลันเชอร์
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= แพตช์อื่นๆ อยู่ในหน้าข่าว
+Patch {0}
+= แพตช์ {0}
+Launcher {0}
+= ลันเชอร์ {0}
+Updated from {0} to {1}.
+= อัปเดตจาก {0} เป็น {1}
+Personal records
+= สถิติส่วนตัว
+Play a few runs with Azeroth Stats to see your records here.
+= เล่นสักสองสามรอบด้วย Azeroth Stats เพื่อดูสถิติของคุณที่นี่
+Fastest victory {0}
+= ชนะเร็วที่สุด {0}
+Highest level {0}
+= เลเวลสูงสุด {0}
+Most kills {0}
+= สังหารมากที่สุด {0}
+best DPS
+= DPS ดีที่สุด
+Solo and co-op runs
+= รอบเดี่ยวและโคออป
+Runs (solo / co-op)
+= รอบ (เดี่ยว / โคออป)
+Win rate (solo / co-op)
+= อัตราชนะ (เดี่ยว / โคออป)
+Average run (solo / co-op)
+= รอบเฉลี่ย (เดี่ยว / โคออป)
+Average level (solo / co-op)
+= เลเวลเฉลี่ย (เดี่ยว / โคออป)
+Average DPS (solo / co-op)
+= DPS เฉลี่ย (เดี่ยว / โคออป)

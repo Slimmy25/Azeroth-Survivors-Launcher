@@ -287,7 +287,17 @@ namespace AzerothLauncher
             {
                 c.Data = null;
             }
-            if (c.Data == null) c.Data = new Dictionary<string, object>();
+            if (c.Data == null)
+            {
+                // settings that exist but cannot be read are kept aside first: the next save would otherwise replace them
+                try
+                {
+                    if (File.Exists(FilePath))
+                        File.Copy(FilePath, FilePath + ".broken-" + DateTime.Now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture), true);
+                }
+                catch (Exception) { }
+                c.Data = new Dictionary<string, object>();
+            }
             return c;
         }
 
@@ -301,32 +311,34 @@ namespace AzerothLauncher
             try
             {
                 Directory.CreateDirectory(AppDir);
-                Util.WriteAtomic(FilePath, Json.Write(Data, true));
+                string text;
+                lock (Data) text = Json.Write(Data, true);   // background tasks read and write settings too
+                Util.WriteAtomic(FilePath, text);
             }
             catch (Exception) { }
         }
 
-        public bool Has(string key) { return Data.ContainsKey(key); }
+        public bool Has(string key) { lock (Data) return Data.ContainsKey(key); }
 
         public string Str(string key)
         {
             object v;
-            if (!Data.TryGetValue(key, out v) || v == null) return "";
+            lock (Data) if (!Data.TryGetValue(key, out v) || v == null) return "";
             return Convert.ToString(v, CultureInfo.InvariantCulture);
         }
 
         public bool Bool(string key, bool def)
         {
             object v;
-            if (!Data.TryGetValue(key, out v) || v == null) return def;
+            lock (Data) if (!Data.TryGetValue(key, out v) || v == null) return def;
             if (v is bool) return (bool)v;
             if (v is long) return (long)v != 0;
             string s = v as string;
             return s != null ? s.Length > 0 : def;
         }
 
-        public void Set(string key, object value) { Data[key] = value; }
-        public void Remove(string key) { Data.Remove(key); }
+        public void Set(string key, object value) { lock (Data) Data[key] = value; }
+        public void Remove(string key) { lock (Data) Data.Remove(key); }
 
         // a nested object, created when asked for
         public Dictionary<string, object> Section(string key)
@@ -495,17 +507,14 @@ namespace AzerothLauncher
         public const string DataFolderName = "Azeroth Survivor Launcher";
         static string dataDir;
         static bool dataBesideExe;
-        static bool newFolder;
 
-        // the exe started in a folder with neither the launcher's own folder nor the game beside it (a new copy, a new
-        // place): a new player as far as the launcher is concerned, so first-time setup runs whatever else it finds
-        public static bool NewFolderAtStart { get { InitData(); return newFolder; } }
         static readonly object dataLock = new object();
 
         public static string DataDir { get { InitData(); return dataDir; } }
         public static bool DataBesideExe { get { InitData(); return dataBesideExe; } }
         public static string StateDir { get { return DataDir; } }
-        public static string TempDir { get { return Path.Combine(DataDir, "temp"); } }
+        public static string TempDir { get { return Path.Combine(DataDir, "temp"); } }       // scratch: emptied at every start
+        public static string CacheDir { get { return Path.Combine(DataDir, "cache"); } }     // kept between starts (icons, thumbnails, GitHub answers)
         // the game's download, beside the launcher: a folder name of this project's own, never a player's "temp"
         public const string DownloadTempName = "Azeroth Survivors Launcher - Temp";
 
@@ -517,11 +526,10 @@ namespace AzerothLauncher
                 if(LauncherApp.PreviewMode || Program.DisplayPreviewBuild)
                 {
                     dataDir=Path.Combine(LauncherDir,Program.DisplayPreviewBuild?"Display Preview Data":"preview-runtime-data");
-                    newFolder=!Directory.Exists(dataDir); dataBesideExe=true;
+                    dataBesideExe=true;
                     return; // QA never migrates or shares public settings, sync state, logs or backups.
                 }
                 string beside = Path.Combine(LauncherDir, DataFolderName);
-                newFolder = !Directory.Exists(beside) && !File.Exists(Path.Combine(LauncherDir, GameExe));
                 if (!InCloudDrive(LauncherDir) && Writable(beside))
                 {
                     dataDir = beside;
@@ -696,18 +704,27 @@ namespace AzerothLauncher
         // Deletes a folder and everything in it. Read-only flags (on files and folders) are cleared first, and each file
         // and folder is deleted on its own with a few short retries: OneDrive, an antivirus or the search indexer often
         // hold a file for a moment, which made a single Directory.Delete fail with "access is denied".
+        // A folder that is a link (a junction or symbolic link, as addon authors use to link their own working folder into
+        // AddOns) is removed as a link only: what it points to is never entered, so the real files stay.
         public static void DeleteTree(string path)
         {
             if (!Directory.Exists(path)) return;
-            var dirs = new List<string>(Directory.GetDirectories(path, "*", SearchOption.AllDirectories));
-            dirs.Sort(delegate(string a, string b) { return b.Length.CompareTo(a.Length); });   // deepest first
-            dirs.Add(path);
-            foreach (string d in dirs)
-                try { new DirectoryInfo(d).Attributes = FileAttributes.Directory; } catch (Exception) { }
-            foreach (string f in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+            if (IsLink(path))
+            {
+                Retry(delegate { if (Directory.Exists(path)) Directory.Delete(path, false); });
+                return;
+            }
+            try { new DirectoryInfo(path).Attributes = FileAttributes.Directory; } catch (Exception) { }
+            foreach (string d in Directory.GetDirectories(path)) DeleteTree(d);
+            foreach (string f in Directory.GetFiles(path))
                 Retry(delegate { File.SetAttributes(f, FileAttributes.Normal); File.Delete(f); });
-            foreach (string d in dirs)
-                Retry(delegate { if (Directory.Exists(d)) Directory.Delete(d, false); });
+            Retry(delegate { if (Directory.Exists(path)) Directory.Delete(path, false); });
+        }
+
+        public static bool IsLink(string path)
+        {
+            try { return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0; }
+            catch (Exception) { return false; }
         }
 
         static void Retry(Action a)
@@ -744,6 +761,17 @@ namespace AzerothLauncher
 
         public static void OpenInShell(string target)
         {
+            // Steam's Game Mode shows no browser: the address is shown instead, to open on a phone or PC
+            if (Handheld.GameMode && target != null && target.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (Form f in Application.OpenForms)
+                {
+                    var app = f as LauncherApp;
+                    if (app == null) continue;
+                    app.Warn("Open on your phone", "Steam's Game Mode cannot open web pages from here. Open this address on your phone or PC:\n\n" + target);
+                    return;
+                }
+            }
             try { System.Diagnostics.Process.Start(target); }
             catch (Exception) { }
         }

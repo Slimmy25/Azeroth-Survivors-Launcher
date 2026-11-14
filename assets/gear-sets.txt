@@ -38,7 +38,7 @@ paladin | Legendary | Exorcism leaps to 3 more enemies for 75% of its damage.
 # Hunter: Tracker's, Beaststalker's, Giantstalker's, Dragonstalker's, Field Marshal's, Cryptstalker
 hunter | Common | Every 5 Auto Shots fire a free Multi-Shot.
 hunter | Uncommon | When its victim dies, Serpent Sting leaps to 2 enemies near it.
-hunter | Rare | Explosive Trap is 50% wider and deals 30% more damage.
+hunter | Rare | Kill Command's cooldown is 20% shorter and its damage 30% higher.
 hunter | Epic | Volley moves with you and lasts 50% longer.
 hunter | PvP | Concussive Shot strikes 5 more enemies, deals 150% more damage and comes back 40% sooner, and you deal 100% more damage to enemies you stun, root, slow or fear.
 hunter | Legendary | Aimed Shot pierces to 4 more enemies for 60% of its damage.

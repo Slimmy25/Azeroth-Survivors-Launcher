@@ -132,7 +132,7 @@ namespace AzerothLauncher
         bool CloseAfterSession(List<string> problems)
         {
             if (!CloseAfterPlaying() || problems.Count > 0 || PreviewMode) return false;
-            SetStatus("The game has closed and the cloud save is uploaded. Closing the launcher...");
+            SetStatus(CloudEnabled() ? "The game has closed and the cloud save is uploaded. Closing the launcher..." : "The game has closed. Closing the launcher...");
             After(1500, QuitApp);
             return true;
         }

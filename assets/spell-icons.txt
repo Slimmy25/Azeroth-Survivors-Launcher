@@ -205,3 +205,5 @@ Heroic Strike|ability_rogue_ambush
 Fan of Knives|ability_rogue_fanofknives
 Rockbiter Weapon|spell_nature_rockbiter
 Stormstrike|spell_nature_cyclone
+Butcher|spell_deathknight_butcher2
+Radiance|inv_inscriptions_darkmoondeckshine_0

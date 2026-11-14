@@ -2032,3 +2032,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Κλείστε πρώτα το παιχνίδι, την εγκατάσταση ή τον συγχρονισμό cloud και μετά ελέγξτε ξανά για ενημέρωση.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Το Launcher {0} είναι έτοιμο. Επιλέξτε Εγκατάσταση ενημέρωσης στις Επιλογές > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Οι ικανότητες καταγράφονται για παρτίδες που παίχτηκαν με ενεργό το addon στατιστικών.
+Addon release check complete.
+= Ο έλεγχος εκδόσεων των addon ολοκληρώθηκε.
+Affects
+= Επηρεάζει
+All 8 armor pieces at 3+ stars
+= Και τα 8 κομμάτια πανοπλίας στα 3+ αστέρια
+All ten Quick Access favorites are full. Remove one before adding another.
+= Και τα δέκα αγαπημένα της Γρήγορης πρόσβασης είναι γεμάτα. Αφαιρέστε ένα πριν προσθέσετε άλλο.
+An addon operation is already running.
+= Μια λειτουργία addon εκτελείται ήδη.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Με 5 αστέρια και στα 8 κομμάτια, αυτό το μπόνους είναι κατά το ήμισυ ισχυρότερο.
+Average time
+= Μέσος χρόνος
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Το Azeroth Stats λείπει από τη Λήψη περισσότερων.
+BACK
+= ΠΙΣΩ
+Back to Top
+= Στην κορυφή
+Best level
+= Καλύτερο επίπεδο
+Bright: victories · faint: all runs
+= Φωτεινό: νίκες · αχνό: όλες οι παρτίδες
+Brighter: more runs that day
+= Φωτεινότερο: περισσότερες παρτίδες εκείνη τη μέρα
+Browse class build videos already featured in the guide.
+= Δείτε βίντεο build κλάσεων που υπάρχουν ήδη στον οδηγό.
+Browse class, item, and transmog references in the Wiki.
+= Δείτε πληροφορίες για κλάσεις, αντικείμενα και transmog στο Wiki.
+Build Videos
+= Βίντεο build
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Φτιάξτε ταλέντα, σχεδιάστε εξοπλισμό και αλλάξτε εργαλείο κρατώντας την επιλεγμένη κλάση.
+Build class
+= Κλάση build
+CANCEL DOWNLOAD & CLOSE
+= ΑΚΥΡΩΣΗ ΛΗΨΗΣ & ΚΛΕΙΣΙΜΟ
+CHECK AGAIN
+= ΕΛΕΓΧΟΣ ΞΑΝΑ
+CHOOSE FOLDER
+= ΕΠΙΛΟΓΗ ΦΑΚΕΛΟΥ
+CHOOSE GAME FOLDER
+= ΕΠΙΛΟΓΗ ΦΑΚΕΛΟΥ ΠΑΙΧΝΙΔΙΟΥ
+CLEAR
+= ΕΚΚΑΘΑΡΙΣΗ
+COPY
+= ΑΝΤΙΓΡΑΦΗ
+Checking addon releases...
+= Έλεγχος εκδόσεων addon...
+Choose an option on this setup step to continue.
+= Επιλέξτε μια επιλογή σε αυτό το βήμα για να συνεχίσετε.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Επιλέξτε τον φάκελο με το AzerothSurvivors.exe για να συνεχίσετε.
+Choose the folder that contains the existing game client before continuing.
+= Επιλέξτε τον φάκελο με το υπάρχον πρόγραμμα του παιχνιδιού πριν συνεχίσετε.
+Classes you play
+= Κλάσεις που παίζετε
+Close the game first: it saves its own settings when it closes.
+= Κλείστε πρώτα το παιχνίδι: αποθηκεύει τις ρυθμίσεις του όταν κλείνει.
+Cloud Save uses Dropbox again.
+= Η αποθήκευση cloud χρησιμοποιεί ξανά το Dropbox.
+Cloud Save uses Google Drive again.
+= Η αποθήκευση cloud χρησιμοποιεί ξανά το Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Η αποθήκευση cloud χρειάζεται φάκελο αποθηκεύσεων παιχνιδιού, ή απενεργοποιήστε την.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Η αποθήκευση cloud χρειάζεται φάκελο συγχρονισμού, ή απενεργοποιήστε την.
+Code copied.
+= Ο κωδικός αντιγράφηκε.
+Codex
+= Codex
+Companions observed in runs
+= Σύντροφοι που εμφανίστηκαν σε παρτίδες
+Connecting Dropbox...
+= Σύνδεση στο Dropbox...
+Connecting Google Drive...
+= Σύνδεση στο Google Drive...
+Contacting Google...
+= Επικοινωνία με την Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Οι προεπιλογές έχουν συμπληρωθεί. Αλλάξτε φάκελο αν τα αρχεία σας είναι αλλού.
+Defeats
+= Ήττες
+Display Preview uses local builds; public updates stay separate.
+= Η προεπισκόπηση οθόνης χρησιμοποιεί τοπικά build· οι δημόσιες ενημερώσεις μένουν χωριστά.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Έχετε ήδη κατεβάσει το Azeroth Survivors σε αυτόν τον υπολογιστή;\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Έχετε ήδη το πρόγραμμα του Azeroth Survivors σε αυτόν τον υπολογιστή;
+Downloading the game
+= Λήψη του παιχνιδιού
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck πειραματικό)
+Dropbox connected
+= Το Dropbox συνδέθηκε
+Dropbox sign-in discarded.
+= Η σύνδεση στο Dropbox απορρίφθηκε.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Το Dropbox σας συνέδεσε, αλλά δεν έδωσε μόνιμη πρόσβαση στον launcher. Δοκιμάστε ξανά.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Η σύνδεση στο Dropbox έληξε (αφαιρέθηκε ή έληξε). Συνδεθείτε ξανά από Επιλογές > Αποθήκευση cloud.
+EXPORT ASBUILDS
+= ΕΞΑΓΩΓΗ ASBUILDS
+EXPORT PROFILE
+= ΕΞΑΓΩΓΗ ΠΡΟΦΙΛ
+Ended
+= Ολοκληρώθηκε
+Error log copied.
+= Το αρχείο σφαλμάτων αντιγράφηκε.
+Every addon is on its latest release.
+= Όλα τα addon είναι στην τελευταία έκδοση.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Τα υπάρχοντα αρχεία AZS Stats διατηρούνται. Το ιστορικό τους δεν συγχωνεύεται στο Azeroth Stats.
+Existing game folder needs attention
+= Ο υπάρχων φάκελος παιχνιδιού χρειάζεται προσοχή
+Existing save kept. Setup is still open; you can finish without importing it.
+= Η υπάρχουσα αποθήκευση διατηρήθηκε. Η ρύθμιση είναι ακόμη ανοιχτή· μπορείτε να ολοκληρώσετε χωρίς εισαγωγή.
+FINISH SETUP
+= ΟΛΟΚΛΗΡΩΣΗ ΡΥΘΜΙΣΗΣ
+Feedback copied.
+= Τα σχόλια αντιγράφηκαν.
+Finish the current update, install, or game session before continuing setup.
+= Ολοκληρώστε την τρέχουσα ενημέρωση, εγκατάσταση ή συνεδρία παιχνιδιού πριν συνεχίσετε τη ρύθμιση.
+First Time Setup
+= Πρώτη ρύθμιση
+Game client
+= Πρόγραμμα παιχνιδιού
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Η λήψη του παιχνιδιού ακυρώθηκε. Επιλέξτε ΕΓΚΑΤΑΣΤΑΣΗ όταν θέλετε να δοκιμάσετε ξανά.
+Gear section
+= Ενότητα εξοπλισμού
+GitHub returned invalid release information. Nothing was installed.
+= Το GitHub επέστρεψε μη έγκυρες πληροφορίες έκδοσης. Δεν εγκαταστάθηκε τίποτα.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Συμπληρώθηκε το όριο αιτημάτων του GitHub. Περιμένετε και δοκιμάστε ξανά. Δεν εγκαταστάθηκε τίποτα.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck πειραματικό)
+Google Drive connected
+= Το Google Drive συνδέθηκε
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Το Google Drive δεν διέθεσε το αρχείο αυτή τη στιγμή (ίσως έφτασε το όριο λήψεων).
+Google Drive made a folder but did not say which.
+= Το Google Drive δημιούργησε φάκελο αλλά δεν είπε ποιον.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Η σύνδεση στο Google Drive έληξε (αφαιρέθηκε ή έληξε). Συνδεθείτε ξανά από Επιλογές > Αποθήκευση cloud.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Η Google σας συνέδεσε, αλλά δεν έδωσε μόνιμη πρόσβαση στον launcher. Δοκιμάστε ξανά.
+Google's sign-in answer was incomplete. Try again.
+= Η απάντηση σύνδεσης της Google ήταν ελλιπής. Δοκιμάστε ξανά.
+Guide links
+= Σύνδεσμοι οδηγού
+Healing
+= Θεραπεία
+Heroic
+= Ηρωικό
+IMPORT ASBUILDS
+= ΕΙΣΑΓΩΓΗ ASBUILDS
+IMPORT BUILD
+= ΕΙΣΑΓΩΓΗ BUILD
+INSTALL AZEROTH STATS
+= ΕΓΚΑΤΑΣΤΑΣΗ AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Αν ναι, θα επιλέξετε πού βρίσκονται το υπάρχον παιχνίδι και τα AddOns του. Αν όχι, το παιχνίδι θα κατέβει στον φάκελο αυτού του launcher.
+Interface size
+= Μέγεθος διεπαφής
+Interrupted
+= Διακόπηκε
+Items
+= Αντικείμενα
+Last 5 weeks
+= Τελευταίες 5 εβδομάδες
+Last step: download the game?
+= Τελευταίο βήμα: λήψη του παιχνιδιού;
+Latest retained spell build
+= Πιο πρόσφατο αποθηκευμένο build ξορκιών
+Locations validated. Continuing setup...
+= Οι τοποθεσίες ελέγχθηκαν. Η ρύθμιση συνεχίζεται...
+MENU ▾
+= ΜΕΝΟΥ ▾
+More entries are available on the Build Journal tab.
+= Περισσότερες εγγραφές στην καρτέλα Ημερολόγιο build.
+NO, DOWNLOAD IT
+= ΟΧΙ, ΚΑΤΕΒΑΣΕ ΤΟ
+Navigation
+= Πλοήγηση
+No build journal entries are stored in the retained runs yet.
+= Δεν υπάρχουν ακόμη εγγραφές ημερολογίου build στις αποθηκευμένες παρτίδες.
+No companion samples are recorded yet.
+= Δεν έχουν καταγραφεί ακόμη δεδομένα συντρόφων.
+No death evidence recorded yet.
+= Δεν έχουν καταγραφεί ακόμη αιτίες θανάτου.
+No download host worked.\n\n
+= Κανένας διακομιστής λήψης δεν λειτούργησε.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Δεν υπάρχει ακόμη στιγμιότυπο ξορκιών στις αποθηκευμένες παρτίδες.
+No source samples are available in retained runs.
+= Δεν υπάρχουν δεδομένα πηγών στις αποθηκευμένες παρτίδες.
+No spell rank trends are stored yet.
+= Δεν υπάρχουν ακόμη τάσεις βαθμίδων ξορκιών.
+No status messages yet.
+= Δεν υπάρχουν ακόμη μηνύματα κατάστασης.
+None selected
+= Τίποτα επιλεγμένο
+Normal
+= Κανονικό
+Not ready for release yet. Click to install it anyway.
+= Δεν είναι ακόμη έτοιμο για κυκλοφορία. Κάντε κλικ για εγκατάσταση έτσι κι αλλιώς.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Δεν έχετε συνδεθεί στο Dropbox. Συνδεθείτε από Επιλογές > Αποθήκευση cloud.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Δεν έχετε συνδεθεί στο Google Drive. Συνδεθείτε από Επιλογές > Αποθήκευση cloud.
+OPEN FOLDER
+= ΑΝΟΙΓΜΑ ΦΑΚΕΛΟΥ
+Observed attributions
+= Παρατηρούμενες αποδόσεις
+Observed build and equipment changes
+= Παρατηρούμενες αλλαγές build και εξοπλισμού
+Observed build journal
+= Παρατηρούμενο ημερολόγιο build
+Observed death sources
+= Παρατηρούμενες αιτίες θανάτου
+Observed in the most recent retained run
+= Παρατηρήθηκε στην πιο πρόσφατη αποθηκευμένη παρτίδα
+Observed party sample
+= Παρατηρούμενο δείγμα ομάδας
+Observed run
+= Παρατηρούμενη παρτίδα
+Observed status
+= Παρατηρούμενη κατάσταση
+On your phone or computer, open
+= Στο κινητό ή στον υπολογιστή, ανοίξτε
+On your phone, open
+= Στο κινητό, ανοίξτε
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Μία πλήρης κατάσταση κερδίζει, η άλλη αντιγράφεται πρώτα.\nΠρώτη φορά σε αυτόν τον υπολογιστή; Επιλέξτε ΧΡΗΣΗ CLOUD.\n
+Open on your phone
+= Άνοιγμα στο κινητό
+Partial
+= Μερική
+Partial observation
+= Μερική παρατήρηση
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Επικολλήστε παρακάτω έναν κωδικό build ταλέντων. Αν υπάρχει στο πρόχειρο, συμπληρώνεται αυτόματα.
+Peel this corner to switch theorycrafting tools.
+= Ξεκολλήστε αυτή τη γωνία για αλλαγή εργαλείου theorycrafting.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Παίξτε μερικές παρτίδες με το Azeroth Stats για να δείτε το DPS σας στον χρόνο.
+Playing on a Steam Deck?
+= Παίζετε σε Steam Deck;
+Playing without cloud sync this time
+= Παιχνίδι χωρίς συγχρονισμό cloud αυτή τη φορά
+Preparing the Dropbox sign-in...
+= Προετοιμασία σύνδεσης στο Dropbox...
+Priest
+= Ιερέας
+Priest guide
+= Οδηγός ιερέα
+QUICK ACCESS
+= ΓΡΗΓΟΡΗ ΠΡΟΣΒΑΣΗ
+Rings & Trinkets
+= Δαχτυλίδια & μπιχλιμπίδια
+Runs observed
+= Παρατηρούμενες παρτίδες
+SIGN IN WITH DROPBOX
+= ΣΥΝΔΕΣΗ ΜΕ DROPBOX
+SIGN IN WITH GOOGLE
+= ΣΥΝΔΕΣΗ ΜΕ GOOGLE
+SIGN OUT
+= ΑΠΟΣΥΝΔΕΣΗ
+START OVER
+= ΕΚΚΙΝΗΣΗ ΑΠΟ ΤΗΝ ΑΡΧΗ
+STAY & FINISH
+= ΠΑΡΑΜΟΝΗ & ΟΛΟΚΛΗΡΩΣΗ
+STEAM DECK / HANDHELD
+= STEAM DECK / ΦΟΡΗΤΗ
+STEAM DECK EXPERIMENTAL
+= STEAM DECK ΠΕΙΡΑΜΑΤΙΚΟ
+Save favorite
+= Αποθήκευση αγαπημένου
+Save this location to Quick Access.
+= Αποθήκευση αυτής της θέσης στη Γρήγορη πρόσβαση.
+Save to Quick Access
+= Αποθήκευση στη Γρήγορη πρόσβαση
+Save where? The current location, the top of this page, or the closest category header.
+= Πού να αποθηκευτεί; Η τρέχουσα θέση, η αρχή της σελίδας ή η πλησιέστερη επικεφαλίδα κατηγορίας.
+Saved in
+= Αποθηκεύτηκε σε
+Scaling video fixture
+= Δοκιμαστικό βίντεο κλιμάκωσης
+Setup is only available while the setup guide is open.
+= Η ρύθμιση είναι διαθέσιμη μόνο όσο είναι ανοιχτός ο οδηγός ρύθμισης.
+Sign in to Google Drive
+= Σύνδεση στο Google Drive
+Signed out of Dropbox.
+= Αποσυνδεθήκατε από το Dropbox.
+Signed out of Google Drive.
+= Αποσυνδεθήκατε από το Google Drive.
+Skip/Stop
+= Παράλειψη/Διακοπή
+Some addons could not be changed:\n\n
+= Ορισμένα addon δεν μπόρεσαν να αλλάξουν:\n\n
+Spell pool
+= Δεξαμενή ξορκιών
+Spell rank trends · observed, not exact card picks
+= Τάσεις βαθμίδων ξορκιών · παρατηρούμενες, όχι ακριβείς επιλογές καρτών
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Ξεκινήστε εδώ: μάθετε τα χειριστήρια, την πρώτη σας παρτίδα και τα συστήματα που βοηθούν στο ξεκίνημα.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / φορητή ή υπολογιστής Windows;
+Stopping the game download before closing...
+= Διακοπή λήψης του παιχνιδιού πριν το κλείσιμο...
+Support the Dev
+= Στηρίξτε τον δημιουργό
+Talent build code
+= Κωδικός build ταλέντων
+Temporarily unavailable while work is in progress.
+= Προσωρινά μη διαθέσιμο όσο γίνονται εργασίες.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Ευχαριστώ που χρησιμοποιείτε τον launcher μου από την κοινότητα. Φτιάχτηκε για να γιορτάσουμε πόσο τέλειο είναι αυτό το παιχνίδι και να είναι ένα ενιαίο σημείο για όλα όσα αφορούν το Azeroth Survivors\n\n
+That file does not exist.
+= Αυτό το αρχείο δεν υπάρχει.
+That is not an Azeroth Survivors save file.
+= Αυτό δεν είναι αρχείο αποθήκευσης του Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= Αυτό δεν είναι αρχείο αποθήκευσης του Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Το περιεχόμενο του αρχείου άλλαξε κατά την αποσυμπίεση. Δεν εγκαταστάθηκε τίποτα.
+The clipboard is busy. Try copying again.
+= Το πρόχειρο είναι απασχολημένο. Δοκιμάστε να αντιγράψετε ξανά.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Το υπάρχον παιχνίδι δεν βρέθηκε σε αυτόν τον φάκελο. Επιλέξτε τον φάκελο με το AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Το αρχείο του παιχνιδιού περιέχει δεσμευμένο όνομα αρχείου Windows. Δεν εγκαταστάθηκε τίποτα.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Το αρχείο του παιχνιδιού περιέχει κενή διαδρομή ή συμβολικό σύνδεσμο. Δεν εγκαταστάθηκε τίποτα.
+The game archive contains an unsafe path. Nothing was installed.
+= Το αρχείο του παιχνιδιού περιέχει μη ασφαλή διαδρομή. Δεν εγκαταστάθηκε τίποτα.
+The game archive contains conflicting file paths. Nothing was installed.
+= Το αρχείο του παιχνιδιού περιέχει αντικρουόμενες διαδρομές αρχείων. Δεν εγκαταστάθηκε τίποτα.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Το αρχείο του παιχνιδιού περιέχει διπλές ή αντικρουόμενες διαδρομές αρχείων. Δεν εγκαταστάθηκε τίποτα.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Το αρχείο του παιχνιδιού δεν αποσυμπιέστηκε. Ίσως είναι κατεστραμμένο, κρυπτογραφημένο, ελλιπές ή χρησιμοποιεί μη υποστηριζόμενη μέθοδο. Δεν εγκαταστάθηκε τίποτα.
+The game archive format is not supported by the built-in extractor.
+= Η μορφή του αρχείου του παιχνιδιού δεν υποστηρίζεται από τον ενσωματωμένο αποσυμπιεστή.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Το αρχείο του παιχνιδιού είναι ελλιπές ή χρειάζεται άλλο τμήμα. Δεν εγκαταστάθηκε τίποτα.
+The game archive is password-protected. Please use an unencrypted game download.
+= Το αρχείο του παιχνιδιού προστατεύεται με κωδικό. Χρησιμοποιήστε μη κρυπτογραφημένη λήψη.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Ο φάκελος ρυθμίσεων του παιχνιδιού δεν έχει οριστεί. Ορίστε τον στις Επιλογές > ΦΑΚΕΛΟΙ.
+The game files are being installed. The launcher will close when that finishes.
+= Τα αρχεία του παιχνιδιού εγκαθίστανται. Ο launcher θα κλείσει όταν τελειώσει.
+The game is running: close it first, it saves its own settings when it closes.
+= Το παιχνίδι τρέχει: κλείστε το πρώτα, αποθηκεύει τις ρυθμίσεις του όταν κλείνει.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Το παιχνίδι ή ο συγχρονισμός ξεκίνησε ενώ κατέβαινε το addon. Τα εγκατεστημένα αρχεία δεν άλλαξαν· δοκιμάστε ξανά αφού κλείσει.
+The launcher closes by itself once your progress is saved.
+= Ο launcher κλείνει μόνος του μόλις αποθηκευτεί η πρόοδός σας.
+The launcher is already running. Look for its window on the taskbar.
+= Ο launcher τρέχει ήδη. Αναζητήστε το παράθυρό του στη γραμμή εργασιών.
+The save could not be imported:\n\n
+= Η αποθήκευση δεν μπόρεσε να εισαχθεί:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Ο κωδικός σύνδεσης έληξε πριν χρησιμοποιηθεί. Πατήστε ξανά ΣΥΝΔΕΣΗ ΜΕ DROPBOX.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Ο κωδικός σύνδεσης έληξε πριν χρησιμοποιηθεί. Πατήστε ξανά ΣΥΝΔΕΣΗ ΜΕ GOOGLE.
+The sign-in was declined on Dropbox's page.
+= Η σύνδεση απορρίφθηκε στη σελίδα του Dropbox.
+The sign-in was declined on Google's page.
+= Η σύνδεση απορρίφθηκε στη σελίδα της Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Στη συνέχεια επιτρέψτε στο Azeroth Survivors Launcher να χρησιμοποιεί δικό του φάκελο στο Google Drive σας. Η σελίδα κλείνει μόνη της μόλις συνδεθείτε.
+This Codex entry's class guide is unavailable.
+= Ο οδηγός κλάσης αυτής της εγγραφής Codex δεν είναι διαθέσιμος.
+This Guide location no longer exists.
+= Αυτή η θέση του οδηγού δεν υπάρχει πια.
+This Guide video is no longer available.
+= Αυτό το βίντεο του οδηγού δεν είναι πια διαθέσιμο.
+This add-on is not configured for direct GitHub release updates.
+= Αυτό το add-on δεν έχει ρυθμιστεί για άμεσες ενημερώσεις από εκδόσεις GitHub.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Αυτό το addon είναι καρφιτσωμένο σε παλαιότερο αντίγραφο. Αντικατάσταση με την τελευταία έκδοση;
+This class talent page is no longer available.
+= Αυτή η σελίδα ταλέντων κλάσης δεν είναι πια διαθέσιμη.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Αυτό το αγαπημένο δεν αντιστοιχεί πια σε σελίδα του οδηγού. Συνδέστε ξανά τη σελίδα για να ενημερωθεί.
+Today
+= Σήμερα
+UPDATE ALL
+= ΕΝΗΜΕΡΩΣΗ ΟΛΩΝ
+USE DROPBOX
+= ΧΡΗΣΗ DROPBOX
+USE GOOGLE DRIVE
+= ΧΡΗΣΗ GOOGLE DRIVE
+Undated
+= Χωρίς ημερομηνία
+Use the arrow keys to browse links and Enter to open one.
+= Χρησιμοποιήστε τα βέλη για περιήγηση στους συνδέσμους και Enter για άνοιγμα.
+Use the star on a guide page to save its reading position to Quick Access.
+= Πατήστε το αστέρι σε σελίδα του οδηγού για να αποθηκεύσετε τη θέση ανάγνωσης στη Γρήγορη πρόσβαση.
+WINDOWS PC
+= ΥΠΟΛΟΓΙΣΤΗΣ WINDOWS
+WINS
+= ΝΙΚΕΣ
+Waiting for the Dropbox sign-in...
+= Αναμονή για σύνδεση στο Dropbox...
+Waiting for the Google sign-in...
+= Αναμονή για σύνδεση στην Google...
+Wiki
+= Wiki
+Work in Progress
+= Σε εξέλιξη
+Written Guides
+= Γραπτοί οδηγοί
+YES, I HAVE THE CLIENT
+= ΝΑΙ, ΕΧΩ ΤΟ ΠΡΟΓΡΑΜΜΑ
+Yesterday
+= Χθες
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Επιλέξατε ότι έχετε ήδη το παιχνίδι, αλλά το AzerothSurvivors.exe δεν υπάρχει πια στον επιλεγμένο φάκελο. Επιλέξτε τον σωστό φάκελο παιχνιδιού για να συνεχίσετε. Για υπάρχον πρόγραμμα η ρύθμιση δεν προσφέρει λήψη του παιχνιδιού.
+ranks
+= βαθμίδες
+times
+= φορές
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Αν το παιχνίδι κράσαρε, αποθήκευσε αναφορά σφάλματος στον φάκελο Diagnostics. Η αποστολή της στον δημιουργό του παιχνιδιού βοηθά στη διόρθωση.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Addon AZS που δεν ενημερώθηκαν: {0}
+  Addons for the synced settings not checked: {0}
+= Addon των συγχρονισμένων ρυθμίσεων που δεν ελέγχθηκαν: {0}
+1  FOLLOW THE PATH
+= 1  ΑΚΟΛΟΥΘΗΣΕ ΤΟ ΜΟΝΟΠΑΤΙ
+2  SAVE A FAVORITE
+= 2  ΑΠΟΘΗΚΕΥΣΕ ΑΓΑΠΗΜΕΝΟ
+4 armor pieces at 1+ stars
+= 4 κομμάτια πανοπλίας στο 1+ αστέρι
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Πρώτα εγκαθίσταται νέος launcher ({0}); πατήστε ξανά ΠΑΙΞΕ μετά την επανεκκίνηση.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Ενημερωμένα addon: {0}. Απέτυχαν: {1}. Σφάλματα ελέγχου: {2}.
+All addons {0}
+= Όλα τα addon {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Το Azeroth Stats καταγράφει παρτίδες και αλλαγές build στο παιχνίδι (/azstats). Ο launcher δείχνει αποθηκευμένα σύνολα, κλάσεις, αναφορές πρόσφατων παρτίδων, δείγματα μάχης και το παρατηρούμενο ημερολόγιο build. Οι δικές του αναφορές, συγκρίσεις και το ρυθμιζόμενο HUD μένουν στο addon.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Το Azeroth Stats καταγράφει παρτίδες και παρατηρούμενες αλλαγές build στο παιχνίδι (/azstats). Ο launcher δείχνει αποθηκευμένα σύνολα, κλάσεις, αναφορές πρόσφατων παρτίδων, δείγματα μάχης και το ημερολόγιο build. Οι αναφορές, συγκρίσεις και το ρυθμιζόμενο HUD του addon μένουν εκεί.
+Best level {#0}
+= Καλύτερο επίπεδο {#0}
+Best level: {#0}
+= Καλύτερο επίπεδο: {#0}
+Best together: {0}, level {#1}
+= Καλύτερα μαζί: {0}, επίπεδο {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Η αποθήκευση cloud σε παύση: το {0} χρειάζεται STEAM DECK ΠΕΙΡΑΜΑΤΙΚΟ (Επιλογές > Launcher). Αυτή η συνεδρία δεν συγχρονίζεται.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Η αποθήκευση cloud έχει οριστεί σε {0}, που χρειάζεται STEAM DECK ΠΕΙΡΑΜΑΤΙΚΟ (Επιλογές > Launcher). Ενεργοποιήστε το ξανά ή επιλέξτε φάκελο συγχρονισμού παρακάτω.
+Confirmed {#0} · probable {#1}
+= Επιβεβαιωμένα {#0} · πιθανά {#1}
+Could not install {0}:\n\n{1}
+= Αδυναμία εγκατάστασης {0}:\n\n{1}
+Could not save the game setting:
+= Αδυναμία αποθήκευσης της ρύθμισης παιχνιδιού:
+Could not uninstall {0}:\n\n{1}
+= Αδυναμία απεγκατάστασης {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= Το Dropbox δεν είναι προσβάσιμο ({0}).
+Dropbox did not accept the sign-in: {0}
+= Το Dropbox δεν δέχτηκε τη σύνδεση: {0}
+Dropbox refused the sign-in: {0}
+= Το Dropbox απέρριψε τη σύνδεση: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Πειραματική υποστήριξη Steam Deck: ο launcher γεμίζει την οθόνη στη λειτουργία παιχνιδιού, ξεκινά το παιχνίδι στην ίδια καταχώριση Steam και παραμερίζει όσο παίζετε. Επιλογές > Launcher το απενεργοποιεί.
+Game setting saved:
+= Η ρύθμιση παιχνιδιού αποθηκεύτηκε:
+Google Drive refused the sign-in: {0}
+= Το Google Drive απέρριψε τη σύνδεση: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Η αποστολή θα γίνει στον επόμενο συγχρονισμό.
+Google could not be reached ({0}).
+= Η Google δεν είναι προσβάσιμη ({0}).
+Google did not start the sign-in: {0}
+= Η Google δεν ξεκίνησε τη σύνδεση: {0}
+Google sign-in failed: {0}
+= Η σύνδεση Google απέτυχε: {0}
+Highest observed rank {#0}
+= Υψηλότερη παρατηρούμενη βαθμίδα {#0}
+Installing {0} ({1})...
+= Εγκατάσταση {0} ({1})...
+It killed you {#0} times
+= Σας σκότωσε {#0} φορές
+Longest: {0}
+= Μεγαλύτερη: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Κανένα αρχείο αυτής της έκδοσης δεν περιέχει το {0} (φάκελο με το αρχείο .toc), ούτε καν ο πηγαίος κώδικας. Δεν εγκαταστάθηκε τίποτα.
+Observed in {#0} runs · rank gains {#1}
+= Παρατηρήθηκε σε {#0} παρτίδες · ανεβάσματα βαθμίδας {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Παίξατε Azeroth Survivors στον browser; Φέρτε την πρόοδό σας: ήρωες, ανοιχτές ζώνες, εξοπλισμό, ταλέντα και codex.\n\nΣτον ιστότοπο ανοίξτε Options > Saves και πατήστε Export Save. Μετά επιλέξτε εδώ αυτό το αρχείο .sav. Το παιχνίδι ανοίγει με την πρόοδό σας.
+Quick Access {0}
+= Γρήγορη πρόσβαση {0}
+Rank {#0}
+= Βαθμίδα {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= Το {0} αφαιρέθηκε από τη Γρήγορη πρόσβαση. Προσθέστε το ξανά με το αστέρι του οδηγού ή το αγαπημένο της ενότητας.
+Runs {#0} · Victories {#1}
+= Παρτίδες {#0} · Νίκες {#1}
+Runs: {#0}
+= Παρτίδες: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Αποθηκεύτηκε στο αντίγραφο του launcher, αλλά το {0} δεν είναι προσβάσιμο: {1} Θα ανέβει στον επόμενο συγχρονισμό.
+Survived {0} · Level {1}
+= Επέζησε {0} · Επίπεδο {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Επέζησε {0} · Επίπεδο {1} · Φόνοι {2} · Χρυσός {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Αυτό είναι το ανώτερο επίπεδο του cloud σας.\n\nΔημιουργία και χρήση υποφακέλου με όνομα Azeroth Survivor Launcher μέσα του;
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Η ενημέρωση του addon απέτυχε. Τα προηγούμενα αρχεία κρατήθηκαν στο {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Η λήψη από το {0} είναι κατεστραμμένη ή λάθος αρχείο (το άθροισμα ελέγχου δεν ταιριάζει). Δοκιμάστε ξανά.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Ο launcher δεν μπόρεσε να αντικαταστήσει τον εαυτό του σε αυτόν τον φάκελο ({0}).\n\nΚατεβάστε τη νέα έκδοση από το GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Ο αναμεταδότης σύνδεσης (ntfy.sh) δεν είναι προσβάσιμος ({0}). Δοκιμάστε σε λίγο.
+The {0} offers a different file than expected ({1} instead of {2}).
+= Το {0} προσφέρει διαφορετικό αρχείο από το αναμενόμενο ({1} αντί για {2}).
+The {0} server answered with error {1}.
+= Ο διακομιστής {0} απάντησε με σφάλμα {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Αυτοί οι φάκελοι δεν βρέθηκαν:\n\n  {0}\n\nΟλοκλήρωση παρ' όλα αυτά; Μπορείτε να τους αλλάξετε αργότερα στις Επιλογές.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Αυτός ο υπολογιστής έχει ήδη πρόοδο στο παιχνίδι.\n\nΑντικατάσταση με {0};\nΗ τωρινή κρατιέται ως αντίγραφο στον φάκελο Saves του παιχνιδιού.
+This launcher was built without {0}.
+= Αυτός ο launcher φτιάχτηκε χωρίς {0}.
+Time {0}
+= Χρόνος {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Τα Windows δεν μπόρεσαν να προστατέψουν τη σύνδεση σε αυτή τη συσκευή, οπότε δεν κρατήθηκε ({0}).
+Won: {#0}
+= Νίκες: {#0}
+You beat it {#0} times
+= Το νικήσατε {#0} φορές
+and enter this code:
+= και εισαγάγετε αυτόν τον κωδικό:
+since {0}
+= από {0}
+✓ Imported: {0}
+= ✓ Εισήχθη: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Επιλέχθηκε αποθήκευση: {0} (θα εισαχθεί στο τέλος της ρύθμισης)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Άλλαξε στο patch του παιχνιδιού {0}
+What changed since you last played
+= Τι άλλαξε από την τελευταία φορά που παίξατε
+THE GAME
+= ΤΟ ΠΑΙΧΝΙΔΙ
+THE LAUNCHER
+= Ο LAUNCHER
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Περισσότερα patch στη σελίδα Νέα.
+Patch {0}
+= Patch {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Ενημερώθηκε από {0} σε {1}.
+Personal records
+= Προσωπικά ρεκόρ
+Play a few runs with Azeroth Stats to see your records here.
+= Παίξτε μερικές παρτίδες με το Azeroth Stats για να δείτε εδώ τα ρεκόρ σας.
+Fastest victory {0}
+= Ταχύτερη νίκη {0}
+Highest level {0}
+= Υψηλότερο επίπεδο {0}
+Most kills {0}
+= Περισσότεροι φόνοι {0}
+best DPS
+= καλύτερο DPS
+Solo and co-op runs
+= Παρτίδες μόνος και co-op
+Runs (solo / co-op)
+= Παρτίδες (μόνος / co-op)
+Win rate (solo / co-op)
+= Ποσοστό νικών (μόνος / co-op)
+Average run (solo / co-op)
+= Μέση παρτίδα (μόνος / co-op)
+Average level (solo / co-op)
+= Μέσο επίπεδο (μόνος / co-op)
+Average DPS (solo / co-op)
+= Μέσο DPS (μόνος / co-op)

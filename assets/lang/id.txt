@@ -2027,3 +2027,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Selesaikan game, pemasangan, atau sinkronisasi cloud terlebih dahulu, lalu periksa pembaruan lagi.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} siap. Pilih Instal pembaruan di Opsi > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Kemampuan dicatat untuk run yang dimainkan dengan addon statistik aktif.
+Addon release check complete.
+= Pemeriksaan rilis addon selesai.
+Affects
+= Memengaruhi
+All 8 armor pieces at 3+ stars
+= Semua 8 bagian zirah di 3+ bintang
+All ten Quick Access favorites are full. Remove one before adding another.
+= Kesepuluh favorit Akses Cepat sudah penuh. Hapus satu sebelum menambah yang lain.
+An addon operation is already running.
+= Operasi addon sedang berjalan.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Dengan 5 bintang di semua 8 bagian, bonus ini 50% lebih kuat.
+Average time
+= Waktu rata-rata
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats tidak ada di Unduh Lainnya.
+BACK
+= KEMBALI
+Back to Top
+= Ke atas
+Best level
+= Level terbaik
+Bright: victories · faint: all runs
+= Terang: kemenangan · pudar: semua run
+Brighter: more runs that day
+= Lebih terang: lebih banyak run hari itu
+Browse class build videos already featured in the guide.
+= Jelajahi video build kelas yang sudah ditampilkan di panduan.
+Browse class, item, and transmog references in the Wiki.
+= Jelajahi referensi kelas, item, dan transmog di Wiki.
+Build Videos
+= Video Build
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Susun talenta, rencanakan perlengkapan, dan berpindah antar alat dengan kelas yang dipilih tetap terjaga.
+Build class
+= Kelas build
+CANCEL DOWNLOAD & CLOSE
+= BATALKAN UNDUHAN & TUTUP
+CHECK AGAIN
+= PERIKSA LAGI
+CHOOSE FOLDER
+= PILIH FOLDER
+CHOOSE GAME FOLDER
+= PILIH FOLDER GAME
+CLEAR
+= HAPUS
+COPY
+= SALIN
+Checking addon releases...
+= Memeriksa rilis addon...
+Choose an option on this setup step to continue.
+= Pilih satu opsi di langkah ini untuk melanjutkan.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Pilih folder yang berisi AzerothSurvivors.exe untuk melanjutkan penyiapan.
+Choose the folder that contains the existing game client before continuing.
+= Pilih folder yang berisi klien game yang sudah ada sebelum melanjutkan.
+Classes you play
+= Kelas yang kamu mainkan
+Close the game first: it saves its own settings when it closes.
+= Tutup game dulu: game menyimpan pengaturannya sendiri saat ditutup.
+Cloud Save uses Dropbox again.
+= Simpan Cloud kembali memakai Dropbox.
+Cloud Save uses Google Drive again.
+= Simpan Cloud kembali memakai Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Simpan cloud butuh folder simpanan game, atau matikan simpan cloud.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Simpan cloud butuh folder sinkronisasi, atau matikan simpan cloud.
+Code copied.
+= Kode disalin.
+Codex
+= Codex
+Companions observed in runs
+= Pendamping yang terlihat di run
+Connecting Dropbox...
+= Menghubungkan Dropbox...
+Connecting Google Drive...
+= Menghubungkan Google Drive...
+Contacting Google...
+= Menghubungi Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Nilai bawaan sudah diisi. Ubah folder jika file kamu ada di tempat lain.
+Defeats
+= Kekalahan
+Display Preview uses local builds; public updates stay separate.
+= Pratinjau Tampilan memakai build lokal; pembaruan publik tetap terpisah.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Apakah kamu sudah mengunduh Azeroth Survivors di PC ini?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Apakah kamu sudah punya klien game Azeroth Survivors di PC ini?
+Downloading the game
+= Mengunduh game
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck eksperimental)
+Dropbox connected
+= Dropbox terhubung
+Dropbox sign-in discarded.
+= Masuk Dropbox dibatalkan.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox sudah memasukkanmu tapi tidak memberi launcher akses tetap. Coba lagi.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Sesi masuk Dropbox berakhir (dihapus atau kedaluwarsa). Masuk lagi di Opsi > Simpan Cloud.
+EXPORT ASBUILDS
+= EKSPOR ASBUILDS
+EXPORT PROFILE
+= EKSPOR PROFIL
+Ended
+= Selesai
+Error log copied.
+= Log kesalahan disalin.
+Every addon is on its latest release.
+= Semua addon sudah rilis terbaru.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= File AZS Stats yang ada tetap disimpan. Riwayatnya tidak digabung ke Azeroth Stats.
+Existing game folder needs attention
+= Folder game yang ada perlu perhatian
+Existing save kept. Setup is still open; you can finish without importing it.
+= Simpanan yang ada dipertahankan. Penyiapan masih terbuka; kamu bisa selesai tanpa mengimpornya.
+FINISH SETUP
+= SELESAIKAN PENYIAPAN
+Feedback copied.
+= Masukan disalin.
+Finish the current update, install, or game session before continuing setup.
+= Selesaikan pembaruan, instalasi, atau sesi game yang sedang berjalan sebelum melanjutkan penyiapan.
+First Time Setup
+= Penyiapan Pertama
+Game client
+= Klien game
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Unduhan game dibatalkan. Pilih INSTAL saat kamu siap mencoba lagi.
+Gear section
+= Bagian perlengkapan
+GitHub returned invalid release information. Nothing was installed.
+= GitHub mengembalikan info rilis yang tidak valid. Tidak ada yang diinstal.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Batas permintaan GitHub tercapai. Tunggu lalu coba lagi. Tidak ada yang diinstal.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck eksperimental)
+Google Drive connected
+= Google Drive terhubung
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive tidak menyediakan file saat ini (mungkin batas unduhan tercapai).
+Google Drive made a folder but did not say which.
+= Google Drive membuat folder tapi tidak menyebut yang mana.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Sesi masuk Google Drive berakhir (dihapus atau kedaluwarsa). Masuk lagi di Opsi > Simpan Cloud.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google sudah memasukkanmu tapi tidak memberi launcher akses tetap. Coba lagi.
+Google's sign-in answer was incomplete. Try again.
+= Jawaban masuk Google tidak lengkap. Coba lagi.
+Guide links
+= Tautan panduan
+Healing
+= Penyembuhan
+Heroic
+= Heroik
+IMPORT ASBUILDS
+= IMPOR ASBUILDS
+IMPORT BUILD
+= IMPOR BUILD
+INSTALL AZEROTH STATS
+= INSTAL AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Jika ya, kamu akan memilih lokasi game yang ada dan AddOn-nya. Jika tidak, game akan diunduh ke folder launcher ini.
+Interface size
+= Ukuran antarmuka
+Interrupted
+= Terputus
+Items
+= Item
+Last 5 weeks
+= 5 minggu terakhir
+Last step: download the game?
+= Langkah terakhir: unduh game?
+Latest retained spell build
+= Build mantra tersimpan terbaru
+Locations validated. Continuing setup...
+= Lokasi tervalidasi. Melanjutkan penyiapan...
+MENU ▾
+= MENU ▾
+More entries are available on the Build Journal tab.
+= Entri lainnya ada di tab Jurnal Build.
+NO, DOWNLOAD IT
+= TIDAK, UNDUH
+Navigation
+= Navigasi
+No build journal entries are stored in the retained runs yet.
+= Belum ada entri jurnal build di run yang disimpan.
+No companion samples are recorded yet.
+= Belum ada data pendamping yang dicatat.
+No death evidence recorded yet.
+= Belum ada penyebab kematian yang dicatat.
+No download host worked.\n\n
+= Tidak ada server unduhan yang berhasil.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Belum ada cuplikan mantra yang teramati di run yang disimpan.
+No source samples are available in retained runs.
+= Tidak ada data sumber di run yang disimpan.
+No spell rank trends are stored yet.
+= Belum ada tren peringkat mantra yang disimpan.
+No status messages yet.
+= Belum ada pesan status.
+None selected
+= Tidak ada yang dipilih
+Normal
+= Normal
+Not ready for release yet. Click to install it anyway.
+= Belum siap rilis. Klik untuk tetap menginstalnya.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Belum masuk ke Dropbox. Masuk di Opsi > Simpan Cloud.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Belum masuk ke Google Drive. Masuk di Opsi > Simpan Cloud.
+OPEN FOLDER
+= BUKA FOLDER
+Observed attributions
+= Atribusi yang teramati
+Observed build and equipment changes
+= Perubahan build dan perlengkapan yang teramati
+Observed build journal
+= Jurnal build yang teramati
+Observed death sources
+= Penyebab kematian yang teramati
+Observed in the most recent retained run
+= Teramati di run tersimpan terbaru
+Observed party sample
+= Sampel party yang teramati
+Observed run
+= Run yang teramati
+Observed status
+= Status yang teramati
+On your phone or computer, open
+= Di ponsel atau komputer, buka
+On your phone, open
+= Di ponsel, buka
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Satu keadaan lengkap menang, yang lain dicadangkan dulu.\nPertama kali di PC ini? Pilih PAKAI CLOUD.\n
+Open on your phone
+= Buka di ponsel
+Partial
+= Sebagian
+Partial observation
+= Pengamatan sebagian
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Tempel kode build talenta di bawah. Jika ada di papan klip, akan diisi otomatis.
+Peel this corner to switch theorycrafting tools.
+= Kupas sudut ini untuk berganti alat theorycrafting.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Mainkan beberapa run dengan Azeroth Stats untuk melihat DPS-mu dari waktu ke waktu.
+Playing on a Steam Deck?
+= Main di Steam Deck?
+Playing without cloud sync this time
+= Bermain tanpa sinkronisasi cloud kali ini
+Preparing the Dropbox sign-in...
+= Menyiapkan masuk Dropbox...
+Priest
+= Priest
+Priest guide
+= Panduan Priest
+QUICK ACCESS
+= AKSES CEPAT
+Rings & Trinkets
+= Cincin & Trinket
+Runs observed
+= Run yang teramati
+SIGN IN WITH DROPBOX
+= MASUK DENGAN DROPBOX
+SIGN IN WITH GOOGLE
+= MASUK DENGAN GOOGLE
+SIGN OUT
+= KELUAR
+START OVER
+= MULAI ULANG
+STAY & FINISH
+= TETAP & SELESAIKAN
+STEAM DECK / HANDHELD
+= STEAM DECK / GENGGAM
+STEAM DECK EXPERIMENTAL
+= STEAM DECK EKSPERIMENTAL
+Save favorite
+= Simpan favorit
+Save this location to Quick Access.
+= Simpan lokasi ini ke Akses Cepat.
+Save to Quick Access
+= Simpan ke Akses Cepat
+Save where? The current location, the top of this page, or the closest category header.
+= Simpan di mana? Lokasi saat ini, bagian atas halaman, atau judul kategori terdekat.
+Saved in
+= Disimpan di
+Scaling video fixture
+= Video uji penskalaan
+Setup is only available while the setup guide is open.
+= Penyiapan hanya tersedia saat panduan penyiapan terbuka.
+Sign in to Google Drive
+= Masuk ke Google Drive
+Signed out of Dropbox.
+= Keluar dari Dropbox.
+Signed out of Google Drive.
+= Keluar dari Google Drive.
+Skip/Stop
+= Lewati/Hentikan
+Some addons could not be changed:\n\n
+= Beberapa addon tidak bisa diubah:\n\n
+Spell pool
+= Kumpulan mantra
+Spell rank trends · observed, not exact card picks
+= Tren peringkat mantra · teramati, bukan pilihan kartu pasti
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Mulai di sini: pelajari kontrol, run pertamamu, dan sistem yang membantumu memulai.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / genggam, atau PC Windows?
+Stopping the game download before closing...
+= Menghentikan unduhan game sebelum menutup...
+Support the Dev
+= Dukung Pengembang
+Talent build code
+= Kode build talenta
+Temporarily unavailable while work is in progress.
+= Sementara tidak tersedia selama pengerjaan.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Terima kasih telah memakai launcher buatan komunitas saya. Ini dibuat untuk merayakan betapa kerennya game ini dan menjadi satu tempat untuk semua kebutuhan Azeroth Survivors\n\n
+That file does not exist.
+= File itu tidak ada.
+That is not an Azeroth Survivors save file.
+= Itu bukan file simpanan Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= Itu bukan file simpanan Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Isi arsip berubah saat diekstrak. Tidak ada yang diinstal.
+The clipboard is busy. Try copying again.
+= Papan klip sedang sibuk. Coba salin lagi.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Game yang ada tidak ditemukan di folder itu. Pilih folder yang berisi AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Arsip game berisi nama file Windows yang dicadangkan. Tidak ada yang diinstal.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Arsip game berisi jalur kosong atau tautan simbolis. Tidak ada yang diinstal.
+The game archive contains an unsafe path. Nothing was installed.
+= Arsip game berisi jalur yang tidak aman. Tidak ada yang diinstal.
+The game archive contains conflicting file paths. Nothing was installed.
+= Arsip game berisi jalur file yang bertentangan. Tidak ada yang diinstal.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Arsip game berisi jalur file ganda atau bertentangan. Tidak ada yang diinstal.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Arsip game tidak bisa diekstrak. Mungkin rusak, terenkripsi, tidak lengkap, atau memakai metode yang tidak didukung. Tidak ada yang diinstal.
+The game archive format is not supported by the built-in extractor.
+= Format arsip game tidak didukung oleh pengekstrak bawaan.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Arsip game tidak lengkap atau butuh bagian arsip lain. Tidak ada yang diinstal.
+The game archive is password-protected. Please use an unencrypted game download.
+= Arsip game dilindungi kata sandi. Gunakan unduhan game yang tidak terenkripsi.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Folder konfigurasi game belum diatur. Atur di Opsi > FOLDER.
+The game files are being installed. The launcher will close when that finishes.
+= File game sedang diinstal. Launcher akan tertutup setelah selesai.
+The game is running: close it first, it saves its own settings when it closes.
+= Game sedang berjalan: tutup dulu, game menyimpan pengaturannya sendiri saat ditutup.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Game atau sinkronisasi dimulai saat addon ini diunduh. File yang terinstal tidak diubah; coba lagi setelah ditutup.
+The launcher closes by itself once your progress is saved.
+= Launcher tertutup sendiri setelah progresmu tersimpan.
+The launcher is already running. Look for its window on the taskbar.
+= Launcher sudah berjalan. Cari jendelanya di taskbar.
+The save could not be imported:\n\n
+= Simpanan tidak bisa diimpor:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Kode masuk kedaluwarsa sebelum dipakai. Tekan MASUK DENGAN DROPBOX lagi.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Kode masuk kedaluwarsa sebelum dipakai. Tekan MASUK DENGAN GOOGLE lagi.
+The sign-in was declined on Dropbox's page.
+= Masuk ditolak di halaman Dropbox.
+The sign-in was declined on Google's page.
+= Masuk ditolak di halaman Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Lalu izinkan Azeroth Survivors Launcher memakai foldernya sendiri di Google Drive-mu. Halaman ini tertutup sendiri setelah kamu masuk.
+This Codex entry's class guide is unavailable.
+= Panduan kelas untuk entri Codex ini tidak tersedia.
+This Guide location no longer exists.
+= Lokasi panduan ini sudah tidak ada.
+This Guide video is no longer available.
+= Video panduan ini sudah tidak tersedia.
+This add-on is not configured for direct GitHub release updates.
+= Add-on ini tidak diatur untuk pembaruan rilis GitHub langsung.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Addon ini terkunci pada salinan lama. Ganti dengan rilis terbaru?
+This class talent page is no longer available.
+= Halaman talenta kelas ini sudah tidak tersedia.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Favorit ini tidak lagi cocok dengan halaman panduan. Tautkan halaman lagi untuk memperbaruinya.
+Today
+= Hari ini
+UPDATE ALL
+= PERBARUI SEMUA
+USE DROPBOX
+= PAKAI DROPBOX
+USE GOOGLE DRIVE
+= PAKAI GOOGLE DRIVE
+Undated
+= Tanpa tanggal
+Use the arrow keys to browse links and Enter to open one.
+= Gunakan tombol panah untuk menelusuri tautan dan Enter untuk membukanya.
+Use the star on a guide page to save its reading position to Quick Access.
+= Gunakan bintang di halaman panduan untuk menyimpan posisi baca ke Akses Cepat.
+WINDOWS PC
+= PC WINDOWS
+WINS
+= MENANG
+Waiting for the Dropbox sign-in...
+= Menunggu masuk Dropbox...
+Waiting for the Google sign-in...
+= Menunggu masuk Google...
+Wiki
+= Wiki
+Work in Progress
+= Dalam Pengerjaan
+Written Guides
+= Panduan Tertulis
+YES, I HAVE THE CLIENT
+= YA, SAYA PUNYA KLIENNYA
+Yesterday
+= Kemarin
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Kamu memilih sudah punya game, tapi AzerothSurvivors.exe tidak lagi ada di folder yang dipilih. Pilih folder game yang benar untuk melanjutkan. Penyiapan tidak menawarkan unduhan game untuk pilihan klien yang sudah ada.
+ranks
+= peringkat
+times
+= kali
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Jika game crash, game menyimpan laporan crash di folder Diagnostics. Mengirimkannya ke pengembang game membantu memperbaiki crash.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Addon AZS tidak diperbarui: {0}
+  Addons for the synced settings not checked: {0}
+= Addon untuk pengaturan tersinkron tidak diperiksa: {0}
+1  FOLLOW THE PATH
+= 1  IKUTI JALANNYA
+2  SAVE A FAVORITE
+= 2  SIMPAN FAVORIT
+4 armor pieces at 1+ stars
+= 4 bagian zirah di 1+ bintang
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Launcher baru ({0}) diinstal dulu; tekan MAIN lagi setelah dimulai ulang.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Addon diperbarui: {0}. Gagal: {1}. Kesalahan pemeriksaan: {2}.
+All addons {0}
+= Semua addon {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats mencatat run dan perubahan build di game (/azstats). Launcher bisa menampilkan total tersimpan, kelas, laporan run terbaru, sampel pertarungan, dan jurnal build yang teramati. Laporan, perbandingan, dan HUD yang bisa diatur tetap ada di addon.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats mencatat run dan perubahan build yang teramati di game (/azstats). Launcher bisa menampilkan total tersimpan, kelas, laporan run terbaru, sampel pertarungan, dan jurnal build. Laporan, perbandingan, dan HUD addon tetap tersedia di sana.
+Best level {#0}
+= Level terbaik {#0}
+Best level: {#0}
+= Level terbaik: {#0}
+Best together: {0}, level {#1}
+= Terbaik bersama: {0}, level {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Simpan Cloud dijeda: {0} butuh STEAM DECK EKSPERIMENTAL (Opsi > Launcher). Sesi ini tidak disinkronkan.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Simpan Cloud diatur ke {0}, yang butuh STEAM DECK EKSPERIMENTAL (Opsi > Launcher). Nyalakan lagi, atau pilih folder sinkronisasi di bawah.
+Confirmed {#0} · probable {#1}
+= Pasti {#0} · mungkin {#1}
+Could not install {0}:\n\n{1}
+= Tidak bisa menginstal {0}:\n\n{1}
+Could not save the game setting:
+= Tidak bisa menyimpan pengaturan game:
+Could not uninstall {0}:\n\n{1}
+= Tidak bisa mencopot {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox tidak bisa dihubungi ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox tidak menerima login: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox menolak login: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Dukungan Steam Deck eksperimental: launcher memenuhi layar di Mode Game, memulai game di entri Steam yang sama, dan menyingkir saat kamu bermain. Opsi > Launcher mematikannya.
+Game setting saved:
+= Pengaturan game disimpan:
+Google Drive refused the sign-in: {0}
+= Google Drive menolak login: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Unggahan dikirim pada sinkronisasi berikutnya.
+Google could not be reached ({0}).
+= Google tidak bisa dihubungi ({0}).
+Google did not start the sign-in: {0}
+= Google tidak memulai login: {0}
+Google sign-in failed: {0}
+= Login Google gagal: {0}
+Highest observed rank {#0}
+= Peringkat tertinggi teramati {#0}
+Installing {0} ({1})...
+= Menginstal {0} ({1})...
+It killed you {#0} times
+= Membunuhmu {#0} kali
+Longest: {0}
+= Terlama: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Tidak ada file di rilis ini yang berisi {0} (folder dengan file .toc-nya), bahkan kode sumbernya. Tidak ada yang diinstal.
+Observed in {#0} runs · rank gains {#1}
+= Teramati di {#0} run · kenaikan peringkat {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Pernah main Azeroth Survivors di browser? Bawa progresmu: pahlawan, zona yang terbuka, perlengkapan, talenta, dan codex.\n\nDi situs, buka Options > Saves lalu tekan Export Save. Lalu pilih file .sav itu di sini. Game terbuka dengan progresmu.
+Quick Access {0}
+= Akses Cepat {0}
+Rank {#0}
+= Peringkat {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} dihapus dari Akses Cepat. Gunakan bintang panduan atau tombol favorit bagian untuk menambahkannya lagi.
+Runs {#0} · Victories {#1}
+= Run {#0} · Menang {#1}
+Runs: {#0}
+= Run: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Disimpan di salinan launcher, tapi {0} tidak bisa dihubungi: {1} Akan diunggah pada sinkronisasi berikutnya.
+Survived {0} · Level {1}
+= Bertahan {0} · Level {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Bertahan {0} · Level {1} · Kill {2} · Emas {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Itu tingkat teratas drive cloud-mu.\n\nBuat dan pakai subfolder bernama Azeroth Survivor Launcher di dalamnya?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Pembaruan addon gagal. File sebelumnya disimpan di {0} untuk pemulihan. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Unduhan dari {0} rusak atau bukan file yang benar (checksum tidak cocok). Coba lagi.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Launcher tidak bisa mengganti dirinya di folder ini ({0}).\n\nUnduh versi baru dari GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Relai login (ntfy.sh) tidak bisa dihubungi ({0}). Coba lagi sebentar lagi.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} menawarkan file yang berbeda dari perkiraan ({1}, bukan {2}).
+The {0} server answered with error {1}.
+= Server {0} menjawab dengan kesalahan {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Folder ini tidak ditemukan:\n\n  {0}\n\nTetap selesaikan? Kamu bisa mengubahnya nanti di Opsi.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= PC ini sudah punya progres di game.\n\nGanti dengan {0}?\nYang ada sekarang disimpan sebagai cadangan di folder Saves game.
+This launcher was built without {0}.
+= Launcher ini dibuat tanpa {0}.
+Time {0}
+= Waktu {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows tidak bisa melindungi login di perangkat ini, jadi tidak disimpan ({0}).
+Won: {#0}
+= Menang: {#0}
+You beat it {#0} times
+= Kamu mengalahkannya {#0} kali
+and enter this code:
+= lalu masukkan kode ini:
+since {0}
+= sejak {0}
+✓ Imported: {0}
+= ✓ Diimpor: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Simpanan dipilih: {0} (akan diimpor setelah penyiapan selesai)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Diubah di patch game {0}
+What changed since you last played
+= Apa yang berubah sejak terakhir kamu bermain
+THE GAME
+= GAME
+THE LAUNCHER
+= LAUNCHER
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Patch lainnya ada di halaman Berita.
+Patch {0}
+= Patch {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Diperbarui dari {0} ke {1}.
+Personal records
+= Rekor pribadi
+Play a few runs with Azeroth Stats to see your records here.
+= Mainkan beberapa run dengan Azeroth Stats untuk melihat rekormu di sini.
+Fastest victory {0}
+= Kemenangan tercepat {0}
+Highest level {0}
+= Level tertinggi {0}
+Most kills {0}
+= Kill terbanyak {0}
+best DPS
+= DPS terbaik
+Solo and co-op runs
+= Run solo dan co-op
+Runs (solo / co-op)
+= Run (solo / co-op)
+Win rate (solo / co-op)
+= Tingkat menang (solo / co-op)
+Average run (solo / co-op)
+= Run rata-rata (solo / co-op)
+Average level (solo / co-op)
+= Level rata-rata (solo / co-op)
+Average DPS (solo / co-op)
+= DPS rata-rata (solo / co-op)

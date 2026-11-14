@@ -2027,3 +2027,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Cierra primero el juego, la instalación o la sincronización en la nube y vuelve a buscar la actualización.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} está listo. Elige Instalar actualización en Opciones > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Las habilidades se registran en las partidas jugadas con el addon de estadísticas activado.
+Addon release check complete.
+= Comprobación de versiones de addons completada.
+Affects
+= Afecta
+All 8 armor pieces at 3+ stars
+= Las 8 piezas de armadura con 3+ estrellas
+All ten Quick Access favorites are full. Remove one before adding another.
+= Los diez favoritos de Acceso rápido están llenos. Quita uno antes de añadir otro.
+An addon operation is already running.
+= Ya hay una operación de addons en curso.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Con 5 estrellas en las 8 piezas, esta bonificación es la mitad más fuerte.
+Average time
+= Tiempo medio
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats no aparece en Descargar más.
+BACK
+= ATRÁS
+Back to Top
+= Volver arriba
+Best level
+= Mejor nivel
+Bright: victories · faint: all runs
+= Brillante: victorias · tenue: todas las partidas
+Brighter: more runs that day
+= Más brillante: más partidas ese día
+Browse class build videos already featured in the guide.
+= Ver vídeos de builds de clase que ya aparecen en la guía.
+Browse class, item, and transmog references in the Wiki.
+= Consultar referencias de clases, objetos y transfiguración en la Wiki.
+Build Videos
+= Vídeos de builds
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Crea una configuración de talentos, planifica el equipo y cambia entre ambas herramientas manteniendo la clase elegida.
+Build class
+= Clase del build
+CANCEL DOWNLOAD & CLOSE
+= CANCELAR DESCARGA Y CERRAR
+CHECK AGAIN
+= COMPROBAR DE NUEVO
+CHOOSE FOLDER
+= ELEGIR CARPETA
+CHOOSE GAME FOLDER
+= ELEGIR CARPETA DEL JUEGO
+CLEAR
+= BORRAR
+COPY
+= COPIAR
+Checking addon releases...
+= Comprobando versiones de addons...
+Choose an option on this setup step to continue.
+= Elige una opción en este paso para continuar.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Elige la carpeta que contiene AzerothSurvivors.exe para continuar.
+Choose the folder that contains the existing game client before continuing.
+= Elige la carpeta con el cliente del juego existente antes de continuar.
+Classes you play
+= Clases que juegas
+Close the game first: it saves its own settings when it closes.
+= Cierra primero el juego: guarda su propia configuración al cerrarse.
+Cloud Save uses Dropbox again.
+= El guardado en la nube vuelve a usar Dropbox.
+Cloud Save uses Google Drive again.
+= El guardado en la nube vuelve a usar Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= El guardado en la nube necesita una carpeta de partidas guardadas, o desactívalo.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= El guardado en la nube necesita una carpeta de sincronización, o desactívalo.
+Code copied.
+= Código copiado.
+Codex
+= Códice
+Companions observed in runs
+= Compañeros observados en partidas
+Connecting Dropbox...
+= Conectando Dropbox...
+Connecting Google Drive...
+= Conectando Google Drive...
+Contacting Google...
+= Contactando con Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Los valores predeterminados ya están puestos. Cambia una carpeta si tus archivos están en otro sitio.
+Defeats
+= Derrotas
+Display Preview uses local builds; public updates stay separate.
+= La vista previa de pantalla usa builds locales; las actualizaciones públicas van aparte.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= ¿Ya has descargado Azeroth Survivors en este PC?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= ¿Ya tienes el cliente de Azeroth Survivors en este PC?
+Downloading the game
+= Descargando el juego
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck experimental)
+Dropbox connected
+= Dropbox conectado
+Dropbox sign-in discarded.
+= Inicio de sesión de Dropbox descartado.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox inició tu sesión pero no dio acceso permanente al launcher. Inténtalo de nuevo.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= La sesión de Dropbox ha terminado (se eliminó o caducó). Vuelve a iniciar sesión en Opciones > Guardado en la nube.
+EXPORT ASBUILDS
+= EXPORTAR ASBUILDS
+EXPORT PROFILE
+= EXPORTAR PERFIL
+Ended
+= Terminada
+Error log copied.
+= Registro de errores copiado.
+Every addon is on its latest release.
+= Todos los addons están en su última versión.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Los archivos de AZS Stats existentes se conservan. Su historial no se fusiona con Azeroth Stats.
+Existing game folder needs attention
+= La carpeta del juego existente necesita atención
+Existing save kept. Setup is still open; you can finish without importing it.
+= Partida existente conservada. La configuración sigue abierta; puedes terminar sin importarla.
+FINISH SETUP
+= TERMINAR CONFIGURACIÓN
+Feedback copied.
+= Comentarios copiados.
+Finish the current update, install, or game session before continuing setup.
+= Termina la actualización, instalación o sesión de juego en curso antes de continuar con la configuración.
+First Time Setup
+= Configuración inicial
+Game client
+= Cliente del juego
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Descarga del juego cancelada. Elige INSTALAR cuando quieras intentarlo de nuevo.
+Gear section
+= Sección de equipo
+GitHub returned invalid release information. Nothing was installed.
+= GitHub devolvió información de versión no válida. No se instaló nada.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Se alcanzó el límite de solicitudes de GitHub. Espera e inténtalo de nuevo. No se instaló nada.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck experimental)
+Google Drive connected
+= Google Drive conectado
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive no ofreció el archivo ahora mismo (puede haber alcanzado su límite de descargas).
+Google Drive made a folder but did not say which.
+= Google Drive creó una carpeta pero no indicó cuál.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= La sesión de Google Drive ha terminado (se eliminó o caducó). Vuelve a iniciar sesión en Opciones > Guardado en la nube.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google inició tu sesión pero no dio acceso permanente al launcher. Inténtalo de nuevo.
+Google's sign-in answer was incomplete. Try again.
+= La respuesta de inicio de sesión de Google estaba incompleta. Inténtalo de nuevo.
+Guide links
+= Enlaces de la guía
+Healing
+= Sanación
+Heroic
+= Heroico
+IMPORT ASBUILDS
+= IMPORTAR ASBUILDS
+IMPORT BUILD
+= IMPORTAR BUILD
+INSTALL AZEROTH STATS
+= INSTALAR AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Si es así, podrás elegir dónde están el juego existente y sus AddOns. Si no, el juego se descargará en la carpeta de este launcher.
+Interface size
+= Tamaño de la interfaz
+Interrupted
+= Interrumpida
+Items
+= Objetos
+Last 5 weeks
+= Últimas 5 semanas
+Last step: download the game?
+= Último paso: ¿descargar el juego?
+Latest retained spell build
+= Último build de hechizos guardado
+Locations validated. Continuing setup...
+= Ubicaciones validadas. Continuando la configuración...
+MENU ▾
+= MENÚ ▾
+More entries are available on the Build Journal tab.
+= Hay más entradas en la pestaña Diario de builds.
+NO, DOWNLOAD IT
+= NO, DESCARGARLO
+Navigation
+= Navegación
+No build journal entries are stored in the retained runs yet.
+= Aún no hay entradas del diario de builds en las partidas guardadas.
+No companion samples are recorded yet.
+= Aún no hay muestras de compañeros.
+No death evidence recorded yet.
+= Aún no hay causas de muerte registradas.
+No download host worked.\n\n
+= Ningún servidor de descarga funcionó.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Aún no hay ninguna instantánea de hechizos observada en las partidas guardadas.
+No source samples are available in retained runs.
+= No hay muestras de fuentes en las partidas guardadas.
+No spell rank trends are stored yet.
+= Aún no hay tendencias de rango de hechizos.
+No status messages yet.
+= Aún no hay mensajes de estado.
+None selected
+= Nada seleccionado
+Normal
+= Normal
+Not ready for release yet. Click to install it anyway.
+= Aún no está listo para publicarse. Haz clic para instalarlo de todos modos.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= No has iniciado sesión en Dropbox. Inicia sesión en Opciones > Guardado en la nube.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= No has iniciado sesión en Google Drive. Inicia sesión en Opciones > Guardado en la nube.
+OPEN FOLDER
+= ABRIR CARPETA
+Observed attributions
+= Atribuciones observadas
+Observed build and equipment changes
+= Cambios de build y equipo observados
+Observed build journal
+= Diario de builds observado
+Observed death sources
+= Causas de muerte observadas
+Observed in the most recent retained run
+= Observado en la última partida guardada
+Observed party sample
+= Muestra de grupo observada
+Observed run
+= Partida observada
+Observed status
+= Estado observado
+On your phone or computer, open
+= En tu móvil u ordenador, abre
+On your phone, open
+= En tu móvil, abre
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Gana un estado completo; el otro se respalda antes.\n¿Primera vez en este PC? Elige USAR LA NUBE.\n
+Open on your phone
+= Abrir en tu móvil
+Partial
+= Parcial
+Partial observation
+= Observación parcial
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Pega abajo un código de build de talentos. Si hay uno en el portapapeles, se rellena automáticamente.
+Peel this corner to switch theorycrafting tools.
+= Levanta esta esquina para cambiar de herramienta de theorycrafting.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Juega algunas partidas con Azeroth Stats para ver tu DPS a lo largo del tiempo.
+Playing on a Steam Deck?
+= ¿Juegas en una Steam Deck?
+Playing without cloud sync this time
+= Jugar sin sincronización en la nube esta vez
+Preparing the Dropbox sign-in...
+= Preparando el inicio de sesión de Dropbox...
+Priest
+= Sacerdote
+Priest guide
+= Guía de sacerdote
+QUICK ACCESS
+= ACCESO RÁPIDO
+Rings & Trinkets
+= Anillos y abalorios
+Runs observed
+= Partidas observadas
+SIGN IN WITH DROPBOX
+= INICIAR SESIÓN CON DROPBOX
+SIGN IN WITH GOOGLE
+= INICIAR SESIÓN CON GOOGLE
+SIGN OUT
+= CERRAR SESIÓN
+START OVER
+= EMPEZAR DE NUEVO
+STAY & FINISH
+= QUEDARSE Y TERMINAR
+STEAM DECK / HANDHELD
+= STEAM DECK / PORTÁTIL
+STEAM DECK EXPERIMENTAL
+= STEAM DECK EXPERIMENTAL
+Save favorite
+= Guardar favorito
+Save this location to Quick Access.
+= Guardar esta ubicación en Acceso rápido.
+Save to Quick Access
+= Guardar en Acceso rápido
+Save where? The current location, the top of this page, or the closest category header.
+= ¿Dónde guardar? La ubicación actual, el inicio de esta página o el encabezado de categoría más cercano.
+Saved in
+= Guardado en
+Scaling video fixture
+= Vídeo de prueba de escalado
+Setup is only available while the setup guide is open.
+= La configuración solo está disponible mientras la guía de configuración está abierta.
+Sign in to Google Drive
+= Iniciar sesión en Google Drive
+Signed out of Dropbox.
+= Sesión de Dropbox cerrada.
+Signed out of Google Drive.
+= Sesión de Google Drive cerrada.
+Skip/Stop
+= Saltar/Parar
+Some addons could not be changed:\n\n
+= Algunos addons no se pudieron cambiar:\n\n
+Spell pool
+= Reserva de hechizos
+Spell rank trends · observed, not exact card picks
+= Tendencias de rango de hechizos · observadas, no elecciones exactas de cartas
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Empieza aquí: aprende los controles, tu primera partida y los sistemas que te ayudan a arrancar.
+Steam Deck / Handheld, or Windows PC?
+= ¿Steam Deck / portátil o PC con Windows?
+Stopping the game download before closing...
+= Deteniendo la descarga del juego antes de cerrar...
+Support the Dev
+= Apoya al desarrollador
+Talent build code
+= Código de build de talentos
+Temporarily unavailable while work is in progress.
+= No disponible temporalmente mientras se trabaja en ello.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Gracias por usar mi launcher hecho por la comunidad. Está pensado para celebrar lo genial que es este juego y ser un punto único para todo lo relacionado con Azeroth Survivors\n\n
+That file does not exist.
+= Ese archivo no existe.
+That is not an Azeroth Survivors save file.
+= No es un archivo de guardado de Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= No es un archivo de guardado de Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= El contenido del archivo comprimido cambió durante la extracción. No se instaló nada.
+The clipboard is busy. Try copying again.
+= El portapapeles está ocupado. Intenta copiar de nuevo.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= No se encontró el juego existente en esa carpeta. Elige la carpeta que contiene AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= El archivo del juego contiene un nombre de archivo reservado de Windows. No se instaló nada.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= El archivo del juego contiene una ruta vacía o un enlace simbólico. No se instaló nada.
+The game archive contains an unsafe path. Nothing was installed.
+= El archivo del juego contiene una ruta no segura. No se instaló nada.
+The game archive contains conflicting file paths. Nothing was installed.
+= El archivo del juego contiene rutas de archivo en conflicto. No se instaló nada.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= El archivo del juego contiene rutas de archivo duplicadas o en conflicto. No se instaló nada.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= No se pudo extraer el archivo del juego. Puede estar dañado, cifrado, incompleto o usar un método no compatible. No se instaló nada.
+The game archive format is not supported by the built-in extractor.
+= El extractor integrado no admite el formato del archivo del juego.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= El archivo del juego está incompleto o necesita otra parte. No se instaló nada.
+The game archive is password-protected. Please use an unencrypted game download.
+= El archivo del juego está protegido con contraseña. Usa una descarga sin cifrar.
+The game config folder is not set. Set it in Options > FOLDERS.
+= La carpeta de configuración del juego no está definida. Defínela en Opciones > CARPETAS.
+The game files are being installed. The launcher will close when that finishes.
+= Se están instalando los archivos del juego. El launcher se cerrará cuando termine.
+The game is running: close it first, it saves its own settings when it closes.
+= El juego está abierto: ciérralo primero, guarda su propia configuración al cerrarse.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= El juego o la sincronización se inició mientras se descargaba este addon. Sus archivos instalados no se tocaron; inténtalo de nuevo cuando se cierre.
+The launcher closes by itself once your progress is saved.
+= El launcher se cierra solo cuando tu progreso esté guardado.
+The launcher is already running. Look for its window on the taskbar.
+= El launcher ya está abierto. Busca su ventana en la barra de tareas.
+The save could not be imported:\n\n
+= No se pudo importar la partida:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= El código de inicio de sesión caducó antes de usarse. Pulsa de nuevo INICIAR SESIÓN CON DROPBOX.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= El código de inicio de sesión caducó antes de usarse. Pulsa de nuevo INICIAR SESIÓN CON GOOGLE.
+The sign-in was declined on Dropbox's page.
+= El inicio de sesión se rechazó en la página de Dropbox.
+The sign-in was declined on Google's page.
+= El inicio de sesión se rechazó en la página de Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Después permite que Azeroth Survivors Launcher use su propia carpeta en tu Google Drive. Esta página se cierra sola cuando hayas iniciado sesión.
+This Codex entry's class guide is unavailable.
+= La guía de clase de esta entrada del Códice no está disponible.
+This Guide location no longer exists.
+= Esta ubicación de la guía ya no existe.
+This Guide video is no longer available.
+= Este vídeo de la guía ya no está disponible.
+This add-on is not configured for direct GitHub release updates.
+= Este add-on no está configurado para actualizaciones directas desde GitHub.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Este addon está fijado a una copia antigua. ¿Sustituirlo por la última versión?
+This class talent page is no longer available.
+= Esta página de talentos de clase ya no está disponible.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Este favorito ya no coincide con ninguna página de la guía. Vuelve a vincular la página para actualizarlo.
+Today
+= Hoy
+UPDATE ALL
+= ACTUALIZAR TODO
+USE DROPBOX
+= USAR DROPBOX
+USE GOOGLE DRIVE
+= USAR GOOGLE DRIVE
+Undated
+= Sin fecha
+Use the arrow keys to browse links and Enter to open one.
+= Usa las flechas para recorrer los enlaces y Intro para abrir uno.
+Use the star on a guide page to save its reading position to Quick Access.
+= Usa la estrella de una página de la guía para guardar tu posición de lectura en Acceso rápido.
+WINDOWS PC
+= PC CON WINDOWS
+WINS
+= VICTORIAS
+Waiting for the Dropbox sign-in...
+= Esperando el inicio de sesión de Dropbox...
+Waiting for the Google sign-in...
+= Esperando el inicio de sesión de Google...
+Wiki
+= Wiki
+Work in Progress
+= En desarrollo
+Written Guides
+= Guías escritas
+YES, I HAVE THE CLIENT
+= SÍ, TENGO EL CLIENTE
+Yesterday
+= Ayer
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Indicaste que ya tienes el juego, pero AzerothSurvivors.exe ya no está en la carpeta elegida. Elige la carpeta correcta del juego para continuar. La configuración no ofrece descargar el juego si eliges un cliente existente.
+ranks
+= rangos
+times
+= veces
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Si el juego se cerró por un fallo, guardó un informe en su carpeta Diagnostics. Enviarlo al desarrollador del juego ayuda a corregirlo.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Addons de AZS no actualizados: {0}
+  Addons for the synced settings not checked: {0}
+= Addons de la configuración sincronizada no comprobados: {0}
+1  FOLLOW THE PATH
+= 1  SIGUE EL CAMINO
+2  SAVE A FAVORITE
+= 2  GUARDA UN FAVORITO
+4 armor pieces at 1+ stars
+= 4 piezas de armadura con 1+ estrellas
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Primero se instala un nuevo launcher ({0}); pulsa JUGAR de nuevo cuando se reinicie.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Addons actualizados: {0}. Fallidos: {1}. Errores de comprobación: {2}.
+All addons {0}
+= Todos los addons {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats registra partidas y cambios de build en el juego (/azstats). El launcher puede mostrar totales guardados, clases, informes de partidas recientes, muestras de combate y el diario de builds observado. Sus propios informes, comparaciones y HUD configurable siguen disponibles en el addon.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats registra partidas y cambios de build observados en el juego (/azstats). El launcher puede mostrar totales guardados, clases, informes de partidas recientes, muestras de combate y el diario de builds. Los informes, comparaciones y HUD configurable del addon siguen disponibles allí.
+Best level {#0}
+= Mejor nivel {#0}
+Best level: {#0}
+= Mejor nivel: {#0}
+Best together: {0}, level {#1}
+= Mejor juntos: {0}, nivel {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Guardado en la nube en pausa: {0} necesita STEAM DECK EXPERIMENTAL (Opciones > Launcher). Esta sesión no se sincroniza.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= El guardado en la nube está en {0}, que necesita STEAM DECK EXPERIMENTAL (Opciones > Launcher). Actívalo de nuevo o elige una carpeta de sincronización abajo.
+Confirmed {#0} · probable {#1}
+= Confirmados {#0} · probables {#1}
+Could not install {0}:\n\n{1}
+= No se pudo instalar {0}:\n\n{1}
+Could not save the game setting:
+= No se pudo guardar el ajuste del juego:
+Could not uninstall {0}:\n\n{1}
+= No se pudo desinstalar {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= No se pudo conectar con Dropbox ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox no aceptó el inicio de sesión: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox rechazó el inicio de sesión: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Soporte experimental para Steam Deck: el launcher ocupa la pantalla en el modo Juego, inicia el juego en la misma entrada de Steam y se aparta mientras juegas. Opciones > Launcher lo desactiva.
+Game setting saved:
+= Ajuste del juego guardado:
+Google Drive refused the sign-in: {0}
+= Google Drive rechazó el inicio de sesión: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} La subida se enviará en la próxima sincronización.
+Google could not be reached ({0}).
+= No se pudo conectar con Google ({0}).
+Google did not start the sign-in: {0}
+= Google no inició el inicio de sesión: {0}
+Google sign-in failed: {0}
+= Falló el inicio de sesión de Google: {0}
+Highest observed rank {#0}
+= Rango más alto observado {#0}
+Installing {0} ({1})...
+= Instalando {0} ({1})...
+It killed you {#0} times
+= Te mató {#0} veces
+Longest: {0}
+= Más larga: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Ningún archivo de esta versión contiene {0} (una carpeta con su archivo .toc), ni siquiera el código fuente. No se instaló nada.
+Observed in {#0} runs · rank gains {#1}
+= Observado en {#0} partidas · subidas de rango {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= ¿Has jugado a Azeroth Survivors en el navegador? Trae tu progreso: tus héroes, las zonas abiertas, tu equipo, talentos y el códice.\n\nEn la web, abre Options > Saves y pulsa Export Save. Luego elige ese archivo .sav aquí. El juego se abre con tu progreso, listo para jugar.
+Quick Access {0}
+= Acceso rápido {0}
+Rank {#0}
+= Rango {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} se quitó de Acceso rápido. Usa la estrella de la guía o el control de favorito de la sección para volver a añadirlo.
+Runs {#0} · Victories {#1}
+= Partidas {#0} · Victorias {#1}
+Runs: {#0}
+= Partidas: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Guardado en la copia del launcher, pero no se pudo conectar con {0}: {1} Se subirá en la próxima sincronización.
+Survived {0} · Level {1}
+= Sobrevivió {0} · Nivel {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Sobrevivió {0} · Nivel {1} · Muertes {2} · Oro {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Ese es el nivel superior de tu nube.\n\n¿Crear y usar una subcarpeta llamada Azeroth Survivor Launcher dentro?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= La actualización del addon falló. Sus archivos anteriores se guardaron en {0} para recuperarlos. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= La descarga desde {0} está dañada o no es el archivo correcto (la suma de comprobación no coincide). Inténtalo de nuevo.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= El launcher no pudo reemplazarse en esta carpeta ({0}).\n\nDescarga la nueva versión desde GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= No se pudo conectar con el relé de inicio de sesión (ntfy.sh) ({0}). Inténtalo de nuevo en un momento.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} ofrece un archivo distinto del esperado ({1} en vez de {2}).
+The {0} server answered with error {1}.
+= El servidor {0} respondió con el error {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= No se encontraron estas carpetas:\n\n  {0}\n\n¿Terminar de todos modos? Puedes cambiarlas luego en Opciones.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Este PC ya tiene progreso en el juego.\n\n¿Sustituirlo por {0}?\nLo que hay ahora se guarda como copia en la carpeta Saves del juego.
+This launcher was built without {0}.
+= Este launcher se compiló sin {0}.
+Time {0}
+= Tiempo {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows no pudo proteger el inicio de sesión en este dispositivo, así que no se guardó ({0}).
+Won: {#0}
+= Ganadas: {#0}
+You beat it {#0} times
+= Lo venciste {#0} veces
+and enter this code:
+= e introduce este código:
+since {0}
+= desde {0}
+✓ Imported: {0}
+= ✓ Importado: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Partida elegida: {0} (se importará al terminar la configuración)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Cambiado en el parche del juego {0}
+What changed since you last played
+= Qué ha cambiado desde tu última partida
+THE GAME
+= EL JUEGO
+THE LAUNCHER
+= EL LAUNCHER
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Hay más parches en la página de Noticias.
+Patch {0}
+= Parche {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Actualizado de {0} a {1}.
+Personal records
+= Récords personales
+Play a few runs with Azeroth Stats to see your records here.
+= Juega algunas partidas con Azeroth Stats para ver tus récords aquí.
+Fastest victory {0}
+= Victoria más rápida {0}
+Highest level {0}
+= Nivel más alto {0}
+Most kills {0}
+= Más muertes {0}
+best DPS
+= mejor DPS
+Solo and co-op runs
+= Partidas en solitario y en cooperativo
+Runs (solo / co-op)
+= Partidas (solo / coop)
+Win rate (solo / co-op)
+= Tasa de victoria (solo / coop)
+Average run (solo / co-op)
+= Partida media (solo / coop)
+Average level (solo / co-op)
+= Nivel medio (solo / coop)
+Average DPS (solo / co-op)
+= DPS medio (solo / coop)

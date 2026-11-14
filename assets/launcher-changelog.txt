@@ -1,3 +1,30 @@
+# v3.39 (2026-11-14)
+
+- Controller support: Start plays, A confirms, B goes back, X saves the current spot to Quick Access, Y jumps to your favorites, the right stick steps through the Wiki's tree, and the left stick moves a glowing blue cursor ball that glows brighter over anything you can click. It works with Xbox controllers and a Steam Deck's controls, only while the launcher is the active window.
+- Dropbox Cloud Save no longer needs STEAM DECK EXPERIMENTAL: sign in under Options > Cloud Save. Google Drive still does.
+- What changed since you last played: when you open the launcher after a game patch, a launcher update or a Slim Suite update (when it is installed), one window sums up what is new since your last PLAY.
+- Patch highlights in the Wiki tree: spells, talents and other entries a recent game patch changed are marked in green, with the patch's own lines when you point at them. A change stays marked for 3 game patches, then shows normally again.
+- Stats: Personal records for each class (fastest victory, highest level, most kills, best DPS), solo and co-op apart, and a Solo and co-op comparison on the Co-op page so party runs don't skew your solo numbers.
+- Every remaining launcher text is now translated, including messages built from several parts (errors, Stats lines, sign-in messages).
+- Behind the scenes: the item data refresh reads the game's newer amulet layout again and skips an unrelated drop table; Cloud Save's sync logic is tested automatically on every build; branches named test/<name> get their own test build without touching releases.
+- Behind the scenes: Google Drive now uses the same local-copy code as Dropbox (one place to fix both; your sync state is kept), the home screen draws its background from one ready-made picture instead of rescaling it on every repaint, and the main launcher code is split into smaller files. Nothing you see changes.
+- When the game does not close normally, the status log now says that the game saved a crash report in its Diagnostics folder (game patch 0.141.1) and that sending it helps.
+- 217 more launcher texts are translated into all 26 languages (setup, Cloud Save sign-in, addon updates, Stats and Guide labels).
+- Game data: patch notes 0.143.1 to 0.143.3, refreshed talents, co-op notes in the Guide, and two new spell icons (Butcher, Radiance).
+- Closing the launcher while the game runs or Cloud Save is uploading now asks first, and can close it by itself once your progress is saved, instead of cutting off the upload.
+- Google Drive and Dropbox: progress that never reached the cloud (the launcher was closed right after the game) is now noticed at the next sync and uploaded, instead of being replaced by the cloud's older copy.
+- Switching sync folder, cloud service or account, or signing in again, now asks on the first sync instead of assuming which side is newer.
+- Addon updates no longer delete files through a linked addon folder (a folder that points to an addon author's own working copy).
+- Addon rollback puts the current version back if installing the older one fails.
+- Spell icons, video thumbnails and GitHub answers are kept between starts (and refreshed), so the launcher downloads less and hits GitHub's request limit less often.
+- PLAY remembers the launcher update check for 10 minutes; a game download of the wrong size stops at once instead of after 760 MB.
+- Errors nothing else caught are now written to log.txt. Unreadable settings are kept aside instead of being overwritten.
+- Steam Deck: web links show their address to open on your phone, PLAY says when Cloud Save is paused, and the Dropbox sign-in checks every 5 seconds.
+- Cloud sign-ins are only kept when Windows can protect them.
+- Community: SKIP VIDEO is now a small X in the top right corner of the video. Hover it and it says Skip/Stop; click it to skip to the next video.
+- Changelog: the game's patch notes 0.143.0 (Hyper Mode) are added, word for word.
+- Guide: a new Hyper Mode topic, after Heroic I to V: how to open it, what changes and what stays the same.
+
 # v3.38 (2026-11-10)
 
 - Download More: Slim Suite (Slimjim's movable default UI, formerly AZS Minor Mods) installs from its own GitHub releases into a SlimSuite folder. It is still marked Work in Progress, so its button asks first.

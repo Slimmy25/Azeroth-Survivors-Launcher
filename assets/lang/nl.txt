@@ -2027,3 +2027,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Rond eerst het spel, de installatie of cloudsynchronisatie af en controleer daarna opnieuw op updates.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} is klaar. Kies Update installeren onder Opties > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Vaardigheden worden vastgelegd voor runs die met de statistiek-addon aan zijn gespeeld.
+Addon release check complete.
+= Controle van addon-releases voltooid.
+Affects
+= Beïnvloedt
+All 8 armor pieces at 3+ stars
+= Alle 8 pantserstukken op 3+ sterren
+All ten Quick Access favorites are full. Remove one before adding another.
+= Alle tien Snelle toegang-favorieten zijn vol. Verwijder er een voordat je een nieuwe toevoegt.
+An addon operation is already running.
+= Er loopt al een addon-bewerking.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Met 5 sterren op alle 8 stukken is deze bonus anderhalf keer zo sterk.
+Average time
+= Gemiddelde tijd
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats ontbreekt in Meer downloaden.
+BACK
+= TERUG
+Back to Top
+= Naar boven
+Best level
+= Beste niveau
+Bright: victories · faint: all runs
+= Fel: overwinningen · vaag: alle runs
+Brighter: more runs that day
+= Feller: meer runs die dag
+Browse class build videos already featured in the guide.
+= Bekijk klasse-buildvideo's die al in de gids staan.
+Browse class, item, and transmog references in the Wiki.
+= Bekijk klasse-, item- en transmog-informatie in de Wiki.
+Build Videos
+= Buildvideo's
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Stel talenten samen, plan uitrusting en wissel tussen beide tools terwijl de gekozen klasse blijft.
+Build class
+= Buildklasse
+CANCEL DOWNLOAD & CLOSE
+= DOWNLOAD ANNULEREN & SLUITEN
+CHECK AGAIN
+= OPNIEUW CONTROLEREN
+CHOOSE FOLDER
+= MAP KIEZEN
+CHOOSE GAME FOLDER
+= SPELMAP KIEZEN
+CLEAR
+= WISSEN
+COPY
+= KOPIËREN
+Checking addon releases...
+= Addon-releases controleren...
+Choose an option on this setup step to continue.
+= Kies een optie in deze stap om door te gaan.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Kies de map met AzerothSurvivors.exe om de installatie voort te zetten.
+Choose the folder that contains the existing game client before continuing.
+= Kies de map met de bestaande spelclient voordat je verdergaat.
+Classes you play
+= Klassen die je speelt
+Close the game first: it saves its own settings when it closes.
+= Sluit eerst het spel: het slaat zijn eigen instellingen op bij het sluiten.
+Cloud Save uses Dropbox again.
+= Cloudopslag gebruikt weer Dropbox.
+Cloud Save uses Google Drive again.
+= Cloudopslag gebruikt weer Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Cloudopslag heeft een map voor spelopslagen nodig, of zet cloudopslag uit.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Cloudopslag heeft een synchronisatiemap nodig, of zet cloudopslag uit.
+Code copied.
+= Code gekopieerd.
+Codex
+= Codex
+Companions observed in runs
+= Metgezellen gezien in runs
+Connecting Dropbox...
+= Verbinden met Dropbox...
+Connecting Google Drive...
+= Verbinden met Google Drive...
+Contacting Google...
+= Contact met Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= De standaardwaarden zijn al ingevuld. Wijzig een map als je bestanden ergens anders staan.
+Defeats
+= Nederlagen
+Display Preview uses local builds; public updates stay separate.
+= Weergavevoorbeeld gebruikt lokale builds; openbare updates blijven apart.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Heb je Azeroth Survivors al op deze pc gedownload?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Heb je de Azeroth Survivors-spelclient al op deze pc?
+Downloading the game
+= Spel downloaden
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck experimenteel)
+Dropbox connected
+= Dropbox verbonden
+Dropbox sign-in discarded.
+= Dropbox-aanmelding geannuleerd.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox heeft je aangemeld maar de launcher geen blijvende toegang gegeven. Probeer het opnieuw.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= De Dropbox-aanmelding is beëindigd (verwijderd of verlopen). Meld je opnieuw aan via Opties > Cloudopslag.
+EXPORT ASBUILDS
+= ASBUILDS EXPORTEREN
+EXPORT PROFILE
+= PROFIEL EXPORTEREN
+Ended
+= Beëindigd
+Error log copied.
+= Foutenlog gekopieerd.
+Every addon is on its latest release.
+= Alle addons zijn up-to-date.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Bestaande AZS Stats-bestanden blijven bewaard. Hun geschiedenis wordt niet samengevoegd met Azeroth Stats.
+Existing game folder needs attention
+= Bestaande spelmap vraagt aandacht
+Existing save kept. Setup is still open; you can finish without importing it.
+= Bestaande save bewaard. De installatie is nog open; je kunt afronden zonder te importeren.
+FINISH SETUP
+= INSTALLATIE AFRONDEN
+Feedback copied.
+= Feedback gekopieerd.
+Finish the current update, install, or game session before continuing setup.
+= Rond de lopende update, installatie of spelsessie af voordat je verdergaat.
+First Time Setup
+= Eerste installatie
+Game client
+= Spelclient
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Spel-download geannuleerd. Kies INSTALLEREN als je het opnieuw wilt proberen.
+Gear section
+= Uitrustingsgedeelte
+GitHub returned invalid release information. Nothing was installed.
+= GitHub gaf ongeldige release-informatie. Er is niets geïnstalleerd.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= De aanvraaglimiet van GitHub is bereikt. Wacht even en probeer het opnieuw. Er is niets geïnstalleerd.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck experimenteel)
+Google Drive connected
+= Google Drive verbonden
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive bood het bestand nu niet aan (mogelijk is de downloadlimiet bereikt).
+Google Drive made a folder but did not say which.
+= Google Drive maakte een map maar zei niet welke.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= De Google Drive-aanmelding is beëindigd (verwijderd of verlopen). Meld je opnieuw aan via Opties > Cloudopslag.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google heeft je aangemeld maar de launcher geen blijvende toegang gegeven. Probeer het opnieuw.
+Google's sign-in answer was incomplete. Try again.
+= Het aanmeldantwoord van Google was onvolledig. Probeer het opnieuw.
+Guide links
+= Gidslinks
+Healing
+= Genezing
+Heroic
+= Heroïsch
+IMPORT ASBUILDS
+= ASBUILDS IMPORTEREN
+IMPORT BUILD
+= BUILD IMPORTEREN
+INSTALL AZEROTH STATS
+= AZEROTH STATS INSTALLEREN
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Bij ja kies je waar het bestaande spel en zijn AddOns staan. Bij nee wordt het spel gedownload naar de map van deze launcher.
+Interface size
+= Interfacegrootte
+Interrupted
+= Onderbroken
+Items
+= Items
+Last 5 weeks
+= Laatste 5 weken
+Last step: download the game?
+= Laatste stap: het spel downloaden?
+Latest retained spell build
+= Nieuwste bewaarde spreukenbuild
+Locations validated. Continuing setup...
+= Locaties gecontroleerd. Installatie gaat verder...
+MENU ▾
+= MENU ▾
+More entries are available on the Build Journal tab.
+= Meer items staan op het tabblad Builddagboek.
+NO, DOWNLOAD IT
+= NEE, DOWNLOAD HET
+Navigation
+= Navigatie
+No build journal entries are stored in the retained runs yet.
+= Nog geen builddagboek-items in de bewaarde runs.
+No companion samples are recorded yet.
+= Nog geen metgezel-gegevens vastgelegd.
+No death evidence recorded yet.
+= Nog geen doodsoorzaken vastgelegd.
+No download host worked.\n\n
+= Geen enkele downloadserver werkte.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Nog geen waargenomen spreukenoverzicht in de bewaarde runs.
+No source samples are available in retained runs.
+= Geen brongegevens in de bewaarde runs.
+No spell rank trends are stored yet.
+= Nog geen spreukrang-trends opgeslagen.
+No status messages yet.
+= Nog geen statusmeldingen.
+None selected
+= Niets geselecteerd
+Normal
+= Normaal
+Not ready for release yet. Click to install it anyway.
+= Nog niet klaar voor release. Klik om het toch te installeren.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Niet aangemeld bij Dropbox. Meld je aan via Opties > Cloudopslag.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Niet aangemeld bij Google Drive. Meld je aan via Opties > Cloudopslag.
+OPEN FOLDER
+= MAP OPENEN
+Observed attributions
+= Waargenomen toeschrijvingen
+Observed build and equipment changes
+= Waargenomen build- en uitrustingswijzigingen
+Observed build journal
+= Waargenomen builddagboek
+Observed death sources
+= Waargenomen doodsoorzaken
+Observed in the most recent retained run
+= Waargenomen in de laatste bewaarde run
+Observed party sample
+= Waargenomen groepssteekproef
+Observed run
+= Waargenomen run
+Observed status
+= Waargenomen status
+On your phone or computer, open
+= Open op je telefoon of computer
+On your phone, open
+= Open op je telefoon
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Eén volledige stand wint, de andere wordt eerst geback-upt.\nEerste keer op deze pc? Kies CLOUD GEBRUIKEN.\n
+Open on your phone
+= Openen op je telefoon
+Partial
+= Gedeeltelijk
+Partial observation
+= Gedeeltelijke waarneming
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Plak hieronder een talentbuildcode. Staat er een op je klembord, dan wordt die ingevuld.
+Peel this corner to switch theorycrafting tools.
+= Til deze hoek op om van theorycraft-tool te wisselen.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Speel een paar runs met Azeroth Stats om je DPS door de tijd te zien.
+Playing on a Steam Deck?
+= Speel je op een Steam Deck?
+Playing without cloud sync this time
+= Deze keer zonder cloudsynchronisatie spelen
+Preparing the Dropbox sign-in...
+= Dropbox-aanmelding voorbereiden...
+Priest
+= Priest
+Priest guide
+= Priest-gids
+QUICK ACCESS
+= SNELLE TOEGANG
+Rings & Trinkets
+= Ringen & trinkets
+Runs observed
+= Waargenomen runs
+SIGN IN WITH DROPBOX
+= AANMELDEN MET DROPBOX
+SIGN IN WITH GOOGLE
+= AANMELDEN MET GOOGLE
+SIGN OUT
+= AFMELDEN
+START OVER
+= OPNIEUW BEGINNEN
+STAY & FINISH
+= BLIJVEN & AFRONDEN
+STEAM DECK / HANDHELD
+= STEAM DECK / HANDHELD
+STEAM DECK EXPERIMENTAL
+= STEAM DECK EXPERIMENTEEL
+Save favorite
+= Favoriet opslaan
+Save this location to Quick Access.
+= Deze locatie opslaan in Snelle toegang.
+Save to Quick Access
+= Opslaan in Snelle toegang
+Save where? The current location, the top of this page, or the closest category header.
+= Waar opslaan? De huidige plek, de bovenkant van deze pagina of de dichtstbijzijnde categoriekop.
+Saved in
+= Opgeslagen in
+Scaling video fixture
+= Schalingstestvideo
+Setup is only available while the setup guide is open.
+= Installeren kan alleen terwijl de installatiegids open is.
+Sign in to Google Drive
+= Aanmelden bij Google Drive
+Signed out of Dropbox.
+= Afgemeld bij Dropbox.
+Signed out of Google Drive.
+= Afgemeld bij Google Drive.
+Skip/Stop
+= Overslaan/Stop
+Some addons could not be changed:\n\n
+= Sommige addons konden niet worden gewijzigd:\n\n
+Spell pool
+= Spreukenpool
+Spell rank trends · observed, not exact card picks
+= Spreukrang-trends · waargenomen, geen exacte kaartkeuzes
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Begin hier: leer de besturing, je eerste run en de systemen die je op weg helpen.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / handheld of Windows-pc?
+Stopping the game download before closing...
+= Spel-download stoppen voor het sluiten...
+Support the Dev
+= Steun de ontwikkelaar
+Talent build code
+= Talentbuildcode
+Temporarily unavailable while work is in progress.
+= Tijdelijk niet beschikbaar terwijl er aan gewerkt wordt.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Bedankt voor het gebruiken van mijn community-launcher. Hij is gemaakt om te vieren hoe gaaf deze game is en om één centrale plek te bieden voor alles rond Azeroth Survivors\n\n
+That file does not exist.
+= Dat bestand bestaat niet.
+That is not an Azeroth Survivors save file.
+= Dat is geen Azeroth Survivors-savebestand.
+That is not an Azeroth Survivors save file.\n\n
+= Dat is geen Azeroth Survivors-savebestand.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= De inhoud van het archief veranderde tijdens het uitpakken. Er is niets geïnstalleerd.
+The clipboard is busy. Try copying again.
+= Het klembord is bezet. Probeer opnieuw te kopiëren.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Het bestaande spel is niet in die map gevonden. Kies de map met AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Het spelarchief bevat een gereserveerde Windows-bestandsnaam. Er is niets geïnstalleerd.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Het spelarchief bevat een leeg pad of symbolische koppeling. Er is niets geïnstalleerd.
+The game archive contains an unsafe path. Nothing was installed.
+= Het spelarchief bevat een onveilig pad. Er is niets geïnstalleerd.
+The game archive contains conflicting file paths. Nothing was installed.
+= Het spelarchief bevat conflicterende bestandspaden. Er is niets geïnstalleerd.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Het spelarchief bevat dubbele of conflicterende bestandspaden. Er is niets geïnstalleerd.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Het spelarchief kon niet worden uitgepakt. Het is mogelijk beschadigd, versleuteld, onvolledig of gebruikt een niet-ondersteunde methode. Er is niets geïnstalleerd.
+The game archive format is not supported by the built-in extractor.
+= Het formaat van het spelarchief wordt niet ondersteund door de ingebouwde uitpakker.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Het spelarchief is onvolledig of heeft nog een archiefdeel nodig. Er is niets geïnstalleerd.
+The game archive is password-protected. Please use an unencrypted game download.
+= Het spelarchief is met een wachtwoord beveiligd. Gebruik een onversleutelde spel-download.
+The game config folder is not set. Set it in Options > FOLDERS.
+= De spelconfiguratiemap is niet ingesteld. Stel die in via Opties > MAPPEN.
+The game files are being installed. The launcher will close when that finishes.
+= De spelbestanden worden geïnstalleerd. De launcher sluit wanneer dat klaar is.
+The game is running: close it first, it saves its own settings when it closes.
+= Het spel draait: sluit het eerst, het slaat zijn eigen instellingen op bij het sluiten.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Het spel of de synchronisatie startte terwijl deze addon downloadde. De geïnstalleerde bestanden zijn ongewijzigd; probeer het opnieuw nadat het gesloten is.
+The launcher closes by itself once your progress is saved.
+= De launcher sluit vanzelf zodra je voortgang is opgeslagen.
+The launcher is already running. Look for its window on the taskbar.
+= De launcher draait al. Zoek het venster op de taakbalk.
+The save could not be imported:\n\n
+= De save kon niet worden geïmporteerd:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= De aanmeldcode is verlopen voordat hij gebruikt werd. Druk opnieuw op AANMELDEN MET DROPBOX.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= De aanmeldcode is verlopen voordat hij gebruikt werd. Druk opnieuw op AANMELDEN MET GOOGLE.
+The sign-in was declined on Dropbox's page.
+= De aanmelding is geweigerd op de pagina van Dropbox.
+The sign-in was declined on Google's page.
+= De aanmelding is geweigerd op de pagina van Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Sta daarna Azeroth Survivors Launcher toe een eigen map in je Google Drive te gebruiken. Deze pagina sluit vanzelf zodra je bent aangemeld.
+This Codex entry's class guide is unavailable.
+= De klassegids van dit Codex-item is niet beschikbaar.
+This Guide location no longer exists.
+= Deze plek in de gids bestaat niet meer.
+This Guide video is no longer available.
+= Deze gidsvideo is niet meer beschikbaar.
+This add-on is not configured for direct GitHub release updates.
+= Deze add-on is niet ingesteld voor directe GitHub-release-updates.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Deze addon is vastgezet op een oudere kopie. Vervangen door de nieuwste release?
+This class talent page is no longer available.
+= Deze klassetalentpagina is niet meer beschikbaar.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Deze favoriet past niet meer bij een gidspagina. Koppel de pagina opnieuw om hem bij te werken.
+Today
+= Vandaag
+UPDATE ALL
+= ALLES BIJWERKEN
+USE DROPBOX
+= DROPBOX GEBRUIKEN
+USE GOOGLE DRIVE
+= GOOGLE DRIVE GEBRUIKEN
+Undated
+= Zonder datum
+Use the arrow keys to browse links and Enter to open one.
+= Gebruik de pijltjestoetsen om door links te bladeren en Enter om er een te openen.
+Use the star on a guide page to save its reading position to Quick Access.
+= Gebruik de ster op een gidspagina om je leespositie op te slaan in Snelle toegang.
+WINDOWS PC
+= WINDOWS-PC
+WINS
+= OVERWINNINGEN
+Waiting for the Dropbox sign-in...
+= Wachten op de Dropbox-aanmelding...
+Waiting for the Google sign-in...
+= Wachten op de Google-aanmelding...
+Wiki
+= Wiki
+Work in Progress
+= In ontwikkeling
+Written Guides
+= Geschreven gidsen
+YES, I HAVE THE CLIENT
+= JA, IK HEB DE CLIENT
+Yesterday
+= Gisteren
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Je gaf aan dat je het spel al hebt, maar AzerothSurvivors.exe staat niet meer in de gekozen map. Kies de juiste spelmap om door te gaan. Bij een bestaande client biedt de installatie geen spel-download aan.
+ranks
+= rangen
+times
+= keer
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Als het spel is gecrasht, heeft het een crashrapport in de map Diagnostics opgeslagen. Dat naar de ontwikkelaar van het spel sturen helpt de crash op te lossen.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= AZS-addons niet bijgewerkt: {0}
+  Addons for the synced settings not checked: {0}
+= Addons voor de gesynchroniseerde instellingen niet gecontroleerd: {0}
+1  FOLLOW THE PATH
+= 1  VOLG HET PAD
+2  SAVE A FAVORITE
+= 2  BEWAAR EEN FAVORIET
+4 armor pieces at 1+ stars
+= 4 pantserstukken op 1+ sterren
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Eerst wordt een nieuwe launcher ({0}) geïnstalleerd; druk na de herstart opnieuw op SPELEN.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Addons bijgewerkt: {0}. Mislukt: {1}. Controlefouten: {2}.
+All addons {0}
+= Alle addons {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats legt runs en buildwijzigingen in het spel vast (/azstats). De launcher toont opgeslagen totalen, klassen, recente runverslagen, gevechtsgegevens en het waargenomen builddagboek. De eigen verslagen, vergelijkingen en instelbare HUD blijven in de addon beschikbaar.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats legt runs en waargenomen buildwijzigingen in het spel vast (/azstats). De launcher toont opgeslagen totalen, klassen, recente runverslagen, gevechtsgegevens en het builddagboek. De verslagen, vergelijkingen en instelbare HUD van de addon blijven daar beschikbaar.
+Best level {#0}
+= Beste niveau {#0}
+Best level: {#0}
+= Beste niveau: {#0}
+Best together: {0}, level {#1}
+= Beste samen: {0}, niveau {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Cloudopslag gepauzeerd: {0} vereist STEAM DECK EXPERIMENTEEL (Opties > Launcher). Deze sessie wordt niet gesynchroniseerd.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Cloudopslag staat op {0}, wat STEAM DECK EXPERIMENTEEL vereist (Opties > Launcher). Zet het weer aan of kies hieronder een synchronisatiemap.
+Confirmed {#0} · probable {#1}
+= Bevestigd {#0} · waarschijnlijk {#1}
+Could not install {0}:\n\n{1}
+= Kon {0} niet installeren:\n\n{1}
+Could not save the game setting:
+= Kon de spelinstelling niet opslaan:
+Could not uninstall {0}:\n\n{1}
+= Kon {0} niet verwijderen:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox was niet bereikbaar ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox accepteerde de aanmelding niet: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox weigerde de aanmelding: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Experimentele Steam Deck-ondersteuning: de launcher vult het scherm in Gamemodus, start het spel in dezelfde Steam-vermelding en stapt opzij terwijl je speelt. Opties > Launcher zet het weer uit.
+Game setting saved:
+= Spelinstelling opgeslagen:
+Google Drive refused the sign-in: {0}
+= Google Drive weigerde de aanmelding: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} De upload wordt bij de volgende synchronisatie verstuurd.
+Google could not be reached ({0}).
+= Google was niet bereikbaar ({0}).
+Google did not start the sign-in: {0}
+= Google startte de aanmelding niet: {0}
+Google sign-in failed: {0}
+= Google-aanmelding mislukt: {0}
+Highest observed rank {#0}
+= Hoogste waargenomen rang {#0}
+Installing {0} ({1})...
+= {0} installeren ({1})...
+It killed you {#0} times
+= Het doodde je {#0} keer
+Longest: {0}
+= Langste: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Geen enkel bestand in deze release bevat {0} (een map met zijn .toc-bestand), zelfs de broncode niet. Er is niets geïnstalleerd.
+Observed in {#0} runs · rank gains {#1}
+= Gezien in {#0} runs · rangstijgingen {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Azeroth Survivors in je browser gespeeld? Neem je voortgang mee: je helden, geopende zones, uitrusting, talenten en codex.\n\nOpen op de website Options > Saves en druk op Export Save. Kies dat .sav-bestand dan hier. Het spel opent met je voortgang, klaar om te spelen.
+Quick Access {0}
+= Snelle toegang {0}
+Rank {#0}
+= Rang {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} verwijderd uit Snelle toegang. Gebruik de gidsster of de favorietknop van de sectie om het weer toe te voegen.
+Runs {#0} · Victories {#1}
+= Runs {#0} · Overwinningen {#1}
+Runs: {#0}
+= Runs: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Opgeslagen in de kopie van de launcher, maar {0} was niet bereikbaar: {1} Het wordt bij de volgende synchronisatie geüpload.
+Survived {0} · Level {1}
+= Overleefd {0} · Niveau {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Overleefd {0} · Niveau {1} · Kills {2} · Goud {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Dat is het hoogste niveau van je cloudopslag.\n\nEen submap genaamd Azeroth Survivor Launcher maken en gebruiken?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= De addon-update is mislukt. De vorige bestanden zijn bewaard in {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= De download van {0} is beschadigd of niet het juiste bestand (controlesom klopt niet). Probeer het opnieuw.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= De launcher kon zichzelf niet vervangen in deze map ({0}).\n\nDownload de nieuwe versie via GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Het aanmeldrelais (ntfy.sh) was niet bereikbaar ({0}). Probeer het zo opnieuw.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} biedt een ander bestand dan verwacht ({1} in plaats van {2}).
+The {0} server answered with error {1}.
+= De server {0} antwoordde met fout {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Deze mappen zijn niet gevonden:\n\n  {0}\n\nToch afronden? Je kunt ze later wijzigen in Opties.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Deze pc heeft al voortgang in het spel.\n\nVervangen door {0}?\nWat er nu is, wordt bewaard als back-up in de Saves-map van het spel.
+This launcher was built without {0}.
+= Deze launcher is gebouwd zonder {0}.
+Time {0}
+= Tijd {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows kon de aanmelding op dit apparaat niet beveiligen, dus die is niet bewaard ({0}).
+Won: {#0}
+= Gewonnen: {#0}
+You beat it {#0} times
+= Je versloeg het {#0} keer
+and enter this code:
+= en voer deze code in:
+since {0}
+= sinds {0}
+✓ Imported: {0}
+= ✓ Geïmporteerd: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Save gekozen: {0} (wordt geïmporteerd als de installatie klaar is)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Gewijzigd in spelpatch {0}
+What changed since you last played
+= Wat er veranderd is sinds je laatst speelde
+THE GAME
+= HET SPEL
+THE LAUNCHER
+= DE LAUNCHER
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Meer patches staan op de Nieuwspagina.
+Patch {0}
+= Patch {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Bijgewerkt van {0} naar {1}.
+Personal records
+= Persoonlijke records
+Play a few runs with Azeroth Stats to see your records here.
+= Speel een paar runs met Azeroth Stats om hier je records te zien.
+Fastest victory {0}
+= Snelste overwinning {0}
+Highest level {0}
+= Hoogste niveau {0}
+Most kills {0}
+= Meeste kills {0}
+best DPS
+= beste DPS
+Solo and co-op runs
+= Solo- en co-op-runs
+Runs (solo / co-op)
+= Runs (solo / co-op)
+Win rate (solo / co-op)
+= Winpercentage (solo / co-op)
+Average run (solo / co-op)
+= Gemiddelde run (solo / co-op)
+Average level (solo / co-op)
+= Gemiddeld niveau (solo / co-op)
+Average DPS (solo / co-op)
+= Gemiddelde DPS (solo / co-op)

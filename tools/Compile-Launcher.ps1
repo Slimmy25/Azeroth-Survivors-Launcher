@@ -31,6 +31,7 @@ $resources = @(
     'vendor\SharpCompress\THIRD-PARTY-NOTICES.md,AS.extractor.notices.txt'
     'assets\addons.txt,AS.addons.txt'
     'assets\launcher-about.txt,AS.launcher-about.txt'
+    'assets\launcher-changelog.txt,AS.launcher-changelog.txt'
     'assets\guide.txt,AS.guide.txt'
     'assets\game-text.txt,AS.game-text.txt'
     'assets\talents.txt,AS.talents.txt'

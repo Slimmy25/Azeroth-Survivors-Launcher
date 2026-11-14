@@ -66,7 +66,7 @@ Naxxramas | The Scourge Invasion. Naxxramas hangs over the Plaguelands, and its 
 # talents (milestones and capstones)
 Adrenaline Rush | Milestone. Every Xth kill floods you with adrenaline: a free Adrenaline Rush, your cooldowns 60% faster for 11 sec.
 Arcane Concentration | Milestone. Clearcasting: every spell you cast has a X% chance to set off a free Arcane Explosion.
-Arcane Power | Capstone. You start every run with Arcane Missiles instead of Fireball, and your spells strike twice X% more often. Your echoes cascade: a spell that strikes twice by chance rolls again to strike once more, up to 3 more times in a row.
+Arcane Power | Capstone. You start every run with Arcane Missiles instead of Fireball, and your spells strike twice X% more often. Your echoes cascade: a spell that strikes twice rolls again to strike once more, up to 3 more times in a row.
 Ardent Defender | Milestone. You start every run with Hammer of Justice. Every Consecration raises a shield of X% of your maximum health, stacking up to 30% (39% with Blessed Life), and while a shield holds, you deal 20% more damage.
 Bestial Wrath | Capstone. A raptor joins your wolf, and your pets' bites tear through 2 more enemies nearby for X% of the bite.
 Bladestorm | Capstone. You start every run with Whirlwind, and you never stop spinning: a free Whirlwind every 3 sec.
@@ -103,7 +103,7 @@ Mortal Wounds | Capstone. You start every run with Mortal Strike; a killing blow
 Mutilate | Milestone. Sinister Strike and Backstab strike with both blades: everything they hit is struck again at once for 50% of the blow.
 Nightfall | Milestone. Your Shadow Bolts carry the night: each one that lands corrupts its target for X% of the bolt over 12 sec, and every tick of Corruption has a 2% chance to fire a free Shadow Bolt, at most twice a second.
 Omen of Clarity | Milestone. Every spell you cast has a X% chance to call down a free Starfire.
-Pact of the Annihilan | Capstone. Summons a Pit Lord for X sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.
+Pact of the Nathrezim | Capstone. Summons a Dread Lord for X sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.
 Butcher | Capstone. Summons a Felguard for X sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.
 Penance | Capstone. You strike out on your own: a free Penance about every 3 sec, three bolts of holy light at the nearest enemies.
 Piercing Shots | Milestone. Auto Shot pierces: every arrow also strikes 1 enemy beyond its target for X% of it.
@@ -115,7 +115,7 @@ Radiance | Milestone. A Holy Nova bursts from you on its own every 24 sec.
 Rain of Chaos | Capstone. A second Rain of Fire falls on its own every 13 sec, and its burning ground slows what it touches.
 Rake | Milestone. Your hide thickens: 20% more maximum health and 8% less damage taken. You start every run with Swipe and Shred, and everything they hit bleeds for X% of the blow over 6 sec.
 Rampage | Milestone. Every Xth kill unleashes a free Whirlwind.
-Rapid Fire | Milestone. Every Xth shot you fire is followed by a free Aimed Shot.
+Rapid Fire | Milestone. Every Xth shot you fire triggers a free Aimed Shot, at most twice a second.
 Rapture | Milestone. A broken Power Word: Shield is raised again at once, at most once every 15 sec.
 Reincarnation | Milestone. A blow that would kill you leaves you at 50% health instead, once every 2 min.
 Seal of Command | Milestone. You start every run with Judgement, and every Judgement also strikes 2 more enemies near its target for X% of it.
@@ -138,4 +138,4 @@ Totemic Wrath | Capstone. You start every run with Magma Totem, and a second Sea
 Toxic Bloom | Capstone. Enemies that die poisoned or bleeding burst in a toxic cloud for X% of their maximum health on everything within 7 yd.
 Tree of Life | Capstone. Healing beyond your maximum health becomes a shield, up to 20% of it, and a free Rejuvenation blooms on you every 6 sec.
 Windfury | Milestone. Your Lightning Bolts, Earth Shocks and Frost Shocks have a X% chance to strike twice more at once.
-Wyvern Sting | Capstone. You start every run with Frost Trap, and an Explosive Trap sets itself at your feet every 5 sec.
+Wyvern Sting | Capstone. You start every run with Frost Trap, and an Immolation Trap sets itself at your feet every 5 sec.

@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Închide jocul, finalizează instalarea sau sincronizarea cloud, apoi verifică din nou actualizările.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} este gata. Alege Instalează actualizarea în Opțiuni > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Abilitățile sunt înregistrate pentru partidele jucate cu addonul de statistici activ.
+Addon release check complete.
+= Verificarea versiunilor addonurilor s-a încheiat.
+Affects
+= Afectează
+All 8 armor pieces at 3+ stars
+= Toate cele 8 piese de armură la 3+ stele
+All ten Quick Access favorites are full. Remove one before adding another.
+= Toate cele zece favorite din Acces rapid sunt ocupate. Elimină unul înainte să adaugi altul.
+An addon operation is already running.
+= O operațiune cu addonuri rulează deja.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= La 5 stele pe toate cele 8 piese, acest bonus este cu jumătate mai puternic.
+Average time
+= Timp mediu
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats lipsește din Descarcă mai multe.
+BACK
+= ÎNAPOI
+Back to Top
+= Sus
+Best level
+= Cel mai bun nivel
+Bright: victories · faint: all runs
+= Luminos: victorii · estompat: toate partidele
+Brighter: more runs that day
+= Mai luminos: mai multe partide în acea zi
+Browse class build videos already featured in the guide.
+= Răsfoiește videoclipurile cu build-uri de clasă deja prezente în ghid.
+Browse class, item, and transmog references in the Wiki.
+= Răsfoiește referințe despre clase, obiecte și transmog în Wiki.
+Build Videos
+= Videoclipuri build-uri
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Construiește talentele, planifică echipamentul și comută între cele două unelte păstrând clasa aleasă.
+Build class
+= Clasa build-ului
+CANCEL DOWNLOAD & CLOSE
+= ANULEAZĂ DESCĂRCAREA ȘI ÎNCHIDE
+CHECK AGAIN
+= VERIFICĂ DIN NOU
+CHOOSE FOLDER
+= ALEGE FOLDERUL
+CHOOSE GAME FOLDER
+= ALEGE FOLDERUL JOCULUI
+CLEAR
+= ȘTERGE
+COPY
+= COPIAZĂ
+Checking addon releases...
+= Se verifică versiunile addonurilor...
+Choose an option on this setup step to continue.
+= Alege o opțiune la acest pas pentru a continua.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Alege folderul care conține AzerothSurvivors.exe pentru a continua configurarea.
+Choose the folder that contains the existing game client before continuing.
+= Alege folderul cu clientul de joc existent înainte de a continua.
+Classes you play
+= Clasele pe care le joci
+Close the game first: it saves its own settings when it closes.
+= Închide mai întâi jocul: își salvează setările la închidere.
+Cloud Save uses Dropbox again.
+= Salvarea în cloud folosește din nou Dropbox.
+Cloud Save uses Google Drive again.
+= Salvarea în cloud folosește din nou Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Salvarea în cloud are nevoie de un folder cu salvările jocului, sau dezactiveaz-o.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Salvarea în cloud are nevoie de un folder de sincronizare, sau dezactiveaz-o.
+Code copied.
+= Cod copiat.
+Codex
+= Codex
+Companions observed in runs
+= Însoțitori observați în partide
+Connecting Dropbox...
+= Conectare la Dropbox...
+Connecting Google Drive...
+= Conectare la Google Drive...
+Contacting Google...
+= Se contactează Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Valorile implicite sunt completate. Schimbă un folder dacă fișierele tale sunt în altă parte.
+Defeats
+= Înfrângeri
+Display Preview uses local builds; public updates stay separate.
+= Previzualizarea afișajului folosește build-uri locale; actualizările publice rămân separate.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Ai descărcat deja Azeroth Survivors pe acest PC?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Ai deja clientul Azeroth Survivors pe acest PC?
+Downloading the game
+= Se descarcă jocul
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck experimental)
+Dropbox connected
+= Dropbox conectat
+Dropbox sign-in discarded.
+= Autentificarea Dropbox a fost abandonată.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox te-a autentificat, dar nu a dat launcherului acces permanent. Încearcă din nou.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Autentificarea Dropbox s-a încheiat (eliminată sau expirată). Autentifică-te din nou în Opțiuni > Salvare în cloud.
+EXPORT ASBUILDS
+= EXPORTĂ ASBUILDS
+EXPORT PROFILE
+= EXPORTĂ PROFILUL
+Ended
+= Încheiată
+Error log copied.
+= Jurnalul de erori a fost copiat.
+Every addon is on its latest release.
+= Toate addonurile au ultima versiune.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Fișierele AZS Stats existente se păstrează. Istoricul lor nu este combinat în Azeroth Stats.
+Existing game folder needs attention
+= Folderul jocului existent necesită atenție
+Existing save kept. Setup is still open; you can finish without importing it.
+= Salvarea existentă a fost păstrată. Configurarea e încă deschisă; poți termina fără import.
+FINISH SETUP
+= TERMINĂ CONFIGURAREA
+Feedback copied.
+= Feedback copiat.
+Finish the current update, install, or game session before continuing setup.
+= Termină actualizarea, instalarea sau sesiunea de joc în curs înainte de a continua configurarea.
+First Time Setup
+= Prima configurare
+Game client
+= Clientul jocului
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Descărcarea jocului a fost anulată. Alege INSTALEAZĂ când vrei să încerci din nou.
+Gear section
+= Secțiunea echipament
+GitHub returned invalid release information. Nothing was installed.
+= GitHub a returnat informații de versiune invalide. Nu s-a instalat nimic.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= S-a atins limita de cereri GitHub. Așteaptă și încearcă din nou. Nu s-a instalat nimic.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck experimental)
+Google Drive connected
+= Google Drive conectat
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive nu a oferit fișierul acum (poate a atins limita de descărcări).
+Google Drive made a folder but did not say which.
+= Google Drive a creat un folder, dar nu a spus care.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Autentificarea Google Drive s-a încheiat (eliminată sau expirată). Autentifică-te din nou în Opțiuni > Salvare în cloud.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google te-a autentificat, dar nu a dat launcherului acces permanent. Încearcă din nou.
+Google's sign-in answer was incomplete. Try again.
+= Răspunsul de autentificare Google a fost incomplet. Încearcă din nou.
+Guide links
+= Linkuri din ghid
+Healing
+= Vindecare
+Heroic
+= Eroic
+IMPORT ASBUILDS
+= IMPORTĂ ASBUILDS
+IMPORT BUILD
+= IMPORTĂ BUILD
+INSTALL AZEROTH STATS
+= INSTALEAZĂ AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Dacă da, vei alege unde se află jocul existent și AddOn-urile lui. Dacă nu, jocul va fi descărcat în folderul acestui launcher.
+Interface size
+= Mărimea interfeței
+Interrupted
+= Întreruptă
+Items
+= Obiecte
+Last 5 weeks
+= Ultimele 5 săptămâni
+Last step: download the game?
+= Ultimul pas: descarci jocul?
+Latest retained spell build
+= Cel mai recent build de vrăji păstrat
+Locations validated. Continuing setup...
+= Locații validate. Configurarea continuă...
+MENU ▾
+= MENIU ▾
+More entries are available on the Build Journal tab.
+= Mai multe intrări în fila Jurnal de build-uri.
+NO, DOWNLOAD IT
+= NU, DESCARCĂ-L
+Navigation
+= Navigare
+No build journal entries are stored in the retained runs yet.
+= Încă nu există intrări în jurnalul de build-uri în partidele păstrate.
+No companion samples are recorded yet.
+= Încă nu există date despre însoțitori.
+No death evidence recorded yet.
+= Încă nu există cauze ale morții înregistrate.
+No download host worked.\n\n
+= Niciun server de descărcare nu a funcționat.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Încă nu există o captură observată a vrăjilor în partidele păstrate.
+No source samples are available in retained runs.
+= Nu există date despre surse în partidele păstrate.
+No spell rank trends are stored yet.
+= Încă nu există tendințe ale rangurilor vrăjilor.
+No status messages yet.
+= Încă nu există mesaje de stare.
+None selected
+= Nimic selectat
+Normal
+= Normal
+Not ready for release yet. Click to install it anyway.
+= Încă nu e gata de lansare. Fă clic pentru a-l instala oricum.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Nu ești autentificat în Dropbox. Autentifică-te în Opțiuni > Salvare în cloud.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Nu ești autentificat în Google Drive. Autentifică-te în Opțiuni > Salvare în cloud.
+OPEN FOLDER
+= DESCHIDE FOLDERUL
+Observed attributions
+= Atribuiri observate
+Observed build and equipment changes
+= Schimbări observate de build și echipament
+Observed build journal
+= Jurnal de build-uri observat
+Observed death sources
+= Cauze ale morții observate
+Observed in the most recent retained run
+= Observat în cea mai recentă partidă păstrată
+Observed party sample
+= Eșantion de grup observat
+Observed run
+= Partidă observată
+Observed status
+= Stare observată
+On your phone or computer, open
+= Pe telefon sau calculator, deschide
+On your phone, open
+= Pe telefon, deschide
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Câștigă o stare completă, cealaltă este salvată mai întâi.\nPrima dată pe acest PC? Alege FOLOSEȘTE CLOUDUL.\n
+Open on your phone
+= Deschide pe telefon
+Partial
+= Parțială
+Partial observation
+= Observație parțială
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Lipește mai jos un cod de build de talente. Dacă există unul în clipboard, este completat automat.
+Peel this corner to switch theorycrafting tools.
+= Ridică acest colț pentru a schimba unealta de theorycrafting.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Joacă câteva partide cu Azeroth Stats ca să vezi DPS-ul tău în timp.
+Playing on a Steam Deck?
+= Joci pe un Steam Deck?
+Playing without cloud sync this time
+= Joci fără sincronizare în cloud de data aceasta
+Preparing the Dropbox sign-in...
+= Se pregătește autentificarea Dropbox...
+Priest
+= Preot
+Priest guide
+= Ghid de preot
+QUICK ACCESS
+= ACCES RAPID
+Rings & Trinkets
+= Inele și podoabe
+Runs observed
+= Partide observate
+SIGN IN WITH DROPBOX
+= AUTENTIFICARE CU DROPBOX
+SIGN IN WITH GOOGLE
+= AUTENTIFICARE CU GOOGLE
+SIGN OUT
+= DECONECTARE
+START OVER
+= ÎNCEPE DIN NOU
+STAY & FINISH
+= RĂMÂI ȘI TERMINĂ
+STEAM DECK / HANDHELD
+= STEAM DECK / PORTABIL
+STEAM DECK EXPERIMENTAL
+= STEAM DECK EXPERIMENTAL
+Save favorite
+= Salvează favoritul
+Save this location to Quick Access.
+= Salvează această locație în Acces rapid.
+Save to Quick Access
+= Salvează în Acces rapid
+Save where? The current location, the top of this page, or the closest category header.
+= Unde salvezi? Locația curentă, începutul paginii sau cel mai apropiat antet de categorie.
+Saved in
+= Salvat în
+Scaling video fixture
+= Videoclip de test pentru scalare
+Setup is only available while the setup guide is open.
+= Configurarea este disponibilă doar cât timp ghidul de configurare este deschis.
+Sign in to Google Drive
+= Autentificare în Google Drive
+Signed out of Dropbox.
+= Deconectat de la Dropbox.
+Signed out of Google Drive.
+= Deconectat de la Google Drive.
+Skip/Stop
+= Sari/Oprește
+Some addons could not be changed:\n\n
+= Unele addonuri nu au putut fi modificate:\n\n
+Spell pool
+= Rezerva de vrăji
+Spell rank trends · observed, not exact card picks
+= Tendințe ale rangurilor vrăjilor · observate, nu alegeri exacte de cărți
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Începe aici: învață controalele, prima partidă și sistemele care te ajută să pornești.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / portabil sau PC cu Windows?
+Stopping the game download before closing...
+= Se oprește descărcarea jocului înainte de închidere...
+Support the Dev
+= Susține dezvoltatorul
+Talent build code
+= Cod de build de talente
+Temporarily unavailable while work is in progress.
+= Temporar indisponibil cât timp se lucrează.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Mulțumesc că folosești launcherul meu făcut de comunitate. Este gândit să sărbătorească cât de tare e acest joc și să fie un singur loc pentru tot ce ține de Azeroth Survivors\n\n
+That file does not exist.
+= Acel fișier nu există.
+That is not an Azeroth Survivors save file.
+= Acesta nu este un fișier de salvare Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= Acesta nu este un fișier de salvare Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Conținutul arhivei s-a schimbat în timpul extragerii. Nu s-a instalat nimic.
+The clipboard is busy. Try copying again.
+= Clipboardul este ocupat. Încearcă să copiezi din nou.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Jocul existent nu a fost găsit în acel folder. Alege folderul care conține AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Arhiva jocului conține un nume de fișier rezervat Windows. Nu s-a instalat nimic.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Arhiva jocului conține o cale goală sau o legătură simbolică. Nu s-a instalat nimic.
+The game archive contains an unsafe path. Nothing was installed.
+= Arhiva jocului conține o cale nesigură. Nu s-a instalat nimic.
+The game archive contains conflicting file paths. Nothing was installed.
+= Arhiva jocului conține căi de fișiere conflictuale. Nu s-a instalat nimic.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Arhiva jocului conține căi de fișiere duplicate sau conflictuale. Nu s-a instalat nimic.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Arhiva jocului nu a putut fi extrasă. Poate fi deteriorată, criptată, incompletă sau folosește o metodă neacceptată. Nu s-a instalat nimic.
+The game archive format is not supported by the built-in extractor.
+= Formatul arhivei jocului nu este acceptat de extractorul integrat.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Arhiva jocului este incompletă sau are nevoie de încă o parte. Nu s-a instalat nimic.
+The game archive is password-protected. Please use an unencrypted game download.
+= Arhiva jocului este protejată prin parolă. Folosește o descărcare necriptată.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Folderul de configurare al jocului nu este setat. Setează-l în Opțiuni > FOLDERE.
+The game files are being installed. The launcher will close when that finishes.
+= Fișierele jocului se instalează. Launcherul se va închide la final.
+The game is running: close it first, it saves its own settings when it closes.
+= Jocul rulează: închide-l mai întâi, își salvează setările la închidere.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Jocul sau sincronizarea a pornit în timp ce se descărca addonul. Fișierele instalate au rămas neschimbate; încearcă din nou după ce se închide.
+The launcher closes by itself once your progress is saved.
+= Launcherul se închide singur după ce progresul tău este salvat.
+The launcher is already running. Look for its window on the taskbar.
+= Launcherul rulează deja. Caută-i fereastra în bara de activități.
+The save could not be imported:\n\n
+= Salvarea nu a putut fi importată:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Codul de autentificare a expirat înainte de folosire. Apasă din nou AUTENTIFICARE CU DROPBOX.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Codul de autentificare a expirat înainte de folosire. Apasă din nou AUTENTIFICARE CU GOOGLE.
+The sign-in was declined on Dropbox's page.
+= Autentificarea a fost refuzată pe pagina Dropbox.
+The sign-in was declined on Google's page.
+= Autentificarea a fost refuzată pe pagina Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Apoi permite Azeroth Survivors Launcher să folosească propriul folder în Google Drive. Pagina se închide singură după autentificare.
+This Codex entry's class guide is unavailable.
+= Ghidul de clasă al acestei intrări din Codex nu este disponibil.
+This Guide location no longer exists.
+= Această locație din ghid nu mai există.
+This Guide video is no longer available.
+= Acest videoclip din ghid nu mai este disponibil.
+This add-on is not configured for direct GitHub release updates.
+= Acest add-on nu este configurat pentru actualizări directe din versiunile GitHub.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Acest addon este fixat pe o copie mai veche. Îl înlocuiești cu ultima versiune?
+This class talent page is no longer available.
+= Această pagină de talente a clasei nu mai este disponibilă.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Acest favorit nu mai corespunde unei pagini din ghid. Leagă din nou pagina pentru a-l actualiza.
+Today
+= Azi
+UPDATE ALL
+= ACTUALIZEAZĂ TOT
+USE DROPBOX
+= FOLOSEȘTE DROPBOX
+USE GOOGLE DRIVE
+= FOLOSEȘTE GOOGLE DRIVE
+Undated
+= Fără dată
+Use the arrow keys to browse links and Enter to open one.
+= Folosește săgețile pentru a parcurge linkurile și Enter pentru a deschide unul.
+Use the star on a guide page to save its reading position to Quick Access.
+= Folosește steaua de pe o pagină de ghid pentru a salva poziția de citire în Acces rapid.
+WINDOWS PC
+= PC CU WINDOWS
+WINS
+= VICTORII
+Waiting for the Dropbox sign-in...
+= Se așteaptă autentificarea Dropbox...
+Waiting for the Google sign-in...
+= Se așteaptă autentificarea Google...
+Wiki
+= Wiki
+Work in Progress
+= În lucru
+Written Guides
+= Ghiduri scrise
+YES, I HAVE THE CLIENT
+= DA, AM CLIENTUL
+Yesterday
+= Ieri
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Ai ales că ai deja jocul, dar AzerothSurvivors.exe nu mai este în folderul selectat. Alege folderul corect al jocului pentru a continua. Pentru un client existent, configurarea nu oferă descărcarea jocului.
+ranks
+= ranguri
+times
+= ori
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Dacă jocul s-a blocat, a salvat un raport de eroare în folderul Diagnostics. Trimiterea lui dezvoltatorului jocului ajută la remediere.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Addonuri AZS neactualizate: {0}
+  Addons for the synced settings not checked: {0}
+= Addonuri pentru setările sincronizate neverificate: {0}
+1  FOLLOW THE PATH
+= 1  URMEAZĂ CALEA
+2  SAVE A FAVORITE
+= 2  SALVEAZĂ UN FAVORIT
+4 armor pieces at 1+ stars
+= 4 piese de armură la 1+ stele
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Mai întâi se instalează un launcher nou ({0}); apasă din nou JOACĂ după repornire.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Addonuri actualizate: {0}. Eșuate: {1}. Erori de verificare: {2}.
+All addons {0}
+= Toate addonurile {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats înregistrează partidele și schimbările de build în joc (/azstats). Launcherul arată totalurile salvate, clasele, rapoartele partidelor recente, eșantioane de luptă și jurnalul de build-uri observat. Rapoartele proprii, comparațiile și HUD-ul configurabil rămân în addon.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats înregistrează partidele și schimbările de build observate în joc (/azstats). Launcherul arată totalurile salvate, clasele, rapoartele partidelor recente, eșantioane de luptă și jurnalul de build-uri. Rapoartele, comparațiile și HUD-ul configurabil ale addonului rămân acolo.
+Best level {#0}
+= Cel mai bun nivel {#0}
+Best level: {#0}
+= Cel mai bun nivel: {#0}
+Best together: {0}, level {#1}
+= Cel mai bine împreună: {0}, nivel {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Salvarea în cloud e în pauză: {0} necesită STEAM DECK EXPERIMENTAL (Opțiuni > Launcher). Această sesiune nu e sincronizată.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Salvarea în cloud e setată pe {0}, care necesită STEAM DECK EXPERIMENTAL (Opțiuni > Launcher). Activează-l din nou sau alege mai jos un folder de sincronizare.
+Confirmed {#0} · probable {#1}
+= Confirmate {#0} · probabile {#1}
+Could not install {0}:\n\n{1}
+= Nu s-a putut instala {0}:\n\n{1}
+Could not save the game setting:
+= Nu s-a putut salva setarea jocului:
+Could not uninstall {0}:\n\n{1}
+= Nu s-a putut dezinstala {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox nu poate fi contactat ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox nu a acceptat autentificarea: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox a refuzat autentificarea: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Suport experimental pentru Steam Deck: launcherul umple ecranul în modul Joc, pornește jocul în aceeași intrare Steam și se dă la o parte cât joci. Opțiuni > Launcher îl dezactivează.
+Game setting saved:
+= Setarea jocului a fost salvată:
+Google Drive refused the sign-in: {0}
+= Google Drive a refuzat autentificarea: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Încărcarea se trimite la următoarea sincronizare.
+Google could not be reached ({0}).
+= Google nu poate fi contactat ({0}).
+Google did not start the sign-in: {0}
+= Google nu a pornit autentificarea: {0}
+Google sign-in failed: {0}
+= Autentificarea Google a eșuat: {0}
+Highest observed rank {#0}
+= Cel mai înalt rang observat {#0}
+Installing {0} ({1})...
+= Se instalează {0} ({1})...
+It killed you {#0} times
+= Te-a ucis de {#0} ori
+Longest: {0}
+= Cea mai lungă: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Niciun fișier din această versiune nu conține {0} (un folder cu fișierul său .toc), nici măcar codul sursă. Nu s-a instalat nimic.
+Observed in {#0} runs · rank gains {#1}
+= Observat în {#0} partide · creșteri de rang {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Ai jucat Azeroth Survivors în browser? Adu-ți progresul: eroii, zonele deschise, echipamentul, talentele și codexul.\n\nPe site, deschide Options > Saves și apasă Export Save. Apoi alege aici acel fișier .sav. Jocul se deschide cu progresul tău.
+Quick Access {0}
+= Acces rapid {0}
+Rank {#0}
+= Rang {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} a fost eliminat din Acces rapid. Adaugă-l din nou cu steaua ghidului sau butonul de favorit al secțiunii.
+Runs {#0} · Victories {#1}
+= Partide {#0} · Victorii {#1}
+Runs: {#0}
+= Partide: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Salvat în copia launcherului, dar {0} nu poate fi contactat: {1} Se încarcă la următoarea sincronizare.
+Survived {0} · Level {1}
+= A supraviețuit {0} · Nivel {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= A supraviețuit {0} · Nivel {1} · Ucideri {2} · Aur {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Acesta e nivelul de sus al stocării tale cloud.\n\nCreezi și folosești în el un subfolder numit Azeroth Survivor Launcher?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Actualizarea addonului a eșuat. Fișierele anterioare au fost păstrate în {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Descărcarea de la {0} e deteriorată sau nu e fișierul corect (suma de control nu se potrivește). Încearcă din nou.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Launcherul nu s-a putut înlocui în acest folder ({0}).\n\nDescarcă noua versiune de pe GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Releul de autentificare (ntfy.sh) nu poate fi contactat ({0}). Încearcă din nou peste puțin timp.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} oferă alt fișier decât cel așteptat ({1} în loc de {2}).
+The {0} server answered with error {1}.
+= Serverul {0} a răspuns cu eroarea {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Aceste foldere nu au fost găsite:\n\n  {0}\n\nTermini oricum? Le poți schimba mai târziu în Opțiuni.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Acest PC are deja progres în joc.\n\nÎl înlocuiești cu {0}?\nCe există acum se păstrează ca backup în folderul Saves al jocului.
+This launcher was built without {0}.
+= Acest launcher a fost compilat fără {0}.
+Time {0}
+= Timp {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows nu a putut proteja autentificarea pe acest dispozitiv, deci nu a fost păstrată ({0}).
+Won: {#0}
+= Câștigate: {#0}
+You beat it {#0} times
+= L-ai învins de {#0} ori
+and enter this code:
+= și introdu acest cod:
+since {0}
+= din {0}
+✓ Imported: {0}
+= ✓ Importat: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Salvare aleasă: {0} (se importă la finalul configurării)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Modificat în patch-ul jocului {0}
+What changed since you last played
+= Ce s-a schimbat de când ai jucat ultima dată
+THE GAME
+= JOCUL
+THE LAUNCHER
+= LAUNCHERUL
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Mai multe patch-uri sunt pe pagina Știri.
+Patch {0}
+= Patch {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Actualizat de la {0} la {1}.
+Personal records
+= Recorduri personale
+Play a few runs with Azeroth Stats to see your records here.
+= Joacă câteva partide cu Azeroth Stats ca să-ți vezi aici recordurile.
+Fastest victory {0}
+= Cea mai rapidă victorie {0}
+Highest level {0}
+= Cel mai înalt nivel {0}
+Most kills {0}
+= Cele mai multe ucideri {0}
+best DPS
+= cel mai bun DPS
+Solo and co-op runs
+= Partide solo și în co-op
+Runs (solo / co-op)
+= Partide (solo / co-op)
+Win rate (solo / co-op)
+= Rata de victorii (solo / co-op)
+Average run (solo / co-op)
+= Partidă medie (solo / co-op)
+Average level (solo / co-op)
+= Nivel mediu (solo / co-op)
+Average DPS (solo / co-op)
+= DPS mediu (solo / co-op)

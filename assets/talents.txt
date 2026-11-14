@@ -111,7 +111,7 @@ piercing_shots | Piercing Shots | Ability_PierceDamage | 2 | 1 | 1 | Milestone. 
 mortal_shots | Mortal Shots | INV_Spear_07 | 2 | 2 | 5 | Increases your critical strike damage by {v}%.
 ranged_spec | Ranged Weapon Specialization | INV_Weapon_Rifle_06 | 3 | 0 | 5 | Increases all damage by {v}%.
 imp_multi_shot | Improved Multi-Shot | Ability_UpgradeMoonGlaive | 3 | 2 | 2 | Multi-Shot fires at {v} more targets.
-rapid_fire | Rapid Fire | Ability_Hunter_RunningShot | 4 | 1 | 1 | Milestone. Every {v}th shot you fire is followed by a free Aimed Shot.
+rapid_fire | Rapid Fire | Ability_Hunter_RunningShot | 4 | 1 | 1 | Milestone. Every {v}th shot you fire triggers a free Aimed Shot, at most twice a second.
 barrage | Barrage | Ability_Marksmanship | 4 | 2 | 3 | Multi-Shot and Volley deal {v}% more damage.
 hawk_eye | Hawk Eye | Ability_TownWatch | 5 | 0 | 3 | You deal {v}% more damage to elites and bosses.
 scatter_shot | Scatter Shot | Ability_GolemStormBolt | 5 | 2 | 3 | Concussive Shot and Aimed Shot cooldowns are {v}% shorter.
@@ -128,8 +128,8 @@ surefooted | Surefooted | Ability_Kick | 3 | 2 | 3 | Increases your movement spe
 explosive_ammo | Explosive Ammunition | Spell_Fire_SelfDestruct | 4 | 1 | 1 | Milestone. Enemies killed by your Auto Shot or Multi-Shot explode for {v}% of their maximum health on everything within 6 yd.
 killer_instinct | Killer Instinct | Spell_Holy_BlessingOfStamina | 4 | 2 | 3 | Fire spells deal {v}% more damage.
 lightning_reflexes | Lightning Reflexes | Spell_Nature_Invisibilty | 5 | 0 | 5 | Increases all damage by {v}%.
-counterattack | Counterattack | Ability_Warrior_Challange | 5 | 2 | 2 | When an enemy strikes you in melee, {v}% chance to set off a free Explosive Trap.
-wyvern_sting | Wyvern Sting | INV_Spear_02 | 6 | 1 | 1 | Capstone. You start every run with Frost Trap, and an Explosive Trap sets itself at your feet every 5 sec.
+counterattack | Counterattack | Ability_Warrior_Challange | 5 | 2 | 2 | When an enemy strikes you in melee, {v}% chance to set off a free Immolation Trap.
+wyvern_sting | Wyvern Sting | INV_Spear_02 | 6 | 1 | 1 | Capstone. You start every run with Frost Trap, and an Immolation Trap sets itself at your feet every 5 sec.
 @tree Rogue | Assassination
 imp_eviscerate | Improved Eviscerate | Ability_Rogue_Eviscerate | 0 | 1 | 5 | Eviscerate deals {v}% more damage.
 malice | Malice | Ability_Racial_BloodRage | 0 | 2 | 5 | Increases your critical strike chance by {v}%.
@@ -206,7 +206,7 @@ blackout | Blackout | Spell_Shadow_GatherShadows | 0 | 2 | 5 | Your Shadow spell
 imp_swp | Improved Shadow Word: Pain | Spell_Shadow_ShadowWordPain | 1 | 0 | 2 | Shadow Word: Pain lasts {v}% longer.
 shadow_focus | Shadow Focus | Spell_Shadow_BurningSpirit | 1 | 2 | 5 | Increases your critical strike chance by {v}%.
 shadow_weaving | Shadow Weaving | Spell_Shadow_BlackPlague | 2 | 1 | 1 | Milestone. Your Shadow spells also strike what they hit for {v}% of its maximum health.
-imp_mind_blast | Improved Mind Blast | Spell_Shadow_UnholyFrenzy | 2 | 2 | 5 | Mind Blast's cooldown is {v}% shorter.
+imp_mind_blast | Improved Mind Blast | Spell_Shadow_UnholyFrenzy | 2 | 2 | 5 | Mind Blast's cooldown is {v}% shorter and its damage is {v}% higher.
 darkness | Darkness | Spell_Shadow_Twilight | 3 | 0 | 5 | Shadow spells deal {v}% more damage.
 imp_psychic_scream | Improved Psychic Scream | Spell_Shadow_PsychicScream | 3 | 2 | 2 | Psychic Scream's cooldown is {v}% shorter.
 shadowy_apparitions | Shadowy Apparitions | Spell_Shadow_Haunting | 4 | 1 | 1 | Milestone. You start every run with Shadow Word: Pain instead of Smite, and its ticks have a {v}% chance to loose a shadowy apparition: a free Mind Blast, at most twice a second.
@@ -231,7 +231,7 @@ elemental_mastery | Elemental Mastery | Spell_Nature_WispHeal | 6 | 1 | 1 | Caps
 @tree Shaman | Enhancement
 enh_thundering_strikes | Thundering Strikes | Ability_ThunderBolt | 0 | 1 | 5 | Rockbiter and Stormstrike gain +{v}% critical chance.
 enh_earthen_bulwark | Stormguard | Spell_Nature_LightningShield | 0 | 2 | 5 | While Lightning Shield is active, you take {v}% less damage.
-enh_resonant_shocks | Resonant Shocks | Spell_Nature_EarthShock | 1 | 0 | 3 | Your Shocks strike {v} additional nearby enemies for 35% damage.
+enh_resonant_shocks | Resonant Shocks | Spell_Nature_EarthShock | 1 | 0 | 3 | Your Shocks strike 1 additional nearby enemy for {v}% damage.
 enh_shattering_elements | Shattering Elements | Spell_Frost_FrostShock | 1 | 2 | 3 | Your next different Shock within 6 sec deals +{v}% damage.
 rockbiter_initiation | Rockbiter Initiation | Spell_Nature_RockBiter | 2 | 1 | 1 | Milestone. Start each run with Rockbiter Weapon instead of Lightning Bolt.
 enh_windfury_weapon | Windfury Weapon | Spell_Nature_Cyclone | 2 | 2 | 3 | Rockbiter and Stormstrike have a {v}% chance to strike two additional times.
@@ -269,7 +269,7 @@ presence_of_mind | Presence of Mind | Spell_Nature_EnchantArmor | 4 | 1 | 1 | Mi
 arcane_instability | Arcane Instability | Spell_Shadow_Teleport | 4 | 2 | 3 | Increases all damage and your critical strike chance by {v}%.
 arcane_fortitude | Arcane Fortitude | Spell_Arcane_ArcaneResilience | 5 | 0 | 3 | Reduces all damage taken by {v}%.
 arcane_reach | Arcane Reach | Spell_Arcane_StarFire | 5 | 2 | 3 | {v}% chance for any spell to strike twice.
-arcane_power | Arcane Power | Spell_Nature_Lightning | 6 | 1 | 1 | Capstone. You start every run with Arcane Missiles instead of Fireball, and your spells strike twice {v}% more often. Your echoes cascade: a spell that strikes twice by chance rolls again to strike once more, up to 3 more times in a row.
+arcane_power | Arcane Power | Spell_Nature_Lightning | 6 | 1 | 1 | Capstone. You start every run with Arcane Missiles instead of Fireball, and your spells strike twice {v}% more often. Your echoes cascade: a spell that strikes twice rolls again to strike once more, up to 3 more times in a row.
 @tree Mage | Fire
 imp_fireball | Improved Fireball | Spell_Fire_FlameBolt | 0 | 1 | 5 | Fireball's cooldown is {v}% shorter.
 impact | Impact | Spell_Fire_MeteorStorm | 0 | 2 | 5 | Your Fire spells have a {v}% chance to stun what they hit for 1 sec.
@@ -325,8 +325,8 @@ legion_gate | Legion Gate | Spell_Shadow_RitualOfSacrifice | 4 | 1 | 1 | Milesto
 demonic_supremacy | Demonic Supremacy | Spell_Shadow_CurseOfAchimonde | 4 | 3 | 1 | Your Infernal and Doomguard become permanent. You can no longer summon lesser demons. Maximum one of each.
 summon_infernal | Summon Infernal | Spell_Shadow_SummonInfernal | 5 | 0 | 3 | Your damaging spells have a 5% chance to summon an Infernal for 15 sec (max 1). Its Meteor stuns enemies on impact, and it burns nearby enemies with Hellfire at {v}% effectiveness.
 summon_doomguard | Summon Doomguard | Spell_Shadow_AntiMagicShell | 5 | 3 | 3 | Your damaging spells have a 5% chance to summon a Doomguard for 15 sec (max 1). Its Shadow Bolts hit 2 enemies and inherit your upgrades.\nDoom Bringer: Consecutive hits on the same boss or elite deal 20% more damage, up to {v}%.
-pact_of_the_annihilan | Pact of the Annihilan | Spell_Shadow_UnholyStrength | 6 | 0 | 1 | Capstone. Summons a Pit Lord for {v} sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.\nFelseeker inherits your Searing Pain upgrades and deals 25% more damage to its primary target. It hits up to 6 enemies.\nExclusive with Butcher.
-butcher | Butcher | Ability_Warrior_Cleave | 6 | 2 | 1 | Capstone. Summons a Felguard for {v} sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.\nCleaves up to 10 enemies within 15 yd. Every third swing deals double damage. Deals 50% more damage below 30% enemy health.\nExclusive with Pact of the Annihilan.
+pact_of_the_annihilan | Pact of the Nathrezim | Spell_Shadow_UnholyStrength | 6 | 0 | 1 | Capstone. Summons a Dread Lord for {v} sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.\nFelseeker inherits your Searing Pain upgrades and deals 25% more damage to its primary target. It hits up to 6 enemies.\nExclusive with Butcher.
+butcher | Butcher | Ability_Warrior_Cleave | 6 | 2 | 1 | Capstone. Summons a Felguard for {v} sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.\nCleaves up to 10 enemies within 15 yd. Every third swing deals double damage. Deals 50% more damage below 30% enemy health.\nExclusive with Pact of the Nathrezim.
 @tree Warlock | Destruction
 imp_shadow_bolt | Improved Shadow Bolt | Spell_Shadow_ShadowBolt | 0 | 1 | 5 | Shadow Bolt deals {v}% more damage.
 cataclysm | Cataclysm | Spell_Fire_WindsofWoe | 0 | 2 | 5 | Your cooldowns recover {v}% faster.
@@ -413,6 +413,7 @@ multi_shot | Multi-Shot
 serpent_sting | Serpent Sting
 volley | Volley
 explosive_trap | Explosive Trap
+kill_command | Kill Command
 concussive_shot | Concussive Shot
 aimed_shot | Aimed Shot
 immolation_trap | Immolation Trap
@@ -498,5 +499,5 @@ berserking | Berserking
 penance | Penance
 arcane_power | Arcane Power
 demonic_empowerment | Demonic Empowerment
-rockbiter | Rockbiter Weapon
 stormstrike | Stormstrike
+rockbiter | Rockbiter Weapon

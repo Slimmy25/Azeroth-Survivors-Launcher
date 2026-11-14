@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Önce oyunu, kurulumu veya bulut eşitlemesini tamamla, ardından güncellemeyi yeniden denetle.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} hazır. Seçenekler > Launcher bölümünden Güncellemeyi yükle seçeneğini seç.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Yetenekler, istatistik eklentisi açıkken oynanan oyunlar için kaydedilir.
+Addon release check complete.
+= Eklenti sürüm kontrolü tamamlandı.
+Affects
+= Etkiler
+All 8 armor pieces at 3+ stars
+= 8 zırh parçasının tamamı 3+ yıldızda
+All ten Quick Access favorites are full. Remove one before adding another.
+= Hızlı Erişim'deki on favorinin hepsi dolu. Yenisini eklemeden önce birini kaldır.
+An addon operation is already running.
+= Bir eklenti işlemi zaten sürüyor.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= 8 parçanın hepsinde 5 yıldızla bu bonus yarısı kadar daha güçlüdür.
+Average time
+= Ortalama süre
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats, Daha Fazla İndir'de yok.
+BACK
+= GERİ
+Back to Top
+= Başa dön
+Best level
+= En iyi seviye
+Bright: victories · faint: all runs
+= Parlak: zaferler · soluk: tüm oyunlar
+Brighter: more runs that day
+= Daha parlak: o gün daha çok oyun
+Browse class build videos already featured in the guide.
+= Rehberde zaten yer alan sınıf build videolarına göz at.
+Browse class, item, and transmog references in the Wiki.
+= Wiki'de sınıf, eşya ve transmog bilgilerine göz at.
+Build Videos
+= Build Videoları
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Yetenek düzeni kur, ekipman planla ve seçili sınıfı koruyarak iki araç arasında geçiş yap.
+Build class
+= Build sınıfı
+CANCEL DOWNLOAD & CLOSE
+= İNDİRMEYİ İPTAL ET VE KAPAT
+CHECK AGAIN
+= TEKRAR KONTROL ET
+CHOOSE FOLDER
+= KLASÖR SEÇ
+CHOOSE GAME FOLDER
+= OYUN KLASÖRÜNÜ SEÇ
+CLEAR
+= TEMİZLE
+COPY
+= KOPYALA
+Checking addon releases...
+= Eklenti sürümleri kontrol ediliyor...
+Choose an option on this setup step to continue.
+= Devam etmek için bu adımda bir seçenek seç.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Kuruluma devam etmek için AzerothSurvivors.exe'yi içeren klasörü seç.
+Choose the folder that contains the existing game client before continuing.
+= Devam etmeden önce mevcut oyun istemcisinin bulunduğu klasörü seç.
+Classes you play
+= Oynadığın sınıflar
+Close the game first: it saves its own settings when it closes.
+= Önce oyunu kapat: kapanırken kendi ayarlarını kaydeder.
+Cloud Save uses Dropbox again.
+= Bulut Kaydı yeniden Dropbox kullanıyor.
+Cloud Save uses Google Drive again.
+= Bulut Kaydı yeniden Google Drive kullanıyor.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Bulut kaydı için bir oyun kayıt klasörü gerekir, ya da bulut kaydını kapat.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Bulut kaydı için bir eşitleme klasörü gerekir, ya da bulut kaydını kapat.
+Code copied.
+= Kod kopyalandı.
+Codex
+= Kodeks
+Companions observed in runs
+= Oyunlarda görülen yoldaşlar
+Connecting Dropbox...
+= Dropbox'a bağlanılıyor...
+Connecting Google Drive...
+= Google Drive'a bağlanılıyor...
+Contacting Google...
+= Google ile iletişim kuruluyor...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Varsayılanlar senin için dolduruldu. Dosyaların başka yerdeyse bir klasörü değiştir.
+Defeats
+= Yenilgiler
+Display Preview uses local builds; public updates stay separate.
+= Ekran Önizleme yerel build'leri kullanır; genel güncellemeler ayrı kalır.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Azeroth Survivors'ı bu bilgisayara zaten indirdin mi?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Bu bilgisayarda Azeroth Survivors oyun istemcisi zaten var mı?
+Downloading the game
+= Oyun indiriliyor
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck deneysel)
+Dropbox connected
+= Dropbox bağlandı
+Dropbox sign-in discarded.
+= Dropbox girişi iptal edildi.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox seni giriş yaptırdı ama başlatıcıya kalıcı erişim vermedi. Tekrar dene.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Dropbox girişi sona erdi (kaldırıldı veya süresi doldu). Seçenekler > Bulut Kaydı altından yeniden giriş yap.
+EXPORT ASBUILDS
+= ASBUILDS DIŞA AKTAR
+EXPORT PROFILE
+= PROFİLİ DIŞA AKTAR
+Ended
+= Bitti
+Error log copied.
+= Hata günlüğü kopyalandı.
+Every addon is on its latest release.
+= Tüm eklentiler en son sürümde.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Mevcut AZS Stats dosyaları korunur. Geçmişleri Azeroth Stats'a birleştirilmez.
+Existing game folder needs attention
+= Mevcut oyun klasörü ilgi bekliyor
+Existing save kept. Setup is still open; you can finish without importing it.
+= Mevcut kayıt korundu. Kurulum hâlâ açık; içe aktarmadan bitirebilirsin.
+FINISH SETUP
+= KURULUMU BİTİR
+Feedback copied.
+= Geri bildirim kopyalandı.
+Finish the current update, install, or game session before continuing setup.
+= Kuruluma devam etmeden önce süren güncellemeyi, yüklemeyi veya oyun oturumunu bitir.
+First Time Setup
+= İlk Kurulum
+Game client
+= Oyun istemcisi
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Oyun indirmesi iptal edildi. Tekrar denemeye hazır olduğunda YÜKLE'yi seç.
+Gear section
+= Ekipman bölümü
+GitHub returned invalid release information. Nothing was installed.
+= GitHub geçersiz sürüm bilgisi döndürdü. Hiçbir şey yüklenmedi.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= GitHub istek sınırına ulaşıldı. Lütfen bekleyip tekrar dene. Hiçbir şey yüklenmedi.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck deneysel)
+Google Drive connected
+= Google Drive bağlandı
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive dosyayı şu an sunmadı (indirme sınırına ulaşmış olabilir).
+Google Drive made a folder but did not say which.
+= Google Drive bir klasör oluşturdu ama hangisi olduğunu söylemedi.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Google Drive girişi sona erdi (kaldırıldı veya süresi doldu). Seçenekler > Bulut Kaydı altından yeniden giriş yap.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google seni giriş yaptırdı ama başlatıcıya kalıcı erişim vermedi. Tekrar dene.
+Google's sign-in answer was incomplete. Try again.
+= Google'ın giriş yanıtı eksikti. Tekrar dene.
+Guide links
+= Rehber bağlantıları
+Healing
+= İyileştirme
+Heroic
+= Kahramanca
+IMPORT ASBUILDS
+= ASBUILDS İÇE AKTAR
+IMPORT BUILD
+= BUILD İÇE AKTAR
+INSTALL AZEROTH STATS
+= AZEROTH STATS'I YÜKLE
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Evet ise, mevcut oyunun ve AddOn'larının yerini seçebilirsin. Hayır ise, oyun bu başlatıcının bulunduğu klasöre indirilir.
+Interface size
+= Arayüz boyutu
+Interrupted
+= Yarıda kaldı
+Items
+= Eşyalar
+Last 5 weeks
+= Son 5 hafta
+Last step: download the game?
+= Son adım: oyun indirilsin mi?
+Latest retained spell build
+= Saklanan en son büyü build'i
+Locations validated. Continuing setup...
+= Konumlar doğrulandı. Kurulum sürüyor...
+MENU ▾
+= MENÜ ▾
+More entries are available on the Build Journal tab.
+= Daha fazla kayıt Build Günlüğü sekmesinde.
+NO, DOWNLOAD IT
+= HAYIR, İNDİR
+Navigation
+= Gezinme
+No build journal entries are stored in the retained runs yet.
+= Saklanan oyunlarda henüz build günlüğü kaydı yok.
+No companion samples are recorded yet.
+= Henüz yoldaş verisi kaydedilmedi.
+No death evidence recorded yet.
+= Henüz ölüm nedeni kaydedilmedi.
+No download host worked.\n\n
+= Hiçbir indirme sunucusu çalışmadı.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Saklanan oyunlarda henüz gözlenen büyü anlık görüntüsü yok.
+No source samples are available in retained runs.
+= Saklanan oyunlarda kaynak verisi yok.
+No spell rank trends are stored yet.
+= Henüz büyü rütbesi eğilimi kaydedilmedi.
+No status messages yet.
+= Henüz durum mesajı yok.
+None selected
+= Hiçbiri seçilmedi
+Normal
+= Normal
+Not ready for release yet. Click to install it anyway.
+= Henüz yayına hazır değil. Yine de yüklemek için tıkla.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Dropbox'a giriş yapılmadı. Seçenekler > Bulut Kaydı altından giriş yap.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Google Drive'a giriş yapılmadı. Seçenekler > Bulut Kaydı altından giriş yap.
+OPEN FOLDER
+= KLASÖRÜ AÇ
+Observed attributions
+= Gözlenen atıflar
+Observed build and equipment changes
+= Gözlenen build ve ekipman değişiklikleri
+Observed build journal
+= Gözlenen build günlüğü
+Observed death sources
+= Gözlenen ölüm nedenleri
+Observed in the most recent retained run
+= En son saklanan oyunda gözlendi
+Observed party sample
+= Gözlenen grup örneği
+Observed run
+= Gözlenen oyun
+Observed status
+= Gözlenen durum
+On your phone or computer, open
+= Telefonunda veya bilgisayarında aç
+On your phone, open
+= Telefonunda aç
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Tam bir durum kazanır, diğeri önce yedeklenir.\nBu bilgisayarda ilk kez mi? BULUTU KULLAN'ı seç.\n
+Open on your phone
+= Telefonunda aç
+Partial
+= Kısmi
+Partial observation
+= Kısmi gözlem
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Aşağıya bir yetenek build kodu yapıştır. Panoda bir tane varsa senin için doldurulur.
+Peel this corner to switch theorycrafting tools.
+= Theorycraft aracını değiştirmek için bu köşeyi kaldır.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= DPS'ini zaman içinde görmek için Azeroth Stats ile birkaç oyun oyna.
+Playing on a Steam Deck?
+= Steam Deck'te mi oynuyorsun?
+Playing without cloud sync this time
+= Bu sefer bulut eşitlemesi olmadan oynanıyor
+Preparing the Dropbox sign-in...
+= Dropbox girişi hazırlanıyor...
+Priest
+= Rahip
+Priest guide
+= Rahip rehberi
+QUICK ACCESS
+= HIZLI ERİŞİM
+Rings & Trinkets
+= Yüzükler ve Takılar
+Runs observed
+= Gözlenen oyunlar
+SIGN IN WITH DROPBOX
+= DROPBOX İLE GİRİŞ YAP
+SIGN IN WITH GOOGLE
+= GOOGLE İLE GİRİŞ YAP
+SIGN OUT
+= ÇIKIŞ YAP
+START OVER
+= BAŞTAN BAŞLA
+STAY & FINISH
+= KAL VE BİTİR
+STEAM DECK / HANDHELD
+= STEAM DECK / EL KONSOLU
+STEAM DECK EXPERIMENTAL
+= STEAM DECK DENEYSEL
+Save favorite
+= Favoriyi kaydet
+Save this location to Quick Access.
+= Bu konumu Hızlı Erişim'e kaydet.
+Save to Quick Access
+= Hızlı Erişim'e kaydet
+Save where? The current location, the top of this page, or the closest category header.
+= Nereye kaydedilsin? Mevcut konum, sayfanın başı veya en yakın kategori başlığı.
+Saved in
+= Kaydedildiği yer
+Scaling video fixture
+= Ölçekleme test videosu
+Setup is only available while the setup guide is open.
+= Kurulum yalnızca kurulum rehberi açıkken kullanılabilir.
+Sign in to Google Drive
+= Google Drive'a giriş yap
+Signed out of Dropbox.
+= Dropbox'tan çıkış yapıldı.
+Signed out of Google Drive.
+= Google Drive'dan çıkış yapıldı.
+Skip/Stop
+= Atla/Durdur
+Some addons could not be changed:\n\n
+= Bazı eklentiler değiştirilemedi:\n\n
+Spell pool
+= Büyü havuzu
+Spell rank trends · observed, not exact card picks
+= Büyü rütbesi eğilimleri · gözlenen, kesin kart seçimleri değil
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Buradan başla: kontrolleri, ilk oyununu ve başlamana yardım eden sistemleri öğren.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / el konsolu mu, Windows bilgisayar mı?
+Stopping the game download before closing...
+= Kapatmadan önce oyun indirmesi durduruluyor...
+Support the Dev
+= Geliştiriciyi destekle
+Talent build code
+= Yetenek build kodu
+Temporarily unavailable while work is in progress.
+= Çalışma sürerken geçici olarak kullanılamıyor.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Topluluk yapımı başlatıcımı kullandığın için teşekkürler. Bu oyunun ne kadar harika olduğunu kutlamak ve Azeroth Survivors ile ilgili her şey için tek durak olmak üzere tasarlandı\n\n
+That file does not exist.
+= Bu dosya yok.
+That is not an Azeroth Survivors save file.
+= Bu bir Azeroth Survivors kayıt dosyası değil.
+That is not an Azeroth Survivors save file.\n\n
+= Bu bir Azeroth Survivors kayıt dosyası değil.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Arşiv içeriği çıkarma sırasında değişti. Hiçbir şey yüklenmedi.
+The clipboard is busy. Try copying again.
+= Pano meşgul. Tekrar kopyalamayı dene.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Mevcut oyun bu klasörde bulunamadı. AzerothSurvivors.exe'yi içeren klasörü seç.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Oyun arşivi ayrılmış bir Windows dosya adı içeriyor. Hiçbir şey yüklenmedi.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Oyun arşivi boş bir yol veya sembolik bağlantı içeriyor. Hiçbir şey yüklenmedi.
+The game archive contains an unsafe path. Nothing was installed.
+= Oyun arşivi güvensiz bir yol içeriyor. Hiçbir şey yüklenmedi.
+The game archive contains conflicting file paths. Nothing was installed.
+= Oyun arşivi çakışan dosya yolları içeriyor. Hiçbir şey yüklenmedi.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Oyun arşivi yinelenen veya çakışan dosya yolları içeriyor. Hiçbir şey yüklenmedi.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Oyun arşivi çıkarılamadı. Hasarlı, şifreli, eksik olabilir ya da desteklenmeyen bir yöntem kullanıyor olabilir. Hiçbir şey yüklenmedi.
+The game archive format is not supported by the built-in extractor.
+= Oyun arşivinin biçimi yerleşik çıkarıcı tarafından desteklenmiyor.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Oyun arşivi eksik veya başka bir arşiv parçası gerektiriyor. Hiçbir şey yüklenmedi.
+The game archive is password-protected. Please use an unencrypted game download.
+= Oyun arşivi parola korumalı. Lütfen şifresiz bir oyun indirmesi kullan.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Oyun yapılandırma klasörü ayarlanmamış. Seçenekler > KLASÖRLER altından ayarla.
+The game files are being installed. The launcher will close when that finishes.
+= Oyun dosyaları yükleniyor. Bittiğinde başlatıcı kapanacak.
+The game is running: close it first, it saves its own settings when it closes.
+= Oyun çalışıyor: önce kapat, kapanırken kendi ayarlarını kaydeder.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Bu eklenti inerken oyun veya eşitleme başladı. Yüklü dosyalarına dokunulmadı; kapandıktan sonra tekrar dene.
+The launcher closes by itself once your progress is saved.
+= İlerlemen kaydedilince başlatıcı kendiliğinden kapanır.
+The launcher is already running. Look for its window on the taskbar.
+= Başlatıcı zaten çalışıyor. Penceresini görev çubuğunda ara.
+The save could not be imported:\n\n
+= Kayıt içe aktarılamadı:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Giriş kodu kullanılmadan süresi doldu. DROPBOX İLE GİRİŞ YAP'a tekrar bas.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Giriş kodu kullanılmadan süresi doldu. GOOGLE İLE GİRİŞ YAP'a tekrar bas.
+The sign-in was declined on Dropbox's page.
+= Giriş, Dropbox sayfasında reddedildi.
+The sign-in was declined on Google's page.
+= Giriş, Google sayfasında reddedildi.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Ardından Azeroth Survivors Launcher'ın Google Drive'ında kendi klasörünü kullanmasına izin ver. Giriş yapınca bu sayfa kendiliğinden kapanır.
+This Codex entry's class guide is unavailable.
+= Bu Kodeks kaydının sınıf rehberi kullanılamıyor.
+This Guide location no longer exists.
+= Rehberdeki bu konum artık yok.
+This Guide video is no longer available.
+= Bu rehber videosu artık mevcut değil.
+This add-on is not configured for direct GitHub release updates.
+= Bu eklenti doğrudan GitHub sürüm güncellemeleri için yapılandırılmamış.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Bu eklenti eski bir kopyaya sabitlenmiş. En yeni sürümle değiştirilsin mi?
+This class talent page is no longer available.
+= Bu sınıf yetenek sayfası artık mevcut değil.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Bu favori artık bir rehber sayfasıyla eşleşmiyor. Güncellemek için sayfayı yeniden bağla.
+Today
+= Bugün
+UPDATE ALL
+= TÜMÜNÜ GÜNCELLE
+USE DROPBOX
+= DROPBOX KULLAN
+USE GOOGLE DRIVE
+= GOOGLE DRIVE KULLAN
+Undated
+= Tarihsiz
+Use the arrow keys to browse links and Enter to open one.
+= Bağlantılarda gezinmek için ok tuşlarını, açmak için Enter'ı kullan.
+Use the star on a guide page to save its reading position to Quick Access.
+= Okuma konumunu Hızlı Erişim'e kaydetmek için rehber sayfasındaki yıldızı kullan.
+WINDOWS PC
+= WINDOWS BİLGİSAYAR
+WINS
+= ZAFERLER
+Waiting for the Dropbox sign-in...
+= Dropbox girişi bekleniyor...
+Waiting for the Google sign-in...
+= Google girişi bekleniyor...
+Wiki
+= Wiki
+Work in Progress
+= Geliştiriliyor
+Written Guides
+= Yazılı Rehberler
+YES, I HAVE THE CLIENT
+= EVET, İSTEMCİ BENDE
+Yesterday
+= Dün
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Oyunun zaten sende olduğunu seçtin, ama AzerothSurvivors.exe seçilen klasörde artık yok. Devam etmek için doğru oyun klasörünü seç. Mevcut istemci seçiminde kurulum oyun indirmesi önermez.
+ranks
+= rütbe
+times
+= kez
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Oyun çöktüyse Diagnostics klasörüne bir çökme raporu kaydetti. Bunu oyunun geliştiricisine göndermek çökmenin düzeltilmesine yardımcı olur.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Güncellenmeyen AZS eklentileri: {0}
+  Addons for the synced settings not checked: {0}
+= Eşitlenen ayarlar için kontrol edilmeyen eklentiler: {0}
+1  FOLLOW THE PATH
+= 1  YOLU İZLE
+2  SAVE A FAVORITE
+= 2  FAVORİ KAYDET
+4 armor pieces at 1+ stars
+= 4 zırh parçası 1+ yıldızda
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Önce yeni bir başlatıcı ({0}) yüklenir; yeniden başladıktan sonra OYNA'ya tekrar bas.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Güncellenen eklentiler: {0}. Başarısız: {1}. Kontrol hataları: {2}.
+All addons {0}
+= Tüm eklentiler {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats oyundaki oyunları ve build değişikliklerini kaydeder (/azstats). Başlatıcı kayıtlı toplamları, sınıfları, son oyun raporlarını, savaş örneklerini ve gözlenen build günlüğünü gösterebilir. Kendi raporları, karşılaştırmaları ve ayarlanabilir HUD'u eklentide kalır.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats oyundaki oyunları ve gözlenen build değişikliklerini kaydeder (/azstats). Başlatıcı kayıtlı toplamları, sınıfları, son oyun raporlarını, savaş örneklerini ve build günlüğünü gösterebilir. Eklentinin raporları, karşılaştırmaları ve ayarlanabilir HUD'u orada kalır.
+Best level {#0}
+= En iyi seviye {#0}
+Best level: {#0}
+= En iyi seviye: {#0}
+Best together: {0}, level {#1}
+= Birlikte en iyi: {0}, seviye {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Bulut Kaydı duraklatıldı: {0} için STEAM DECK DENEYSEL gerekir (Seçenekler > Başlatıcı). Bu oturum eşitlenmiyor.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Bulut Kaydı {0} olarak ayarlı ve bu STEAM DECK DENEYSEL gerektirir (Seçenekler > Başlatıcı). Tekrar aç ya da aşağıdan bir eşitleme klasörü seç.
+Confirmed {#0} · probable {#1}
+= Doğrulanmış {#0} · olası {#1}
+Could not install {0}:\n\n{1}
+= {0} yüklenemedi:\n\n{1}
+Could not save the game setting:
+= Oyun ayarı kaydedilemedi:
+Could not uninstall {0}:\n\n{1}
+= {0} kaldırılamadı:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox'a ulaşılamadı ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox girişi kabul etmedi: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox girişi reddetti: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Deneysel Steam Deck desteği: başlatıcı Oyun Modu'nda ekranı doldurur, oyunu aynı Steam girdisinde başlatır ve sen oynarken kenara çekilir. Seçenekler > Başlatıcı kapatır.
+Game setting saved:
+= Oyun ayarı kaydedildi:
+Google Drive refused the sign-in: {0}
+= Google Drive girişi reddetti: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Yükleme bir sonraki eşitlemede gönderilir.
+Google could not be reached ({0}).
+= Google'a ulaşılamadı ({0}).
+Google did not start the sign-in: {0}
+= Google girişi başlatmadı: {0}
+Google sign-in failed: {0}
+= Google girişi başarısız: {0}
+Highest observed rank {#0}
+= Gözlenen en yüksek rütbe {#0}
+Installing {0} ({1})...
+= {0} yükleniyor ({1})...
+It killed you {#0} times
+= Seni {#0} kez öldürdü
+Longest: {0}
+= En uzun: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Bu sürümdeki hiçbir dosya {0} içermiyor (.toc dosyalı bir klasör), kaynak kodu bile. Hiçbir şey yüklenmedi.
+Observed in {#0} runs · rank gains {#1}
+= {#0} oyunda görüldü · rütbe artışı {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Azeroth Survivors'ı tarayıcıda mı oynadın? İlerlemeni getir: kahramanların, açtığın bölgeler, ekipman, yetenekler ve kodeks.\n\nSitede Options > Saves'i aç ve Export Save'e bas. Sonra o .sav dosyasını burada seç. Oyun ilerlemenle açılır.
+Quick Access {0}
+= Hızlı Erişim {0}
+Rank {#0}
+= Rütbe {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} Hızlı Erişim'den kaldırıldı. Rehber yıldızı veya bölümün favori düğmesiyle yeniden ekleyebilirsin.
+Runs {#0} · Victories {#1}
+= Oyunlar {#0} · Zaferler {#1}
+Runs: {#0}
+= Oyunlar: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Başlatıcının kopyasına kaydedildi, ama {0} adresine ulaşılamadı: {1} Bir sonraki eşitlemede yüklenir.
+Survived {0} · Level {1}
+= Hayatta kaldı {0} · Seviye {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Hayatta kaldı {0} · Seviye {1} · Öldürme {2} · Altın {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Bu, bulut sürücünün en üst seviyesi.\n\nİçinde Azeroth Survivor Launcher adlı bir alt klasör oluşturulup kullanılsın mı?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Eklenti güncellemesi başarısız. Önceki dosyaları kurtarma için {0} içinde tutuldu. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= {0} indirmesi bozuk ya da yanlış dosya (sağlama toplamı uyuşmuyor). Lütfen tekrar dene.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Başlatıcı bu klasörde kendini değiştiremedi ({0}).\n\nYeni sürümü GitHub'dan indir:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Giriş aktarıcısına (ntfy.sh) ulaşılamadı ({0}). Birazdan tekrar dene.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} beklenenden farklı bir dosya sunuyor ({2} yerine {1}).
+The {0} server answered with error {1}.
+= {0} sunucusu {1} hatasıyla yanıt verdi.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Bu klasörler bulunamadı:\n\n  {0}\n\nYine de bitirilsin mi? Daha sonra Seçenekler'den değiştirebilirsin.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Bu bilgisayarda oyunda zaten ilerleme var.\n\n{0} ile değiştirilsin mi?\nŞu anki, oyunun Saves klasöründe yedek olarak tutulur.
+This launcher was built without {0}.
+= Bu başlatıcı {0} olmadan derlendi.
+Time {0}
+= Süre {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows bu cihazda girişi koruyamadı, bu yüzden saklanmadı ({0}).
+Won: {#0}
+= Kazanılan: {#0}
+You beat it {#0} times
+= Onu {#0} kez yendin
+and enter this code:
+= ve bu kodu gir:
+since {0}
+= {0} tarihinden beri
+✓ Imported: {0}
+= ✓ İçe aktarıldı: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Kayıt seçildi: {0} (kurulum bitince içe aktarılacak)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Oyun yamasında değişti: {0}
+What changed since you last played
+= Son oynadığından beri neler değişti
+THE GAME
+= OYUN
+THE LAUNCHER
+= BAŞLATICI
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Diğer yamalar Haberler sayfasında.
+Patch {0}
+= Yama {0}
+Launcher {0}
+= Başlatıcı {0}
+Updated from {0} to {1}.
+= {0} sürümünden {1} sürümüne güncellendi.
+Personal records
+= Kişisel rekorlar
+Play a few runs with Azeroth Stats to see your records here.
+= Rekorlarını burada görmek için Azeroth Stats ile birkaç oyun oyna.
+Fastest victory {0}
+= En hızlı zafer {0}
+Highest level {0}
+= En yüksek seviye {0}
+Most kills {0}
+= En çok öldürme {0}
+best DPS
+= en iyi DPS
+Solo and co-op runs
+= Tek başına ve co-op oyunlar
+Runs (solo / co-op)
+= Oyunlar (tek / co-op)
+Win rate (solo / co-op)
+= Kazanma oranı (tek / co-op)
+Average run (solo / co-op)
+= Ortalama oyun (tek / co-op)
+Average level (solo / co-op)
+= Ortalama seviye (tek / co-op)
+Average DPS (solo / co-op)
+= Ortalama DPS (tek / co-op)

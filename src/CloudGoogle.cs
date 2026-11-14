@@ -1,5 +1,5 @@
 // Cloud Save through Google Drive or Dropbox, the launcher's side (GoogleDrive.cs and Dropbox.cs talk to the services;
-// Dropbox's local copy is kept by CloudCopy.cs). Behind STEAM DECK EXPERIMENTAL. What follows says Google Drive; Dropbox
+// both local copies are kept by CloudCopy.cs). Behind STEAM DECK EXPERIMENTAL. What follows says Google Drive; Dropbox
 // works the same way, with its own copy (<launcher data>\dropbox) and a sign-in from the phone through the launcher's page.
 // Signing in makes Cloud Save use Google Drive: the sync folder becomes the launcher's local copy of the Drive folder
 // (<launcher data>\google-drive), which the unchanged cloud engine syncs with as before. Around every sync the copy is
@@ -19,7 +19,7 @@ namespace AzerothLauncher
 
         public bool UsingDropbox()
         {
-            return Handheld.Experimental && Cfg.Str("cloud_provider") == "dropbox" && Cfg.Str("dropbox_token").Length > 0;
+            return Cfg.Str("cloud_provider") == "dropbox" && Cfg.Str("dropbox_token").Length > 0;   // no longer behind STEAM DECK EXPERIMENTAL
         }
 
         // the cloud service Cloud Save uses, by name (for messages)
@@ -30,11 +30,11 @@ namespace AzerothLauncher
             return Handheld.Experimental && Cfg.Str("cloud_provider") == "gdrive" && Cfg.Str("gdrive_token").Length > 0;
         }
 
-        // Google Drive chosen but STEAM DECK EXPERIMENTAL off: cloud saving pauses rather than syncing a lone local copy
+        // Google Drive chosen but STEAM DECK EXPERIMENTAL off: cloud saving pauses rather than syncing a lone local copy.
+        // Dropbox needs no switch (only a sign-in), so it never pauses this way.
         bool GoogleDrivePaused()
         {
-            string service = Cfg.Str("cloud_provider");
-            return (service == "gdrive" || service == "dropbox") && !UsingGoogleDrive() && !UsingDropbox();
+            return Cfg.Str("cloud_provider") == "gdrive" && !UsingGoogleDrive();
         }
 
         void LoadGoogleSignIn() { GoogleDrive.RefreshToken = GoogleDrive.Unprotect(Cfg.Str("gdrive_token")); }
@@ -157,7 +157,10 @@ namespace AzerothLauncher
         void StartUsingGoogleDrive(string refresh)
         {
             string oldFolder = Cfg.Str("cloud_provider") == "gdrive" ? "" : Cfg.Str("cloud_dir").Trim();   // a sync folder until now
-            Cfg.Set("gdrive_token", GoogleDrive.Protect(refresh));
+            string kept;
+            try { kept = GoogleDrive.Protect(refresh); }
+            catch (UserError e) { Warn("Google Drive", e.Message); SetStatus("Ready."); return; }
+            Cfg.Set("gdrive_token", kept);
             Cfg.Set("cloud_provider", "gdrive");
             Cfg.Set("cloud_dir", GoogleCopyDir);
             Cfg.Set("cloud_enabled", true);
@@ -172,6 +175,7 @@ namespace AzerothLauncher
                 {
                     email = GoogleDrive.Email();
                     GoogleDrive.ResetCopy(GoogleCopyDir);
+                    SyncEngine.ForgetLastSync(Util.StateDir);   // a fresh copy: the first sync compares and asks
                     bool empty = GoogleDrive.IsEmpty();
                     bool moveOver = empty && oldFolder.Length > 0 && !Util.SamePath(oldFolder, GoogleCopyDir) &&
                                     File.Exists(Path.Combine(oldFolder, "manifest.json"));
@@ -262,10 +266,10 @@ namespace AzerothLauncher
             return signOut.Bottom + 12;
         }
 
-        // Options > Cloud Save, with STEAM DECK EXPERIMENTAL on: Google Drive's part, then Dropbox's
+        // Options > Cloud Save: Dropbox's part always, Google Drive's only with STEAM DECK EXPERIMENTAL on
         int OptionsCloudServices(int PW, int y)
         {
-            y = OptionsGoogleDrive(PW, y);
+            if (Handheld.Experimental) y = OptionsGoogleDrive(PW, y);
             return OptionsDropbox(PW, y);
         }
 
@@ -275,7 +279,7 @@ namespace AzerothLauncher
             bool inUse = UsingDropbox();
             string email = Cfg.Str("dropbox_email");
             string who = email.Length > 0 ? " (" + email + ")" : "";
-            var title = PutText("Dropbox (Steam Deck experimental)", 11, FontStyle.Bold, Theme.Gold, 20, y, PW - 40);
+            var title = PutText("Dropbox", 11, FontStyle.Bold, Theme.Gold, 20, y, PW - 40);
             y = BottomOf(title) + 4;
             string text = inUse ? "Cloud Save uses Dropbox" + who + ", in its folder Apps › Azeroth Survivors Launcher. No sync app is needed, also in Steam's Game Mode."
                 : signedIn ? "Signed in" + who + ", but Cloud Save uses " + (UsingGoogleDrive() ? "Google Drive" : "a sync folder") + " right now."
@@ -360,7 +364,10 @@ namespace AzerothLauncher
         void StartUsingDropbox(string refresh, string email)
         {
             string oldFolder = Cfg.Str("cloud_dir").Trim();
-            Cfg.Set("dropbox_token", GoogleDrive.Protect(refresh));
+            string kept;
+            try { kept = GoogleDrive.Protect(refresh); }
+            catch (UserError e) { Warn("Dropbox", e.Message); SetStatus("Ready."); return; }
+            Cfg.Set("dropbox_token", kept);
             if (email.Length > 0) Cfg.Set("dropbox_email", email);
             Cfg.Set("cloud_provider", "dropbox");
             Cfg.Set("cloud_dir", DropboxCopyDir);
@@ -376,6 +383,7 @@ namespace AzerothLauncher
                 {
                     var store = new Dropbox();
                     CloudCopy.Reset(DropboxCopyDir);
+                    SyncEngine.ForgetLastSync(Util.StateDir);   // a fresh copy: the first sync compares and asks
                     bool empty = CloudCopy.IsEmpty(store);
                     bool moveOver = empty && oldFolder.Length > 0 && !Util.SamePath(oldFolder, DropboxCopyDir) &&
                                     File.Exists(Path.Combine(oldFolder, "manifest.json"));

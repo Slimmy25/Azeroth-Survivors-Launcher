@@ -86,20 +86,31 @@ def main():
     debug.append("amulet rows: %d" % len(amulet_rows))
     for x in amulet_rows:
         debug.append("  %x %s | %s | %s | %d %d %d" % x)
-    # each amulet's lines: 36 bytes each; kind 0x30 (0x31 since 0.121.0) is a plain bonus (its number and which stat), any other kind is
-    # one of the game's special effects (described in game)
+    # each amulet's lines: kind 0x30 (0x31 since 0.121.0, 0x3c in later builds) is a plain bonus (its number and which stat), any
+    # other kind is one of the game's special effects (described in game). A line was 36 bytes; later builds use 40. The size
+    # used is the one that reads more lines as plain bonuses (a whole amulet of "special" lines means the layout moved again).
+    PLAIN = (0x30, 0x31, 0x3c)
+    def read_lines(ptr, cnt, size):
+        return [ptr + size * i for i in range(cnt)]
     amulet_lines = {}
     for x in amulet_rows:
         ptr, cnt = x[4], x[5]
+        best = None
+        for size in (40, 36):
+            qs = read_lines(ptr, cnt, size)
+            plain = sum(1 for q in qs if u(q) in PLAIN)
+            if best is None or plain > best[0]:
+                best = (plain, size, qs)
         lines = []
-        for i in range(cnt):
-            q = ptr + 36 * i
-            if u(q) in (0x30, 0x31):
+        for q in best[2]:
+            if u(q) in PLAIN:
                 lines.append("%d=%g" % (u(q + 8), f(q + 4)))
             else:
                 lines.append("special")
-                debug.append("  special %s: %s" % (x[1], " ".join("%x" % u(q + 4 * j) for j in range(9))))
+                debug.append("  special %s (%d-byte lines): %s" % (x[1], best[1], " ".join("%x" % u(q + 4 * j) for j in range(9))))
         amulet_lines[x[1]] = (x[3], x[6], lines)
+    if amulet_rows and all(all(l == "special" for l in v[2]) for v in amulet_lines.values()):
+        raise SystemExit("every amulet line reads as special: the game's amulet layout changed; not writing items.txt")
     # the stats' texts, in the game's order (the order is the stat's number): "Increases all damage you deal by {p}."
     stats = []
     first = "Increases all damage you deal by {p}."
@@ -159,8 +170,11 @@ def main():
         v = [f(r + 4 * i) for i in range(6)]
         if abs(v[0] - 0.6) < 1e-6 and (abs(v[1] - 0.5) < 1e-6 or abs(v[5] - 0.2) < 1e-6 or abs(v[2] - 0.5) < 1e-6):
             debug.append("chances at %x: %s" % (r, v))
-            if chances is None and abs(v[1] - 0.5) < 1e-6 and abs(v[4] - 0.2) < 1e-6:
+            # the drop table has six real shares (PvP last); a run of five followed by unrelated memory is another table
+            if chances is None and abs(v[1] - 0.5) < 1e-6 and abs(v[4] - 0.2) < 1e-6 and 0 < v[5] <= 1:
                 chances = v
+    if chances is None:
+        raise SystemExit("no drop chance table found: not writing items.txt")
 
     # ---- write assets/items.txt
     out = ["Items of Azeroth Survivors, read from the game itself at wow.aethus.pl by tools/game_items.py.",

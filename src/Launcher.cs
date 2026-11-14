@@ -1,5 +1,5 @@
-// The main launcher window: the tall narrow window with PLAY and the section buttons, playing
-// (cloud download -> game -> cloud upload), installing the game, cloud sync runs and the launcher's own updates.
+// The main launcher window: the tall narrow window with PLAY and the section buttons, and the launcher's own updates.
+// Playing is in LauncherPlay.cs, installing the game in LauncherInstall.cs, cloud sync runs in LauncherSync.cs.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,10 +16,6 @@ namespace AzerothLauncher
 {
     public partial class LauncherApp : Form, IWheel
     {
-        // TEMPORARY: while true, nothing but INSTALL works until the game has been downloaded by this launcher
-        // (the flag is stored in the config when a download finishes). Set to false to switch it off.
-        public const bool RequireLauncherInstall = true;
-
         // Where the game is downloaded from, and the download server's login (shared with every player, so it is fine
         // in the open). The launcher downloads it itself (BeginClientDownload), into its own temp folder beside the launcher
         // ("Azeroth Survivors Launcher - Temp": a name no other folder has, so nothing of the player's is ever wiped).
@@ -38,6 +34,7 @@ namespace AzerothLauncher
         // page remains the last resort. Regular-host downloads are checked against the game's known checksums below.
         public const string ClientSha256 = "971db7968dc37ec50b18d64a1de7f693e137f6793a7368e4d5c27bd9522eccd8";   // AzerothSurvivorsWindowsNew.rar
         public const string ClientMd5 = "7748bfdffaccd2f46d868cf69ad3e72c";                                       //   (760497456 bytes)
+        public const long ClientBytes = 760497456;                                                                  // its size
         public const string ClientDriveMd5 = "81887cd5d56dcca3b7dd086b0b498cf6";                                  // the Google Drive archive
         public const string DiscordUrl = "https://discord.gg/azerothsurvivors";
         public const string SupportUrl = "https://buymeacoffee.com/aethusx";      // the game's developer's own page
@@ -48,6 +45,7 @@ namespace AzerothLauncher
         public Config Cfg;
         public bool GameRunningFlag, Installing, SyncBusy, Updating, UpdateChecking;   // Updating: the launcher's own update
         bool setupOpen, setupAsked, quitting, closeAfterDownloadCancel;
+        bool closeWhenSessionDone;                           // closing was asked while the game ran or a sync was busy
         ManualResetEvent launcherUpdateCancel;
         readonly List<KeyValuePair<string, Level>> cloudLog = new List<KeyValuePair<string, Level>>();
         RichTextBox logBox;
@@ -199,6 +197,8 @@ namespace AzerothLauncher
                 if (!PreviewMode && !Program.LocalDevelopmentBuild) After(300, StartupUpdateCheck);
                 if (!PreviewMode && !Program.DisplayPreviewBuild) After(4000, AutoUpdateAddons);    // and newer addons from GitHub, without asking
                 After(500, MaybeFirstRun);
+                if (!PreviewMode) After(2500, delegate { if (!setupOpen && !IsDisposed) MaybeShowWhatsNew(); });
+                if (!PreviewMode) StartController();             // Xbox pad / Steam Deck controls (Controller.cs)
                 After(700, delegate { if ((current == null || current == "Home") && !setupOpen) ShowHomeCommunity(); });   // home: Community
             };
             VisibleChanged += delegate
@@ -276,8 +276,7 @@ namespace AzerothLauncher
 
         public bool ClientPresent()
         {
-            if (!File.Exists(Path.Combine(GameDir(), Util.GameExe))) return false;
-            return !RequireLauncherInstall || Cfg.Bool("installed_by_launcher", false);
+            return File.Exists(Path.Combine(GameDir(), Util.GameExe));
         }
 
         // Persist the requested first-time marker and keep it in sync with the game root folder.
@@ -297,7 +296,8 @@ namespace AzerothLauncher
         // handoff flag is set for that short transition and remains set while the download runs.
         // Requiring Installing here creates a race: SetupLeave opens Addons just before
         // InstallClient sets Installing, so the catalog is rejected and the user lands home.
-        public bool GateOpen() { return !RequireLauncherInstall || ClientPresent() || setupBrowseWhileInstalling; }
+        // until the game is there, nothing but INSTALL (and browsing during the first download) works
+        public bool GateOpen() { return ClientPresent() || setupBrowseWhileInstalling; }
 
         public bool CloudEnabled() { return !GoogleDrivePaused() && Cfg.Bool("cloud_enabled", Cfg.Str("cloud_dir").Trim().Length > 0); }
 
@@ -308,15 +308,17 @@ namespace AzerothLauncher
             if (config.Length == 0 || !Directory.Exists(config)) config = Path.Combine(game, "benilla-config");
             config = ConfigFolderOf(config);
             string save = Cfg.Str("save_dir");
-            return new SyncSettings(Path.Combine(game, Util.GameExe), Cfg.Str("cloud_dir").Trim(),
-                                    save.Length > 0 ? save : Util.DefaultSaveDir, config, Util.StateDir,
-                                    Cfg.Str("addons_dir"), Cfg.Str("saved_dir"));
+            var s = new SyncSettings(Path.Combine(game, Util.GameExe), Cfg.Str("cloud_dir").Trim(),
+                                     save.Length > 0 ? save : Util.DefaultSaveDir, config, Util.StateDir,
+                                     Cfg.Str("addons_dir"), Cfg.Str("saved_dir"));
+            string service = Cfg.Str("cloud_provider");
+            if (service == "dropbox") s.CloudIdentity = "dropbox:" + Cfg.Str("dropbox_email");
+            else if (service == "gdrive") s.CloudIdentity = "gdrive:" + Cfg.Str("gdrive_email");
+            return s;
         }
 
         // ------------------------------------------------------------------ drawing the launcher
         // the launcher art (layout after the WoW Retro Launcher); the newest patch notes in the News panel
-        // what never changes on the home screen (the picture, the title, its byline, the headings, the game version) is
-        // drawn once into a picture of its own; a repaint copies the part it needs and draws only what moves on top
         // The display renderer covers the client area; avoid an intermediate background fill/flicker.
         protected override void OnPaintBackground(PaintEventArgs e) { }
 
@@ -768,6 +770,32 @@ namespace AzerothLauncher
             QuitApp();
         }
 
+        // the game is running or a cloud sync is busy: closing now would skip or cut off the upload of your progress
+        bool WaitBeforeClosing()
+        {
+            if (!GameRunningFlag && !SyncBusy) return false;
+            if (closeWhenSessionDone) return true;           // already asked: it closes by itself when done
+            string why = GameRunningFlag
+                ? "The game is still running. The launcher uploads your progress to the cloud after the game closes, so it needs to stay open until then."
+                : "Your cloud save is still syncing. Closing now could leave the cloud copy half written.";
+            if (Ask("Launcher", why + "\n\nClose the launcher by itself as soon as that is done?"))
+            {
+                closeWhenSessionDone = true;
+                SetStatus("The launcher closes by itself once your progress is saved.");
+                Hide();
+            }
+            return true;
+        }
+
+        // called when a session or a sync has finished: close if that was asked for
+        void CloseIfAskedAfterSession(bool problems)
+        {
+            if (!closeWhenSessionDone || GameRunningFlag || SyncBusy) return;
+            closeWhenSessionDone = false;
+            if (problems) { ShowWindowFront(); return; }     // something to say first: the launcher stays
+            QuitApp();
+        }
+
         public void QuitApp()
         {
             if (quitting) return;
@@ -776,6 +804,7 @@ namespace AzerothLauncher
                 ShowDownloadClosePrompt();
                 return;
             }
+            if (WaitBeforeClosing()) return;
             quitting = true;
             if (launcherUpdateCancel != null) launcherUpdateCancel.Set();
             StopEdge();
@@ -928,901 +957,6 @@ namespace AzerothLauncher
                 Cfg.Set("cloud_dir", d);
                 Cfg.Save();
                 RebuildCurrent();
-            }
-        }
-
-        // ------------------------------------------------------------------ cloud sync runs
-        SyncEngine MakeEngine()
-        {
-            var eng = new SyncEngine(SyncSettings());
-            eng.Log = SyncLog;
-            eng.Confirm = delegate(string msg)
-            {
-                return UiCall<bool>(delegate
-                {
-                    ShowWindowFront();
-                    return Ask("Cloud Save", msg);
-                });
-            };
-            eng.AskConflict = delegate(List<SyncSet> sets, bool downloading)
-            {
-                return UiCall<Choice>(delegate
-                {
-                    ShowWindowFront();
-                    using (var dlg = new ConflictDialog(sets, downloading))
-                    {
-                        dlg.PlaceOver(this);
-                        dlg.ShowModal(this);
-                        return dlg.Result;
-                    }
-                });
-            };
-            return eng;
-        }
-
-        void SyncLog(string msg, Level level)
-        {
-            lock (cloudLog)
-            {
-                cloudLog.Add(new KeyValuePair<string, Level>(msg, level));
-                if (cloudLog.Count > 400) cloudLog.RemoveRange(0, cloudLog.Count - 400);
-            }
-            try
-            {
-                Directory.CreateDirectory(Util.StateDir);
-                string logf = Path.Combine(Util.StateDir, "log.txt");
-                if (File.Exists(logf) && new FileInfo(logf).Length > 1000000)
-                    Util.Replace(logf, Path.Combine(Util.StateDir, "log.old.txt"));
-                File.AppendAllText(logf, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ", CultureInfo.InvariantCulture) + "[" + level + "] " + msg + "\r\n",
-                                   Encoding.UTF8);
-            }
-            catch (Exception) { }
-            Ui(delegate
-            {
-                if (logBox != null && !logBox.IsDisposed)
-                {
-                    UI.Append(logBox, Lang.T(msg) + "\n", UI.LevelColor(level), null);
-                    logBox.ScrollToCaret();
-                }
-            });
-        }
-
-        public void RunSync(string kind, bool force, bool quiet)
-        {
-            RunSync(kind, force, quiet, null);
-        }
-
-        // kind: status, pull, push, or restore (stamp = which kept download)
-        public void RunSync(string kind, bool force, bool quiet, string stamp)
-        {
-            if (SyncBusy || GameRunningFlag || Installing)
-            {
-                SetStatus("Another task is still running - wait for it to finish.");
-                return;
-            }
-            if (!CloudEnabled()) return;
-            if (!GateOpen())                                 // no cloud sync before the game is installed
-            {
-                if (quiet) Notify(CloudNeedsGame); else SetStatus(CloudNeedsGame);
-                return;
-            }
-            if (Cfg.Str("cloud_dir").Trim().Length == 0)
-            {
-                string msg = "Choose a sync folder inside your cloud drive first (Cloud Save or Options).";
-                if (quiet) Notify(msg); else Warn("Cloud Save", msg);
-                return;
-            }
-            SyncBusy = true;
-            SyncEngine eng = MakeEngine();
-            Bg(delegate
-            {
-                bool ok = false;
-                string err = null;
-                try
-                {
-                    string driveDown = DriveDown();          // Google Drive: its local copy first
-                    if (driveDown != null) throw new UserError(CloudServiceName() + " could not be reached: " + driveDown);
-                    ok = kind == "status" ? eng.Status() : kind == "pull" ? eng.Pull(force) :
-                         kind == "restore" ? eng.RestoreDownload(stamp) : eng.Push(force);
-                    string driveUp = DriveUp();              // and what changed in it, sent back
-                    if (driveUp != null) throw new UserError("Saved in the launcher's copy, but " + CloudServiceName() + " could not be reached: " + driveUp +
-                                                             " It is uploaded at the next sync.");
-                }
-                catch (Exception e)
-                {
-                    err = e.Message;
-                    SyncLog("  " + err, Level.Error);
-                }
-                finally { eng.EndProgress(); }
-                Ui(delegate { SyncDone(kind, ok, err, quiet); });
-            });
-        }
-
-        void SyncDone(string kind, bool ok, string err, bool quiet)
-        {
-            SyncBusy = false;
-            string stamp = DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
-            string text = err != null ? "Cloud sync failed." : kind == "status" ? "Status checked at " + stamp :
-                          kind == "restore" ? (ok ? "Earlier download restored." : "Cancelled, nothing changed.") :
-                          ok ? (kind == "pull" ? "Downloaded from the cloud" : "Saves uploaded") + " at " + stamp
-                             : "Not everything was synced - see the Cloud Save log.";
-            SetStatus("Ready.");                             // cloud results stay in the Cloud Save log
-            if (quiet) Notify(err ?? text);
-            else if (err != null)
-            {
-                ShowWindowFront();
-                Error("Cloud Save", err);
-            }
-            if (current == "Options" && optionsTab == 1 && !optionsLang) RebuildCurrent();   // Options > CLOUD SAVE
-            // settings downloaded: the addons they belong to are installed if they are missing
-            if (ok && err == null && (kind == "pull" || kind == "restore"))
-                Bg(delegate
-                {
-                    if (InstallAddonsForSettings().Count > 0)
-                        Ui(delegate { if (current == "Addons") BuildPanel("Addons"); });
-                });
-        }
-
-        // Cloud Save syncs only the addons' settings: a Download More addon whose settings are here but whose folders
-        // are not is installed (on a background thread). Returns the names installed.
-        List<string> InstallAddonsForSettings()
-        {
-            var done = new List<string>();
-            SyncSettings ss = SyncSettings();
-            List<AddonEntry> missing;
-            try { missing = Addons.MissingForSettings(ss.AddonsDir, ss.SavedDir, Data.Addons); }
-            catch (Exception e) { SyncLog("  Addons for the synced settings not checked: " + e.Message, Level.Warn); return done; }
-            foreach (var entry in missing)
-            {
-                string releaseIdentity = null;
-                try
-                {
-                    Directory.CreateDirectory(ss.AddonsDir);
-                    List<string> names;
-                    BuiltinAddon builtin = BuiltinAddons.Find(entry.Url);
-                    if (builtin != null) { BuiltinAddons.Install(ss.AddonsDir, builtin); names = new List<string> { builtin.Folder }; }
-                    else
-                    {
-                        string installUrl = entry.Url, expectedSha = null;
-                        List<KeyValuePair<string, string>> alternatives = null;
-                        if (IsDynamicGitHubAddonUrl(entry.Url))
-                        {
-                            GitHubAddonRelease release = ResolveGitHubAddonRelease(entry.Url);
-                            installUrl = release.Url;
-                            expectedSha = release.Digest;
-                            alternatives = release.Alternatives;
-                            releaseIdentity = release.Identity;
-                        }
-                        names = InstallAddonUpdateSafely(installUrl, ss.AddonsDir, null, expectedSha, new List<string>(entry.Folders), false, null,
-                                                         entry.Folders, alternatives);
-                        AddonArchive.Tidy(entry.Name);
-                    }
-                    string name = entry.Name;
-                    string savedReleaseIdentity = releaseIdentity;
-                    var rec = new List<object>();
-                    foreach (string n in names) rec.Add(n);
-                    Ui(delegate
-                    {
-                        AddonInstalls()[name] = rec;
-                        AddonInstalledAt()[name] = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-                        if (!string.IsNullOrEmpty(savedReleaseIdentity)) AddonInstalledRelease()[name] = savedReleaseIdentity;
-                        Cfg.Save();
-                    });
-                    SyncLog(name + " installed: its settings came from the cloud.", Level.Good);
-                    done.Add(name);
-                }
-                catch (Exception e) { SyncLog("  " + entry.Name + " not installed: " + e.Message, Level.Warn); }
-            }
-            return done;
-        }
-
-        // ------------------------------------------------------------------ play: download newest -> run game -> upload
-        void Play()
-        {
-            if (setupOpen || Util.SetupPendingForThisInstall)
-            {
-                if (!setupOpen)
-                {
-                    RunSetup();
-                    if (!setupOpen) return;
-                }
-                if (setupFooterNext != null) setupFooterNext();
-                else SetStatus("Choose an option on this setup step to continue.");
-                return;
-            }
-            if (GameRunningFlag) return;
-            if (Installing)
-            {
-                InstallClient();                             // asks whether to stop the download
-                return;
-            }
-            if (Updating)
-            {
-                SetStatus("The launcher is updating itself. Please wait until that has finished.");
-                return;
-            }
-            if (!ClientPresent())
-            {
-                RunSetup();
-                if (setupOpen && setupPage == 0) SetupGo(1);   // REQUIRES INSTALL acts as NEXT on the welcome slide
-                return;
-            }
-            // PLAY first makes sure this is the newest launcher: a newer one is installed (and the launcher restarts)
-            // instead of starting the game; when GitHub can't be reached, the game starts as it is
-            if (!playChecking && !StartedAfterUpdate && !PreviewMode && !Program.LocalDevelopmentBuild)
-            {
-                playChecking = true;
-                SetStatus("Checking for a launcher update...");
-                Bg(delegate
-                {
-                    LauncherRelease rel = null;
-                    bool differs = false;
-                    try { rel = SelfUpdate.FetchLatest(); differs = SelfUpdate.Differs(rel); }
-                    catch (Exception) { }
-                    Ui(delegate
-                    {
-                        playChecking = false;
-                        if (differs && rel != null && !Updating)
-                        {
-                            launcherRelease = rel;
-                            RefreshUpdateBtn();
-                            SetStatus("A new launcher (" + rel.Name + ") is installed first; press PLAY again after it restarts.");
-                            ForceLauncherUpdate();
-                            return;
-                        }
-                        StartGame();
-                    });
-                });
-                return;
-            }
-            if (playChecking) return;
-            StartGame();
-        }
-
-        bool playChecking;                                   // PLAY is checking for a launcher update
-
-        void StartGame()
-        {
-            // Final launch gate: even if a delayed update callback reaches this method directly, a marker
-            // beside the running EXE keeps the game locked until first-time setup completes and moves it.
-            if (Util.SetupPendingForThisInstall)
-            {
-                if (!setupOpen) RunSetup();
-                RefreshPlayLabel();
-                return;
-            }
-            if (GameRunningFlag || Installing || Updating || !ClientPresent()) return;
-            string exe = Path.Combine(GameDir(), Util.GameExe);
-            GameRunningFlag = true;
-            RefreshPlayLabel();
-            SyncEngine eng = (CloudEnabled() && Cfg.Str("cloud_dir").Trim().Length > 0) ? MakeEngine() : null;
-            bool cloudOnButNoFolder = CloudEnabled() && eng == null;
-            Bg(delegate { Session(exe, eng, cloudOnButNoFolder); });
-        }
-
-        // Keep a small local recovery copy of both new and legacy stats files before launching the game.
-        static void BackupStats(string savedDir)
-        {
-            try
-            {
-                string dir = Path.Combine(Util.DataDir, "backups", "Stats");
-                Directory.CreateDirectory(dir);
-                string stamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-                foreach (var file in new[] { new[] { Stats.FileName, "AzerothStats" }, new[] { "AZSStats.lua", "AZSStats-legacy" } })
-                {
-                    string src = Path.Combine(savedDir ?? "", file[0]);
-                    if (!File.Exists(src) || new FileInfo(src).Length < 100) continue;
-                    File.Copy(src, Path.Combine(dir, file[1] + " " + stamp + ".lua"), true);
-                    var files = new List<string>(Directory.GetFiles(dir, file[1] + " *.lua"));
-                    files.Sort(StringComparer.Ordinal);
-                    for (int i = 0; i < files.Count - 10; i++) { try { File.Delete(files[i]); } catch (Exception) { } }
-                }
-            }
-            catch (Exception) { }
-        }
-
-        void Session(string exe, SyncEngine eng, bool cloudOnButNoFolder)
-        {
-            var problems = new List<string>();
-            bool launched = false;
-            Ui(delegate { SetCloudNote(""); });
-            try
-            {
-                if (eng != null)
-                {
-                    string driveProblem = DriveDown();       // Google Drive: its local copy brought up to date first
-                    if (driveProblem != null)
-                    {
-                        bool playAnyway = UiCall<bool>(delegate
-                        {
-                            ShowWindowFront();
-                            return Ask("Cloud Save", CloudServiceName() + " could not be reached:\n" + driveProblem + "\n\nPlay anyway with the save on " +
-                                                     "this device? Nothing is synced this time; the next sync compares both and asks if they differ.");
-                        });
-                        if (!playAnyway)
-                        {
-                            problems.Add(CloudServiceName() + " could not be reached, so the game was not launched.\n\n" + driveProblem);
-                            Ui(delegate { SetCloudNote(CloudServiceName() + " not reached - game not launched"); SetStatus("Ready."); });
-                            return;
-                        }
-                        eng = null;                          // no download now and no upload after
-                        Ui(delegate { SetCloudNote("Playing without cloud sync this time"); });
-                    }
-                }
-                if (eng != null)
-                {
-                    bool complete;
-                    try
-                    {
-                        complete = eng.Pull(false);          // asks only on a real conflict
-                        eng.EndProgress();
-                    }
-                    catch (Exception e)
-                    {
-                        SyncLog("  " + e.Message, Level.Error);
-                        problems.Add("The cloud save could NOT be loaded, so the game was not launched.\n\n" + e.Message);
-                        Ui(delegate { SetCloudNote("Cloud sync failed - game not launched"); SetStatus("Ready."); });
-                        return;
-                    }
-                    if (!complete)                           // cloud save not loaded -> never start the game
-                    {
-                        SyncLog("Cloud save was not loaded - game not launched.", Level.Error);
-                        problems.Add("The cloud save could NOT be loaded, so the game was not launched.\n\nSee the log in " +
-                                     "Cloud Save. If your cloud drive is still syncing, wait for it to finish and press PLAY again.");
-                        Ui(delegate { SetCloudNote("Cloud sync failed - game not launched"); SetStatus("Ready."); });
-                        return;
-                    }
-                    Ui(delegate { SetCloudNote(""); });
-                    InstallAddonsForSettings();              // the addons whose settings came from the cloud
-                }
-                else if (cloudOnButNoFolder) problems.Add("No sync folder set - launched without cloud sync.");
-                BackupStats(SyncSettings().SavedDir);
-                // Azeroth Stats is installed and updated through Download More; the launcher does not overwrite
-                // its files at game start. Legacy AZS Stats SavedVariables are read-only and are never removed.
-                // the AZS addon the launcher carries (AZS Handbook): an installed one brought up to the launcher's
-                // version too, and the retired ones (AZS Transparency, AZS Minor Mods: Slim Suite's old folder) taken out
-                try
-                {
-                    foreach (string f in BuiltinAddons.RemoveRetired(SyncSettings().AddonsDir, SyncSettings().SavedDir))
-                        SyncLog(f + " addon removed (it is no longer part of the launcher).", Level.Info);
-                    foreach (string f in BuiltinAddons.UpdateInstalled(SyncSettings().AddonsDir))
-                        SyncLog(f + " addon updated to the launcher's version.", Level.Info);
-                    foreach (string f in Addons.EnforceConflicts(SyncSettings().AddonsDir))
-                        SyncLog(f + " addon switched off: it conflicts with another addon that is on.", Level.Info);
-                }
-                catch (Exception e) { SyncLog("  AZS addons not updated: " + e.Message, Level.Warn); }
-                SyncLog("Starting Azeroth Survivors ...", Level.Info);
-                Ui(delegate
-                {
-                    SetStatus("Game running.");
-                });
-                try
-                {
-                    var psi = new ProcessStartInfo(exe);
-                    psi.WorkingDirectory = Path.GetDirectoryName(exe);
-                    psi.UseShellExecute = false;
-                    string environmentNote = PrepareGameEnvironment(psi);   // Steam Deck experimental: WGPU_BACKEND=vulkan
-                    if (environmentNote != null) LogStatusOnly(environmentNote);
-                    string gameDir = Path.GetDirectoryName(exe);
-                    DateTime stamp = GameFilesStamp(gameDir);
-                    sessionUpdated = false;
-                    sessionCrashed = false;
-                    using (Process p = Process.Start(psi))
-                    {
-                        launched = true;
-                        Ui(StepAsideForGame);                // hidden (Game Mode) or minimized while it runs, if chosen
-                        p.WaitForExit();                     // returns on normal exit or crash
-                        Ui(ReturnAfterGame);                 // back at once (no black screen while it waits below)
-                        try { sessionCrashed = p.ExitCode != 0; } catch (Exception) { }
-                    }
-                    // The game updates itself when it starts: it closes and opens again (possibly through a helper in its
-                    // folder). So after it closes, the launcher waits a moment for it to come back: 3 s after a plain
-                    // close (a helper starts at once), up to 45 s when its files changed (it updated). Only when it stays
-                    // closed is the session over; then the upload starts straight away.
-                    while (true)
-                    {
-                        while (GameProcessRunning(gameDir)) Thread.Sleep(2000);
-                        bool patched = GameFilesStamp(gameDir) > stamp;
-                        if (patched) sessionUpdated = true;
-                        if (patched) Ui(delegate { SetStatus("The game updated itself and is opening again..."); });
-                        bool back = false;
-                        for (int i = 0; i < (patched ? 90 : 6) && !back; i++)
-                        {
-                            Thread.Sleep(500);
-                            back = GameProcessRunning(gameDir);
-                        }
-                        if (!back) break;
-                        Ui(StepAsideForGame);                // the game opened again (its update): out of its way again
-                        stamp = GameFilesStamp(gameDir);
-                        SyncLog(patched ? "The game updated itself and opened again." : "The game opened again.", Level.Info);
-                        Ui(delegate { SetStatus("Game running."); });
-                    }
-                }
-                catch (Exception e)
-                {
-                    problems.Add("Could not start the game: " + e.Message);
-                }
-                if (launched)
-                {
-                    Ui(ReturnAfterGame);                     // back before the upload, so it is seen
-                    SyncLog("Game closed." + (sessionCrashed ? " (it did not close normally)" : ""), Level.Info);
-                    if (eng == null) Ui(delegate { SetCloudNote("Game has closed."); });
-                }
-                string driveBefore = launched && eng != null ? DriveDown() : null;
-                if (driveBefore != null)
-                {
-                    problems.Add(CloudServiceName() + " could not be reached, so your progress was not uploaded. It stays on this device " +
-                                 "and is uploaded at the next sync.\n\n" + driveBefore);
-                    Ui(delegate { SetCloudNote(CloudServiceName() + " not reached - progress kept on this device"); });
-                }
-                else if (launched && eng != null)
-                {
-                    try
-                    {
-                        if (eng.Push(false))
-                        {
-                            string driveAfter = DriveUp();
-                            if (driveAfter == null) Ui(delegate { SetStatus("Ready."); SetCloudNote(""); });
-                            else
-                            {
-                                problems.Add("Your progress is saved on this device, but " + CloudServiceName() + " could not be reached. " +
-                                             "It is uploaded at the next sync.\n\n" + driveAfter);
-                                Ui(delegate { SetCloudNote(CloudServiceName() + " upload waiting - see the Cloud Save log"); });
-                            }
-                        }
-                        else
-                        {
-                            problems.Add("Some of your progress was NOT uploaded. See the log in Cloud Save.");
-                            Ui(delegate { SetCloudNote("Cloud sync NOT completed - see the Cloud Save log"); });
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        SyncLog("  " + e.Message, Level.Error);
-                        problems.Add("Cloud upload failed: " + e.Message);
-                        Ui(delegate { SetCloudNote("Cloud sync failed - see the Cloud Save log"); });
-                    }
-                    eng.EndProgress();
-                }
-            }
-            finally
-            {
-                Ui(delegate { SessionDone(problems); });
-            }
-        }
-
-        // the newest change to the game's own files (its exe and its Data folder's .MPQ files): later after a session
-        // means the game updated itself
-        static DateTime GameFilesStamp(string gameDir)
-        {
-            DateTime newest = DateTime.MinValue;
-            try
-            {
-                var files = new List<string>();
-                files.Add(Path.Combine(gameDir, Util.GameExe));
-                string data = Path.Combine(gameDir, "Data");
-                if (Directory.Exists(data)) files.AddRange(Directory.GetFiles(data, "*.mpq"));
-                foreach (string f in files)
-                    try { if (File.Exists(f)) { DateTime t = File.GetLastWriteTimeUtc(f); if (t > newest) newest = t; } }
-                    catch (Exception) { }
-            }
-            catch (Exception) { }
-            return newest;
-        }
-
-        // the game, or any other program of the game's folder (an updater helper) is running: looked up by the names of
-        // the .exe files in that folder and the folders right under it (fast: no need to open every running program)
-        static bool GameProcessRunning(string gameDir)
-        {
-            if (Util.GameRunning()) return true;
-            try
-            {
-                var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (string f in Directory.GetFiles(gameDir, "*.exe")) names.Add(Path.GetFileNameWithoutExtension(f));
-                foreach (string d in Directory.GetDirectories(gameDir))
-                    try { foreach (string f in Directory.GetFiles(d, "*.exe")) names.Add(Path.GetFileNameWithoutExtension(f)); }
-                    catch (Exception) { }
-                names.Remove(Path.GetFileNameWithoutExtension(Application.ExecutablePath));   // the launcher itself
-                foreach (string n in names)
-                {
-                    Process[] found = Process.GetProcessesByName(n);
-                    bool any = found.Length > 0;
-                    foreach (Process pr in found) pr.Dispose();
-                    if (any) return true;
-                }
-            }
-            catch (Exception) { }
-            return false;
-        }
-
-        // ------------------------------------------------------------------ play time
-        // Duration of an entire player session when a legacy stats file supplies it. The new add-on records run time.
-        public static string Duration(long seconds)
-        {
-            long h = seconds / 3600, m = seconds % 3600 / 60;
-            return h > 0 ? h + "h " + m.ToString("00") + "m" : m + "m";
-        }
-
-        RunStats statsCache;
-        string statsCacheKey = "";
-
-        // Add-on stats, read again only when the saved-variable file changed.
-        public RunStats AddonStats()
-        {
-            try
-            {
-                string f = Stats.FindFile(SyncSettings().SavedDir);
-                if (f == null) { statsCache = null; statsCacheKey = ""; return null; }
-                string key = f + "|" + File.GetLastWriteTimeUtc(f).Ticks;
-                if (key != statsCacheKey)
-                {
-                    statsCache = Stats.Load(SyncSettings().SavedDir);
-                    statsCacheKey = key;
-                }
-                return statsCache;
-            }
-            catch (Exception) { return null; }
-        }
-
-        // what the Home screen, Options and Stats show
-        public PlayStats ShownPlayStats()
-        {
-            RunStats st = AddonStats();
-            return st != null ? st.Play : new PlayStats();
-        }
-
-        // the game has closed, but its session is still finishing (the cloud upload)
-        const string StillUploading = "The game has closed and your progress is still uploading to the cloud. Try again in a moment.";
-
-        volatile bool sessionUpdated, sessionCrashed;
-
-        void SessionDone(List<string> problems)
-        {
-            GameRunningFlag = false;
-            ReturnAfterGame();                               // (if it was still out of the way)
-            if (CloseAfterSession(problems)) return;          // chosen in Options: back to Steam once all is saved
-            After(3000, AutoUpdateAddons);                    // updates that waited for the game to close
-            Invalidate();                                    // the play time the game just saved
-            RefreshPlayLabel();
-            // the launcher comes back up only when there is something to say: the game updated itself, it crashed, or
-            // something went wrong (an upload). Otherwise the launcher stays visible after the game closes.
-            if (problems.Count > 0 || sessionUpdated || sessionCrashed) ShowWindowFront();
-            if (problems.Count > 0) Warn("Launcher", string.Join("\n\n", problems));
-        }
-
-        // ------------------------------------------------------------------ installing the game client
-        void InstallClient() { InstallClient(false); }
-
-        bool setupAfterInstall;
-        bool dlActive;                                       // the game download is running: the status line shows its bar
-        long dlDone, dlTotal;
-
-        void SetDownloadBar(bool on, long done, long total)
-        {
-            dlActive = on;
-            dlDone = done;
-            dlTotal = total;
-            if (closeDownloadCard != null && closeDownloadCard.Visible)
-            {
-                LayoutDownloadClosePrompt();
-                closeDownloadCard.Invalidate();
-            }
-            Invalidate(new Rectangle(0, FooterTop, W, Math.Max(1, H - FooterTop)));
-        }
-
-        ManualResetEvent installCancel;
-        bool downloadInstall;
-
-        // INSTALL: no window of its own. The download and the install run in the launcher's status line (a bar with the
-        // percentage above INSTALLING); pressing INSTALLING asks whether to stop the download.
-        void InstallClient(bool forSetup) { InstallClient(forSetup, GameDir()); }
-
-        void InstallClient(bool forSetup, string destination)
-        {
-            if (Updating)
-            {
-                SetStatus("The launcher is updating itself. Please wait until that has finished.");
-                return;
-            }
-            if (Installing)
-            {
-                if (installCancel != null && dlActive && Ask("Install", "Stop downloading the game?"))
-                    installCancel.Set();
-                return;
-            }
-            if (GameRunningFlag)
-            {
-                Info("Install", Util.GameRunning() ? "Close the game first, then install it again." : StillUploading);
-                return;
-            }
-            setupAfterInstall = forSetup;
-            BeginClientDownload(destination);
-        }
-
-        // The game download, done by the launcher: into <launcher folder>\temp, with the download server's login,
-        // then unpacked next to the launcher; the temp folder is deleted afterwards, whatever happened.
-        void BeginClientDownload(string destination)
-        {
-            Installing = true;
-            RefreshPlayLabel();
-            SetStatus("Downloading the game client...");
-            SetDownloadBar(true, 0, 0);
-            string temp = Path.Combine(Util.LauncherDir, Util.DownloadTempName);
-            string dest = Path.GetFullPath(destination);
-            installCancel = new ManualResetEvent(false);
-            ManualResetEvent cancel = installCancel;
-            Bg(delegate
-            {
-                string error = null;
-                bool cancelled = false;
-                try
-                {
-                    Util.DeleteTreeQuiet(temp);
-                    Directory.CreateDirectory(temp);
-                    string file = Path.Combine(temp, "AzerothSurvivors-client.download");
-                    long last = -1;
-                    int lastTick = 0;
-                    Action<long, long> progress = delegate(long done, long total)
-                    {
-                        int pct = total > 0 ? (int)(done * 1000 / total) : (int)(done >> 20);
-                        if (pct == last && Environment.TickCount - lastTick < 1000) return;
-                        last = pct;
-                        lastTick = Environment.TickCount;
-                        Ui(delegate { SetDownloadBar(true, done, total); });
-                    };
-                    DownloadClient(file, progress, cancel, delegate(string text) { });
-                    Ui(delegate { SetDownloadBar(false, 0, 0); SetStatus("Unpacking the game client..."); });
-                    if (Archive.Kind(file) == null)
-                        throw new UserError("The download server sent something that is not the game archive. Please try again later.");
-                    Archive.InstallGame(file, dest);
-                }
-                catch (CancelledError) { cancelled = true; }
-                catch (Exception e) { error = e.Message; }
-                finally { Util.DeleteTreeQuiet(temp); }        // the download is never kept
-                Ui(delegate
-                {
-                    SetDownloadBar(false, 0, 0);
-                    installCancel = null;
-                    if (cancelled)
-                    {
-                        Installing = false;
-                        setupBrowseWhileInstalling = false;
-                        setupAfterInstall = false;
-                        RefreshPlayLabel();
-                        SetStatus("Download cancelled.");
-                        if (closeAfterDownloadCancel)
-                        {
-                            closeAfterDownloadCancel = false;
-                            QuitApp();
-                            return;
-                        }
-                        SetupDownloadCancelled();            // started from setup: setup is cancelled with it
-                        return;
-                    }
-                    setupDownloading = false;                // (the download from setup has ended)
-                    if (error != null)
-                    {
-                        Installing = false;
-                        setupBrowseWhileInstalling = false;
-                        setupAfterInstall = false;
-                        RefreshPlayLabel();
-                        SetStatus("Install failed.");
-                        if (closeAfterDownloadCancel)
-                        {
-                            closeAfterDownloadCancel = false;
-                            QuitApp();
-                            return;
-                        }
-                        ShowWindowFront();
-                        Error("Install", error);
-                        return;
-                    }
-                    bool setup = setupAfterInstall || !Cfg.Bool("setup_done", false);
-                    setupAfterInstall = false;
-                    setupBrowseWhileInstalling = false;
-                    downloadInstall = true;
-                    try { InstallDone(null, dest); }
-                    finally { downloadInstall = false; }
-                    if (closeAfterDownloadCancel)
-                    {
-                        closeAfterDownloadCancel = false;
-                        QuitApp();
-                        return;
-                    }
-                    if (setup) After(300, ShowSetupDialog);  // first-time setup / RUN SETUP AGAIN: on to the folders page
-                });
-            });
-        }
-
-        static readonly Random hostDice = new Random();
-
-        // Try the two regular hosts in random order; if one fails (not when cancelled), try the other.
-        static void DownloadClient(string file, Action<long, long> progress, ManualResetEvent cancel, Action<string> say)
-        {
-            var hosts = new List<int> { 0, 1 };               // 0 main, 1 Google Drive
-            lock (hostDice)
-                for (int i = hosts.Count - 1; i > 0; i--) { int j = hostDice.Next(i + 1); int t = hosts[i]; hosts[i] = hosts[j]; hosts[j] = t; }
-            string[] names = { "main host", "Google Drive host" };
-            var errors = new List<string>();
-            for (int i = 0; i < hosts.Count; i++)
-            {
-                int h = hosts[i];
-                say(i == 0 ? "Downloading from the " + names[h] + "..."
-                           : "The " + names[hosts[i - 1]] + " did not work. Trying the " + names[h] + "...");
-                try
-                {
-                    if (h == 0) DownloadFromMain(file, progress, cancel);
-                    else DownloadFromDrive(file, progress, cancel);
-                    return;
-                }
-                catch (CancelledError) { throw; }
-                catch (UserError e) { errors.Add(char.ToUpperInvariant(names[h][0]) + names[h].Substring(1) + ": " + e.Message); }
-            }
-            say("The other hosts did not work. Trying the game's own download page...");
-            try { DownloadFromGameSite(file, progress, cancel); return; }
-            catch (CancelledError) { throw; }
-            catch (UserError e) { errors.Add("Game's download page: " + e.Message); }
-            throw new UserError("No download host worked.\n\n" + string.Join("\n\n", errors.ToArray()));
-        }
-
-        // the downloaded game against its known checksums: a damaged or different file is deleted, never installed
-        static void CheckClient(string file, string sha, string md5, bool drive, string where)
-        {
-            bool ok = drive ? string.Equals(md5, ClientDriveMd5, StringComparison.OrdinalIgnoreCase)
-                              || string.Equals(sha, ClientSha256, StringComparison.OrdinalIgnoreCase)
-                            : string.Equals(sha, ClientSha256, StringComparison.OrdinalIgnoreCase)
-                              && (md5 == null || string.Equals(md5, ClientMd5, StringComparison.OrdinalIgnoreCase));
-            if (ok) return;
-            try { File.Delete(file); } catch (Exception) { }
-            throw new UserError("The download from the " + where + " is damaged or not the right file (its checksum does not match). Please try again.");
-        }
-
-        // the main host, with the download login: sent the plain HTTP way (Basic); a server that wants it in the
-        // address instead gets that next
-        static void DownloadFromMain(string file, Action<long, long> progress, ManualResetEvent cancel)
-        {
-            string basic = Convert.ToBase64String(Encoding.UTF8.GetBytes(ClientUser + ":" + ClientPassword));
-            Action<HttpWebRequest> login = delegate(HttpWebRequest r) { r.Headers["Authorization"] = "Basic " + basic; };
-            string q = ClientUrl.Contains("?") ? "&" : "?";
-            string u = Uri.EscapeDataString(ClientUser), pw = Uri.EscapeDataString(ClientPassword);
-            string[] urls = { ClientUrl, ClientUrl + q + "username=" + u + "&password=" + pw, ClientUrl + q + "user=" + u + "&pass=" + pw };
-            UserError lastError = null;
-            foreach (string url in urls)
-            {
-                try
-                {
-                    string sha = Net.Download(url, file, true, "download", progress, cancel, 0, login);
-                    CheckClient(file, sha, Net.LastMd5, false, "main host");
-                    return;
-                }
-                catch (CancelledError) { throw; }
-                catch (UserError e)
-                {
-                    lastError = e;
-                    if (!e.Message.Contains("error 401") && !e.Message.Contains("error 403")) throw;   // only a refused login tries the next way
-                }
-            }
-            throw new UserError("The download server did not accept the launcher's login." +
-                                (lastError != null ? " (" + lastError.Message + ")" : ""));
-        }
-
-        // the last resort: the game's own download page (https://wow.aethus.pl/download)
-        static void DownloadFromGameSite(string file, Action<long, long> progress, ManualResetEvent cancel)
-        {
-            string sha = Net.Download(ClientLastResortUrl, file, true, "game's download page", progress, cancel, 0);
-            if (string.Equals(sha, ClientSha256, StringComparison.OrdinalIgnoreCase)) return;
-            if (Archive.Kind(file) != null) return;
-            try { File.Delete(file); } catch (Exception) { }
-            throw new UserError("The game's download page did not give a game archive.");
-        }
-
-        // Google Drive: a large file first gives a "can't scan this file for viruses" page whose form holds the real
-        // download address; that form is followed, then the file is checked against its MD5
-        static void DownloadFromDrive(string file, Action<long, long> progress, ManualResetEvent cancel)
-        {
-            string url = "https://drive.usercontent.google.com/download?id=" + ClientDriveId + "&export=download&confirm=t";
-            // only the first byte is asked for: the file itself is then fetched by the download below
-            using (HttpWebResponse resp = Net.Open(url, 30000, true, "Google Drive download", null,
-                                                   delegate(HttpWebRequest r) { r.AddRange(0L, 0L); }))
-            {
-                if ((resp.ContentType ?? "").ToLowerInvariant().Contains("text/html"))
-                {
-                    string html;
-                    using (var rd = new StreamReader(resp.GetResponseStream(), Encoding.UTF8)) html = rd.ReadToEnd();
-                    var form = System.Text.RegularExpressions.Regex.Match(html, "<form[^>]*action=\"([^\"]+)\"[^>]*>(.*?)</form>",
-                        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Singleline);
-                    if (!form.Success) throw new UserError("Google Drive did not offer the file right now (it may have hit its download limit).");
-                    var q = new List<string>();
-                    foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(form.Groups[2].Value,
-                        "<input[^>]*name=\"([^\"]+)\"[^>]*value=\"([^\"]*)\"", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                        q.Add(Uri.EscapeDataString(System.Net.WebUtility.HtmlDecode(m.Groups[1].Value)) + "=" +
-                              Uri.EscapeDataString(System.Net.WebUtility.HtmlDecode(m.Groups[2].Value)));
-                    url = new Uri(new Uri(url), System.Net.WebUtility.HtmlDecode(form.Groups[1].Value)).AbsoluteUri;
-                    url += (url.Contains("?") ? "&" : "?") + string.Join("&", q.ToArray());
-                }
-            }
-            string sha = Net.Download(url, file, true, "Google Drive download", progress, cancel, 0);
-            CheckClient(file, sha, Net.LastMd5, true, "Google Drive host");
-        }
-
-        bool setupAfterFileInstall;
-
-        public void InstallFromDownloads() { InstallFromDownloads(false); }
-
-        public void InstallFromDownloads(bool forSetup)
-        {
-            if (Updating || Installing) return;
-            setupAfterFileInstall = forSetup;
-            string archive = Archive.FindDownloaded();
-            if (archive != null)
-            {
-                var fi = new FileInfo(archive);
-                if (!Ask("Install", "Install the game from this file?\n\n" + fi.Name + "  (" + (fi.Length >> 20) + " MB)\nin " + fi.DirectoryName))
-                    archive = null;
-            }
-            if (archive == null)
-            {
-                using (var d = new OpenFileDialog())
-                {
-                    d.Title = Lang.T("Choose the game file you downloaded (.rar)");
-                    d.InitialDirectory = Util.DownloadsDir;
-                    d.Filter = Lang.T("Game archive (*.rar;*.zip;*.7z)|*.rar;*.zip;*.7z|All files (*.*)|*.*");
-                    if (d.ShowDialog(this) != DialogResult.OK)
-                    {
-                        SetStatus("Install cancelled.");
-                        return;
-                    }
-                    archive = d.FileName;
-                }
-            }
-            string dest = Util.LauncherDir;                  // installs next to the launcher, no folder question
-            Installing = true;
-            RefreshPlayLabel();
-            SetStatus("Unpacking the game client...");
-            Bg(delegate
-            {
-                string error = null;
-                try
-                {
-                    Archive.InstallGame(archive, dest);
-                    try { File.Delete(archive); } catch (Exception) { }     // the download is no longer needed
-                }
-                catch (Exception e) { error = e.Message; }
-                Ui(delegate { InstallDone(error, dest); });
-            });
-        }
-
-        void InstallDone(string error, string gameDir)
-        {
-            Installing = false;
-            if (error == null)
-            {
-                Cfg.Set("game_dir", gameDir);
-                Cfg.Set("installed_by_launcher", true);
-                    UpdateNewPlayerFlag();
-                Cfg.Save();
-            }
-            Invalidate();
-            RebuildCurrent();
-            if (error != null)
-            {
-                SetStatus("Install failed.");
-                ShowWindowFront();
-                Error("Install", error);
-            }
-            else
-            {
-                SetStatus("Install complete - press PLAY.");
-                if (Cfg.Bool("stats_pending", false))        // setup opted into Azeroth Stats before the game was here
-                {
-                    Cfg.Remove("stats_pending");
-                    Cfg.Save();
-                    InstallStatsAddon();
-                }
-                Notify("Install complete. Press PLAY to enter Azeroth.");
-                if (!downloadInstall && (setupAfterFileInstall || !Cfg.Bool("setup_done", false)))
-                    After(300, ShowSetupDialog);             // installed from a file during setup: on to the folders page
-                setupAfterFileInstall = false;
             }
         }
 

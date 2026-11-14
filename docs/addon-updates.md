@@ -2,7 +2,7 @@
 
 ## Findings
 
-The catalog has 24 entries: 7 follow creator releases, 15 follow ZIP assets in the launcher's `addons` release, and 2 bundled projects are temporarily marked Work in Progress. A launcher mirror is not a live subscription to the author's repository: new author releases do not update that mirrored ZIP by themselves.
+The catalog has 27 entries: 24 follow creator releases, 2 follow ZIP assets in the launcher's `addons` release, and 1 (AZS Handbook) is built into the launcher. 2 are marked Work in Progress: the first install asks the player to accept a warning; after that they update like the rest. A launcher mirror is not a live subscription to the author's repository: new author releases do not update that mirrored ZIP by themselves.
 
 All seven direct release APIs returned matching ZIPs with SHA-256 digests during this audit. All 15 configured mirror assets were present and had GitHub digests. This confirms release metadata and catalog matching, not that every mirrored ZIP contains its author's newest code or that every addon was installed in a live game.
 
@@ -15,7 +15,7 @@ The prior updater fetched release metadata once per launcher session, silently d
 - Update All and individual Update actions check the relevant source, install confirmed changes, and report successful updates, failed installs and check errors separately. A failure does not stop the rest of a batch.
 - The Updates view shows each managed addon's status and whether it follows a creator release or the launcher mirror. Unknown/manual addons have no invented update URL.
 - A diagonal Updates Available badge appears only for confirmed pending updates and opens Updates inside the secondary panel. Update All respects rollback pins; an individual pinned update asks before replacing the selected old copy.
-- An unexpected ZIP name in the newest stable release is reported as a packaging error instead of silently substituting an older release.
+- When the newest stable release has no ZIP with the expected name, the best-matching ZIP of that same release is used, and as a last resort GitHub's source archive of it. An older release is never substituted.
 - Creator updates compare tag plus digest. Mirror updates compare the exact asset identity, update timestamp and digest. Older installs lacking identity receive one verified refresh to establish that baseline.
 - Verify and extract to staging first. Keep previous addon folders until every incoming folder is moved into place. Restore them if commit fails; preserve recovery files if rollback itself fails. Keep disabled addons disabled. SavedVariables directories are not part of these folder swaps.
 - Integrity checks continue to use the exact hosting GitHub release asset's digest. SurvivorsForge remains a picture/review source.

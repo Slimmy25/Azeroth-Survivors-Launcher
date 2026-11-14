@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Спершу завершіть гру, установлення або хмарну синхронізацію, а потім перевірте оновлення ще раз.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} готовий. Виберіть «Установити оновлення» в Параметри > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Здібності записуються для забігів, зіграних з увімкненим аддоном статистики.
+Addon release check complete.
+= Перевірку релізів аддонів завершено.
+Affects
+= Впливає на
+All 8 armor pieces at 3+ stars
+= Усі 8 частин броні на 3+ зірках
+All ten Quick Access favorites are full. Remove one before adding another.
+= Усі десять обраних у Швидкому доступі зайняті. Видаліть одне, перш ніж додати нове.
+An addon operation is already running.
+= Операція з аддонами вже виконується.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= З 5 зірками на всіх 8 частинах цей бонус у півтора раза сильніший.
+Average time
+= Середній час
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats немає в розділі «Завантажити ще».
+BACK
+= НАЗАД
+Back to Top
+= Угору
+Best level
+= Найкращий рівень
+Bright: victories · faint: all runs
+= Яскраво: перемоги · бліде: усі забіги
+Brighter: more runs that day
+= Яскравіше: більше забігів того дня
+Browse class build videos already featured in the guide.
+= Відео з білдами класів, які вже є в посібнику.
+Browse class, item, and transmog references in the Wiki.
+= Довідка про класи, предмети й трансмогрифікацію у Вікі.
+Build Videos
+= Відео білдів
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Складіть таланти, сплануйте спорядження й перемикайтеся між інструментами, зберігаючи вибраний клас.
+Build class
+= Клас білда
+CANCEL DOWNLOAD & CLOSE
+= СКАСУВАТИ ЗАВАНТАЖЕННЯ Й ЗАКРИТИ
+CHECK AGAIN
+= ПЕРЕВІРИТИ ЗНОВУ
+CHOOSE FOLDER
+= ВИБРАТИ ТЕКУ
+CHOOSE GAME FOLDER
+= ВИБРАТИ ТЕКУ ГРИ
+CLEAR
+= ОЧИСТИТИ
+COPY
+= КОПІЮВАТИ
+Checking addon releases...
+= Перевірка релізів аддонів...
+Choose an option on this setup step to continue.
+= Виберіть варіант на цьому кроці, щоб продовжити.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Виберіть теку з AzerothSurvivors.exe, щоб продовжити налаштування.
+Choose the folder that contains the existing game client before continuing.
+= Перед продовженням виберіть теку з наявним клієнтом гри.
+Classes you play
+= Ваші класи
+Close the game first: it saves its own settings when it closes.
+= Спершу закрийте гру: вона зберігає свої налаштування під час закриття.
+Cloud Save uses Dropbox again.
+= Хмарне збереження знову використовує Dropbox.
+Cloud Save uses Google Drive again.
+= Хмарне збереження знову використовує Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Для хмарного збереження потрібна тека збережень гри, або вимкніть його.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Для хмарного збереження потрібна тека синхронізації, або вимкніть його.
+Code copied.
+= Код скопійовано.
+Codex
+= Кодекс
+Companions observed in runs
+= Супутники, помічені в забігах
+Connecting Dropbox...
+= Підключення до Dropbox...
+Connecting Google Drive...
+= Підключення до Google Drive...
+Contacting Google...
+= Зв'язок з Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Типові значення вже заповнено. Змініть теку, якщо ваші файли деінде.
+Defeats
+= Поразки
+Display Preview uses local builds; public updates stay separate.
+= Попередній перегляд екрана використовує локальні збірки; публічні оновлення окремо.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Ви вже завантажили Azeroth Survivors на цей ПК?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= У вас уже є клієнт Azeroth Survivors на цьому ПК?
+Downloading the game
+= Завантаження гри
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck, експериментально)
+Dropbox connected
+= Dropbox підключено
+Dropbox sign-in discarded.
+= Вхід у Dropbox скасовано.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox виконав вхід, але не дав лаунчеру постійного доступу. Спробуйте ще раз.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Вхід у Dropbox завершився (видалено або минув термін). Увійдіть знову в Налаштування > Хмарне збереження.
+EXPORT ASBUILDS
+= ЕКСПОРТ ASBUILDS
+EXPORT PROFILE
+= ЕКСПОРТ ПРОФІЛЮ
+Ended
+= Завершено
+Error log copied.
+= Журнал помилок скопійовано.
+Every addon is on its latest release.
+= Усі аддони мають останній реліз.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Наявні файли AZS Stats збережено. Їхня історія не переноситься до Azeroth Stats.
+Existing game folder needs attention
+= Наявна тека гри потребує уваги
+Existing save kept. Setup is still open; you can finish without importing it.
+= Наявне збереження залишено. Налаштування ще відкрите; можна завершити без імпорту.
+FINISH SETUP
+= ЗАВЕРШИТИ НАЛАШТУВАННЯ
+Feedback copied.
+= Відгук скопійовано.
+Finish the current update, install, or game session before continuing setup.
+= Завершіть поточне оновлення, встановлення або ігровий сеанс, перш ніж продовжити налаштування.
+First Time Setup
+= Перше налаштування
+Game client
+= Клієнт гри
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Завантаження гри скасовано. Натисніть ВСТАНОВИТИ, коли захочете спробувати знову.
+Gear section
+= Розділ спорядження
+GitHub returned invalid release information. Nothing was installed.
+= GitHub повернув неправильні дані про реліз. Нічого не встановлено.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Досягнуто ліміту запитів GitHub. Зачекайте й спробуйте знову. Нічого не встановлено.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck, експериментально)
+Google Drive connected
+= Google Drive підключено
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive зараз не віддав файл (можливо, досягнуто ліміту завантажень).
+Google Drive made a folder but did not say which.
+= Google Drive створив теку, але не повідомив яку.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Вхід у Google Drive завершився (видалено або минув термін). Увійдіть знову в Налаштування > Хмарне збереження.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google виконав вхід, але не дав лаунчеру постійного доступу. Спробуйте ще раз.
+Google's sign-in answer was incomplete. Try again.
+= Відповідь Google на вхід була неповною. Спробуйте ще раз.
+Guide links
+= Посилання посібника
+Healing
+= Зцілення
+Heroic
+= Героїчний
+IMPORT ASBUILDS
+= ІМПОРТ ASBUILDS
+IMPORT BUILD
+= ІМПОРТ БІЛДА
+INSTALL AZEROTH STATS
+= ВСТАНОВИТИ AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Якщо так, ви вкажете, де розташовані гра та її аддони. Якщо ні, гру буде завантажено в теку цього лаунчера.
+Interface size
+= Розмір інтерфейсу
+Interrupted
+= Перервано
+Items
+= Предмети
+Last 5 weeks
+= Останні 5 тижнів
+Last step: download the game?
+= Останній крок: завантажити гру?
+Latest retained spell build
+= Останній збережений набір заклинань
+Locations validated. Continuing setup...
+= Розташування перевірено. Продовжуємо налаштування...
+MENU ▾
+= МЕНЮ ▾
+More entries are available on the Build Journal tab.
+= Більше записів на вкладці «Журнал білдів».
+NO, DOWNLOAD IT
+= НІ, ЗАВАНТАЖИТИ
+Navigation
+= Навігація
+No build journal entries are stored in the retained runs yet.
+= У збережених забігах ще немає записів журналу білдів.
+No companion samples are recorded yet.
+= Даних про супутників ще немає.
+No death evidence recorded yet.
+= Причин смерті ще не записано.
+No download host worked.\n\n
+= Жоден сервер завантаження не спрацював.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= У збережених забігах ще немає знімка заклинань.
+No source samples are available in retained runs.
+= У збережених забігах немає даних про джерела.
+No spell rank trends are stored yet.
+= Тенденцій рангів заклинань ще немає.
+No status messages yet.
+= Повідомлень про стан ще немає.
+None selected
+= Нічого не вибрано
+Normal
+= Звичайний
+Not ready for release yet. Click to install it anyway.
+= Ще не готово до випуску. Натисніть, щоб усе одно встановити.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Вхід у Dropbox не виконано. Увійдіть у Налаштування > Хмарне збереження.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Вхід у Google Drive не виконано. Увійдіть у Налаштування > Хмарне збереження.
+OPEN FOLDER
+= ВІДКРИТИ ТЕКУ
+Observed attributions
+= Спостережувані атрибуції
+Observed build and equipment changes
+= Спостережувані зміни білда й спорядження
+Observed build journal
+= Спостережуваний журнал білдів
+Observed death sources
+= Спостережувані причини смерті
+Observed in the most recent retained run
+= Помічено в останньому збереженому забігу
+Observed party sample
+= Спостережувана вибірка групи
+Observed run
+= Спостережуваний забіг
+Observed status
+= Спостережуваний стан
+On your phone or computer, open
+= На телефоні чи комп'ютері відкрийте
+On your phone, open
+= На телефоні відкрийте
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Перемагає один повний стан, інший спершу копіюється в резерв.\nВперше на цьому ПК? Виберіть ВЗЯТИ З ХМАРИ.\n
+Open on your phone
+= Відкрити на телефоні
+Partial
+= Частково
+Partial observation
+= Часткове спостереження
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Вставте код білда талантів нижче. Якщо він є в буфері обміну, його підставлено.
+Peel this corner to switch theorycrafting tools.
+= Відігніть цей кут, щоб змінити інструмент теоркрафту.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Зіграйте кілька забігів з Azeroth Stats, щоб побачити свій DPS у часі.
+Playing on a Steam Deck?
+= Граєте на Steam Deck?
+Playing without cloud sync this time
+= Цього разу грати без хмарної синхронізації
+Preparing the Dropbox sign-in...
+= Підготовка входу в Dropbox...
+Priest
+= Жрець
+Priest guide
+= Посібник жерця
+QUICK ACCESS
+= ШВИДКИЙ ДОСТУП
+Rings & Trinkets
+= Персні та аксесуари
+Runs observed
+= Спостережувані забіги
+SIGN IN WITH DROPBOX
+= УВІЙТИ ЧЕРЕЗ DROPBOX
+SIGN IN WITH GOOGLE
+= УВІЙТИ ЧЕРЕЗ GOOGLE
+SIGN OUT
+= ВИЙТИ
+START OVER
+= ПОЧАТИ ЗНОВУ
+STAY & FINISH
+= ЗАЛИШИТИСЯ Й ЗАВЕРШИТИ
+STEAM DECK / HANDHELD
+= STEAM DECK / ПОРТАТИВНИЙ
+STEAM DECK EXPERIMENTAL
+= STEAM DECK ЕКСПЕРИМЕНТАЛЬНО
+Save favorite
+= Зберегти в обране
+Save this location to Quick Access.
+= Зберегти це місце у Швидкому доступі.
+Save to Quick Access
+= Зберегти у Швидкому доступі
+Save where? The current location, the top of this page, or the closest category header.
+= Куди зберегти? Поточне місце, початок сторінки або найближчий заголовок категорії.
+Saved in
+= Збережено в
+Scaling video fixture
+= Тестове відео масштабування
+Setup is only available while the setup guide is open.
+= Налаштування доступне, лише поки відкрито майстер налаштування.
+Sign in to Google Drive
+= Увійти в Google Drive
+Signed out of Dropbox.
+= Вихід із Dropbox виконано.
+Signed out of Google Drive.
+= Вихід із Google Drive виконано.
+Skip/Stop
+= Пропуск/Стоп
+Some addons could not be changed:\n\n
+= Деякі аддони не вдалося змінити:\n\n
+Spell pool
+= Набір заклинань
+Spell rank trends · observed, not exact card picks
+= Тенденції рангів заклинань · спостережувані, не точний вибір карт
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Почніть тут: керування, перший забіг і системи, що допоможуть освоїтися.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / портативний пристрій чи ПК з Windows?
+Stopping the game download before closing...
+= Зупинка завантаження гри перед закриттям...
+Support the Dev
+= Підтримати розробника
+Talent build code
+= Код білда талантів
+Temporarily unavailable while work is in progress.
+= Тимчасово недоступно, поки триває робота.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Дякую, що користуєтеся моїм лаунчером від спільноти. Він створений, щоб відзначити, яка крута ця гра, і зібрати все для Azeroth Survivors в одному місці\n\n
+That file does not exist.
+= Цього файлу не існує.
+That is not an Azeroth Survivors save file.
+= Це не файл збереження Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= Це не файл збереження Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Вміст архіву змінився під час розпакування. Нічого не встановлено.
+The clipboard is busy. Try copying again.
+= Буфер обміну зайнятий. Спробуйте скопіювати ще раз.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Гру не знайдено в цій теці. Виберіть теку з AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Архів гри містить зарезервоване ім'я файлу Windows. Нічого не встановлено.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Архів гри містить порожній шлях або символьне посилання. Нічого не встановлено.
+The game archive contains an unsafe path. Nothing was installed.
+= Архів гри містить небезпечний шлях. Нічого не встановлено.
+The game archive contains conflicting file paths. Nothing was installed.
+= Архів гри містить конфліктні шляхи файлів. Нічого не встановлено.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Архів гри містить повторювані або конфліктні шляхи файлів. Нічого не встановлено.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Не вдалося розпакувати архів гри. Можливо, він пошкоджений, зашифрований, неповний або використовує непідтримуваний метод. Нічого не встановлено.
+The game archive format is not supported by the built-in extractor.
+= Вбудований розпакувальник не підтримує формат архіву гри.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Архів гри неповний або потребує ще однієї частини. Нічого не встановлено.
+The game archive is password-protected. Please use an unencrypted game download.
+= Архів гри захищено паролем. Використайте незашифроване завантаження.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Теку налаштувань гри не вказано. Вкажіть її в Налаштування > ТЕКИ.
+The game files are being installed. The launcher will close when that finishes.
+= Встановлюються файли гри. Лаунчер закриється після завершення.
+The game is running: close it first, it saves its own settings when it closes.
+= Гра запущена: спершу закрийте її, вона зберігає свої налаштування під час закриття.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Гра або синхронізація запустилася під час завантаження аддона. Встановлені файли не змінено; спробуйте знову після її закриття.
+The launcher closes by itself once your progress is saved.
+= Лаунчер закриється сам, щойно прогрес буде збережено.
+The launcher is already running. Look for its window on the taskbar.
+= Лаунчер уже запущено. Знайдіть його вікно на панелі завдань.
+The save could not be imported:\n\n
+= Не вдалося імпортувати збереження:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Код входу минув до використання. Натисніть УВІЙТИ ЧЕРЕЗ DROPBOX знову.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Код входу минув до використання. Натисніть УВІЙТИ ЧЕРЕЗ GOOGLE знову.
+The sign-in was declined on Dropbox's page.
+= Вхід відхилено на сторінці Dropbox.
+The sign-in was declined on Google's page.
+= Вхід відхилено на сторінці Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Потім дозвольте Azeroth Survivors Launcher використовувати власну теку на вашому Google Drive. Сторінка закриється сама після входу.
+This Codex entry's class guide is unavailable.
+= Посібник класу для цього запису Кодексу недоступний.
+This Guide location no longer exists.
+= Цього місця в посібнику більше немає.
+This Guide video is no longer available.
+= Це відео посібника більше недоступне.
+This add-on is not configured for direct GitHub release updates.
+= Цей аддон не налаштовано на прямі оновлення з релізів GitHub.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Цей аддон закріплено на старій копії. Замінити його останнім релізом?
+This class talent page is no longer available.
+= Ця сторінка талантів класу більше недоступна.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Це обране більше не відповідає сторінці посібника. Прив'яжіть сторінку знову, щоб оновити його.
+Today
+= Сьогодні
+UPDATE ALL
+= ОНОВИТИ ВСЕ
+USE DROPBOX
+= ВИКОРИСТАТИ DROPBOX
+USE GOOGLE DRIVE
+= ВИКОРИСТАТИ GOOGLE DRIVE
+Undated
+= Без дати
+Use the arrow keys to browse links and Enter to open one.
+= Стрілки — перехід посиланнями, Enter — відкрити.
+Use the star on a guide page to save its reading position to Quick Access.
+= Натисніть зірку на сторінці посібника, щоб зберегти місце читання у Швидкому доступі.
+WINDOWS PC
+= ПК З WINDOWS
+WINS
+= ПЕРЕМОГИ
+Waiting for the Dropbox sign-in...
+= Очікування входу в Dropbox...
+Waiting for the Google sign-in...
+= Очікування входу в Google...
+Wiki
+= Вікі
+Work in Progress
+= У розробці
+Written Guides
+= Текстові посібники
+YES, I HAVE THE CLIENT
+= ТАК, КЛІЄНТ Є
+Yesterday
+= Учора
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Ви вказали, що гра вже є, але AzerothSurvivors.exe більше немає у вибраній теці. Виберіть правильну теку гри, щоб продовжити. Для наявного клієнта налаштування не пропонує завантажити гру.
+ranks
+= ранги
+times
+= разів
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Якщо гра аварійно завершилася, вона зберегла звіт про збій у теці Diagnostics. Надсилання його розробнику гри допомагає виправити збій.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Аддони AZS не оновлено: {0}
+  Addons for the synced settings not checked: {0}
+= Аддони синхронізованих налаштувань не перевірено: {0}
+1  FOLLOW THE PATH
+= 1  ЙДИ ШЛЯХОМ
+2  SAVE A FAVORITE
+= 2  ЗБЕРЕЖИ ОБРАНЕ
+4 armor pieces at 1+ stars
+= 4 частини броні на 1+ зірці
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Спершу встановлюється новий лаунчер ({0}); після перезапуску знову натисніть ГРАТИ.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Оновлено аддонів: {0}. З помилкою: {1}. Помилок перевірки: {2}.
+All addons {0}
+= Усі аддони {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats записує забіги й зміни білда в грі (/azstats). Лаунчер показує збережені підсумки, класи, звіти про недавні забіги, бойові вибірки та спостережуваний журнал білдів. Власні звіти, порівняння й налаштовуваний HUD лишаються в аддоні.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats записує забіги й спостережувані зміни білда в грі (/azstats). Лаунчер показує збережені підсумки, класи, звіти про недавні забіги, бойові вибірки та журнал білдів. Звіти, порівняння й налаштовуваний HUD аддона лишаються там.
+Best level {#0}
+= Найкращий рівень {#0}
+Best level: {#0}
+= Найкращий рівень: {#0}
+Best together: {0}, level {#1}
+= Найкраще разом: {0}, рівень {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Хмарне збереження призупинено: {0} потребує STEAM DECK ЕКСПЕРИМЕНТАЛЬНО (Налаштування > Лаунчер). Цей сеанс не синхронізується.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Хмарне збереження налаштовано на {0}, що потребує STEAM DECK ЕКСПЕРИМЕНТАЛЬНО (Налаштування > Лаунчер). Увімкніть його знову або виберіть теку синхронізації нижче.
+Confirmed {#0} · probable {#1}
+= Підтверджено {#0} · імовірно {#1}
+Could not install {0}:\n\n{1}
+= Не вдалося встановити {0}:\n\n{1}
+Could not save the game setting:
+= Не вдалося зберегти налаштування гри:
+Could not uninstall {0}:\n\n{1}
+= Не вдалося видалити {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox недоступний ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox не прийняв вхід: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox відхилив вхід: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Експериментальна підтримка Steam Deck: в ігровому режимі лаунчер займає весь екран, запускає гру в тому самому записі Steam і відходить убік, поки ви граєте. Налаштування > Лаунчер вимикають це.
+Game setting saved:
+= Налаштування гри збережено:
+Google Drive refused the sign-in: {0}
+= Google Drive відхилив вхід: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Завантаження буде надіслано під час наступної синхронізації.
+Google could not be reached ({0}).
+= Google недоступний ({0}).
+Google did not start the sign-in: {0}
+= Google не розпочав вхід: {0}
+Google sign-in failed: {0}
+= Помилка входу в Google: {0}
+Highest observed rank {#0}
+= Найвищий спостережуваний ранг {#0}
+Installing {0} ({1})...
+= Встановлення {0} ({1})...
+It killed you {#0} times
+= Убив вас {#0} разів
+Longest: {0}
+= Найдовший: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Жоден файл цього релізу не містить {0} (теку з її файлом .toc), навіть вихідний код. Нічого не встановлено.
+Observed in {#0} runs · rank gains {#1}
+= Помічено в {#0} забігах · підвищень рангу {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Грали в Azeroth Survivors у браузері? Перенесіть прогрес: героїв, відкриті зони, спорядження, таланти й кодекс.\n\nНа сайті відкрийте Options > Saves і натисніть Export Save. Потім виберіть тут цей файл .sav. Гра відкриється з вашим прогресом.
+Quick Access {0}
+= Швидкий доступ {0}
+Rank {#0}
+= Ранг {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} вилучено зі Швидкого доступу. Додайте знову зірочкою посібника або кнопкою обраного розділу.
+Runs {#0} · Victories {#1}
+= Забіги {#0} · Перемоги {#1}
+Runs: {#0}
+= Забіги: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Збережено в копії лаунчера, але {0} недоступний: {1} Завантаження відбудеться під час наступної синхронізації.
+Survived {0} · Level {1}
+= Вижив {0} · Рівень {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Вижив {0} · Рівень {1} · Вбивства {2} · Золото {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Це верхній рівень вашого хмарного диска.\n\nСтворити й використовувати в ньому підтеку Azeroth Survivor Launcher?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Оновлення аддона не вдалося. Попередні файли збережено для відновлення в {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Завантаження з {0} пошкоджене або це не той файл (контрольна сума не збігається). Спробуйте ще раз.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Лаунчер не зміг замінити себе в цій теці ({0}).\n\nЗавантажте нову версію з GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Ретранслятор входу (ntfy.sh) недоступний ({0}). Спробуйте трохи згодом.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} пропонує не той файл ({1} замість {2}).
+The {0} server answered with error {1}.
+= Сервер {0} відповів помилкою {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Ці теки не знайдено:\n\n  {0}\n\nУсе одно завершити? Їх можна змінити пізніше в Налаштуваннях.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= На цьому ПК уже є прогрес у грі.\n\nЗамінити його на {0}?\nПоточний буде збережено як резервну копію в теці Saves гри.
+This launcher was built without {0}.
+= Цей лаунчер зібрано без {0}.
+Time {0}
+= Час {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows не змогла захистити вхід на цьому пристрої, тому його не збережено ({0}).
+Won: {#0}
+= Перемог: {#0}
+You beat it {#0} times
+= Ви перемогли його {#0} разів
+and enter this code:
+= і введіть цей код:
+since {0}
+= з {0}
+✓ Imported: {0}
+= ✓ Імпортовано: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Збереження вибрано: {0} (буде імпортовано після налаштування)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Змінено в патчі гри {0}
+What changed since you last played
+= Що змінилося з вашої останньої гри
+THE GAME
+= ГРА
+THE LAUNCHER
+= ЛАУНЧЕР
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Інші патчі — на сторінці новин.
+Patch {0}
+= Патч {0}
+Launcher {0}
+= Лаунчер {0}
+Updated from {0} to {1}.
+= Оновлено з {0} до {1}.
+Personal records
+= Особисті рекорди
+Play a few runs with Azeroth Stats to see your records here.
+= Зіграйте кілька забігів з Azeroth Stats, щоб побачити тут свої рекорди.
+Fastest victory {0}
+= Найшвидша перемога {0}
+Highest level {0}
+= Найвищий рівень {0}
+Most kills {0}
+= Найбільше вбивств {0}
+best DPS
+= найкращий DPS
+Solo and co-op runs
+= Одиночні та кооперативні забіги
+Runs (solo / co-op)
+= Забіги (соло / кооп)
+Win rate (solo / co-op)
+= Частка перемог (соло / кооп)
+Average run (solo / co-op)
+= Середній забіг (соло / кооп)
+Average level (solo / co-op)
+= Середній рівень (соло / кооп)
+Average DPS (solo / co-op)
+= Середній DPS (соло / кооп)

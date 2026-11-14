@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = 請先結束遊戲、安裝或雲端同步，然後再次檢查更新。
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} 已就緒。請在「選項」>「Launcher」中選擇「安裝更新」。
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= 開啟統計插件進行的對局會記錄技能。
+Addon release check complete.
+= 插件版本檢查完成。
+Affects
+= 影響
+All 8 armor pieces at 3+ stars
+= 全部 8 件護甲達到 3 星以上
+All ten Quick Access favorites are full. Remove one before adding another.
+= 快速存取的十個收藏已滿。新增之前請先移除一個。
+An addon operation is already running.
+= 已有插件作業正在進行。
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= 8 件全部 5 星時，此加成提高 50%。
+Average time
+= 平均時間
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= 「下載更多」中缺少 Azeroth Stats。
+BACK
+= 返回
+Back to Top
+= 回到頂端
+Best level
+= 最佳等級
+Bright: victories · faint: all runs
+= 亮色：勝利 · 淡色：所有對局
+Brighter: more runs that day
+= 更亮：當天對局更多
+Browse class build videos already featured in the guide.
+= 瀏覽指南中已收錄的職業配置影片。
+Browse class, item, and transmog references in the Wiki.
+= 在 Wiki 中瀏覽職業、物品和塑形資料。
+Build Videos
+= 配置影片
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= 在保留所選職業的同時搭配天賦、規劃裝備，並在兩個工具間切換。
+Build class
+= 配置職業
+CANCEL DOWNLOAD & CLOSE
+= 取消下載並關閉
+CHECK AGAIN
+= 再次檢查
+CHOOSE FOLDER
+= 選擇資料夾
+CHOOSE GAME FOLDER
+= 選擇遊戲資料夾
+CLEAR
+= 清除
+COPY
+= 複製
+Checking addon releases...
+= 正在檢查插件版本...
+Choose an option on this setup step to continue.
+= 請在此步驟選擇一個選項以繼續。
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= 請選擇包含 AzerothSurvivors.exe 的資料夾以繼續設定。
+Choose the folder that contains the existing game client before continuing.
+= 繼續之前，請選擇現有遊戲用戶端所在的資料夾。
+Classes you play
+= 你玩過的職業
+Close the game first: it saves its own settings when it closes.
+= 請先關閉遊戲：遊戲關閉時會儲存自己的設定。
+Cloud Save uses Dropbox again.
+= 雲端存檔重新使用 Dropbox。
+Cloud Save uses Google Drive again.
+= 雲端存檔重新使用 Google Drive。
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= 雲端存檔需要一個遊戲存檔資料夾，或關閉雲端存檔。
+Cloud saving needs a sync folder, or turn cloud saving off.
+= 雲端存檔需要一個同步資料夾，或關閉雲端存檔。
+Code copied.
+= 代碼已複製。
+Codex
+= 法典
+Companions observed in runs
+= 對局中觀察到的夥伴
+Connecting Dropbox...
+= 正在連線 Dropbox...
+Connecting Google Drive...
+= 正在連線 Google Drive...
+Contacting Google...
+= 正在聯絡 Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= 已為你填入預設值。如果檔案在別處，請變更資料夾。
+Defeats
+= 失敗
+Display Preview uses local builds; public updates stay separate.
+= 顯示預覽使用本機版本；公開更新保持獨立。
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= 你已在這台電腦上下載過 Azeroth Survivors 嗎？\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= 這台電腦上已有 Azeroth Survivors 遊戲用戶端嗎？
+Downloading the game
+= 正在下載遊戲
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox（Steam Deck 實驗性）
+Dropbox connected
+= Dropbox 已連線
+Dropbox sign-in discarded.
+= 已放棄 Dropbox 登入。
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox 已為你登入，但沒有給啟動器長期存取權。請重試。
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Dropbox 登入已結束（被移除或已過期）。請在 選項 > 雲端存檔 中重新登入。
+EXPORT ASBUILDS
+= 匯出 ASBUILDS
+EXPORT PROFILE
+= 匯出個人檔案
+Ended
+= 已結束
+Error log copied.
+= 錯誤記錄已複製。
+Every addon is on its latest release.
+= 所有插件均為最新版本。
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= 現有的 AZS Stats 檔案會保留。其歷史不會合併到 Azeroth Stats。
+Existing game folder needs attention
+= 現有遊戲資料夾需要處理
+Existing save kept. Setup is still open; you can finish without importing it.
+= 已保留現有存檔。設定仍在進行中；你可以不匯入直接完成。
+FINISH SETUP
+= 完成設定
+Feedback copied.
+= 意見回饋已複製。
+Finish the current update, install, or game session before continuing setup.
+= 繼續設定之前，請先完成正在進行的更新、安裝或遊戲工作階段。
+First Time Setup
+= 首次設定
+Game client
+= 遊戲用戶端
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= 遊戲下載已取消。準備重試時請選擇 安裝。
+Gear section
+= 裝備區塊
+GitHub returned invalid release information. Nothing was installed.
+= GitHub 傳回了無效的版本資訊。未安裝任何內容。
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= 已達到 GitHub 請求上限。請稍後重試。未安裝任何內容。
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive（Steam Deck 實驗性）
+Google Drive connected
+= Google Drive 已連線
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive 暫時沒有提供該檔案（可能已達下載上限）。
+Google Drive made a folder but did not say which.
+= Google Drive 建立了一個資料夾，但沒說明是哪個。
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Google Drive 登入已結束（被移除或已過期）。請在 選項 > 雲端存檔 中重新登入。
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google 已為你登入，但沒有給啟動器長期存取權。請重試。
+Google's sign-in answer was incomplete. Try again.
+= Google 的登入回應不完整。請重試。
+Guide links
+= 指南連結
+Healing
+= 治療
+Heroic
+= 英雄
+IMPORT ASBUILDS
+= 匯入 ASBUILDS
+IMPORT BUILD
+= 匯入配置
+INSTALL AZEROTH STATS
+= 安裝 AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= 如果選是，你可以指定現有遊戲及其插件的位置。如果選否，遊戲將下載到此啟動器所在的資料夾。
+Interface size
+= 介面大小
+Interrupted
+= 中斷
+Items
+= 物品
+Last 5 weeks
+= 最近 5 週
+Last step: download the game?
+= 最後一步：下載遊戲嗎？
+Latest retained spell build
+= 保留的最新法術配置
+Locations validated. Continuing setup...
+= 位置已驗證。正在繼續設定...
+MENU ▾
+= 選單 ▾
+More entries are available on the Build Journal tab.
+= 更多項目在「配置日誌」分頁。
+NO, DOWNLOAD IT
+= 否，下載
+Navigation
+= 導覽
+No build journal entries are stored in the retained runs yet.
+= 保留的對局中還沒有配置日誌項目。
+No companion samples are recorded yet.
+= 還沒有記錄夥伴資料。
+No death evidence recorded yet.
+= 還沒有記錄死因。
+No download host worked.\n\n
+= 沒有可用的下載伺服器。\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= 保留的對局中還沒有觀察到的法術快照。
+No source samples are available in retained runs.
+= 保留的對局中沒有來源資料。
+No spell rank trends are stored yet.
+= 還沒有儲存法術等級趨勢。
+No status messages yet.
+= 還沒有狀態訊息。
+None selected
+= 未選擇
+Normal
+= 普通
+Not ready for release yet. Click to install it anyway.
+= 尚未準備好發佈。點擊仍然安裝。
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= 未登入 Dropbox。請在 選項 > 雲端存檔 中登入。
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= 未登入 Google Drive。請在 選項 > 雲端存檔 中登入。
+OPEN FOLDER
+= 開啟資料夾
+Observed attributions
+= 觀察到的歸因
+Observed build and equipment changes
+= 觀察到的配置和裝備變化
+Observed build journal
+= 觀察到的配置日誌
+Observed death sources
+= 觀察到的死因
+Observed in the most recent retained run
+= 在最近保留的對局中觀察到
+Observed party sample
+= 觀察到的隊伍樣本
+Observed run
+= 觀察到的對局
+Observed status
+= 觀察到的狀態
+On your phone or computer, open
+= 在手機或電腦上開啟
+On your phone, open
+= 在手機上開啟
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= 採用一個完整狀態，另一個會先備份。\n第一次在這台電腦上？請選擇 使用雲端。\n
+Open on your phone
+= 在手機上開啟
+Partial
+= 部分
+Partial observation
+= 部分觀察
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= 在下方貼上天賦配置代碼。如果剪貼簿中有，會自動填入。
+Peel this corner to switch theorycrafting tools.
+= 翻起這個角可切換理論計算工具。
+Play a few runs with Azeroth Stats to see your DPS over time.
+= 用 Azeroth Stats 玩幾局即可查看你的 DPS 隨時間的變化。
+Playing on a Steam Deck?
+= 在 Steam Deck 上玩？
+Playing without cloud sync this time
+= 本次不使用雲端同步進行遊戲
+Preparing the Dropbox sign-in...
+= 正在準備 Dropbox 登入...
+Priest
+= 牧師
+Priest guide
+= 牧師指南
+QUICK ACCESS
+= 快速存取
+Rings & Trinkets
+= 戒指和飾品
+Runs observed
+= 觀察到的對局
+SIGN IN WITH DROPBOX
+= 使用 DROPBOX 登入
+SIGN IN WITH GOOGLE
+= 使用 GOOGLE 登入
+SIGN OUT
+= 登出
+START OVER
+= 重新開始
+STAY & FINISH
+= 留下並完成
+STEAM DECK / HANDHELD
+= STEAM DECK / 掌機
+STEAM DECK EXPERIMENTAL
+= STEAM DECK 實驗性
+Save favorite
+= 儲存收藏
+Save this location to Quick Access.
+= 將此位置儲存到快速存取。
+Save to Quick Access
+= 儲存到快速存取
+Save where? The current location, the top of this page, or the closest category header.
+= 儲存到哪裡？目前位置、本頁頂端或最近的分類標題。
+Saved in
+= 儲存於
+Scaling video fixture
+= 縮放測試影片
+Setup is only available while the setup guide is open.
+= 只有在設定精靈開啟時才能進行設定。
+Sign in to Google Drive
+= 登入 Google Drive
+Signed out of Dropbox.
+= 已登出 Dropbox。
+Signed out of Google Drive.
+= 已登出 Google Drive。
+Skip/Stop
+= 略過/停止
+Some addons could not be changed:\n\n
+= 部分插件無法變更：\n\n
+Spell pool
+= 法術池
+Spell rank trends · observed, not exact card picks
+= 法術等級趨勢 · 觀察所得，並非精確的卡牌選擇
+Start here: learn the controls, your first run, and the systems that help you get going.
+= 從這裡開始：學習操作、你的第一局，以及幫助你入門的系統。
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / 掌機，還是 Windows 電腦？
+Stopping the game download before closing...
+= 關閉前正在停止遊戲下載...
+Support the Dev
+= 支持開發者
+Talent build code
+= 天賦配置代碼
+Temporarily unavailable while work is in progress.
+= 正在開發中，暫時無法使用。
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= 感謝使用我這個社群製作的啟動器。它旨在一起慶祝這款遊戲有多棒，並成為滿足 Azeroth Survivors 所有需求的一站式入口\n\n
+That file does not exist.
+= 該檔案不存在。
+That is not an Azeroth Survivors save file.
+= 這不是 Azeroth Survivors 存檔檔案。
+That is not an Azeroth Survivors save file.\n\n
+= 這不是 Azeroth Survivors 存檔檔案。\n\n
+The archive contents changed while extracting. Nothing was installed.
+= 解壓縮過程中壓縮檔內容發生變化。未安裝任何內容。
+The clipboard is busy. Try copying again.
+= 剪貼簿正忙。請重新複製。
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= 在該資料夾中找不到現有遊戲。請選擇包含 AzerothSurvivors.exe 的資料夾。
+The game archive contains a reserved Windows file name. Nothing was installed.
+= 遊戲壓縮檔包含 Windows 保留檔名。未安裝任何內容。
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= 遊戲壓縮檔包含空路徑或符號連結。未安裝任何內容。
+The game archive contains an unsafe path. Nothing was installed.
+= 遊戲壓縮檔包含不安全的路徑。未安裝任何內容。
+The game archive contains conflicting file paths. Nothing was installed.
+= 遊戲壓縮檔包含衝突的檔案路徑。未安裝任何內容。
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= 遊戲壓縮檔包含重複或衝突的檔案路徑。未安裝任何內容。
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= 無法解壓縮遊戲壓縮檔。它可能已損毀、加密、不完整或使用了不支援的方法。未安裝任何內容。
+The game archive format is not supported by the built-in extractor.
+= 內建解壓縮工具不支援此遊戲壓縮檔格式。
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= 遊戲壓縮檔不完整或還需要另一個分卷。未安裝任何內容。
+The game archive is password-protected. Please use an unencrypted game download.
+= 遊戲壓縮檔有密碼保護。請使用未加密的遊戲下載。
+The game config folder is not set. Set it in Options > FOLDERS.
+= 未設定遊戲設定資料夾。請在 選項 > 資料夾 中設定。
+The game files are being installed. The launcher will close when that finishes.
+= 正在安裝遊戲檔案。完成後啟動器會關閉。
+The game is running: close it first, it saves its own settings when it closes.
+= 遊戲正在執行：請先關閉它，遊戲關閉時會儲存自己的設定。
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= 下載此插件期間遊戲或同步已啟動。已安裝的檔案未被變更；請在其關閉後重試。
+The launcher closes by itself once your progress is saved.
+= 進度儲存後，啟動器會自動關閉。
+The launcher is already running. Look for its window on the taskbar.
+= 啟動器已在執行。請在工作列中找到它的視窗。
+The save could not be imported:\n\n
+= 無法匯入存檔：\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= 登入代碼在使用前已過期。請再次點擊 使用 DROPBOX 登入。
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= 登入代碼在使用前已過期。請再次點擊 使用 GOOGLE 登入。
+The sign-in was declined on Dropbox's page.
+= 在 Dropbox 頁面上登入被拒絕。
+The sign-in was declined on Google's page.
+= 在 Google 頁面上登入被拒絕。
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= 接著允許 Azeroth Survivors Launcher 在你的 Google Drive 中使用自己的資料夾。登入後此頁面會自動關閉。
+This Codex entry's class guide is unavailable.
+= 此法典項目的職業指南無法使用。
+This Guide location no longer exists.
+= 此指南位置已不存在。
+This Guide video is no longer available.
+= 此指南影片已無法觀看。
+This add-on is not configured for direct GitHub release updates.
+= 此插件未設定為直接從 GitHub 版本更新。
+This addon is pinned to an older copy. Replace it with the newest release?
+= 此插件固定在舊副本上。要替換為最新版本嗎？
+This class talent page is no longer available.
+= 此職業天賦頁面已無法使用。
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= 此收藏已不再對應任何指南頁面。請重新綁定頁面以更新它。
+Today
+= 今天
+UPDATE ALL
+= 全部更新
+USE DROPBOX
+= 使用 DROPBOX
+USE GOOGLE DRIVE
+= 使用 GOOGLE DRIVE
+Undated
+= 無日期
+Use the arrow keys to browse links and Enter to open one.
+= 使用方向鍵瀏覽連結，按 Enter 開啟。
+Use the star on a guide page to save its reading position to Quick Access.
+= 點擊指南頁面上的星號，可將閱讀位置儲存到快速存取。
+WINDOWS PC
+= WINDOWS 電腦
+WINS
+= 勝利
+Waiting for the Dropbox sign-in...
+= 正在等待 Dropbox 登入...
+Waiting for the Google sign-in...
+= 正在等待 Google 登入...
+Wiki
+= Wiki
+Work in Progress
+= 開發中
+Written Guides
+= 文字指南
+YES, I HAVE THE CLIENT
+= 是的，我有用戶端
+Yesterday
+= 昨天
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= 你選擇了已有遊戲，但所選資料夾中已不存在 AzerothSurvivors.exe。請選擇正確的遊戲資料夾以繼續。選擇現有用戶端時，設定不會提供遊戲下載。
+ranks
+= 級
+times
+= 次
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= 如果遊戲當機，它已在 Diagnostics 資料夾中儲存了當機報告。將其傳送給遊戲開發者有助於修正問題。
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= 未更新的 AZS 插件：{0}
+  Addons for the synced settings not checked: {0}
+= 未檢查的同步設定插件：{0}
+1  FOLLOW THE PATH
+= 1  沿路前進
+2  SAVE A FAVORITE
+= 2  儲存收藏
+4 armor pieces at 1+ stars
+= 4 件護甲達到 1 星以上
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= 會先安裝新的啟動器（{0}）；重新啟動後請再次點擊 開始遊戲。
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= 已更新插件：{0}。失敗：{1}。檢查錯誤：{2}。
+All addons {0}
+= 所有插件 {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats 在遊戲中記錄對局和配置變化（/azstats）。啟動器可以顯示儲存的總計、職業、最近對局報告、戰鬥樣本和觀察到的配置日誌。插件自帶的報告、比較和可設定 HUD 仍可在插件中使用。
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats 在遊戲中記錄對局和觀察到的配置變化（/azstats）。啟動器可以顯示儲存的總計、職業、最近對局報告、戰鬥樣本和配置日誌。插件的報告、比較和可設定 HUD 仍可在那裡使用。
+Best level {#0}
+= 最佳等級 {#0}
+Best level: {#0}
+= 最佳等級：{#0}
+Best together: {0}, level {#1}
+= 最佳搭檔：{0}，等級 {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= 雲端存檔已暫停：{0} 需要 STEAM DECK 實驗性（選項 > 啟動器）。本次工作階段不同步。
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= 雲端存檔設為 {0}，需要 STEAM DECK 實驗性（選項 > 啟動器）。請重新開啟，或在下方選擇同步資料夾。
+Confirmed {#0} · probable {#1}
+= 確認 {#0} · 可能 {#1}
+Could not install {0}:\n\n{1}
+= 無法安裝 {0}：\n\n{1}
+Could not save the game setting:
+= 無法儲存遊戲設定：
+Could not uninstall {0}:\n\n{1}
+= 無法解除安裝 {0}：\n\n{1}
+Dropbox could not be reached ({0}).
+= 無法連線 Dropbox（{0}）。
+Dropbox did not accept the sign-in: {0}
+= Dropbox 未接受登入：{0}
+Dropbox refused the sign-in: {0}
+= Dropbox 拒絕了登入：{0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= 實驗性 Steam Deck 支援：啟動器在遊戲模式下全螢幕，在同一個 Steam 項目中啟動遊戲，並在你遊戲時退到一旁。選項 > 啟動器 可關閉。
+Game setting saved:
+= 遊戲設定已儲存：
+Google Drive refused the sign-in: {0}
+= Google Drive 拒絕了登入：{0}
+Google Drive: {0}
+= Google Drive：{0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive：{0} 上傳將在下次同步時送出。
+Google could not be reached ({0}).
+= 無法連線 Google（{0}）。
+Google did not start the sign-in: {0}
+= Google 未開始登入：{0}
+Google sign-in failed: {0}
+= Google 登入失敗：{0}
+Highest observed rank {#0}
+= 觀察到的最高等級 {#0}
+Installing {0} ({1})...
+= 正在安裝 {0}（{1}）...
+It killed you {#0} times
+= 它擊殺了你 {#0} 次
+Longest: {0}
+= 最長：{0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= 此版本中沒有任何檔案包含 {0}（帶 .toc 檔案的資料夾），原始碼中也沒有。未安裝任何內容。
+Observed in {#0} runs · rank gains {#1}
+= 在 {#0} 局中觀察到 · 升級 {#1} 次
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= 在瀏覽器中玩過 Azeroth Survivors？帶上你的進度：英雄、已開放的區域、裝備、天賦和法典。\n\n在網站上開啟 Options > Saves 並點擊 Export Save。然後在這裡選擇該 .sav 檔案。遊戲會帶著你的進度開啟。
+Quick Access {0}
+= 快速存取 {0}
+Rank {#0}
+= 等級 {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= 已從快速存取中移除 {0}。可用指南星號或區塊收藏按鈕重新加入。
+Runs {#0} · Victories {#1}
+= 對局 {#0} · 勝利 {#1}
+Runs: {#0}
+= 對局：{#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= 已儲存到啟動器的副本，但無法連線 {0}：{1} 將在下次同步時上傳。
+Survived {0} · Level {1}
+= 存活 {0} · 等級 {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= 存活 {0} · 等級 {1} · 擊殺 {2} · 金幣 {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= 這是你雲端硬碟的最上層。\n\n要在其中建立並使用名為 Azeroth Survivor Launcher 的子資料夾嗎？
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= 插件更新失敗。先前的檔案已保留在 {0} 以便復原。{1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= 從 {0} 下載的檔案已損毀或不正確（總和檢查碼不符）。請重試。
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= 啟動器無法在此資料夾中替換自身（{0}）。\n\n請從 GitHub 下載新版本：\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= 無法連線登入中繼（ntfy.sh）（{0}）。請稍後重試。
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} 提供的檔案與預期不同（是 {1} 而不是 {2}）。
+The {0} server answered with error {1}.
+= {0} 伺服器傳回錯誤 {1}。
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= 找不到這些資料夾：\n\n  {0}\n\n仍要完成嗎？你可以稍後在 選項 中變更。
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= 這台電腦上已有遊戲進度。\n\n要替換為 {0} 嗎？\n現有進度會作為備份保存在遊戲的 Saves 資料夾中。
+This launcher was built without {0}.
+= 此啟動器建置時沒有 {0}。
+Time {0}
+= 時間 {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows 無法在此裝置上保護登入資訊，因此未保留（{0}）。
+Won: {#0}
+= 勝利：{#0}
+You beat it {#0} times
+= 你擊敗了它 {#0} 次
+and enter this code:
+= 並輸入此代碼：
+since {0}
+= 自 {0} 起
+✓ Imported: {0}
+= ✓ 已匯入：{0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ 已選擇存檔：{0}（設定完成時匯入）
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= 在遊戲修補程式 {0} 中變更
+What changed since you last played
+= 自你上次遊戲以來的變化
+THE GAME
+= 遊戲
+THE LAUNCHER
+= 啟動器
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= 更多修補程式請見新聞頁面。
+Patch {0}
+= 修補程式 {0}
+Launcher {0}
+= 啟動器 {0}
+Updated from {0} to {1}.
+= 已從 {0} 更新到 {1}。
+Personal records
+= 個人紀錄
+Play a few runs with Azeroth Stats to see your records here.
+= 用 Azeroth Stats 玩幾局即可在此查看你的紀錄。
+Fastest victory {0}
+= 最快勝利 {0}
+Highest level {0}
+= 最高等級 {0}
+Most kills {0}
+= 最多擊殺 {0}
+best DPS
+= 最佳 DPS
+Solo and co-op runs
+= 單人與合作對局
+Runs (solo / co-op)
+= 對局（單人 / 合作）
+Win rate (solo / co-op)
+= 勝率（單人 / 合作）
+Average run (solo / co-op)
+= 平均對局（單人 / 合作）
+Average level (solo / co-op)
+= 平均等級（單人 / 合作）
+Average DPS (solo / co-op)
+= 平均 DPS（單人 / 合作）

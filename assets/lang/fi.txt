@@ -2027,3 +2027,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Sulje ensin peli, asennus tai pilvisynkronointi ja tarkista sitten päivitys uudelleen.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} on valmis. Valitse Asenna päivitys kohdasta Asetukset > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Kyvyt tallennetaan juoksuista, jotka pelattiin tilastolisäosa päällä.
+Addon release check complete.
+= Lisäosien julkaisujen tarkistus valmis.
+Affects
+= Vaikuttaa
+All 8 armor pieces at 3+ stars
+= Kaikki 8 haarniskaosaa 3+ tähdellä
+All ten Quick Access favorites are full. Remove one before adding another.
+= Kaikki kymmenen Pikakäytön suosikkia ovat täynnä. Poista yksi ennen uuden lisäämistä.
+An addon operation is already running.
+= Lisäosatoiminto on jo käynnissä.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= 5 tähdellä kaikissa 8 osassa tämä bonus on 50 % vahvempi.
+Average time
+= Keskimääräinen aika
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats puuttuu kohdasta Lataa lisää.
+BACK
+= TAKAISIN
+Back to Top
+= Alkuun
+Best level
+= Paras taso
+Bright: victories · faint: all runs
+= Kirkas: voitot · himmeä: kaikki juoksut
+Brighter: more runs that day
+= Kirkkaampi: enemmän juoksuja sinä päivänä
+Browse class build videos already featured in the guide.
+= Selaa oppaassa jo esiteltyjä luokkien build-videoita.
+Browse class, item, and transmog references in the Wiki.
+= Selaa luokka-, esine- ja transmog-tietoja wikissä.
+Build Videos
+= Build-videot
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Kokoa kykypuu, suunnittele varusteet ja vaihda työkalujen välillä valitun luokan säilyessä.
+Build class
+= Buildin luokka
+CANCEL DOWNLOAD & CLOSE
+= PERUUTA LATAUS JA SULJE
+CHECK AGAIN
+= TARKISTA UUDELLEEN
+CHOOSE FOLDER
+= VALITSE KANSIO
+CHOOSE GAME FOLDER
+= VALITSE PELIKANSIO
+CLEAR
+= TYHJENNÄ
+COPY
+= KOPIOI
+Checking addon releases...
+= Tarkistetaan lisäosien julkaisuja...
+Choose an option on this setup step to continue.
+= Valitse vaihtoehto tässä vaiheessa jatkaaksesi.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Valitse kansio, jossa AzerothSurvivors.exe on, jatkaaksesi asennusta.
+Choose the folder that contains the existing game client before continuing.
+= Valitse olemassa olevan peliasiakkaan kansio ennen jatkamista.
+Classes you play
+= Pelaamasi luokat
+Close the game first: it saves its own settings when it closes.
+= Sulje peli ensin: se tallentaa omat asetuksensa sulkeutuessaan.
+Cloud Save uses Dropbox again.
+= Pilvitallennus käyttää taas Dropboxia.
+Cloud Save uses Google Drive again.
+= Pilvitallennus käyttää taas Google Drivea.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Pilvitallennus tarvitsee pelin tallennuskansion, tai poista se käytöstä.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Pilvitallennus tarvitsee synkronointikansion, tai poista se käytöstä.
+Code copied.
+= Koodi kopioitu.
+Codex
+= Codex
+Companions observed in runs
+= Juoksuissa havaitut seuralaiset
+Connecting Dropbox...
+= Yhdistetään Dropboxiin...
+Connecting Google Drive...
+= Yhdistetään Google Driveen...
+Contacting Google...
+= Otetaan yhteyttä Googleen...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Oletukset on täytetty valmiiksi. Vaihda kansio, jos tiedostosi ovat muualla.
+Defeats
+= Tappiot
+Display Preview uses local builds; public updates stay separate.
+= Näytön esikatselu käyttää paikallisia buildeja; julkiset päivitykset pysyvät erillään.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Oletko jo ladannut Azeroth Survivorsin tälle PC:lle?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Onko sinulla jo Azeroth Survivors -peliasiakas tällä PC:llä?
+Downloading the game
+= Ladataan peliä
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck, kokeellinen)
+Dropbox connected
+= Dropbox yhdistetty
+Dropbox sign-in discarded.
+= Dropbox-kirjautuminen hylätty.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox kirjasi sinut sisään, mutta ei antanut käynnistimelle pysyvää pääsyä. Yritä uudelleen.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Dropbox-kirjautuminen on päättynyt (poistettu tai vanhentunut). Kirjaudu uudelleen kohdassa Asetukset > Pilvitallennus.
+EXPORT ASBUILDS
+= VIE ASBUILDS
+EXPORT PROFILE
+= VIE PROFIILI
+Ended
+= Päättynyt
+Error log copied.
+= Virheloki kopioitu.
+Every addon is on its latest release.
+= Kaikki lisäosat ovat uusimmassa versiossa.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Olemassa olevat AZS Stats -tiedostot säilytetään. Niiden historiaa ei yhdistetä Azeroth Statsiin.
+Existing game folder needs attention
+= Olemassa oleva pelikansio vaatii huomiota
+Existing save kept. Setup is still open; you can finish without importing it.
+= Olemassa oleva tallennus säilytetty. Asennus on yhä auki; voit viimeistellä tuomatta sitä.
+FINISH SETUP
+= VIIMEISTELE ASENNUS
+Feedback copied.
+= Palaute kopioitu.
+Finish the current update, install, or game session before continuing setup.
+= Viimeistele käynnissä oleva päivitys, asennus tai pelisessio ennen kuin jatkat asennusta.
+First Time Setup
+= Ensimmäinen asennus
+Game client
+= Peliasiakas
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Pelin lataus peruutettu. Valitse ASENNA, kun haluat yrittää uudelleen.
+Gear section
+= Varusteosio
+GitHub returned invalid release information. Nothing was installed.
+= GitHub palautti virheelliset julkaisutiedot. Mitään ei asennettu.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= GitHubin pyyntöraja on täynnä. Odota ja yritä uudelleen. Mitään ei asennettu.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck, kokeellinen)
+Google Drive connected
+= Google Drive yhdistetty
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive ei tarjonnut tiedostoa juuri nyt (latausraja voi olla täynnä).
+Google Drive made a folder but did not say which.
+= Google Drive loi kansion, mutta ei kertonut mikä se on.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Google Drive -kirjautuminen on päättynyt (poistettu tai vanhentunut). Kirjaudu uudelleen kohdassa Asetukset > Pilvitallennus.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google kirjasi sinut sisään, mutta ei antanut käynnistimelle pysyvää pääsyä. Yritä uudelleen.
+Google's sign-in answer was incomplete. Try again.
+= Googlen kirjautumisvastaus oli puutteellinen. Yritä uudelleen.
+Guide links
+= Oppaan linkit
+Healing
+= Parannus
+Heroic
+= Sankarillinen
+IMPORT ASBUILDS
+= TUO ASBUILDS
+IMPORT BUILD
+= TUO BUILD
+INSTALL AZEROTH STATS
+= ASENNA AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Jos kyllä, valitset missä olemassa oleva peli ja sen lisäosat ovat. Jos ei, peli ladataan tämän käynnistimen kansioon.
+Interface size
+= Käyttöliittymän koko
+Interrupted
+= Keskeytetty
+Items
+= Esineet
+Last 5 weeks
+= Viimeiset 5 viikkoa
+Last step: download the game?
+= Viimeinen vaihe: ladataanko peli?
+Latest retained spell build
+= Uusin säilytetty loitsubuild
+Locations validated. Continuing setup...
+= Sijainnit tarkistettu. Asennus jatkuu...
+MENU ▾
+= VALIKKO ▾
+More entries are available on the Build Journal tab.
+= Lisää merkintöjä Build-päiväkirja-välilehdellä.
+NO, DOWNLOAD IT
+= EI, LATAA SE
+Navigation
+= Navigointi
+No build journal entries are stored in the retained runs yet.
+= Säilytetyissä juoksuissa ei ole vielä build-päiväkirjan merkintöjä.
+No companion samples are recorded yet.
+= Seuralaistietoja ei ole vielä tallennettu.
+No death evidence recorded yet.
+= Kuolinsyitä ei ole vielä tallennettu.
+No download host worked.\n\n
+= Mikään latauspalvelin ei toiminut.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Säilytetyissä juoksuissa ei ole vielä havaittua loitsutilannetta.
+No source samples are available in retained runs.
+= Säilytetyissä juoksuissa ei ole lähdetietoja.
+No spell rank trends are stored yet.
+= Loitsutasojen kehitystä ei ole vielä tallennettu.
+No status messages yet.
+= Ei vielä tilaviestejä.
+None selected
+= Ei valintaa
+Normal
+= Normaali
+Not ready for release yet. Click to install it anyway.
+= Ei vielä valmis julkaistavaksi. Napsauta asentaaksesi silti.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Et ole kirjautunut Dropboxiin. Kirjaudu kohdassa Asetukset > Pilvitallennus.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Et ole kirjautunut Google Driveen. Kirjaudu kohdassa Asetukset > Pilvitallennus.
+OPEN FOLDER
+= AVAA KANSIO
+Observed attributions
+= Havaitut kohdistukset
+Observed build and equipment changes
+= Havaitut build- ja varustemuutokset
+Observed build journal
+= Havaittu build-päiväkirja
+Observed death sources
+= Havaitut kuolinsyyt
+Observed in the most recent retained run
+= Havaittu viimeisimmässä säilytetyssä juoksussa
+Observed party sample
+= Havaittu ryhmänäyte
+Observed run
+= Havaittu juoksu
+Observed status
+= Havaittu tila
+On your phone or computer, open
+= Avaa puhelimella tai tietokoneella
+On your phone, open
+= Avaa puhelimella
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Yksi täydellinen tila voittaa, toinen varmuuskopioidaan ensin.\nEnsimmäinen kerta tällä PC:llä? Valitse KÄYTÄ PILVEÄ.\n
+Open on your phone
+= Avaa puhelimessa
+Partial
+= Osittainen
+Partial observation
+= Osittainen havainto
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Liitä kykybuildin koodi alle. Jos leikepöydällä on sellainen, se täytetään valmiiksi.
+Peel this corner to switch theorycrafting tools.
+= Taita tätä kulmaa vaihtaaksesi theorycraft-työkalua.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Pelaa muutama juoksu Azeroth Statsin kanssa nähdäksesi DPS:si ajan mittaan.
+Playing on a Steam Deck?
+= Pelaatko Steam Deckillä?
+Playing without cloud sync this time
+= Pelaa ilman pilvisynkronointia tällä kertaa
+Preparing the Dropbox sign-in...
+= Valmistellaan Dropbox-kirjautumista...
+Priest
+= Pappi
+Priest guide
+= Papin opas
+QUICK ACCESS
+= PIKAKÄYTTÖ
+Rings & Trinkets
+= Sormukset ja korut
+Runs observed
+= Havaitut juoksut
+SIGN IN WITH DROPBOX
+= KIRJAUDU DROPBOXILLA
+SIGN IN WITH GOOGLE
+= KIRJAUDU GOOGLELLA
+SIGN OUT
+= KIRJAUDU ULOS
+START OVER
+= ALOITA ALUSTA
+STAY & FINISH
+= JÄÄ JA VIIMEISTELE
+STEAM DECK / HANDHELD
+= STEAM DECK / KÄSIKONSOLI
+STEAM DECK EXPERIMENTAL
+= STEAM DECK KOKEELLINEN
+Save favorite
+= Tallenna suosikki
+Save this location to Quick Access.
+= Tallenna tämä sijainti Pikakäyttöön.
+Save to Quick Access
+= Tallenna Pikakäyttöön
+Save where? The current location, the top of this page, or the closest category header.
+= Mihin tallennetaan? Nykyinen kohta, sivun alku tai lähin luokkaotsikko.
+Saved in
+= Tallennettu kohteeseen
+Scaling video fixture
+= Skaalauksen testivideo
+Setup is only available while the setup guide is open.
+= Asennus on käytettävissä vain asennusoppaan ollessa auki.
+Sign in to Google Drive
+= Kirjaudu Google Driveen
+Signed out of Dropbox.
+= Kirjauduttu ulos Dropboxista.
+Signed out of Google Drive.
+= Kirjauduttu ulos Google Drivesta.
+Skip/Stop
+= Ohita/Pysäytä
+Some addons could not be changed:\n\n
+= Joitakin lisäosia ei voitu muuttaa:\n\n
+Spell pool
+= Loitsuvalikoima
+Spell rank trends · observed, not exact card picks
+= Loitsutasojen kehitys · havaittu, ei tarkkoja korttivalintoja
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Aloita tästä: opettele ohjaus, ensimmäinen juoksusi ja järjestelmät, jotka auttavat alkuun.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / käsikonsoli vai Windows-PC?
+Stopping the game download before closing...
+= Pysäytetään pelin lataus ennen sulkemista...
+Support the Dev
+= Tue kehittäjää
+Talent build code
+= Kykybuildin koodi
+Temporarily unavailable while work is in progress.
+= Väliaikaisesti poissa käytöstä työn ajan.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Kiitos, että käytät yhteisön tekemää käynnistintäni. Se on tehty juhlistamaan, kuinka siisti tämä peli on, ja kokoamaan kaiken Azeroth Survivorsiin liittyvän yhteen paikkaan\n\n
+That file does not exist.
+= Tiedostoa ei ole olemassa.
+That is not an Azeroth Survivors save file.
+= Se ei ole Azeroth Survivors -tallennustiedosto.
+That is not an Azeroth Survivors save file.\n\n
+= Se ei ole Azeroth Survivors -tallennustiedosto.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Arkiston sisältö muuttui purettaessa. Mitään ei asennettu.
+The clipboard is busy. Try copying again.
+= Leikepöytä on varattu. Yritä kopioida uudelleen.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Olemassa olevaa peliä ei löytynyt kansiosta. Valitse kansio, jossa AzerothSurvivors.exe on.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Peliarkisto sisältää varatun Windows-tiedostonimen. Mitään ei asennettu.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Peliarkisto sisältää tyhjän polun tai symbolisen linkin. Mitään ei asennettu.
+The game archive contains an unsafe path. Nothing was installed.
+= Peliarkisto sisältää vaarallisen polun. Mitään ei asennettu.
+The game archive contains conflicting file paths. Nothing was installed.
+= Peliarkisto sisältää ristiriitaisia tiedostopolkuja. Mitään ei asennettu.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Peliarkisto sisältää päällekkäisiä tai ristiriitaisia tiedostopolkuja. Mitään ei asennettu.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Peliarkistoa ei voitu purkaa. Se voi olla vioittunut, salattu, puutteellinen tai käyttää tukematonta menetelmää. Mitään ei asennettu.
+The game archive format is not supported by the built-in extractor.
+= Sisäänrakennettu purkaja ei tue peliarkiston muotoa.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Peliarkisto on puutteellinen tai tarvitsee toisen osan. Mitään ei asennettu.
+The game archive is password-protected. Please use an unencrypted game download.
+= Peliarkisto on suojattu salasanalla. Käytä salaamatonta pelilatausta.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Pelin asetuskansiota ei ole asetettu. Aseta se kohdassa Asetukset > KANSIOT.
+The game files are being installed. The launcher will close when that finishes.
+= Pelitiedostoja asennetaan. Käynnistin sulkeutuu, kun se on valmis.
+The game is running: close it first, it saves its own settings when it closes.
+= Peli on käynnissä: sulje se ensin, se tallentaa omat asetuksensa sulkeutuessaan.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Peli tai synkronointi käynnistyi tämän lisäosan latauksen aikana. Asennettuja tiedostoja ei muutettu; yritä uudelleen sen sulkeuduttua.
+The launcher closes by itself once your progress is saved.
+= Käynnistin sulkeutuu itsestään, kun edistymisesi on tallennettu.
+The launcher is already running. Look for its window on the taskbar.
+= Käynnistin on jo käynnissä. Etsi sen ikkuna tehtäväpalkista.
+The save could not be imported:\n\n
+= Tallennusta ei voitu tuoda:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Kirjautumiskoodi vanhentui ennen käyttöä. Paina KIRJAUDU DROPBOXILLA uudelleen.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Kirjautumiskoodi vanhentui ennen käyttöä. Paina KIRJAUDU GOOGLELLA uudelleen.
+The sign-in was declined on Dropbox's page.
+= Kirjautuminen hylättiin Dropboxin sivulla.
+The sign-in was declined on Google's page.
+= Kirjautuminen hylättiin Googlen sivulla.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Salli sitten Azeroth Survivors Launcherin käyttää omaa kansiotaan Google Drivessasi. Sivu sulkeutuu itsestään, kun olet kirjautunut.
+This Codex entry's class guide is unavailable.
+= Tämän Codex-merkinnän luokkaopas ei ole saatavilla.
+This Guide location no longer exists.
+= Tätä kohtaa oppaassa ei enää ole.
+This Guide video is no longer available.
+= Tämä opasvideo ei ole enää saatavilla.
+This add-on is not configured for direct GitHub release updates.
+= Tätä lisäosaa ei ole määritetty suoriin GitHub-julkaisupäivityksiin.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Tämä lisäosa on lukittu vanhempaan kopioon. Korvataanko uusimmalla julkaisulla?
+This class talent page is no longer available.
+= Tämän luokan kykysivu ei ole enää saatavilla.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Tämä suosikki ei enää vastaa mitään oppaan sivua. Yhdistä sivu uudelleen päivittääksesi sen.
+Today
+= Tänään
+UPDATE ALL
+= PÄIVITÄ KAIKKI
+USE DROPBOX
+= KÄYTÄ DROPBOXIA
+USE GOOGLE DRIVE
+= KÄYTÄ GOOGLE DRIVEA
+Undated
+= Päiväämätön
+Use the arrow keys to browse links and Enter to open one.
+= Selaa linkkejä nuolinäppäimillä ja avaa Enterillä.
+Use the star on a guide page to save its reading position to Quick Access.
+= Tallenna lukukohta Pikakäyttöön oppaan sivun tähdellä.
+WINDOWS PC
+= WINDOWS-PC
+WINS
+= VOITOT
+Waiting for the Dropbox sign-in...
+= Odotetaan Dropbox-kirjautumista...
+Waiting for the Google sign-in...
+= Odotetaan Google-kirjautumista...
+Wiki
+= Wiki
+Work in Progress
+= Työn alla
+Written Guides
+= Kirjoitetut oppaat
+YES, I HAVE THE CLIENT
+= KYLLÄ, MINULLA ON ASIAKAS
+Yesterday
+= Eilen
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Valitsit, että sinulla on jo peli, mutta AzerothSurvivors.exe ei ole enää valitussa kansiossa. Valitse oikea pelikansio jatkaaksesi. Olemassa olevalle asiakkaalle asennus ei tarjoa pelin latausta.
+ranks
+= tasoa
+times
+= kertaa
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Jos peli kaatui, se tallensi kaatumisraportin Diagnostics-kansioonsa. Sen lähettäminen pelin kehittäjälle auttaa korjaamaan kaatumisen.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= AZS-lisäosia ei päivitetty: {0}
+  Addons for the synced settings not checked: {0}
+= Synkronoitujen asetusten lisäosia ei tarkistettu: {0}
+1  FOLLOW THE PATH
+= 1  SEURAA POLKUA
+2  SAVE A FAVORITE
+= 2  TALLENNA SUOSIKKI
+4 armor pieces at 1+ stars
+= 4 haarniskaosaa 1+ tähdellä
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Ensin asennetaan uusi käynnistin ({0}); paina PELAA uudelleen uudelleenkäynnistyksen jälkeen.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Päivitetyt lisäosat: {0}. Epäonnistui: {1}. Tarkistusvirheet: {2}.
+All addons {0}
+= Kaikki lisäosat {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats tallentaa juoksut ja build-muutokset pelissä (/azstats). Käynnistin näyttää tallennetut yhteenvedot, luokat, viimeisimpien juoksujen raportit, taistelunäytteet ja havaitun build-päiväkirjan. Omat raportit, vertailut ja muokattava HUD ovat yhä lisäosassa.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats tallentaa juoksut ja havaitut build-muutokset pelissä (/azstats). Käynnistin näyttää tallennetut yhteenvedot, luokat, viimeisimpien juoksujen raportit, taistelunäytteet ja build-päiväkirjan. Lisäosan raportit, vertailut ja muokattava HUD ovat yhä siellä.
+Best level {#0}
+= Paras taso {#0}
+Best level: {#0}
+= Paras taso: {#0}
+Best together: {0}, level {#1}
+= Paras yhdessä: {0}, taso {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Pilvitallennus tauolla: {0} vaatii STEAM DECK KOKEELLINEN (Asetukset > Käynnistin). Tätä istuntoa ei synkronoida.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Pilvitallennus on asetettu kohteeseen {0}, joka vaatii STEAM DECK KOKEELLINEN (Asetukset > Käynnistin). Ota se uudelleen käyttöön tai valitse synkronointikansio alta.
+Confirmed {#0} · probable {#1}
+= Vahvistettu {#0} · todennäköinen {#1}
+Could not install {0}:\n\n{1}
+= Kohdetta {0} ei voitu asentaa:\n\n{1}
+Could not save the game setting:
+= Peliasetusta ei voitu tallentaa:
+Could not uninstall {0}:\n\n{1}
+= Kohdetta {0} ei voitu poistaa:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropboxia ei tavoitettu ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox ei hyväksynyt kirjautumista: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox hylkäsi kirjautumisen: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Kokeellinen Steam Deck -tuki: käynnistin täyttää näytön pelitilassa, käynnistää pelin samassa Steam-kohteessa ja väistyy pelaamisen ajaksi. Asetukset > Käynnistin poistaa sen käytöstä.
+Game setting saved:
+= Peliasetus tallennettu:
+Google Drive refused the sign-in: {0}
+= Google Drive hylkäsi kirjautumisen: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Lähetys tehdään seuraavassa synkronoinnissa.
+Google could not be reached ({0}).
+= Googlea ei tavoitettu ({0}).
+Google did not start the sign-in: {0}
+= Google ei aloittanut kirjautumista: {0}
+Google sign-in failed: {0}
+= Google-kirjautuminen epäonnistui: {0}
+Highest observed rank {#0}
+= Korkein havaittu taso {#0}
+Installing {0} ({1})...
+= Asennetaan {0} ({1})...
+It killed you {#0} times
+= Se tappoi sinut {#0} kertaa
+Longest: {0}
+= Pisin: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Mikään tämän julkaisun tiedosto ei sisällä kohdetta {0} (kansiota .toc-tiedostoineen), ei edes lähdekoodi. Mitään ei asennettu.
+Observed in {#0} runs · rank gains {#1}
+= Havaittu {#0} juoksussa · tasonnousuja {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Pelasitko Azeroth Survivorsia selaimessa? Tuo edistymisesi mukanasi: sankarit, avatut alueet, varusteet, kyvyt ja codex.\n\nAvaa sivustolla Options > Saves ja paina Export Save. Valitse sitten tuo .sav-tiedosto tässä. Peli aukeaa edistymiselläsi.
+Quick Access {0}
+= Pikakäyttö {0}
+Rank {#0}
+= Taso {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} poistettu Pikakäytöstä. Lisää se uudelleen oppaan tähdellä tai osion suosikkipainikkeella.
+Runs {#0} · Victories {#1}
+= Juoksut {#0} · Voitot {#1}
+Runs: {#0}
+= Juoksut: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Tallennettu käynnistimen kopioon, mutta kohdetta {0} ei tavoitettu: {1} Se lähetetään seuraavassa synkronoinnissa.
+Survived {0} · Level {1}
+= Selvisi {0} · Taso {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Selvisi {0} · Taso {1} · Tapot {2} · Kulta {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Se on pilviaseman ylin taso.\n\nLuodaanko ja käytetäänkö sen sisällä alikansiota nimeltä Azeroth Survivor Launcher?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Lisäosan päivitys epäonnistui. Aiemmat tiedostot säilytettiin kansiossa {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Lataus kohteesta {0} on vioittunut tai väärä tiedosto (tarkistussumma ei täsmää). Yritä uudelleen.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Käynnistin ei voinut korvata itseään tässä kansiossa ({0}).\n\nLataa uusi versio GitHubista:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Kirjautumisvälitystä (ntfy.sh) ei tavoitettu ({0}). Yritä hetken päästä uudelleen.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} tarjoaa eri tiedoston kuin odotettiin ({1} eikä {2}).
+The {0} server answered with error {1}.
+= Palvelin {0} vastasi virheellä {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Näitä kansioita ei löytynyt:\n\n  {0}\n\nViimeistelläänkö silti? Voit muuttaa niitä myöhemmin Asetuksissa.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Tällä PC:llä on jo edistymistä pelissä.\n\nKorvataanko se kohteella {0}?\nNykyinen säilytetään varmuuskopiona pelin Saves-kansiossa.
+This launcher was built without {0}.
+= Tämä käynnistin on koottu ilman kohdetta {0}.
+Time {0}
+= Aika {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows ei voinut suojata kirjautumista tällä laitteella, joten sitä ei säilytetty ({0}).
+Won: {#0}
+= Voitettu: {#0}
+You beat it {#0} times
+= Voitit sen {#0} kertaa
+and enter this code:
+= ja syötä tämä koodi:
+since {0}
+= alkaen {0}
+✓ Imported: {0}
+= ✓ Tuotu: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Tallennus valittu: {0} (tuodaan, kun asennus valmistuu)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Muutettu pelin päivityksessä {0}
+What changed since you last played
+= Mikä on muuttunut, kun viimeksi pelasit
+THE GAME
+= PELI
+THE LAUNCHER
+= KÄYNNISTIN
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Lisää päivityksiä on Uutiset-sivulla.
+Patch {0}
+= Päivitys {0}
+Launcher {0}
+= Käynnistin {0}
+Updated from {0} to {1}.
+= Päivitetty versiosta {0} versioon {1}.
+Personal records
+= Omat ennätykset
+Play a few runs with Azeroth Stats to see your records here.
+= Pelaa muutama juoksu Azeroth Statsin kanssa nähdäksesi ennätyksesi tässä.
+Fastest victory {0}
+= Nopein voitto {0}
+Highest level {0}
+= Korkein taso {0}
+Most kills {0}
+= Eniten tappoja {0}
+best DPS
+= paras DPS
+Solo and co-op runs
+= Yksin ja yhteistyössä pelatut juoksut
+Runs (solo / co-op)
+= Juoksut (yksin / yhdessä)
+Win rate (solo / co-op)
+= Voittoprosentti (yksin / yhdessä)
+Average run (solo / co-op)
+= Keskimääräinen juoksu (yksin / yhdessä)
+Average level (solo / co-op)
+= Keskimääräinen taso (yksin / yhdessä)
+Average DPS (solo / co-op)
+= Keskimääräinen DPS (yksin / yhdessä)

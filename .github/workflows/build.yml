@@ -1,5 +1,7 @@
 # Builds the launcher on GitHub's own Windows machines every time you upload changes.
 # The finished exe appears under the "Actions" tab (open the run, then "Artifacts") and is attached to this repository's release.
+# Test builds: push to a branch named test/<anything> (for example test/controller). It is built and tested the same way and
+# the exe is kept as that run's download (Actions > the run > Artifacts), but it is never attached to a release.
 # It is attached automatically when:
 #   - you publish a release (any tag name), or push a tag
 #   - you run this workflow by hand (Actions > Build > Run workflow) and type a release's tag name
@@ -7,8 +9,13 @@ name: Build
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'test/**']
     tags: ['*']
+    # a change to only these (website, notes, documents) does not change the exe, so no new build is pushed to players
+    paths-ignore:
+      - 'docs/**'
+      - 'release-notes/**'
+      - '**.md'
   pull_request:
   release:
     types: [published]
@@ -28,10 +35,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Run the automated tests (Cloud Save sync logic)
+        shell: pwsh
+        run: ./tests/run-tests.ps1
+
       - name: Build the launcher
         shell: pwsh
         env:
-          RELEASE_BUILD: 'true'
+          # a test branch builds like a local build: it never replaces itself with the published release
+          RELEASE_BUILD: ${{ startsWith(github.ref, 'refs/heads/test/') && '' || 'true' }}
           # Google Drive sign-in for Cloud Save (src/GoogleDrive.cs): repository secrets, never in the code
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -44,16 +56,26 @@ jobs:
             exit $code
           }
 
+      - name: Name the download
+        shell: bash
+        run: |
+          # a test branch's exe is named after the branch, so it is never mistaken for a release
+          if [[ "$GITHUB_REF" == refs/heads/test/* ]]; then
+            echo "ARTIFACT_NAME=Azeroth-Survivors-Launcher-${GITHUB_REF_NAME//\//-}" >> "$GITHUB_ENV"
+          else
+            echo "ARTIFACT_NAME=Azeroth-Survivors-Launcher" >> "$GITHUB_ENV"
+          fi
+
       - name: Keep the exe as a download of this run
         uses: actions/upload-artifact@v4
         with:
-          name: Azeroth-Survivors-Launcher
+          name: ${{ env.ARTIFACT_NAME }}
           path: |
             dist/Azeroth Survivors Launcher.exe
             dist/Azeroth Survivors Launcher.sha256.txt
 
       - name: Attach the exe to the release
-        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/') || inputs.release != '' || (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/') || inputs.release != '' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}

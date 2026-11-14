@@ -2031,3 +2031,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Afslut spillet, installationen eller cloud-synkroniseringen, og søg derefter efter opdateringen igen.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} er klar. Vælg Installér opdatering under Indstillinger > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Evner registreres for runs spillet med statistik-addon'en slået til.
+Addon release check complete.
+= Tjek af addon-udgivelser færdigt.
+Affects
+= Påvirker
+All 8 armor pieces at 3+ stars
+= Alle 8 rustningsdele på 3+ stjerner
+All ten Quick Access favorites are full. Remove one before adding another.
+= Alle ti favoritter i Hurtig adgang er fyldt. Fjern en, før du tilføjer en ny.
+An addon operation is already running.
+= En addon-handling er allerede i gang.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Med 5 stjerner på alle 8 dele er denne bonus 50 % stærkere.
+Average time
+= Gennemsnitlig tid
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats mangler under Download flere.
+BACK
+= TILBAGE
+Back to Top
+= Til toppen
+Best level
+= Bedste niveau
+Bright: victories · faint: all runs
+= Lys: sejre · svag: alle runs
+Brighter: more runs that day
+= Lysere: flere runs den dag
+Browse class build videos already featured in the guide.
+= Gennemse klasse-build-videoer, der allerede er med i guiden.
+Browse class, item, and transmog references in the Wiki.
+= Gennemse klasse-, genstands- og transmog-opslag i wikien.
+Build Videos
+= Build-videoer
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Byg en talentopsætning, planlæg udstyr og skift mellem værktøjerne, mens den valgte klasse bevares.
+Build class
+= Build-klasse
+CANCEL DOWNLOAD & CLOSE
+= ANNULLER DOWNLOAD & LUK
+CHECK AGAIN
+= TJEK IGEN
+CHOOSE FOLDER
+= VÆLG MAPPE
+CHOOSE GAME FOLDER
+= VÆLG SPILMAPPE
+CLEAR
+= RYD
+COPY
+= KOPIÉR
+Checking addon releases...
+= Tjekker addon-udgivelser...
+Choose an option on this setup step to continue.
+= Vælg en mulighed i dette trin for at fortsætte.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Vælg mappen med AzerothSurvivors.exe for at fortsætte opsætningen.
+Choose the folder that contains the existing game client before continuing.
+= Vælg mappen med den eksisterende spilklient, før du fortsætter.
+Classes you play
+= Klasser du spiller
+Close the game first: it saves its own settings when it closes.
+= Luk spillet først: det gemmer sine egne indstillinger, når det lukker.
+Cloud Save uses Dropbox again.
+= Skygemning bruger Dropbox igen.
+Cloud Save uses Google Drive again.
+= Skygemning bruger Google Drive igen.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Skygemning kræver en mappe til spilgemninger, ellers slå den fra.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Skygemning kræver en synkmappe, ellers slå den fra.
+Code copied.
+= Kode kopieret.
+Codex
+= Codex
+Companions observed in runs
+= Ledsagere set i runs
+Connecting Dropbox...
+= Forbinder til Dropbox...
+Connecting Google Drive...
+= Forbinder til Google Drive...
+Contacting Google...
+= Kontakter Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Standardværdier er udfyldt. Skift en mappe, hvis dine filer ligger et andet sted.
+Defeats
+= Nederlag
+Display Preview uses local builds; public updates stay separate.
+= Skærmeksempel bruger lokale builds; offentlige opdateringer holdes adskilt.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Har du allerede downloadet Azeroth Survivors på denne pc?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Har du allerede Azeroth Survivors-klienten på denne pc?
+Downloading the game
+= Downloader spillet
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck eksperimentel)
+Dropbox connected
+= Dropbox forbundet
+Dropbox sign-in discarded.
+= Dropbox-login kasseret.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox loggede dig ind, men gav ikke launcheren varig adgang. Prøv igen.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Dropbox-login er ophørt (fjernet eller udløbet). Log ind igen under Indstillinger > Skygemning.
+EXPORT ASBUILDS
+= EKSPORTÉR ASBUILDS
+EXPORT PROFILE
+= EKSPORTÉR PROFIL
+Ended
+= Afsluttet
+Error log copied.
+= Fejllog kopieret.
+Every addon is on its latest release.
+= Alle addons har nyeste udgivelse.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Eksisterende AZS Stats-filer beholdes. Deres historik flettes ikke ind i Azeroth Stats.
+Existing game folder needs attention
+= Eksisterende spilmappe kræver opmærksomhed
+Existing save kept. Setup is still open; you can finish without importing it.
+= Eksisterende gemning beholdt. Opsætningen er stadig åben; du kan afslutte uden at importere.
+FINISH SETUP
+= AFSLUT OPSÆTNING
+Feedback copied.
+= Feedback kopieret.
+Finish the current update, install, or game session before continuing setup.
+= Afslut den igangværende opdatering, installation eller spilsession, før du fortsætter opsætningen.
+First Time Setup
+= Første opsætning
+Game client
+= Spilklient
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Download af spillet annulleret. Vælg INSTALLÉR, når du vil prøve igen.
+Gear section
+= Udstyrssektion
+GitHub returned invalid release information. Nothing was installed.
+= GitHub returnerede ugyldige udgivelsesoplysninger. Intet blev installeret.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= GitHubs grænse for forespørgsler er nået. Vent og prøv igen. Intet blev installeret.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck eksperimentel)
+Google Drive connected
+= Google Drive forbundet
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive tilbød ikke filen lige nu (download-grænsen kan være nået).
+Google Drive made a folder but did not say which.
+= Google Drive oprettede en mappe, men sagde ikke hvilken.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Google Drive-login er ophørt (fjernet eller udløbet). Log ind igen under Indstillinger > Skygemning.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google loggede dig ind, men gav ikke launcheren varig adgang. Prøv igen.
+Google's sign-in answer was incomplete. Try again.
+= Googles login-svar var ufuldstændigt. Prøv igen.
+Guide links
+= Guidelinks
+Healing
+= Healing
+Heroic
+= Heroisk
+IMPORT ASBUILDS
+= IMPORTÉR ASBUILDS
+IMPORT BUILD
+= IMPORTÉR BUILD
+INSTALL AZEROTH STATS
+= INSTALLÉR AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Hvis ja, vælger du, hvor det eksisterende spil og dets AddOns ligger. Hvis nej, downloades spillet til mappen med denne launcher.
+Interface size
+= Interfacestørrelse
+Interrupted
+= Afbrudt
+Items
+= Genstande
+Last 5 weeks
+= Sidste 5 uger
+Last step: download the game?
+= Sidste trin: download spillet?
+Latest retained spell build
+= Nyeste gemte besværgelses-build
+Locations validated. Continuing setup...
+= Placeringer kontrolleret. Opsætningen fortsætter...
+MENU ▾
+= MENU ▾
+More entries are available on the Build Journal tab.
+= Flere poster findes på fanen Build-journal.
+NO, DOWNLOAD IT
+= NEJ, DOWNLOAD DET
+Navigation
+= Navigation
+No build journal entries are stored in the retained runs yet.
+= Ingen build-journal-poster i de gemte runs endnu.
+No companion samples are recorded yet.
+= Ingen ledsagerdata registreret endnu.
+No death evidence recorded yet.
+= Ingen dødsårsager registreret endnu.
+No download host worked.\n\n
+= Ingen downloadserver virkede.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Intet observeret besværgelses-øjebliksbillede i de gemte runs endnu.
+No source samples are available in retained runs.
+= Ingen kildedata i de gemte runs.
+No spell rank trends are stored yet.
+= Ingen tendenser for besværgelsesrang gemt endnu.
+No status messages yet.
+= Ingen statusbeskeder endnu.
+None selected
+= Intet valgt
+Normal
+= Normal
+Not ready for release yet. Click to install it anyway.
+= Ikke klar til udgivelse endnu. Klik for at installere alligevel.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Ikke logget ind på Dropbox. Log ind under Indstillinger > Skygemning.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Ikke logget ind på Google Drive. Log ind under Indstillinger > Skygemning.
+OPEN FOLDER
+= ÅBN MAPPE
+Observed attributions
+= Observerede tilskrivninger
+Observed build and equipment changes
+= Observerede build- og udstyrsændringer
+Observed build journal
+= Observeret build-journal
+Observed death sources
+= Observerede dødsårsager
+Observed in the most recent retained run
+= Set i det seneste gemte run
+Observed party sample
+= Observeret gruppeudsnit
+Observed run
+= Observeret run
+Observed status
+= Observeret status
+On your phone or computer, open
+= Åbn på din telefon eller computer
+On your phone, open
+= Åbn på din telefon
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Én komplet tilstand vinder, den anden sikkerhedskopieres først.\nFørste gang på denne pc? Vælg BRUG SKYEN.\n
+Open on your phone
+= Åbn på telefonen
+Partial
+= Delvis
+Partial observation
+= Delvis observation
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Indsæt en talent-build-kode nedenfor. Ligger der en i udklipsholderen, udfyldes den for dig.
+Peel this corner to switch theorycrafting tools.
+= Bøj dette hjørne for at skifte theorycraft-værktøj.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Spil et par runs med Azeroth Stats for at se din DPS over tid.
+Playing on a Steam Deck?
+= Spiller du på en Steam Deck?
+Playing without cloud sync this time
+= Spil uden skysynk denne gang
+Preparing the Dropbox sign-in...
+= Forbereder Dropbox-login...
+Priest
+= Præst
+Priest guide
+= Præsteguide
+QUICK ACCESS
+= HURTIG ADGANG
+Rings & Trinkets
+= Ringe & smykker
+Runs observed
+= Observerede runs
+SIGN IN WITH DROPBOX
+= LOG IND MED DROPBOX
+SIGN IN WITH GOOGLE
+= LOG IND MED GOOGLE
+SIGN OUT
+= LOG UD
+START OVER
+= START FORFRA
+STAY & FINISH
+= BLIV & AFSLUT
+STEAM DECK / HANDHELD
+= STEAM DECK / HÅNDHOLDT
+STEAM DECK EXPERIMENTAL
+= STEAM DECK EKSPERIMENTEL
+Save favorite
+= Gem favorit
+Save this location to Quick Access.
+= Gem denne placering i Hurtig adgang.
+Save to Quick Access
+= Gem i Hurtig adgang
+Save where? The current location, the top of this page, or the closest category header.
+= Gem hvor? Den aktuelle placering, sidens top eller nærmeste kategorioverskrift.
+Saved in
+= Gemt i
+Scaling video fixture
+= Testvideo for skalering
+Setup is only available while the setup guide is open.
+= Opsætning er kun tilgængelig, mens opsætningsguiden er åben.
+Sign in to Google Drive
+= Log ind på Google Drive
+Signed out of Dropbox.
+= Logget ud af Dropbox.
+Signed out of Google Drive.
+= Logget ud af Google Drive.
+Skip/Stop
+= Spring over/Stop
+Some addons could not be changed:\n\n
+= Nogle addons kunne ikke ændres:\n\n
+Spell pool
+= Besværgelsespulje
+Spell rank trends · observed, not exact card picks
+= Tendenser for besværgelsesrang · observeret, ikke præcise kortvalg
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Start her: lær styringen, dit første run og de systemer, der hjælper dig i gang.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / håndholdt eller Windows-pc?
+Stopping the game download before closing...
+= Stopper download af spillet før lukning...
+Support the Dev
+= Støt udvikleren
+Talent build code
+= Talent-build-kode
+Temporarily unavailable while work is in progress.
+= Midlertidigt utilgængelig, mens der arbejdes.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Tak fordi du bruger min fællesskabslavede launcher. Den er lavet for at fejre, hvor sejt spillet er, og være ét samlet sted til alt om Azeroth Survivors\n\n
+That file does not exist.
+= Den fil findes ikke.
+That is not an Azeroth Survivors save file.
+= Det er ikke en Azeroth Survivors-gemmefil.
+That is not an Azeroth Survivors save file.\n\n
+= Det er ikke en Azeroth Survivors-gemmefil.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Arkivets indhold ændrede sig under udpakningen. Intet blev installeret.
+The clipboard is busy. Try copying again.
+= Udklipsholderen er optaget. Prøv at kopiere igen.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Det eksisterende spil blev ikke fundet i den mappe. Vælg mappen med AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Spilarkivet indeholder et reserveret Windows-filnavn. Intet blev installeret.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Spilarkivet indeholder en tom sti eller et symbolsk link. Intet blev installeret.
+The game archive contains an unsafe path. Nothing was installed.
+= Spilarkivet indeholder en usikker sti. Intet blev installeret.
+The game archive contains conflicting file paths. Nothing was installed.
+= Spilarkivet indeholder modstridende filstier. Intet blev installeret.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Spilarkivet indeholder dublerede eller modstridende filstier. Intet blev installeret.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Spilarkivet kunne ikke pakkes ud. Det kan være beskadiget, krypteret, ufuldstændigt eller bruge en metode, der ikke understøttes. Intet blev installeret.
+The game archive format is not supported by the built-in extractor.
+= Spilarkivets format understøttes ikke af den indbyggede udpakker.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Spilarkivet er ufuldstændigt eller kræver en arkivdel mere. Intet blev installeret.
+The game archive is password-protected. Please use an unencrypted game download.
+= Spilarkivet er beskyttet med adgangskode. Brug en ukrypteret download.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Spillets konfigurationsmappe er ikke angivet. Angiv den under Indstillinger > MAPPER.
+The game files are being installed. The launcher will close when that finishes.
+= Spilfilerne installeres. Launcheren lukker, når det er færdigt.
+The game is running: close it first, it saves its own settings when it closes.
+= Spillet kører: luk det først, det gemmer sine egne indstillinger, når det lukker.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Spillet eller synk startede, mens denne addon blev downloadet. De installerede filer er uændrede; prøv igen, når det er lukket.
+The launcher closes by itself once your progress is saved.
+= Launcheren lukker af sig selv, når dine fremskridt er gemt.
+The launcher is already running. Look for its window on the taskbar.
+= Launcheren kører allerede. Find dens vindue på proceslinjen.
+The save could not be imported:\n\n
+= Gemningen kunne ikke importeres:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Login-koden udløb, før den blev brugt. Tryk på LOG IND MED DROPBOX igen.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Login-koden udløb, før den blev brugt. Tryk på LOG IND MED GOOGLE igen.
+The sign-in was declined on Dropbox's page.
+= Login blev afvist på Dropbox' side.
+The sign-in was declined on Google's page.
+= Login blev afvist på Googles side.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Tillad derefter Azeroth Survivors Launcher at bruge sin egen mappe i dit Google Drive. Siden lukker af sig selv, når du er logget ind.
+This Codex entry's class guide is unavailable.
+= Klasseguiden til denne Codex-post er ikke tilgængelig.
+This Guide location no longer exists.
+= Denne placering i guiden findes ikke længere.
+This Guide video is no longer available.
+= Denne guidevideo er ikke længere tilgængelig.
+This add-on is not configured for direct GitHub release updates.
+= Denne add-on er ikke sat op til direkte opdateringer fra GitHub-udgivelser.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Denne addon er låst til en ældre kopi. Erstat den med nyeste udgivelse?
+This class talent page is no longer available.
+= Denne klasses talentside er ikke længere tilgængelig.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Denne favorit passer ikke længere til en guideside. Forbind siden igen for at opdatere den.
+Today
+= I dag
+UPDATE ALL
+= OPDATÉR ALLE
+USE DROPBOX
+= BRUG DROPBOX
+USE GOOGLE DRIVE
+= BRUG GOOGLE DRIVE
+Undated
+= Uden dato
+Use the arrow keys to browse links and Enter to open one.
+= Brug piletasterne til at gennemse links og Enter til at åbne et.
+Use the star on a guide page to save its reading position to Quick Access.
+= Brug stjernen på en guideside for at gemme din læseposition i Hurtig adgang.
+WINDOWS PC
+= WINDOWS-PC
+WINS
+= SEJRE
+Waiting for the Dropbox sign-in...
+= Venter på Dropbox-login...
+Waiting for the Google sign-in...
+= Venter på Google-login...
+Wiki
+= Wiki
+Work in Progress
+= Under udvikling
+Written Guides
+= Skrevne guides
+YES, I HAVE THE CLIENT
+= JA, JEG HAR KLIENTEN
+Yesterday
+= I går
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Du valgte, at du allerede har spillet, men AzerothSurvivors.exe findes ikke længere i den valgte mappe. Vælg den rigtige spilmappe for at fortsætte. Ved en eksisterende klient tilbyder opsætningen ikke at downloade spillet.
+ranks
+= ranger
+times
+= gange
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Hvis spillet gik ned, gemte det en nedbrudsrapport i mappen Diagnostics. Send den til spillets udvikler for at hjælpe med at rette fejlen.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= AZS-addons ikke opdateret: {0}
+  Addons for the synced settings not checked: {0}
+= Addons til de synkroniserede indstillinger ikke tjekket: {0}
+1  FOLLOW THE PATH
+= 1  FØLG STIEN
+2  SAVE A FAVORITE
+= 2  GEM EN FAVORIT
+4 armor pieces at 1+ stars
+= 4 rustningsdele på 1+ stjerner
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= En ny launcher ({0}) installeres først; tryk SPIL igen efter genstarten.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Addons opdateret: {0}. Mislykkedes: {1}. Tjekfejl: {2}.
+All addons {0}
+= Alle addons {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats registrerer runs og build-ændringer i spillet (/azstats). Launcheren viser gemte totaler, klasser, rapporter fra seneste runs, kampprøver og den observerede build-journal. Egne rapporter, sammenligninger og den tilpasselige HUD findes stadig i addon'en.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats registrerer runs og observerede build-ændringer i spillet (/azstats). Launcheren viser gemte totaler, klasser, rapporter fra seneste runs, kampprøver og build-journalen. Addon'ens rapporter, sammenligninger og tilpasselige HUD findes stadig der.
+Best level {#0}
+= Bedste niveau {#0}
+Best level: {#0}
+= Bedste niveau: {#0}
+Best together: {0}, level {#1}
+= Bedst sammen: {0}, niveau {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Skygemning sat på pause: {0} kræver STEAM DECK EKSPERIMENTEL (Indstillinger > Launcher). Denne session synkroniseres ikke.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Skygemning er sat til {0}, som kræver STEAM DECK EKSPERIMENTEL (Indstillinger > Launcher). Slå det til igen, eller vælg en synkmappe nedenfor.
+Confirmed {#0} · probable {#1}
+= Bekræftet {#0} · sandsynligt {#1}
+Could not install {0}:\n\n{1}
+= Kunne ikke installere {0}:\n\n{1}
+Could not save the game setting:
+= Kunne ikke gemme spilindstillingen:
+Could not uninstall {0}:\n\n{1}
+= Kunne ikke afinstallere {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox kunne ikke nås ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox godtog ikke login: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox afviste login: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Eksperimentel Steam Deck-understøttelse: launcheren fylder skærmen i spiltilstand, starter spillet i samme Steam-post og træder til side, mens du spiller. Indstillinger > Launcher slår det fra.
+Game setting saved:
+= Spilindstilling gemt:
+Google Drive refused the sign-in: {0}
+= Google Drive afviste login: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Uploadet sendes ved næste synk.
+Google could not be reached ({0}).
+= Google kunne ikke nås ({0}).
+Google did not start the sign-in: {0}
+= Google startede ikke login: {0}
+Google sign-in failed: {0}
+= Google-login mislykkedes: {0}
+Highest observed rank {#0}
+= Højeste observerede rang {#0}
+Installing {0} ({1})...
+= Installerer {0} ({1})...
+It killed you {#0} times
+= Det dræbte dig {#0} gange
+Longest: {0}
+= Længste: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Ingen fil i denne udgivelse indeholder {0} (en mappe med dens .toc-fil), heller ikke kildekoden. Intet blev installeret.
+Observed in {#0} runs · rank gains {#1}
+= Set i {#0} runs · rangstigninger {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Har du spillet Azeroth Survivors i browseren? Tag dine fremskridt med: helte, åbnede zoner, udstyr, talenter og codex.\n\nÅbn Options > Saves på hjemmesiden og tryk Export Save. Vælg så den .sav-fil her. Spillet åbner med dine fremskridt.
+Quick Access {0}
+= Hurtig adgang {0}
+Rank {#0}
+= Rang {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} fjernet fra Hurtig adgang. Tilføj igen med guidestjernen eller sektionens favoritknap.
+Runs {#0} · Victories {#1}
+= Runs {#0} · Sejre {#1}
+Runs: {#0}
+= Runs: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Gemt i launcherens kopi, men {0} kunne ikke nås: {1} Det uploades ved næste synk.
+Survived {0} · Level {1}
+= Overlevede {0} · Niveau {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Overlevede {0} · Niveau {1} · Drab {2} · Guld {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Det er det øverste niveau i dit skydrev.\n\nOpret og brug en undermappe ved navn Azeroth Survivor Launcher?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Addon-opdateringen mislykkedes. De tidligere filer blev gemt i {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Downloadet fra {0} er beskadiget eller den forkerte fil (kontrolsummen passer ikke). Prøv igen.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Launcheren kunne ikke erstatte sig selv i denne mappe ({0}).\n\nDownload den nye version fra GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Login-relæet (ntfy.sh) kunne ikke nås ({0}). Prøv igen om lidt.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} tilbyder en anden fil end ventet ({1} i stedet for {2}).
+The {0} server answered with error {1}.
+= Serveren {0} svarede med fejl {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Disse mapper blev ikke fundet:\n\n  {0}\n\nAfslut alligevel? Du kan ændre dem senere under Indstillinger.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Denne pc har allerede fremskridt i spillet.\n\nErstat med {0}?\nDet nuværende gemmes som backup i spillets Saves-mappe.
+This launcher was built without {0}.
+= Denne launcher blev bygget uden {0}.
+Time {0}
+= Tid {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows kunne ikke beskytte login på denne enhed, så det blev ikke gemt ({0}).
+Won: {#0}
+= Vundet: {#0}
+You beat it {#0} times
+= Du besejrede det {#0} gange
+and enter this code:
+= og indtast denne kode:
+since {0}
+= siden {0}
+✓ Imported: {0}
+= ✓ Importeret: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Gemning valgt: {0} (importeres når opsætningen er færdig)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Ændret i spilpatch {0}
+What changed since you last played
+= Hvad der er ændret, siden du sidst spillede
+THE GAME
+= SPILLET
+THE LAUNCHER
+= LAUNCHEREN
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Flere patches findes på siden Nyheder.
+Patch {0}
+= Patch {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Opdateret fra {0} til {1}.
+Personal records
+= Personlige rekorder
+Play a few runs with Azeroth Stats to see your records here.
+= Spil et par runs med Azeroth Stats for at se dine rekorder her.
+Fastest victory {0}
+= Hurtigste sejr {0}
+Highest level {0}
+= Højeste niveau {0}
+Most kills {0}
+= Flest drab {0}
+best DPS
+= bedste DPS
+Solo and co-op runs
+= Solo- og co-op-runs
+Runs (solo / co-op)
+= Runs (solo / co-op)
+Win rate (solo / co-op)
+= Sejrsrate (solo / co-op)
+Average run (solo / co-op)
+= Gennemsnitligt run (solo / co-op)
+Average level (solo / co-op)
+= Gennemsnitligt niveau (solo / co-op)
+Average DPS (solo / co-op)
+= Gennemsnitlig DPS (solo / co-op)

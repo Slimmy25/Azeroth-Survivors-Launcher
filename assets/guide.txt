@@ -381,7 +381,7 @@ The meter window has three views: Damage Done (every spell, pet, talent and item
 
 # Talent trees
 - Affliction: Nightfall, Contagion, Seed of Corruption
-- Demonology: Soul Devourer / Soul Link, Legion Gate, Pact of the Annihilan / Butcher. Demonology brings demons that fight for you.
+- Demonology: Soul Devourer / Soul Link, Legion Gate, Pact of the Nathrezim / Butcher. Demonology brings demons that fight for you.
 - Destruction: Shadow Cleave, Conflagrate, Rain of Chaos
 
 @page Druid | Moon, storm and growth, with steady self-healing
@@ -589,6 +589,13 @@ Pick a Heroic level with the Difficulty button beside Play. It shows each level'
 - A class can play a zone's Heroic once it has beaten that zone itself.
 - Against the Odds, and the co-op feats that asked for maxed Run Options before, now ask for Heroic III or harder.
 
+# Hyper Mode
+Beat Heroic V in Naxxramas (the Champion of Naxxramas achievement) to open Hyper Mode, a faster way to play any zone. Turn it on in the Difficulty window, on Normal or at any Heroic level.
+- Bosses arrive at half their usual time, at full strength; the final boss comes at 8, 9 or 10 minutes, depending on the zone. Guardians return to their lairs twice as fast.
+- The horde's strength, numbers and types grow twice as fast until the final boss, so 10:00 plays like 20:00. In endless mode it keeps that lead, and bosses return every 2:30 instead of every 5:00.
+- Rewards are the same as on that difficulty without Hyper Mode. Achievements use the real clock.
+- Co-op: the host's choice applies to the whole party, and everyone needs Hyper Mode open to join.
+
 # Horde affixes
 From Heroic III the horde has an affix that changes every week; Heroic V has two at once.
 - Bolstering: each death makes the enemies within 12 yards 20% tougher and stronger, stacking up to triple.
@@ -605,7 +612,8 @@ A co-op run needs at least two players: a host alone sees "Waiting for players" 
 - Lobbies: public games of your version. Each shows its zone, its difficulty (Normal, or the Heroic level in red), the host's class, the party's classes and the open seats. Click one to join (some need a password).
 - Filters: by zone and by difficulty. "Can join" hides every lobby whose zone or Heroic level your class has not opened yet, and a lobby you cannot join says which of the two you are missing.
 - Host: name your lobby, choose who can find it (public, or private by code), set the number of players (up to 5) and an optional password. Hosting shows the run you will host (hero, zone, difficulty), with a Change difficulty button.
-- Join by code: type a friend's lobby code.
+- Join by code: type a friend's lobby code. A lobby whose host already stands in its zone cannot be joined: you are told the run is under way.
+- Lobby names and descriptions keep letters and digits of any language and ordinary punctuation. Symbols, emoji and box characters are dropped, a character repeated more than three times is cut to three (numbers excepted), and long words wrap inside their row.
 - Party chat: while you wait in the lobby, a chat sits beside the party (it closes when the run begins). Messages are up to 160 characters; press Enter or click Send. The Co-op button shows how many came in while the window was closed. Chat stays steady as messages arrive, and scrolling up keeps your place while new messages come in.
 - Each guest's ping shows the true round trip to the host: green when quick, gold when fair, red when slow. Before 0.127.0, it included up to 50 ms of the game's own waiting; older guests still show that old measurement. The party window shows each player's country next to their ping.
 You play the hero on your own picker. The host chooses the zone and the Heroic level, and everyone in the party sees them change at once. You can only join zones (and Heroic levels) you have opened with the class you bring: a hero who has not is marked in red and stays behind when the host enters.
@@ -618,7 +626,9 @@ Click any player's row in the co-op party window to inspect their hero. The Armo
 # How co-op plays
 - Experience and gold are shared; caches are each hero's own to buy.
 - Every extra hero makes the horde bigger (each brings 35% fewer extra enemies than before 0.125.0), but the party also finds more chests. In a party every enemy (mobs, elites, guardians and bosses) has 20% less health and hits 20% softer; playing alone is unchanged.
-- When you pick a card, only you pause while the others fight on.
+- When you pick a card, only you pause while the others fight on. If the run waits only on one player's cards (everyone else is down or at the end screen), the first card is taken for them after two minutes.
+- A guest whose game is not in within a minute of the host entering sits that run out and stays in the party for the next one.
+- Connection trouble: a guest whose host stops answering for two minutes goes back to the lobby list, and a guest the host can no longer keep up with is taken out of the party. A host's short disconnect late in a run no longer drops the guests.
 - A fallen hero is down, not out: stand next to them for 6 seconds to bring them back. Each extra ally reviving the same friend speeds it up by 20% (two allies 1.2x, three 1.4x, four 1.6x). The run ends when every hero is down.
 - Your heals, Battle Shout and Power Word: Shield also help friends within 30 yards.
 - Every hero rolls on a slain boss's gear for their own class and earns their own marks and clears, and a guardian slain by anyone rewards everyone.

@@ -2028,3 +2028,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Hãy hoàn tất trò chơi, cài đặt hoặc đồng bộ đám mây trước, rồi kiểm tra cập nhật lại.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} đã sẵn sàng. Chọn Cài đặt bản cập nhật trong Tùy chọn > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Kỹ năng được ghi lại cho các lượt chơi có bật addon thống kê.
+Addon release check complete.
+= Đã kiểm tra xong bản phát hành addon.
+Affects
+= Ảnh hưởng
+All 8 armor pieces at 3+ stars
+= Cả 8 món giáp ở 3+ sao
+All ten Quick Access favorites are full. Remove one before adding another.
+= Cả mười mục yêu thích của Truy cập nhanh đã đầy. Hãy xóa một mục trước khi thêm mục khác.
+An addon operation is already running.
+= Một thao tác addon đang chạy.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= Với 5 sao trên cả 8 món, phần thưởng này mạnh hơn một nửa.
+Average time
+= Thời gian trung bình
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats không có trong Tải thêm.
+BACK
+= QUAY LẠI
+Back to Top
+= Lên đầu trang
+Best level
+= Cấp tốt nhất
+Bright: victories · faint: all runs
+= Sáng: chiến thắng · mờ: mọi lượt chơi
+Brighter: more runs that day
+= Sáng hơn: nhiều lượt chơi hơn trong ngày đó
+Browse class build videos already featured in the guide.
+= Xem video build lớp nhân vật đã có trong hướng dẫn.
+Browse class, item, and transmog references in the Wiki.
+= Xem thông tin về lớp, vật phẩm và transmog trong Wiki.
+Build Videos
+= Video build
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Tạo bộ thiên phú, lên kế hoạch trang bị và chuyển giữa hai công cụ mà vẫn giữ lớp đã chọn.
+Build class
+= Lớp của build
+CANCEL DOWNLOAD & CLOSE
+= HỦY TẢI & ĐÓNG
+CHECK AGAIN
+= KIỂM TRA LẠI
+CHOOSE FOLDER
+= CHỌN THƯ MỤC
+CHOOSE GAME FOLDER
+= CHỌN THƯ MỤC GAME
+CLEAR
+= XÓA
+COPY
+= SAO CHÉP
+Checking addon releases...
+= Đang kiểm tra bản phát hành addon...
+Choose an option on this setup step to continue.
+= Chọn một tùy chọn ở bước này để tiếp tục.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Chọn thư mục chứa AzerothSurvivors.exe để tiếp tục cài đặt.
+Choose the folder that contains the existing game client before continuing.
+= Chọn thư mục chứa bản game có sẵn trước khi tiếp tục.
+Classes you play
+= Lớp bạn chơi
+Close the game first: it saves its own settings when it closes.
+= Hãy đóng game trước: game tự lưu cài đặt khi đóng.
+Cloud Save uses Dropbox again.
+= Lưu trên mây lại dùng Dropbox.
+Cloud Save uses Google Drive again.
+= Lưu trên mây lại dùng Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Lưu trên mây cần thư mục lưu game, hoặc tắt lưu trên mây.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Lưu trên mây cần thư mục đồng bộ, hoặc tắt lưu trên mây.
+Code copied.
+= Đã sao chép mã.
+Codex
+= Codex
+Companions observed in runs
+= Bạn đồng hành thấy trong các lượt chơi
+Connecting Dropbox...
+= Đang kết nối Dropbox...
+Connecting Google Drive...
+= Đang kết nối Google Drive...
+Contacting Google...
+= Đang liên hệ Google...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Giá trị mặc định đã được điền sẵn. Đổi thư mục nếu tệp của bạn ở nơi khác.
+Defeats
+= Thất bại
+Display Preview uses local builds; public updates stay separate.
+= Xem trước màn hình dùng build cục bộ; bản cập nhật công khai vẫn tách riêng.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Bạn đã tải Azeroth Survivors về máy này chưa?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Bạn đã có bản game Azeroth Survivors trên máy này chưa?
+Downloading the game
+= Đang tải game
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck thử nghiệm)
+Dropbox connected
+= Đã kết nối Dropbox
+Dropbox sign-in discarded.
+= Đã hủy đăng nhập Dropbox.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox đã đăng nhập cho bạn nhưng không cấp cho launcher quyền lâu dài. Hãy thử lại.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Phiên đăng nhập Dropbox đã kết thúc (bị gỡ hoặc hết hạn). Đăng nhập lại trong Tùy chọn > Lưu trên mây.
+EXPORT ASBUILDS
+= XUẤT ASBUILDS
+EXPORT PROFILE
+= XUẤT HỒ SƠ
+Ended
+= Đã kết thúc
+Error log copied.
+= Đã sao chép nhật ký lỗi.
+Every addon is on its latest release.
+= Mọi addon đều ở bản mới nhất.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Các tệp AZS Stats hiện có được giữ lại. Lịch sử của chúng không được gộp vào Azeroth Stats.
+Existing game folder needs attention
+= Thư mục game hiện có cần được xem lại
+Existing save kept. Setup is still open; you can finish without importing it.
+= Đã giữ bản lưu hiện có. Cài đặt vẫn đang mở; bạn có thể hoàn tất mà không cần nhập.
+FINISH SETUP
+= HOÀN TẤT CÀI ĐẶT
+Feedback copied.
+= Đã sao chép góp ý.
+Finish the current update, install, or game session before continuing setup.
+= Hãy hoàn tất cập nhật, cài đặt hoặc phiên chơi đang diễn ra trước khi tiếp tục cài đặt.
+First Time Setup
+= Cài đặt lần đầu
+Game client
+= Bản game
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Đã hủy tải game. Chọn CÀI ĐẶT khi bạn muốn thử lại.
+Gear section
+= Mục trang bị
+GitHub returned invalid release information. Nothing was installed.
+= GitHub trả về thông tin phát hành không hợp lệ. Không có gì được cài.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Đã chạm giới hạn yêu cầu của GitHub. Vui lòng chờ rồi thử lại. Không có gì được cài.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck thử nghiệm)
+Google Drive connected
+= Đã kết nối Google Drive
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive hiện không cung cấp tệp (có thể đã chạm giới hạn tải xuống).
+Google Drive made a folder but did not say which.
+= Google Drive đã tạo thư mục nhưng không cho biết thư mục nào.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Phiên đăng nhập Google Drive đã kết thúc (bị gỡ hoặc hết hạn). Đăng nhập lại trong Tùy chọn > Lưu trên mây.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google đã đăng nhập cho bạn nhưng không cấp cho launcher quyền lâu dài. Hãy thử lại.
+Google's sign-in answer was incomplete. Try again.
+= Phản hồi đăng nhập của Google không đầy đủ. Hãy thử lại.
+Guide links
+= Liên kết hướng dẫn
+Healing
+= Hồi máu
+Heroic
+= Anh hùng
+IMPORT ASBUILDS
+= NHẬP ASBUILDS
+IMPORT BUILD
+= NHẬP BUILD
+INSTALL AZEROTH STATS
+= CÀI AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Nếu có, bạn sẽ chọn nơi chứa game hiện có và các AddOn của nó. Nếu không, game sẽ được tải về thư mục chứa launcher này.
+Interface size
+= Kích thước giao diện
+Interrupted
+= Bị gián đoạn
+Items
+= Vật phẩm
+Last 5 weeks
+= 5 tuần gần nhất
+Last step: download the game?
+= Bước cuối: tải game về?
+Latest retained spell build
+= Build phép mới nhất được lưu
+Locations validated. Continuing setup...
+= Đã xác thực vị trí. Đang tiếp tục cài đặt...
+MENU ▾
+= MENU ▾
+More entries are available on the Build Journal tab.
+= Còn nhiều mục khác ở thẻ Nhật ký build.
+NO, DOWNLOAD IT
+= KHÔNG, HÃY TẢI VỀ
+Navigation
+= Điều hướng
+No build journal entries are stored in the retained runs yet.
+= Chưa có mục nhật ký build nào trong các lượt chơi đã lưu.
+No companion samples are recorded yet.
+= Chưa ghi nhận dữ liệu bạn đồng hành nào.
+No death evidence recorded yet.
+= Chưa ghi nhận nguyên nhân tử vong nào.
+No download host worked.\n\n
+= Không máy chủ tải nào hoạt động.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= Chưa có ảnh chụp phép quan sát được trong các lượt chơi đã lưu.
+No source samples are available in retained runs.
+= Không có dữ liệu nguồn trong các lượt chơi đã lưu.
+No spell rank trends are stored yet.
+= Chưa lưu xu hướng bậc phép nào.
+No status messages yet.
+= Chưa có thông báo trạng thái.
+None selected
+= Chưa chọn
+Normal
+= Thường
+Not ready for release yet. Click to install it anyway.
+= Chưa sẵn sàng phát hành. Bấm để vẫn cài đặt.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Chưa đăng nhập Dropbox. Đăng nhập trong Tùy chọn > Lưu trên mây.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Chưa đăng nhập Google Drive. Đăng nhập trong Tùy chọn > Lưu trên mây.
+OPEN FOLDER
+= MỞ THƯ MỤC
+Observed attributions
+= Phân bổ quan sát được
+Observed build and equipment changes
+= Thay đổi build và trang bị quan sát được
+Observed build journal
+= Nhật ký build quan sát được
+Observed death sources
+= Nguyên nhân tử vong quan sát được
+Observed in the most recent retained run
+= Quan sát được trong lượt chơi đã lưu gần nhất
+Observed party sample
+= Mẫu tổ đội quan sát được
+Observed run
+= Lượt chơi quan sát được
+Observed status
+= Trạng thái quan sát được
+On your phone or computer, open
+= Trên điện thoại hoặc máy tính, mở
+On your phone, open
+= Trên điện thoại, mở
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Một trạng thái đầy đủ sẽ thắng, cái còn lại được sao lưu trước.\nLần đầu trên máy này? Chọn DÙNG MÂY.\n
+Open on your phone
+= Mở trên điện thoại
+Partial
+= Một phần
+Partial observation
+= Quan sát một phần
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Dán mã build thiên phú bên dưới. Nếu có sẵn trong bộ nhớ tạm, mã sẽ được điền giúp bạn.
+Peel this corner to switch theorycrafting tools.
+= Lật góc này để đổi công cụ theorycrafting.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Chơi vài lượt với Azeroth Stats để xem DPS của bạn theo thời gian.
+Playing on a Steam Deck?
+= Bạn chơi trên Steam Deck?
+Playing without cloud sync this time
+= Lần này chơi không đồng bộ mây
+Preparing the Dropbox sign-in...
+= Đang chuẩn bị đăng nhập Dropbox...
+Priest
+= Mục sư
+Priest guide
+= Hướng dẫn Mục sư
+QUICK ACCESS
+= TRUY CẬP NHANH
+Rings & Trinkets
+= Nhẫn & Trang sức
+Runs observed
+= Lượt chơi quan sát được
+SIGN IN WITH DROPBOX
+= ĐĂNG NHẬP BẰNG DROPBOX
+SIGN IN WITH GOOGLE
+= ĐĂNG NHẬP BẰNG GOOGLE
+SIGN OUT
+= ĐĂNG XUẤT
+START OVER
+= BẮT ĐẦU LẠI
+STAY & FINISH
+= Ở LẠI & HOÀN TẤT
+STEAM DECK / HANDHELD
+= STEAM DECK / MÁY CẦM TAY
+STEAM DECK EXPERIMENTAL
+= STEAM DECK THỬ NGHIỆM
+Save favorite
+= Lưu yêu thích
+Save this location to Quick Access.
+= Lưu vị trí này vào Truy cập nhanh.
+Save to Quick Access
+= Lưu vào Truy cập nhanh
+Save where? The current location, the top of this page, or the closest category header.
+= Lưu ở đâu? Vị trí hiện tại, đầu trang này hoặc tiêu đề danh mục gần nhất.
+Saved in
+= Đã lưu trong
+Scaling video fixture
+= Video thử tỉ lệ
+Setup is only available while the setup guide is open.
+= Chỉ có thể cài đặt khi trình hướng dẫn cài đặt đang mở.
+Sign in to Google Drive
+= Đăng nhập Google Drive
+Signed out of Dropbox.
+= Đã đăng xuất Dropbox.
+Signed out of Google Drive.
+= Đã đăng xuất Google Drive.
+Skip/Stop
+= Bỏ qua/Dừng
+Some addons could not be changed:\n\n
+= Không thể thay đổi một số addon:\n\n
+Spell pool
+= Kho phép
+Spell rank trends · observed, not exact card picks
+= Xu hướng bậc phép · quan sát được, không phải lựa chọn thẻ chính xác
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Bắt đầu tại đây: tìm hiểu điều khiển, lượt chơi đầu tiên và các hệ thống giúp bạn khởi đầu.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / máy cầm tay hay PC Windows?
+Stopping the game download before closing...
+= Đang dừng tải game trước khi đóng...
+Support the Dev
+= Ủng hộ nhà phát triển
+Talent build code
+= Mã build thiên phú
+Temporarily unavailable while work is in progress.
+= Tạm thời không khả dụng khi đang được hoàn thiện.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Cảm ơn bạn đã dùng launcher do cộng đồng làm của mình. Nó được tạo ra để tôn vinh trò chơi tuyệt vời này và là nơi duy nhất cho mọi nhu cầu về Azeroth Survivors\n\n
+That file does not exist.
+= Tệp đó không tồn tại.
+That is not an Azeroth Survivors save file.
+= Đó không phải tệp lưu Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= Đó không phải tệp lưu Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Nội dung tệp nén đã thay đổi khi giải nén. Không có gì được cài.
+The clipboard is busy. Try copying again.
+= Bộ nhớ tạm đang bận. Hãy thử sao chép lại.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Không tìm thấy game hiện có trong thư mục đó. Chọn thư mục chứa AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Tệp nén game chứa tên tệp Windows dành riêng. Không có gì được cài.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Tệp nén game chứa đường dẫn trống hoặc liên kết tượng trưng. Không có gì được cài.
+The game archive contains an unsafe path. Nothing was installed.
+= Tệp nén game chứa đường dẫn không an toàn. Không có gì được cài.
+The game archive contains conflicting file paths. Nothing was installed.
+= Tệp nén game chứa các đường dẫn tệp xung đột. Không có gì được cài.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Tệp nén game chứa các đường dẫn tệp trùng lặp hoặc xung đột. Không có gì được cài.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Không thể giải nén tệp game. Tệp có thể bị hỏng, mã hóa, thiếu hoặc dùng phương thức không được hỗ trợ. Không có gì được cài.
+The game archive format is not supported by the built-in extractor.
+= Trình giải nén tích hợp không hỗ trợ định dạng tệp nén game.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Tệp nén game chưa đầy đủ hoặc cần thêm một phần. Không có gì được cài.
+The game archive is password-protected. Please use an unencrypted game download.
+= Tệp nén game có mật khẩu. Hãy dùng bản tải không mã hóa.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Chưa đặt thư mục cấu hình game. Đặt trong Tùy chọn > THƯ MỤC.
+The game files are being installed. The launcher will close when that finishes.
+= Đang cài các tệp game. Launcher sẽ đóng khi xong.
+The game is running: close it first, it saves its own settings when it closes.
+= Game đang chạy: hãy đóng game trước, game tự lưu cài đặt khi đóng.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Game hoặc đồng bộ đã bắt đầu trong khi addon này đang tải. Các tệp đã cài không bị thay đổi; hãy thử lại sau khi đóng.
+The launcher closes by itself once your progress is saved.
+= Launcher tự đóng khi tiến trình của bạn đã được lưu.
+The launcher is already running. Look for its window on the taskbar.
+= Launcher đang chạy rồi. Hãy tìm cửa sổ của nó trên thanh tác vụ.
+The save could not be imported:\n\n
+= Không thể nhập bản lưu:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Mã đăng nhập đã hết hạn trước khi dùng. Nhấn ĐĂNG NHẬP BẰNG DROPBOX lần nữa.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Mã đăng nhập đã hết hạn trước khi dùng. Nhấn ĐĂNG NHẬP BẰNG GOOGLE lần nữa.
+The sign-in was declined on Dropbox's page.
+= Đăng nhập bị từ chối trên trang Dropbox.
+The sign-in was declined on Google's page.
+= Đăng nhập bị từ chối trên trang Google.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Sau đó cho phép Azeroth Survivors Launcher dùng thư mục riêng trong Google Drive của bạn. Trang này tự đóng khi bạn đăng nhập xong.
+This Codex entry's class guide is unavailable.
+= Hướng dẫn lớp của mục Codex này không khả dụng.
+This Guide location no longer exists.
+= Vị trí hướng dẫn này không còn tồn tại.
+This Guide video is no longer available.
+= Video hướng dẫn này không còn khả dụng.
+This add-on is not configured for direct GitHub release updates.
+= Add-on này không được thiết lập để cập nhật trực tiếp từ bản phát hành GitHub.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Addon này bị ghim vào bản cũ. Thay bằng bản phát hành mới nhất?
+This class talent page is no longer available.
+= Trang thiên phú của lớp này không còn khả dụng.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Mục yêu thích này không còn khớp với trang hướng dẫn nào. Liên kết lại trang để cập nhật.
+Today
+= Hôm nay
+UPDATE ALL
+= CẬP NHẬT TẤT CẢ
+USE DROPBOX
+= DÙNG DROPBOX
+USE GOOGLE DRIVE
+= DÙNG GOOGLE DRIVE
+Undated
+= Không ngày
+Use the arrow keys to browse links and Enter to open one.
+= Dùng phím mũi tên để duyệt liên kết và Enter để mở.
+Use the star on a guide page to save its reading position to Quick Access.
+= Dùng ngôi sao trên trang hướng dẫn để lưu vị trí đọc vào Truy cập nhanh.
+WINDOWS PC
+= PC WINDOWS
+WINS
+= THẮNG
+Waiting for the Dropbox sign-in...
+= Đang chờ đăng nhập Dropbox...
+Waiting for the Google sign-in...
+= Đang chờ đăng nhập Google...
+Wiki
+= Wiki
+Work in Progress
+= Đang phát triển
+Written Guides
+= Hướng dẫn viết
+YES, I HAVE THE CLIENT
+= CÓ, TÔI CÓ BẢN GAME
+Yesterday
+= Hôm qua
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Bạn đã chọn là đã có game, nhưng AzerothSurvivors.exe không còn trong thư mục đã chọn. Chọn đúng thư mục game để tiếp tục. Cài đặt không đề nghị tải game khi bạn chọn bản có sẵn.
+ranks
+= bậc
+times
+= lần
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Nếu game bị lỗi văng, game đã lưu báo cáo lỗi trong thư mục Diagnostics. Gửi báo cáo cho nhà phát triển game giúp sửa lỗi.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Addon AZS chưa cập nhật: {0}
+  Addons for the synced settings not checked: {0}
+= Addon cho cài đặt đồng bộ chưa kiểm tra: {0}
+1  FOLLOW THE PATH
+= 1  ĐI THEO LỐI
+2  SAVE A FAVORITE
+= 2  LƯU YÊU THÍCH
+4 armor pieces at 1+ stars
+= 4 món giáp ở 1+ sao
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Launcher mới ({0}) được cài trước; nhấn CHƠI lần nữa sau khi khởi động lại.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Addon đã cập nhật: {0}. Thất bại: {1}. Lỗi kiểm tra: {2}.
+All addons {0}
+= Mọi addon {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats ghi lại lượt chơi và thay đổi build trong game (/azstats). Launcher có thể hiển thị tổng đã lưu, lớp, báo cáo lượt chơi gần đây, mẫu chiến đấu và nhật ký build quan sát được. Báo cáo, so sánh và HUD tùy chỉnh riêng vẫn có trong addon.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats ghi lại lượt chơi và thay đổi build quan sát được trong game (/azstats). Launcher có thể hiển thị tổng đã lưu, lớp, báo cáo lượt chơi gần đây, mẫu chiến đấu và nhật ký build. Báo cáo, so sánh và HUD tùy chỉnh của addon vẫn có ở đó.
+Best level {#0}
+= Cấp tốt nhất {#0}
+Best level: {#0}
+= Cấp tốt nhất: {#0}
+Best together: {0}, level {#1}
+= Tốt nhất khi đi cùng: {0}, cấp {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Lưu trên mây tạm dừng: {0} cần STEAM DECK THỬ NGHIỆM (Tùy chọn > Launcher). Phiên này không được đồng bộ.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Lưu trên mây đang đặt là {0}, cần STEAM DECK THỬ NGHIỆM (Tùy chọn > Launcher). Bật lại, hoặc chọn thư mục đồng bộ bên dưới.
+Confirmed {#0} · probable {#1}
+= Xác nhận {#0} · có thể {#1}
+Could not install {0}:\n\n{1}
+= Không thể cài {0}:\n\n{1}
+Could not save the game setting:
+= Không thể lưu cài đặt game:
+Could not uninstall {0}:\n\n{1}
+= Không thể gỡ {0}:\n\n{1}
+Dropbox could not be reached ({0}).
+= Không kết nối được Dropbox ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox không chấp nhận đăng nhập: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox từ chối đăng nhập: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Hỗ trợ Steam Deck thử nghiệm: launcher lấp đầy màn hình ở Chế độ Game, khởi động game trong cùng mục Steam và tránh sang bên khi bạn chơi. Tùy chọn > Launcher tắt tính năng này.
+Game setting saved:
+= Đã lưu cài đặt game:
+Google Drive refused the sign-in: {0}
+= Google Drive từ chối đăng nhập: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Bản tải lên sẽ gửi ở lần đồng bộ sau.
+Google could not be reached ({0}).
+= Không kết nối được Google ({0}).
+Google did not start the sign-in: {0}
+= Google không bắt đầu đăng nhập: {0}
+Google sign-in failed: {0}
+= Đăng nhập Google thất bại: {0}
+Highest observed rank {#0}
+= Bậc cao nhất quan sát được {#0}
+Installing {0} ({1})...
+= Đang cài {0} ({1})...
+It killed you {#0} times
+= Nó đã giết bạn {#0} lần
+Longest: {0}
+= Dài nhất: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Không tệp nào trong bản phát hành này chứa {0} (một thư mục có tệp .toc), kể cả mã nguồn. Không có gì được cài.
+Observed in {#0} runs · rank gains {#1}
+= Thấy trong {#0} lượt chơi · tăng bậc {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Đã chơi Azeroth Survivors trên trình duyệt? Mang tiến trình theo: anh hùng, khu vực đã mở, trang bị, thiên phú và codex.\n\nTrên trang web, mở Options > Saves và nhấn Export Save. Sau đó chọn tệp .sav đó ở đây. Game mở với tiến trình của bạn.
+Quick Access {0}
+= Truy cập nhanh {0}
+Rank {#0}
+= Bậc {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= Đã xóa {0} khỏi Truy cập nhanh. Dùng ngôi sao hướng dẫn hoặc nút yêu thích của mục để thêm lại.
+Runs {#0} · Victories {#1}
+= Lượt chơi {#0} · Chiến thắng {#1}
+Runs: {#0}
+= Lượt chơi: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Đã lưu trong bản sao của launcher, nhưng không kết nối được {0}: {1} Sẽ tải lên ở lần đồng bộ sau.
+Survived {0} · Level {1}
+= Sống sót {0} · Cấp {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Sống sót {0} · Cấp {1} · Hạ gục {2} · Vàng {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= Đó là cấp cao nhất của ổ mây.\n\nTạo và dùng thư mục con tên Azeroth Survivor Launcher bên trong?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Cập nhật addon thất bại. Các tệp trước đó được giữ trong {0} để khôi phục. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Tệp tải từ {0} bị hỏng hoặc không đúng (checksum không khớp). Vui lòng thử lại.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Launcher không thể tự thay thế trong thư mục này ({0}).\n\nHãy tải bản mới từ GitHub:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Không kết nối được trạm chuyển tiếp đăng nhập (ntfy.sh) ({0}). Thử lại sau giây lát.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} cung cấp tệp khác với mong đợi ({1} thay vì {2}).
+The {0} server answered with error {1}.
+= Máy chủ {0} trả lời với lỗi {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Không tìm thấy các thư mục này:\n\n  {0}\n\nVẫn hoàn tất? Bạn có thể đổi sau trong Tùy chọn.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Máy này đã có tiến trình trong game.\n\nThay bằng {0}?\nTiến trình hiện có được giữ làm bản sao lưu trong thư mục Saves của game.
+This launcher was built without {0}.
+= Launcher này được build không có {0}.
+Time {0}
+= Thời gian {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows không thể bảo vệ đăng nhập trên thiết bị này nên nó không được giữ ({0}).
+Won: {#0}
+= Thắng: {#0}
+You beat it {#0} times
+= Bạn đã hạ nó {#0} lần
+and enter this code:
+= và nhập mã này:
+since {0}
+= từ {0}
+✓ Imported: {0}
+= ✓ Đã nhập: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Đã chọn bản lưu: {0} (sẽ nhập khi hoàn tất cài đặt)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Đã thay đổi trong bản vá game {0}
+What changed since you last played
+= Những gì thay đổi kể từ lần chơi trước
+THE GAME
+= GAME
+THE LAUNCHER
+= LAUNCHER
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Các bản vá khác có ở trang Tin tức.
+Patch {0}
+= Bản vá {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Đã cập nhật từ {0} lên {1}.
+Personal records
+= Kỷ lục cá nhân
+Play a few runs with Azeroth Stats to see your records here.
+= Chơi vài lượt với Azeroth Stats để xem kỷ lục của bạn ở đây.
+Fastest victory {0}
+= Chiến thắng nhanh nhất {0}
+Highest level {0}
+= Cấp cao nhất {0}
+Most kills {0}
+= Hạ gục nhiều nhất {0}
+best DPS
+= DPS tốt nhất
+Solo and co-op runs
+= Lượt chơi đơn và co-op
+Runs (solo / co-op)
+= Lượt chơi (đơn / co-op)
+Win rate (solo / co-op)
+= Tỉ lệ thắng (đơn / co-op)
+Average run (solo / co-op)
+= Lượt chơi trung bình (đơn / co-op)
+Average level (solo / co-op)
+= Cấp trung bình (đơn / co-op)
+Average DPS (solo / co-op)
+= DPS trung bình (đơn / co-op)

@@ -134,7 +134,8 @@ namespace AzerothLauncher
         [ThreadStatic] public static string LastMd5;          // the MD5 of the last file Download fetched on this thread
 
         public static string Download(string url, string dest, bool httpsOnly, string what, Action<long, long> progress,
-                                      ManualResetEvent cancel, long expectedSize, Action<HttpWebRequest> prepare = null)
+                                      ManualResetEvent cancel, long expectedSize, Action<HttpWebRequest> prepare = null,
+                                      bool sizeMustMatch = false)
         {
             string tmp = dest + ".part";
             try
@@ -147,6 +148,10 @@ namespace AzerothLauncher
                     if ((resp.ContentType ?? "").ToLowerInvariant().Contains("text/html"))
                         throw new UserError("The download link gave a web page instead of the file. It must be a direct download link.");
                     long clen = resp.ContentLength > 0 ? resp.ContentLength : 0;
+                    // a file of another size can never pass its checksum: stop before downloading all of it
+                    if (sizeMustMatch && expectedSize > 0 && clen > 0 && clen != expectedSize)
+                        throw new UserError("The " + what + " offers a different file than expected (" + Util.SizeText(clen) + " instead of " +
+                                            Util.SizeText(expectedSize) + ").");
                     long total = clen > 0 ? clen : expectedSize;
                     long done = 0;
                     var buf = new byte[1 << 16];
@@ -540,7 +545,7 @@ namespace AzerothLauncher
                 string key;
                 using (var sha = System.Security.Cryptography.SHA256.Create())
                     key = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(api))).Replace("-", "");
-                string cache = Path.Combine(Util.TempDir, "github-releases", key + ".json");
+                string cache = Path.Combine(Util.CacheDir, "github-releases", key + ".json");
                 TimeSpan fresh = refresh ? TimeSpan.FromMinutes(2) : TimeSpan.FromMinutes(20);
                 try
                 {
@@ -705,7 +710,7 @@ namespace AzerothLauncher
                     using (var input = File.OpenRead(tmp))
                         actualSha256 = BitConverter.ToString(sha.ComputeHash(input)).Replace("-", "").ToLowerInvariant();
                 }
-                else actualSha256 = Net.Download(url, tmp, false, "addon", null, null, 0);
+                else actualSha256 = Net.Download(url, tmp, true, "addon", null, null, 0);
                 if (!string.IsNullOrWhiteSpace(expectedSha256) &&
                     !string.Equals(actualSha256, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
                     throw new DigestMismatchError("The downloaded addon does not match the SHA-256 published for this exact addon release. Nothing was installed.");

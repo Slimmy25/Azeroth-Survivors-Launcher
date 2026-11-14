@@ -2,6 +2,55 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.143.3
+-------
+A lobby with a very long word in its description no longer breaks the co-op lobby list for everyone. Lobby names and descriptions are tidier: letters, digits and ordinary punctuation only, in any language.
+
+* Co-op: a lobby description written as one endless word (a row of stars, say) stretched every row of the lobby list off the window. Names and descriptions now wrap inside their row.
+* Co-op: a lobby's name and description show letters and digits of any language and ordinary punctuation. Symbols, emoji, box characters and stacked accents are dropped.
+* Co-op: the same character more than three times in a row is cut to three (numbers are left alone), and extra spaces are removed.
+===
+
+0.143.2
+-------
+Co-op is smoother with three or more players: other heroes no longer stand still and then jump when a friend's connection hiccups. In a browser, a party's run keeps its pace when a player looks at another tab.
+
+* Co-op: another guest's hero no longer freezes for a moment and then snaps ahead when that player's connection stalls. You see it keep running to where it really is.
+* Co-op in a browser: a host who switches to another tab no longer slows the whole party's run to a crawl. The run goes on at full speed for everyone (the host's hero stands where it was left).
+* Co-op in a browser: a guest whose tab is in the background keeps up with its host instead of falling behind.
+===
+
+0.143.1
+-------
+Co-op fixes. A guest the host can no longer reach is sent back to the lobby instead of standing in a frozen world, and a host's short disconnect late in a run no longer drops its guests. A run no longer waits forever on one player's cards.
+
+* Co-op: a guest the host can no longer keep up with is taken out of the party and told the party ended. Before, it stood in a frozen world and still held its place.
+* Co-op: a host's own short disconnect late in a run no longer drops every guest.
+* Co-op: a guest whose host stops answering for two minutes goes back to the lobby list instead of waiting forever.
+* Co-op: a guest whose game is not in within a minute of the host entering sits that run out and stays in the party for the next one. Its party chat says why, and the others see a line. Before, it could come in late to a world with no enemies in it.
+* Co-op: you can no longer join a lobby whose host already stands in its zone: you are told the run is under way. Before, you got in and waited out the whole run with no word.
+* Co-op: when everyone else is down or at the end screen and the run waits only on one player's cards, the first card is taken for them after two minutes, and the chat says so.
+* Co-op: if the host ends its run just as a guest is entering, the guest returns to the hero picker instead of starting a run of its own inside the party.
+* Co-op: a creature or a card offer could go missing after a reconnect. Fixed.
+* Co-op: fewer needless reconnects after the computer sleeps or a browser tab is frozen, and after a slow reconnect in the desktop game.
+* Co-op window: when the co-op service cannot be reached, the lobby list tries again less and less often instead of flickering between "Connecting" and "unavailable". Refresh tries at once.
+* Co-op window: a lobby the service turns down now says "Could not host" instead of "Could not join".
+* Co-op window: holding Enter on Join sends one request, so a wrong password no longer uses up every try at once.
+===
+
+0.143.0
+-------
+Hyper Mode is here: beat Heroic V in Naxxramas to open a faster, fiercer way to play any zone. Bosses come twice as early and mobs grow stronger twice as fast, so a whole run takes half the time.
+
+* Hyper Mode: earned with Champion of Naxxramas, alongside the Crusader weapon glow. If you already have the achievement, it is already open. Turn it on in the Difficulty window, at any Heroic level or on Normal.
+* Bosses arrive at half their usual minute, at full strength. The final boss comes at 8, 9 or 10 minutes, depending on the zone.
+* Guardians return to their lairs twice as fast.
+* Mobs' strength, numbers and types run twice as fast until the final boss's time, so 10:00 plays like 20:00. In endless it keeps that lead, and bosses return every 2:30 instead of every 5:00.
+* Rewards are the same as on the same difficulty without Hyper Mode: bosses pay the same marks and loot, and a win earns the same talent experience for its time.
+* Achievements count as usual, on the real clock: 40 minutes in Hyper Mode is 40 minutes.
+* Co-op: the host's choice applies to the whole party, and everyone needs Hyper Mode open to join. The lobby list and party window show it beside the difficulty.
+===
+
 0.142.0
 -------
 Azeroth Survivors now runs on Macs with Apple silicon (M1 and later). Download it from the site, and it keeps itself up to date like the Windows and Linux versions.

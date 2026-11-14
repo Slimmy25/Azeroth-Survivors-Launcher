@@ -319,6 +319,7 @@ namespace AzerothLauncher
             else if (statsTab == 3)                          // Records
             {
                 y = Place(sp, Records(b.Best), w, y);
+                y = Place(sp, PersonalRecords(runs, "Personal records"), w, y);   // each class's best runs, solo and co-op apart
                 var more = new TilesBlock();                 // legendaries collected and level-ups that saved you
                 more.Title = Lang.T("Collected");
                 more.Cols = 2;                               // two wide tiles, so their labels fit
@@ -333,7 +334,10 @@ namespace AzerothLauncher
             else if (statsTab == 4)                          // Nemesis / observed death evidence
                 y = st.Source == "Azeroth Stats" ? AzerothNemesisTab(sp, w, y, st, cls) : NemesisTab(sp, w, y, st, cls);
             else if (statsTab == 5)                          // Co-op / observed companions
+            {
+                if (runs.Count > 0) y = Place(sp, SoloAndCoop(runs), w, y);   // solo and party runs kept apart
                 y = st.Source == "Azeroth Stats" ? AzerothCompanionTab(sp, w, y, st) : CoopTab(sp, w, y, st);
+            }
             else if (statsTab == 7)                          // Armory
                 y = ArmoryTab(sp, w, y, st, cls);
             else if (statsTab == 8)                          // combat source observations retained per run

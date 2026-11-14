@@ -1,7 +1,6 @@
 // A cloud service's folder kept as a local copy, for Cloud Save (STEAM DECK EXPERIMENTAL). The cloud sync engine
 // (Sync.cs) works on the copy as on any sync folder; Down() makes the copy match the service before the engine reads
-// it, Up() sends what the engine changed. Used for Dropbox (Dropbox.cs). Google Drive (GoogleDrive.cs) has the same
-// rules in its own code.
+// it, Up() sends what the engine changed. Used for Dropbox (Dropbox.cs) and Google Drive (GoogleDrive.cs).
 //   Offline: an upload that fails is marked pending and sent first at the next sync. If the service changed in the
 //   meantime, the player chooses whose progress to keep; the other one is kept in a folder beside the copy.
 using System;
@@ -26,7 +25,9 @@ namespace AzerothLauncher
 
     public static class CloudCopy
     {
-        class State { public string Print = ""; public bool Pending; }
+        // Print: the service's files as last seen. Local: the copy's own files at that moment (no line in older state files),
+        // so changes made to the copy that never reached the service can be told apart even after the launcher was closed.
+        class State { public string Print = "", Local = ""; public bool Pending; }
 
         static string StateFile(string copy) { return copy.TrimEnd('\\', '/') + ".state.txt"; }
 
@@ -38,6 +39,7 @@ namespace AzerothLauncher
                 foreach (string line in File.ReadAllLines(StateFile(copy)))
                 {
                     if (line.StartsWith("print=", StringComparison.Ordinal)) st.Print = line.Substring(6);
+                    else if (line.StartsWith("local=", StringComparison.Ordinal)) st.Local = line.Substring(6);
                     else if (line == "pending=1") st.Pending = true;
                 }
             }
@@ -47,7 +49,7 @@ namespace AzerothLauncher
 
         static void SaveState(string copy, State st)
         {
-            File.WriteAllLines(StateFile(copy), new[] { "print=" + st.Print, "pending=" + (st.Pending ? "1" : "0") });
+            File.WriteAllLines(StateFile(copy), new[] { "print=" + st.Print, "local=" + st.Local, "pending=" + (st.Pending ? "1" : "0") });
         }
 
         // a new sign-in or account: the copy starts empty and nothing is pending
@@ -60,14 +62,30 @@ namespace AzerothLauncher
 
         public static bool IsEmpty(ICloudStore store) { return store.List().Count == 0; }
 
+        // the service's list with paths compared regardless of case, as Windows and Dropbox both do: a name that changed
+        // only in case is one file, never downloaded and deleted in the same pass
+        static Dictionary<string, string> Listed(ICloudStore store)
+        {
+            var list = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var kv in store.List()) if (!list.ContainsKey(kv.Key)) list[kv.Key] = kv.Value;
+            return list;
+        }
+
         // the copy made to match the service. A pending upload goes first when the service has not changed since; when
         // it has, ask(question) decides: true keeps this device's progress (the service's is kept beside the copy).
-        public static void Down(ICloudStore store, string copy, Func<string, bool> ask, Action<string> log)
+        // keptFolder: the folder beside the copy that holds a kept-aside version (default "<copy>-kept")
+        public static void Down(ICloudStore store, string copy, Func<string, bool> ask, Action<string> log, string keptFolder = null)
         {
             Directory.CreateDirectory(copy);
-            Dictionary<string, string> remote = store.List();
+            Dictionary<string, string> remote = Listed(store);
             string remotePrint = PrintOf(remote);
             State st = LoadState(copy);
+            // the copy changed since the last sync but the upload never started (the launcher was closed in between)
+            if (!st.Pending && st.Local.Length > 0 && LocalPrint(store, copy) != st.Local)
+            {
+                st.Pending = true;
+                log(store.Name + ": this device has progress that was never uploaded.");
+            }
             if (st.Pending)
             {
                 if (remotePrint == st.Print)
@@ -76,7 +94,7 @@ namespace AzerothLauncher
                     UpTo(store, copy, remote, st, log);
                     return;
                 }
-                string aside = Path.Combine(Path.GetDirectoryName(copy.TrimEnd('\\', '/')), Path.GetFileName(copy.TrimEnd('\\', '/')) + "-kept",
+                string aside = Path.Combine(Path.GetDirectoryName(copy.TrimEnd('\\', '/')), keptFolder ?? Path.GetFileName(copy.TrimEnd('\\', '/')) + "-kept",
                                             DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss", CultureInfo.InvariantCulture));
                 bool keepDevice = ask("Your last upload from this device never reached " + store.Name + ", and " + store.Name +
                                       " has changed since (another device synced).\n\nKeep this device's progress? YES uploads this device's " +
@@ -114,6 +132,7 @@ namespace AzerothLauncher
                 if (!remote.ContainsKey(kv.Key)) { File.Delete(kv.Value); removed++; }
             RemoveEmptyFolders(copy);
             st.Print = remotePrint;
+            st.Local = LocalPrint(store, copy);
             st.Pending = false;
             SaveState(copy, st);
             if (fetched + removed > 0) log(store.Name + ": " + fetched + " file(s) downloaded, " + removed + " removed from the local copy.");
@@ -127,7 +146,9 @@ namespace AzerothLauncher
             var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var kv in LocalFiles(copy)) hashes[kv.Key] = store.LocalHash(kv.Value);
             if (PrintOf(hashes) == st.Print && !st.Pending) return;
-            try { UpTo(store, copy, store.List(), st, log); }
+            st.Pending = true;                               // saved first: a launcher closed mid-upload sends it next time
+            SaveState(copy, st);
+            try { UpTo(store, copy, Listed(store), st, log); }
             catch (Exception)
             {
                 st.Pending = true;
@@ -153,9 +174,17 @@ namespace AzerothLauncher
             foreach (var kv in remote)
                 if (!local.ContainsKey(kv.Key)) { store.Delete(kv.Key); removed++; }
             st.Print = PrintOf(hashes);
+            st.Local = st.Print;
             st.Pending = false;
             SaveState(copy, st);
             if (sent + removed > 0) log(store.Name + ": " + sent + " file(s) uploaded, " + removed + " removed.");
+        }
+
+        static string LocalPrint(ICloudStore store, string copy)
+        {
+            var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (var kv in LocalFiles(copy)) hashes[kv.Key] = store.LocalHash(kv.Value);
+            return PrintOf(hashes);
         }
 
         public static void CopyFolder(string from, string to)
@@ -172,7 +201,7 @@ namespace AzerothLauncher
 
         static Dictionary<string, string> LocalFiles(string copy)
         {
-            var files = new Dictionary<string, string>(StringComparer.Ordinal);
+            var files = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (!Directory.Exists(copy)) return files;
             string root = Path.GetFullPath(copy).TrimEnd('\\', '/');
             foreach (string f in Directory.GetFiles(root, "*", SearchOption.AllDirectories))

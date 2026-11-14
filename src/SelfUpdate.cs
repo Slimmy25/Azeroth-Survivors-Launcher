@@ -1,5 +1,5 @@
 // Launcher updates: the UPDATE button (and a quiet check at start-up) compares this exe with the exe on the
-// latest release of the GitHub repository. When they differ, it offers the new one (never forced); the new exe is
+// latest release of the GitHub repository. When they differ, the new one is installed: at start and before PLAY the update is required, as the owner decided; the new exe is
 // downloaded next to this one, checked against the release's SHA-256, swapped in, and the launcher restarts.
 // Pre-releases (such as "test" and "addons") are never offered: GitHub's "latest release" skips them.
 using System;
@@ -38,7 +38,20 @@ namespace AzerothLauncher
         }
 
         // the newest published (not pre-) release and its exe
+        // the answer is remembered for 10 minutes: PLAY asks every time, and GitHub allows 60 questions an hour
+        static LauncherRelease lastRelease;
+        static DateTime lastReleaseAt;
+
         public static LauncherRelease FetchLatest()
+        {
+            if (lastRelease != null && DateTime.UtcNow - lastReleaseAt < TimeSpan.FromMinutes(10)) return lastRelease;
+            LauncherRelease fetched = FetchLatestNow();
+            lastRelease = fetched;
+            lastReleaseAt = DateTime.UtcNow;
+            return fetched;
+        }
+
+        static LauncherRelease FetchLatestNow()
         {
             string text = null;
             UserError last = null;

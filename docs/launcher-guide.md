@@ -71,7 +71,7 @@ The STATS screenshot uses made-up sample data. The other screenshots show the lo
 - Addons from Download More are installed only when chosen. First-time setup offers Maidenhead's Azeroth Stats; you can decline it.
 - Addon cards show available SurvivorsForge pictures: hover a listing name for a small preview, or click it for a centered gallery. Missing source artwork remains unavailable rather than being replaced with a made-up addon image.
 - Azeroth Stats, SurvivorsDragonUi, Keijin UI, Azeroth FieldKit, ASTinyPlates, ASBuilder and Azeroth Hub resolve the selected add-on's current upstream GitHub release at install/update time and verify the exact ZIP with GitHub's published SHA-256. Projects that publish only pre-releases use their newest published release containing the expected ZIP. The launcher does not use a stale mirrored package for these entries.
-- Mirrored GitHub release ZIPs, including combined bundles, are checked against the digest of that exact asset in the repository hosting the download. Missing digests, missing assets and checksum mismatches stop installation before extraction. SurvivorsForge supplies artwork and trust/Verified labels, not installation checksums or approval gates. Local ZIP imports and archived rollback files do not have a GitHub release URL and are not validated against GitHub metadata.
+- Mirrored GitHub release ZIPs, including combined bundles, are checked against the digest of that exact asset in the repository hosting the download. A checksum mismatch stops installation before extraction. When GitHub publishes no digest for an asset, the ZIP is installed without that check. When a creator release has no ZIP with the expected name, the launcher picks the best-matching ZIP, and as a last resort GitHub's source archive of that release. SurvivorsForge supplies artwork and trust/Verified labels, not installation checksums or approval gates. Local ZIP imports and archived rollback files do not have a GitHub release URL and are not validated against GitHub metadata.
 - AZSSpellMeter and AZS Max Hit cannot be enabled together. Azeroth Cursor, Big Cursor and Cursor Reticle are mutually exclusive. The launcher switches off an incompatible addon when you enable another one, and resolves conflicts when a saved profile is loaded or Toggle All is used.
 
 ### The Guide
@@ -122,6 +122,14 @@ YouTube in a launcher-managed video window and are not saved as video files. Eac
 - **Import / Export Save** (Options > Folders): import or export a validated `.sav` file for the browser game or another
   client. Importing over existing progress keeps a backup in the game's Saves folder.
 - **News and Changelog**: every patch note of the game, newest first.
+- **Dropbox**: Cloud Save can sync straight with Dropbox (Options > Cloud Save > SIGN IN WITH DROPBOX), no sync app needed.
+  Google Drive's direct sync is still behind STEAM DECK EXPERIMENTAL.
+- **What changed since you last played**: after a game patch, a launcher update or a Slim Suite update, the launcher sums up
+  what is new since your last PLAY, once.
+- **Patch highlights**: Wiki tree entries changed by one of the newest 3 game patches are shown in green; point at one to
+  read the patch's lines about it.
+- **Controller**: Start plays, A confirms, B goes back, X saves the current spot to Quick Access, Y jumps to your favorites,
+  the right stick steps through the Wiki tree and the left stick moves a glowing cursor ball (Xbox pads, Steam Deck).
 - **Options**: the game's own settings (display, graphics, sound, gameplay) with a plain explanation for each, your
   folders, and the launcher's own settings.
 - **26 languages** and only one copy running at a time. Closing exits the launcher; it does not stay in the system tray.
@@ -137,7 +145,7 @@ YouTube in a launcher-managed video window and are not saved as video files. Eac
 | **ASBuilder** | Cadoky's build-sharing tool. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
 | **Azeroth Hub** | Maidenhead's in-game addon hub. The launcher resolves its current release ZIP and verifies GitHub's published SHA-256. |
 | **AZS Handbook** (`/handbook`) | The launcher's whole Guide, inside the game. |
-| **Slim Suite** (`/slimsuite`) | Movable UI frames, grid alignment, frame sizing and scale, gameplay helpers, and optional interface features. The settings are split between “Modifying the User Interface” and “New/Unique, but Minor Features.” |
+| **Slim Suite** (`/slimsuite` or `/slim`) | Movable UI frames, grid alignment, frame sizing and scale, gameplay helpers, and optional interface features. The settings are split between “Modifying the User Interface” and “New/Unique, but Minor Features.” |
 
 They use the game's addon API and share one look (`addons/AZSKit`).
 

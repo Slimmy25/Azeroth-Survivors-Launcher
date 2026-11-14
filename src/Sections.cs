@@ -664,11 +664,6 @@ namespace AzerothLauncher
             sideHead.CloseClicked = CloseSide;
             sideHead.HelpClicked = ShowLostHelpInline;
             sideHead.HelpLeft = DeferHideLostHelpInline;
-            sideHead.Moved = delegate(Point p)
-            {
-                Cfg.Set("side_pos", new List<object> { (long)p.X, (long)p.Y });
-                Cfg.Save();
-            };
             inner.Controls.Add(sideHead);
 
             // right: only the Guide locations the player has favorited
@@ -2084,6 +2079,10 @@ namespace AzerothLauncher
             {
                 string err = null;
                 List<string> names = null;
+                // the current folders are moved aside (beside AddOns, same drive) and only removed once the older version
+                // is in: a rollback that fails puts them back, so the addon is never lost
+                string aside = Path.Combine(Path.GetDirectoryName(dir.TrimEnd('\\', '/')), "asl-rollback-" + Guid.NewGuid().ToString("N"));
+                var moved = new List<KeyValuePair<string, string>>();
                 try
                 {
                     bool off = false;
@@ -2091,7 +2090,14 @@ namespace AzerothLauncher
                     {
                         string bare = f.EndsWith(Addons.DisabledSuffix) ? f.Substring(0, f.Length - Addons.DisabledSuffix.Length) : f;
                         foreach (string p in new[] { Path.Combine(dir, bare), Path.Combine(dir, bare + Addons.DisabledSuffix) })
-                            if (Directory.Exists(p)) { if (p.EndsWith(Addons.DisabledSuffix)) off = true; Directory.Delete(p, true); }
+                            if (Directory.Exists(p))
+                            {
+                                if (p.EndsWith(Addons.DisabledSuffix)) off = true;
+                                Directory.CreateDirectory(aside);
+                                string to = Path.Combine(aside, Path.GetFileName(p));
+                                Directory.Move(p, to);
+                                moved.Add(new KeyValuePair<string, string>(p, to));
+                            }
                     }
                     names = Archive.InstallAddonZip(zip, dir);
                     if (off)                                   // it was switched off: it stays off
@@ -2101,7 +2107,19 @@ namespace AzerothLauncher
                             if (Directory.Exists(on) && !Directory.Exists(to)) Directory.Move(on, to);
                         }
                 }
-                catch (Exception e) { err = e.Message; }
+                catch (Exception e)
+                {
+                    err = e.Message;
+                    foreach (var m in moved)                   // the version that was there goes back
+                        try
+                        {
+                            if (Directory.Exists(m.Key)) Util.DeleteTree(m.Key);
+                            Directory.Move(m.Value, m.Key);
+                        }
+                        catch (Exception) { err += "\n\nIts previous version is kept in " + aside + "."; }
+                }
+                if (err == null || moved.TrueForAll(delegate(KeyValuePair<string, string> pair) { return !Directory.Exists(pair.Value); }))
+                    Util.DeleteTreeQuiet(aside);
                 Ui(delegate
                 {
                     addonDlBusy = false;
@@ -2220,7 +2238,6 @@ namespace AzerothLauncher
         sealed class GitHubAddonSource
         {
             public string Url, Repo, AssetPrefix;
-            public bool FixedAssetName;
             public bool Generic;   // any repo's releases/latest from the catalog: the ZIP is chosen by rule
         }
 
@@ -2255,7 +2272,7 @@ namespace AzerothLauncher
             if (string.Equals(normalized, AzerothStatsLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = AzerothStatsLatestUrl, Repo = "Maidenquinn/AzerothStats", AssetPrefix = "AzerothStats-" };
             if (string.Equals(normalized, SurvivorsDragonUiLatestUrl, StringComparison.OrdinalIgnoreCase))
-                return new GitHubAddonSource { Url = SurvivorsDragonUiLatestUrl, Repo = "migwynkriid13/SurvivorsDragonUi", AssetPrefix = "SurvivorsDragonUi.zip", FixedAssetName = true };
+                return new GitHubAddonSource { Url = SurvivorsDragonUiLatestUrl, Repo = "migwynkriid13/SurvivorsDragonUi", AssetPrefix = "SurvivorsDragonUi.zip" };
             if (string.Equals(normalized, KeijinUiLatestUrl, StringComparison.OrdinalIgnoreCase))
                 return new GitHubAddonSource { Url = KeijinUiLatestUrl, Repo = "KeijinDE/KeijinUI_modern-as-ui", AssetPrefix = "KeijinUI-" };
             if (string.Equals(normalized, AzerothFieldKitLatestUrl, StringComparison.OrdinalIgnoreCase))
@@ -2722,12 +2739,12 @@ namespace AzerothLauncher
 
         // quiet: an automatic update (no message box on a failure; the log says it and the next one goes on)
         // Download More's Work in Progress button: the addon is not finished, so it is installed only after the player
-        // agrees to that. It is not updated automatically; UNINSTALL removes it as usual.
+        // agrees to that. Once installed it updates like any other addon; UNINSTALL removes it as usual.
         void InstallWorkInProgress(AddonEntry it)
         {
             if (!Ask("Work in Progress", it.Name + " is a work in progress. It is not ready for release yet.\n\n" +
                      "It may be unfinished, change a lot or stop working between versions, and it can cause errors in the game. " +
-                     "The launcher does not update it automatically and gives no support for it until it is released.\n\n" +
+                     "Once installed it updates like any other addon, but it gets no support until it is released.\n\n" +
                      "Install it anyway?"))
                 return;
             DownloadAddon(it.Name, it.Url, null, false, true);
@@ -2765,11 +2782,16 @@ namespace AzerothLauncher
                 catch (Exception) { }
                 if (conflictingOn.Count > 0 && !quiet && Msg.Show(this,
                     name + " cannot be enabled with " + string.Join(", ", conflictingOn.ToArray()) + ". Install it and switch those addons off?",
-                    "Addon conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+                    "Addon conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                {
+                    if (after != null) after();              // the update queue moves on
+                    return;
+                }
             }
             if (addonDlBusy)
             {
                 SetStatus("Another addon is still downloading.");
+                if (after != null) after();
                 return;
             }
             bool keepDisabled = false;
@@ -3695,8 +3717,8 @@ namespace AzerothLauncher
         {
             int y = 6;
             y = OptionCheck("Cloud saving", CloudEnabled(), y, delegate(bool on) { SetCloudEnabled(on); });
-            if (Handheld.Experimental) y = OptionsCloudServices(PW, y + 6);   // Steam Deck experimental: Google Drive, Dropbox
-            else if (GoogleDrivePaused())
+            y = OptionsCloudServices(PW, y + 6);             // Dropbox; Google Drive with Steam Deck experimental on
+            if (!Handheld.Experimental && GoogleDrivePaused())
             {
                 var paused = PutText("Cloud Save is set to " + CloudServiceName() + ", which needs STEAM DECK EXPERIMENTAL (Options > Launcher). " +
                                      "Turn it on again, or choose a sync folder below.", 9.5f, FontStyle.Italic, Theme.GoldDim, 20, y + 2, PW - 40);

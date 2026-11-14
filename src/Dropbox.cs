@@ -88,7 +88,7 @@ namespace AzerothLauncher
             DateTime until = DateTime.UtcNow.AddMinutes(15);
             while (DateTime.UtcNow < until)
             {
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 50; i++)                // every 5 s: within the relay's request rate
                 {
                     if (cancelled()) return null;
                     Thread.Sleep(100);
@@ -172,14 +172,14 @@ namespace AzerothLauncher
         public static void Revoke(string refresh)
         {
             if (string.IsNullOrEmpty(refresh)) return;
+            string saved = RefreshToken;
             try
             {
-                string saved = RefreshToken;
                 RefreshToken = refresh;
                 Send("POST", "https://api.dropboxapi.com/2/auth/token/revoke", null, null, Access());
-                RefreshToken = saved;
             }
             catch (Exception) { }
+            finally { RefreshToken = saved; }       // the device's own sign-in back, even when the revoke failed
             lock (gate) { accessToken = null; accessFor = null; }
         }
 

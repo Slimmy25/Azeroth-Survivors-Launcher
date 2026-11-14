@@ -195,13 +195,15 @@ namespace AzerothLauncher
         // the lasting sign-in as stored in the settings: protected for this Windows user (Wine and Proton have the same)
         public static string Protect(string refresh)
         {
+            // only ever stored protected by Windows (for this Windows user); when that is not possible the sign-in fails
+            // instead of keeping the token readable ("b64:" values from older versions are still read)
             try
             {
                 return "dp:" + Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(refresh), Entropy, DataProtectionScope.CurrentUser));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return "b64:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(refresh));
+                throw new UserError("Windows could not protect the sign-in on this device, so it was not kept (" + e.Message + ").");
             }
         }
 
@@ -224,41 +226,61 @@ namespace AzerothLauncher
 
         class Tree
         {
-            public readonly Dictionary<string, Entry> Files = new Dictionary<string, Entry>(StringComparer.Ordinal);
-            public readonly Dictionary<string, string> Dirs = new Dictionary<string, string>(StringComparer.Ordinal);
+            public readonly Dictionary<string, Entry> Files = new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);   // matched as CloudCopy matches paths
+            public readonly Dictionary<string, string> Dirs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        class State { public string Print = ""; public bool Pending; }
-
-        static string StateFile(string copy) { return copy.TrimEnd('\\', '/') + ".state.txt"; }
-
-        static State LoadState(string copy)
+        // Drive's Cloud Save folder as a flat file list, for CloudCopy (CloudCopy.cs keeps the local copy and its state file;
+        // the state format and fingerprints are the same as before, so nothing resyncs). One store is one sync pass: the
+        // tree listed by List() gives the ids Download, Upload and Delete use.
+        class Store : ICloudStore
         {
-            var st = new State();
-            try
+            string root;
+            Tree tree;
+
+            public string Name { get { return "Google Drive"; } }
+
+            public Dictionary<string, string> List()
             {
-                foreach (string line in File.ReadAllLines(StateFile(copy)))
-                {
-                    if (line.StartsWith("print=", StringComparison.Ordinal)) st.Print = line.Substring(6);
-                    else if (line == "pending=1") st.Pending = true;
-                }
+                root = RootFolder();
+                tree = ListTree(root);
+                var list = new Dictionary<string, string>(StringComparer.Ordinal);
+                foreach (var kv in tree.Files) list[kv.Key] = kv.Value.Md5;
+                return list;
             }
-            catch (Exception) { }
-            return st;
+
+            public string LocalHash(string file) { return Md5(file); }
+
+            Tree Listed() { if (tree == null) List(); return tree; }
+
+            public byte[] Download(string path)
+            {
+                Entry e;
+                if (!Listed().Files.TryGetValue(path, out e)) throw new UserError("Google Drive did not offer the file right now (it may have hit its download limit).");
+                return GoogleDrive.Download(e.Id);
+            }
+
+            public void Upload(string path, byte[] data)
+            {
+                Tree t = Listed();
+                Entry e;
+                if (t.Files.TryGetValue(path, out e)) { Replace(e.Id, data); return; }
+                int slash = path.LastIndexOf('/');
+                string dir = slash < 0 ? "" : path.Substring(0, slash);
+                Create(path.Substring(slash + 1), FolderFor(t, dir), data);
+            }
+
+            public void Delete(string path)
+            {
+                Entry e;
+                if (Listed().Files.TryGetValue(path, out e)) Remove(e.Id);
+            }
         }
 
-        static void SaveState(string copy, State st)
-        {
-            File.WriteAllLines(StateFile(copy), new[] { "print=" + st.Print, "pending=" + (st.Pending ? "1" : "0") });
-        }
+        const string KeptFolder = "google-drive-kept";        // where a kept-aside version goes, as before the move to CloudCopy
 
         // a new sign-in or account: the copy starts empty and nothing is pending
-        public static void ResetCopy(string copy)
-        {
-            try { if (File.Exists(StateFile(copy))) File.Delete(StateFile(copy)); } catch (Exception) { }
-            if (Directory.Exists(copy)) Util.DeleteTreeQuiet(copy);
-            Directory.CreateDirectory(copy);
-        }
+        public static void ResetCopy(string copy) { CloudCopy.Reset(copy); }
 
         // Drive has nothing in the launcher's folder yet
         public static bool IsEmpty()
@@ -267,199 +289,32 @@ namespace AzerothLauncher
             return Children(root).Count == 0;
         }
 
-        // the copy made to match Drive. A pending upload goes first when Drive has not changed since; when it has,
-        // ask(question) decides: true keeps this device's progress (Drive's is kept beside the copy), false takes Drive's.
+        // the copy made to match Drive; see CloudCopy.Down
         public static void Down(string copy, Func<string, bool> ask, Action<string> log)
         {
-            Directory.CreateDirectory(copy);
-            string root = RootFolder();
-            Tree tree = ListTree(root);
-            string drivePrint = PrintOf(tree);
-            State st = LoadState(copy);
-            if (st.Pending)
-            {
-                if (drivePrint == st.Print)
-                {
-                    log("Google Drive: sending the upload that could not be sent last time.");
-                    UpTo(copy, root, tree, st, log);
-                    return;
-                }
-                string aside = Path.Combine(Path.GetDirectoryName(copy.TrimEnd('\\', '/')), "google-drive-kept",
-                                            DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss", CultureInfo.InvariantCulture));
-                bool keepDevice = ask("Your last upload from this device never reached Google Drive, and Google Drive has changed since " +
-                                      "(another device synced).\n\nKeep this device's progress? YES uploads this device's progress. " +
-                                      "NO takes Google Drive's. The other one is kept in a folder on this device either way.");
-                if (keepDevice)
-                {
-                    SaveTreeTo(tree, aside);
-                    log("Google Drive's files were kept in " + aside + "; this device's progress is uploaded.");
-                    UpTo(copy, root, tree, st, log);
-                    return;
-                }
-                CopyFolder(copy, aside);
-                log("This device's unsent progress was kept in " + aside + "; Google Drive's progress is used.");
-            }
-            Dictionary<string, string> local = LocalFiles(copy);
-            int fetched = 0;
-            foreach (var kv in tree.Files)
-            {
-                string full;
-                if (local.TryGetValue(kv.Key, out full) && kv.Value.Md5.Length > 0 && Md5(full) == kv.Value.Md5) continue;
-                string target = Path.Combine(copy, kv.Key.Replace('/', '\\'));
-                Directory.CreateDirectory(Path.GetDirectoryName(target));
-                string temp = target + ".asl-download";
-                File.WriteAllBytes(temp, Download(kv.Value.Id));
-                if (File.Exists(target)) File.Delete(target);
-                File.Move(temp, target);
-                fetched++;
-            }
-            int removed = 0;
-            foreach (var kv in local)
-                if (!tree.Files.ContainsKey(kv.Key)) { File.Delete(kv.Value); removed++; }
-            RemoveEmptyFolders(copy);
-            st.Print = drivePrint;
-            st.Pending = false;
-            SaveState(copy, st);
-            if (fetched + removed > 0) log("Google Drive: " + fetched + " file(s) downloaded, " + removed + " removed from the local copy.");
+            CloudCopy.Down(new Store(), copy, ask, log, KeptFolder);
         }
 
-        // what changed in the copy, sent to Drive. Nothing changed: no connection is made. A failure leaves it pending.
+        // what changed in the copy, sent to Drive; see CloudCopy.Up
         public static void Up(string copy, Action<string> log)
         {
-            if (!Directory.Exists(copy)) return;
-            State st = LoadState(copy);
-            if (PrintOf(LocalHashes(copy)) == st.Print && !st.Pending) return;
-            try
-            {
-                string root = RootFolder();
-                UpTo(copy, root, ListTree(root), st, log);
-            }
-            catch (Exception)
-            {
-                st.Pending = true;
-                try { SaveState(copy, st); } catch (Exception) { }
-                throw;
-            }
+            CloudCopy.Up(new Store(), copy, log);
         }
 
-        static void UpTo(string copy, string root, Tree tree, State st, Action<string> log)
-        {
-            Dictionary<string, string> local = LocalFiles(copy);
-            var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-            int sent = 0, removed = 0;
-            foreach (var kv in local)
-            {
-                string md5 = Md5(kv.Value);
-                hashes[kv.Key] = md5;
-                Entry e;
-                if (tree.Files.TryGetValue(kv.Key, out e))
-                {
-                    if (e.Md5 == md5) continue;
-                    Replace(e.Id, File.ReadAllBytes(kv.Value));
-                }
-                else
-                {
-                    int slash = kv.Key.LastIndexOf('/');
-                    string dir = slash < 0 ? "" : kv.Key.Substring(0, slash);
-                    Create(kv.Key.Substring(slash + 1), FolderFor(tree, dir), File.ReadAllBytes(kv.Value));
-                }
-                sent++;
-            }
-            foreach (var kv in tree.Files)
-                if (!local.ContainsKey(kv.Key)) { Remove(kv.Value.Id); removed++; }
-            st.Print = PrintOf(hashes);
-            st.Pending = false;
-            SaveState(copy, st);
-            if (sent + removed > 0) log("Google Drive: " + sent + " file(s) uploaded, " + removed + " removed.");
-        }
-
-        // a whole folder copied (an existing sync folder moving into Google Drive, or a copy kept aside)
-        public static void CopyFolder(string from, string to)
-        {
-            if (!Directory.Exists(from)) return;
-            string root = Path.GetFullPath(from).TrimEnd('\\', '/');
-            foreach (string f in Directory.GetFiles(root, "*", SearchOption.AllDirectories))
-            {
-                string target = Path.Combine(to, f.Substring(root.Length + 1));
-                Directory.CreateDirectory(Path.GetDirectoryName(target));
-                File.Copy(f, target, true);
-            }
-        }
-
-        static void SaveTreeTo(Tree tree, string folder)
-        {
-            foreach (var kv in tree.Files)
-            {
-                string target = Path.Combine(folder, kv.Key.Replace('/', '\\'));
-                Directory.CreateDirectory(Path.GetDirectoryName(target));
-                File.WriteAllBytes(target, Download(kv.Value.Id));
-            }
-        }
-
-        // relative path ('/' separated) -> full path, skipping the launcher's own leftovers
-        static Dictionary<string, string> LocalFiles(string copy)
-        {
-            var files = new Dictionary<string, string>(StringComparer.Ordinal);
-            if (!Directory.Exists(copy)) return files;
-            string root = Path.GetFullPath(copy).TrimEnd('\\', '/');
-            foreach (string f in Directory.GetFiles(root, "*", SearchOption.AllDirectories))
-            {
-                if (f.EndsWith(".asl-download", StringComparison.OrdinalIgnoreCase)) continue;
-                files[f.Substring(root.Length + 1).Replace('\\', '/')] = f;
-            }
-            return files;
-        }
-
-        static Dictionary<string, string> LocalHashes(string copy)
-        {
-            var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-            foreach (var kv in LocalFiles(copy)) hashes[kv.Key] = Md5(kv.Value);
-            return hashes;
-        }
-
-        static void RemoveEmptyFolders(string copy)
-        {
-            var dirs = new List<string>(Directory.GetDirectories(copy, "*", SearchOption.AllDirectories));
-            dirs.Sort(delegate(string a, string b) { return b.Length.CompareTo(a.Length); });   // deepest first
-            foreach (string d in dirs)
-                try { if (Directory.GetFileSystemEntries(d).Length == 0) Directory.Delete(d); } catch (Exception) { }
-        }
+        // a whole folder copied (an existing sync folder moving into Google Drive)
+        public static void CopyFolder(string from, string to) { CloudCopy.CopyFolder(from, to); }
 
         static string Md5(string path)
         {
             using (var md5 = MD5.Create())
-            using (var s = File.OpenRead(path)) return Hex(md5.ComputeHash(s));
-        }
-
-        static string Hex(byte[] bytes)
-        {
-            var sb = new StringBuilder(bytes.Length * 2);
-            foreach (byte b in bytes) sb.Append(b.ToString("x2", CultureInfo.InvariantCulture));
-            return sb.ToString();
-        }
-
-        static string PrintOf(Tree tree)
-        {
-            var hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-            foreach (var kv in tree.Files) hashes[kv.Key] = kv.Value.Md5;
-            return PrintOf(hashes);
-        }
-
-        // one fingerprint for a whole set of files: their paths and contents
-        static string PrintOf(Dictionary<string, string> hashes)
-        {
-            var keys = new List<string>(hashes.Keys);
-            keys.Sort(StringComparer.Ordinal);
-            var sb = new StringBuilder();
-            foreach (string k in keys) sb.Append(k).Append('\n').Append(hashes[k]).Append('\n');
-            using (var sha = SHA256.Create()) return Hex(sha.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString())));
+            using (var s = File.OpenRead(path)) return CloudCopy.Hex(md5.ComputeHash(s));
         }
 
         // ------------------------------------------------------------------ Drive itself
         static string RootFolder()
         {
             string q = "name='" + FolderName + "' and mimeType='" + FolderMime + "' and 'root' in parents and trashed=false";
-            Reply r = Send("GET", FilesUrl + "?pageSize=10&fields=" + Uri.EscapeDataString("files(id)") + "&q=" + Uri.EscapeDataString(q), null, null, true);
+            Reply r = Send("GET", FilesUrl + "?pageSize=10&orderBy=createdTime&fields=" + Uri.EscapeDataString("files(id)") + "&q=" + Uri.EscapeDataString(q), null, null, true);
             Check(r, "find its Cloud Save folder");
             foreach (object o in Json.AsList(Json.Get(Json.AsDict(Json.Parse(r.Text)), "files")) ?? new List<object>())
             {

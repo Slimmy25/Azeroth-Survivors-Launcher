@@ -2032,3 +2032,613 @@ Finish the game, install, or cloud sync first, then check for the launcher updat
 = Nejprve ukončete hru, instalaci nebo cloudovou synchronizaci a potom znovu vyhledejte aktualizaci.
 Launcher {0} is ready. Choose Install update on the Options > Launcher page.
 = Launcher {0} je připraven. Instalaci spusťte v Možnosti > Launcher.
+
+# Added in v3.39
+Abilities are recorded for runs played with the stats addon enabled.
+= Schopnosti se zaznamenávají pro běhy hrané se zapnutým doplňkem statistik.
+Addon release check complete.
+= Kontrola vydání doplňků dokončena.
+Affects
+= Ovlivňuje
+All 8 armor pieces at 3+ stars
+= Všech 8 dílů zbroje na 3+ hvězdách
+All ten Quick Access favorites are full. Remove one before adding another.
+= Všech deset oblíbených v Rychlém přístupu je plných. Než přidáte další, jeden odeberte.
+An addon operation is already running.
+= Operace s doplňky už probíhá.
+At 5 stars on all 8 pieces, this bonus is half again as strong.
+= S 5 hvězdami na všech 8 dílech je tento bonus o polovinu silnější.
+Average time
+= Průměrný čas
+Azeroth Stats
+= Azeroth Stats
+Azeroth Stats is missing from Download More.
+= Azeroth Stats chybí v Stáhnout další.
+BACK
+= ZPĚT
+Back to Top
+= Nahoru
+Best level
+= Nejlepší úroveň
+Bright: victories · faint: all runs
+= Jasné: výhry · slabé: všechny běhy
+Brighter: more runs that day
+= Jasnější: víc běhů v ten den
+Browse class build videos already featured in the guide.
+= Procházet videa s buildy tříd, která už průvodce obsahuje.
+Browse class, item, and transmog references in the Wiki.
+= Procházet informace o třídách, předmětech a transmogu na Wiki.
+Build Videos
+= Videa buildů
+Build a talent setup, plan gear, and switch between both tools while keeping the selected class.
+= Sestavte talenty, naplánujte výbavu a přepínejte mezi nástroji se zachovanou zvolenou třídou.
+Build class
+= Třída buildu
+CANCEL DOWNLOAD & CLOSE
+= ZRUŠIT STAHOVÁNÍ A ZAVŘÍT
+CHECK AGAIN
+= ZKONTROLOVAT ZNOVU
+CHOOSE FOLDER
+= VYBRAT SLOŽKU
+CHOOSE GAME FOLDER
+= VYBRAT SLOŽKU HRY
+CLEAR
+= VYMAZAT
+COPY
+= KOPÍROVAT
+Checking addon releases...
+= Kontrola vydání doplňků...
+Choose an option on this setup step to continue.
+= Pro pokračování zvolte v tomto kroku možnost.
+Choose the folder containing AzerothSurvivors.exe to continue setup.
+= Pro pokračování vyberte složku s AzerothSurvivors.exe.
+Choose the folder that contains the existing game client before continuing.
+= Před pokračováním vyberte složku s existujícím klientem hry.
+Classes you play
+= Třídy, které hrajete
+Close the game first: it saves its own settings when it closes.
+= Nejdřív zavřete hru: při zavření si ukládá vlastní nastavení.
+Cloud Save uses Dropbox again.
+= Uložení do cloudu znovu používá Dropbox.
+Cloud Save uses Google Drive again.
+= Uložení do cloudu znovu používá Google Drive.
+Cloud saving needs a game saves folder, or turn cloud saving off.
+= Uložení do cloudu potřebuje složku s uloženými hrami, nebo ho vypněte.
+Cloud saving needs a sync folder, or turn cloud saving off.
+= Uložení do cloudu potřebuje synchronizační složku, nebo ho vypněte.
+Code copied.
+= Kód zkopírován.
+Codex
+= Kodex
+Companions observed in runs
+= Společníci zaznamenaní v bězích
+Connecting Dropbox...
+= Připojování k Dropboxu...
+Connecting Google Drive...
+= Připojování ke Google Drive...
+Contacting Google...
+= Kontaktování Googlu...
+Defaults are filled in for you. Change a folder if your files live somewhere else.
+= Výchozí hodnoty jsou vyplněné. Změňte složku, pokud jsou vaše soubory jinde.
+Defeats
+= Prohry
+Display Preview uses local builds; public updates stay separate.
+= Náhled zobrazení používá místní buildy; veřejné aktualizace zůstávají oddělené.
+Do you already have Azeroth Survivors downloaded on this PC?\n\n
+= Máte už Azeroth Survivors na tomto PC stažené?\n\n
+Do you already have the Azeroth Survivors game client on this PC?
+= Máte už na tomto PC klienta Azeroth Survivors?
+Downloading the game
+= Stahování hry
+Dropbox
+= Dropbox
+Dropbox (Steam Deck experimental)
+= Dropbox (Steam Deck experimentálně)
+Dropbox connected
+= Dropbox připojen
+Dropbox sign-in discarded.
+= Přihlášení k Dropboxu zahozeno.
+Dropbox signed you in but did not give the launcher lasting access. Try again.
+= Dropbox vás přihlásil, ale launcheru nedal trvalý přístup. Zkuste to znovu.
+Dropbox's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Přihlášení k Dropboxu skončilo (odebráno nebo vypršelo). Přihlaste se znovu v Možnosti > Uložení do cloudu.
+EXPORT ASBUILDS
+= EXPORTOVAT ASBUILDS
+EXPORT PROFILE
+= EXPORTOVAT PROFIL
+Ended
+= Ukončen
+Error log copied.
+= Protokol chyb zkopírován.
+Every addon is on its latest release.
+= Všechny doplňky jsou v nejnovější verzi.
+Existing AZS Stats files are kept. Their history is not merged into Azeroth Stats.
+= Existující soubory AZS Stats zůstávají. Jejich historie se do Azeroth Stats neslučuje.
+Existing game folder needs attention
+= Existující složka hry vyžaduje pozornost
+Existing save kept. Setup is still open; you can finish without importing it.
+= Existující uložená hra ponechána. Nastavení je stále otevřené; můžete dokončit bez importu.
+FINISH SETUP
+= DOKONČIT NASTAVENÍ
+Feedback copied.
+= Zpětná vazba zkopírována.
+Finish the current update, install, or game session before continuing setup.
+= Před pokračováním dokončete probíhající aktualizaci, instalaci nebo herní relaci.
+First Time Setup
+= První nastavení
+Game client
+= Klient hry
+Game download cancelled. Choose INSTALL when you are ready to try again.
+= Stahování hry zrušeno. Až to budete chtít zkusit znovu, zvolte NAINSTALOVAT.
+Gear section
+= Sekce výbavy
+GitHub returned invalid release information. Nothing was installed.
+= GitHub vrátil neplatné informace o vydání. Nic nebylo nainstalováno.
+GitHub's request limit has been reached. Please wait and try again. Nothing was installed.
+= Byl dosažen limit požadavků GitHubu. Počkejte a zkuste to znovu. Nic nebylo nainstalováno.
+Google Drive
+= Google Drive
+Google Drive (Steam Deck experimental)
+= Google Drive (Steam Deck experimentálně)
+Google Drive connected
+= Google Drive připojen
+Google Drive did not offer the file right now (it may have hit its download limit).
+= Google Drive teď soubor nenabídl (možná dosáhl limitu stahování).
+Google Drive made a folder but did not say which.
+= Google Drive vytvořil složku, ale neřekl kterou.
+Google Drive's sign-in has ended (it was removed or expired). Sign in again under Options > Cloud Save.
+= Přihlášení ke Google Drive skončilo (odebráno nebo vypršelo). Přihlaste se znovu v Možnosti > Uložení do cloudu.
+Google signed you in but did not give the launcher lasting access. Try again.
+= Google vás přihlásil, ale launcheru nedal trvalý přístup. Zkuste to znovu.
+Google's sign-in answer was incomplete. Try again.
+= Odpověď Googlu na přihlášení byla neúplná. Zkuste to znovu.
+Guide links
+= Odkazy průvodce
+Healing
+= Léčení
+Heroic
+= Hrdinská
+IMPORT ASBUILDS
+= IMPORTOVAT ASBUILDS
+IMPORT BUILD
+= IMPORTOVAT BUILD
+INSTALL AZEROTH STATS
+= NAINSTALOVAT AZEROTH STATS
+If yes, setup will let you choose where the existing game and its AddOns are located. If no, the game will download into the folder containing this launcher.
+= Pokud ano, vyberete, kde je existující hra a její doplňky. Pokud ne, hra se stáhne do složky tohoto launcheru.
+Interface size
+= Velikost rozhraní
+Interrupted
+= Přerušen
+Items
+= Předměty
+Last 5 weeks
+= Posledních 5 týdnů
+Last step: download the game?
+= Poslední krok: stáhnout hru?
+Latest retained spell build
+= Nejnovější uložený build kouzel
+Locations validated. Continuing setup...
+= Umístění ověřena. Pokračuje se v nastavení...
+MENU ▾
+= NABÍDKA ▾
+More entries are available on the Build Journal tab.
+= Další záznamy jsou na kartě Deník buildů.
+NO, DOWNLOAD IT
+= NE, STÁHNOUT
+Navigation
+= Navigace
+No build journal entries are stored in the retained runs yet.
+= V uložených bězích zatím nejsou záznamy deníku buildů.
+No companion samples are recorded yet.
+= Zatím nejsou zaznamenány údaje o společnících.
+No death evidence recorded yet.
+= Zatím nejsou zaznamenány příčiny smrti.
+No download host worked.\n\n
+= Žádný server ke stažení nefungoval.\n\n
+No observed spell snapshot is stored in the retained runs yet.
+= V uložených bězích zatím není zaznamenaný stav kouzel.
+No source samples are available in retained runs.
+= V uložených bězích nejsou údaje o zdrojích.
+No spell rank trends are stored yet.
+= Zatím nejsou uloženy trendy úrovní kouzel.
+No status messages yet.
+= Zatím žádné stavové zprávy.
+None selected
+= Nic nevybráno
+Normal
+= Normální
+Not ready for release yet. Click to install it anyway.
+= Ještě není připraveno k vydání. Klikněte pro instalaci i tak.
+Not signed in to Dropbox. Sign in under Options > Cloud Save.
+= Nepřihlášeno k Dropboxu. Přihlaste se v Možnosti > Uložení do cloudu.
+Not signed in to Google Drive. Sign in under Options > Cloud Save.
+= Nepřihlášeno ke Google Drive. Přihlaste se v Možnosti > Uložení do cloudu.
+OPEN FOLDER
+= OTEVŘÍT SLOŽKU
+Observed attributions
+= Zaznamenaná přiřazení
+Observed build and equipment changes
+= Zaznamenané změny buildu a výbavy
+Observed build journal
+= Zaznamenaný deník buildů
+Observed death sources
+= Zaznamenané příčiny smrti
+Observed in the most recent retained run
+= Zaznamenáno v posledním uloženém běhu
+Observed party sample
+= Zaznamenaný vzorek skupiny
+Observed run
+= Zaznamenaný běh
+Observed status
+= Zaznamenaný stav
+On your phone or computer, open
+= V telefonu nebo počítači otevřete
+On your phone, open
+= V telefonu otevřete
+One complete state wins, the other is backed up first.\nFirst time on this PC? Choose USE CLOUD.\n
+= Vyhraje jeden úplný stav, druhý se nejdřív zálohuje.\nPoprvé na tomto PC? Zvolte POUŽÍT CLOUD.\n
+Open on your phone
+= Otevřít v telefonu
+Partial
+= Částečný
+Partial observation
+= Částečné pozorování
+Paste a talent build code below. If one is on your clipboard, it is filled in for you.
+= Vložte níže kód buildu talentů. Pokud je ve schránce, vyplní se sám.
+Peel this corner to switch theorycrafting tools.
+= Odloupněte tento roh pro přepnutí nástroje na theorycrafting.
+Play a few runs with Azeroth Stats to see your DPS over time.
+= Odehrajte pár běhů s Azeroth Stats a uvidíte své DPS v čase.
+Playing on a Steam Deck?
+= Hrajete na Steam Decku?
+Playing without cloud sync this time
+= Tentokrát hrát bez synchronizace s cloudem
+Preparing the Dropbox sign-in...
+= Příprava přihlášení k Dropboxu...
+Priest
+= Kněz
+Priest guide
+= Průvodce knězem
+QUICK ACCESS
+= RYCHLÝ PŘÍSTUP
+Rings & Trinkets
+= Prsteny a cetky
+Runs observed
+= Zaznamenané běhy
+SIGN IN WITH DROPBOX
+= PŘIHLÁSIT PŘES DROPBOX
+SIGN IN WITH GOOGLE
+= PŘIHLÁSIT PŘES GOOGLE
+SIGN OUT
+= ODHLÁSIT
+START OVER
+= ZAČÍT ZNOVU
+STAY & FINISH
+= ZŮSTAT A DOKONČIT
+STEAM DECK / HANDHELD
+= STEAM DECK / KAPESNÍ PC
+STEAM DECK EXPERIMENTAL
+= STEAM DECK EXPERIMENTÁLNĚ
+Save favorite
+= Uložit oblíbené
+Save this location to Quick Access.
+= Uložit toto místo do Rychlého přístupu.
+Save to Quick Access
+= Uložit do Rychlého přístupu
+Save where? The current location, the top of this page, or the closest category header.
+= Kam uložit? Aktuální místo, začátek stránky nebo nejbližší nadpis kategorie.
+Saved in
+= Uloženo v
+Scaling video fixture
+= Testovací video škálování
+Setup is only available while the setup guide is open.
+= Nastavení je dostupné jen při otevřeném průvodci nastavením.
+Sign in to Google Drive
+= Přihlásit se ke Google Drive
+Signed out of Dropbox.
+= Odhlášeno z Dropboxu.
+Signed out of Google Drive.
+= Odhlášeno z Google Drive.
+Skip/Stop
+= Přeskočit/Zastavit
+Some addons could not be changed:\n\n
+= Některé doplňky nešlo změnit:\n\n
+Spell pool
+= Sada kouzel
+Spell rank trends · observed, not exact card picks
+= Trendy úrovní kouzel · zaznamenané, ne přesné volby karet
+Start here: learn the controls, your first run, and the systems that help you get going.
+= Začněte tady: ovládání, první běh a systémy, které vám pomohou začít.
+Steam Deck / Handheld, or Windows PC?
+= Steam Deck / kapesní PC, nebo Windows PC?
+Stopping the game download before closing...
+= Zastavování stahování hry před zavřením...
+Support the Dev
+= Podpořte vývojáře
+Talent build code
+= Kód buildu talentů
+Temporarily unavailable while work is in progress.
+= Dočasně nedostupné, probíhá práce.
+Thank you for using my community-made launcher. This is designed to help people celebrate how cool this game is and make a unifying one-stop-shop for all Azeroth Survivors needs\n\n
+= Děkuji, že používáte můj komunitní launcher. Má pomoci oslavit, jak skvělá tahle hra je, a být jedním místem pro všechno kolem Azeroth Survivors\n\n
+That file does not exist.
+= Ten soubor neexistuje.
+That is not an Azeroth Survivors save file.
+= To není soubor uložené hry Azeroth Survivors.
+That is not an Azeroth Survivors save file.\n\n
+= To není soubor uložené hry Azeroth Survivors.\n\n
+The archive contents changed while extracting. Nothing was installed.
+= Obsah archivu se při rozbalování změnil. Nic nebylo nainstalováno.
+The clipboard is busy. Try copying again.
+= Schránka je zaneprázdněná. Zkuste kopírovat znovu.
+The existing game was not found in that folder. Choose the folder containing AzerothSurvivors.exe.
+= Existující hra v té složce nebyla nalezena. Vyberte složku s AzerothSurvivors.exe.
+The game archive contains a reserved Windows file name. Nothing was installed.
+= Archiv hry obsahuje vyhrazený název souboru Windows. Nic nebylo nainstalováno.
+The game archive contains an empty path or symbolic link. Nothing was installed.
+= Archiv hry obsahuje prázdnou cestu nebo symbolický odkaz. Nic nebylo nainstalováno.
+The game archive contains an unsafe path. Nothing was installed.
+= Archiv hry obsahuje nebezpečnou cestu. Nic nebylo nainstalováno.
+The game archive contains conflicting file paths. Nothing was installed.
+= Archiv hry obsahuje konfliktní cesty souborů. Nic nebylo nainstalováno.
+The game archive contains duplicate or conflicting file paths. Nothing was installed.
+= Archiv hry obsahuje duplicitní nebo konfliktní cesty souborů. Nic nebylo nainstalováno.
+The game archive could not be extracted. It may be damaged, encrypted, incomplete, or use an unsupported method. Nothing was installed.
+= Archiv hry nešlo rozbalit. Může být poškozený, šifrovaný, neúplný nebo používat nepodporovanou metodu. Nic nebylo nainstalováno.
+The game archive format is not supported by the built-in extractor.
+= Vestavěný rozbalovač formát archivu hry nepodporuje.
+The game archive is incomplete or needs another archive part. Nothing was installed.
+= Archiv hry je neúplný nebo potřebuje další část. Nic nebylo nainstalováno.
+The game archive is password-protected. Please use an unencrypted game download.
+= Archiv hry je chráněný heslem. Použijte nešifrované stažení hry.
+The game config folder is not set. Set it in Options > FOLDERS.
+= Složka nastavení hry není nastavena. Nastavte ji v Možnosti > SLOŽKY.
+The game files are being installed. The launcher will close when that finishes.
+= Soubory hry se instalují. Launcher se po dokončení zavře.
+The game is running: close it first, it saves its own settings when it closes.
+= Hra běží: nejdřív ji zavřete, při zavření si ukládá vlastní nastavení.
+The game or sync started while this addon downloaded. Its installed files were left unchanged; try again after it closes.
+= Během stahování doplňku se spustila hra nebo synchronizace. Nainstalované soubory zůstaly beze změny; zkuste to po jejím zavření.
+The launcher closes by itself once your progress is saved.
+= Launcher se zavře sám, jakmile bude váš postup uložen.
+The launcher is already running. Look for its window on the taskbar.
+= Launcher už běží. Najděte jeho okno na hlavním panelu.
+The save could not be imported:\n\n
+= Uloženou hru nešlo importovat:\n\n
+The sign-in code expired before it was used. Press SIGN IN WITH DROPBOX again.
+= Přihlašovací kód vypršel před použitím. Stiskněte znovu PŘIHLÁSIT PŘES DROPBOX.
+The sign-in code expired before it was used. Press SIGN IN WITH GOOGLE again.
+= Přihlašovací kód vypršel před použitím. Stiskněte znovu PŘIHLÁSIT PŘES GOOGLE.
+The sign-in was declined on Dropbox's page.
+= Přihlášení bylo na stránce Dropboxu odmítnuto.
+The sign-in was declined on Google's page.
+= Přihlášení bylo na stránce Googlu odmítnuto.
+Then allow Azeroth Survivors Launcher to use its own folder in your Google Drive. This page closes by itself once you have signed in.
+= Pak povolte Azeroth Survivors Launcheru používat vlastní složku ve vašem Google Drive. Stránka se po přihlášení sama zavře.
+This Codex entry's class guide is unavailable.
+= Průvodce třídou pro tento záznam Kodexu není dostupný.
+This Guide location no longer exists.
+= Toto místo průvodce už neexistuje.
+This Guide video is no longer available.
+= Toto video průvodce už není dostupné.
+This add-on is not configured for direct GitHub release updates.
+= Tento doplněk není nastaven pro přímé aktualizace z vydání na GitHubu.
+This addon is pinned to an older copy. Replace it with the newest release?
+= Tento doplněk je připnut ke starší kopii. Nahradit nejnovějším vydáním?
+This class talent page is no longer available.
+= Tato stránka talentů třídy už není dostupná.
+This favorite no longer matches a Guide page. Bind the page again to update it.
+= Toto oblíbené už neodpovídá žádné stránce průvodce. Pro aktualizaci stránku znovu propojte.
+Today
+= Dnes
+UPDATE ALL
+= AKTUALIZOVAT VŠE
+USE DROPBOX
+= POUŽÍT DROPBOX
+USE GOOGLE DRIVE
+= POUŽÍT GOOGLE DRIVE
+Undated
+= Bez data
+Use the arrow keys to browse links and Enter to open one.
+= Šipkami procházejte odkazy, Enterem otevřete.
+Use the star on a guide page to save its reading position to Quick Access.
+= Hvězdičkou na stránce průvodce uložíte místo čtení do Rychlého přístupu.
+WINDOWS PC
+= WINDOWS PC
+WINS
+= VÝHRY
+Waiting for the Dropbox sign-in...
+= Čekání na přihlášení k Dropboxu...
+Waiting for the Google sign-in...
+= Čekání na přihlášení ke Googlu...
+Wiki
+= Wiki
+Work in Progress
+= Ve vývoji
+Written Guides
+= Psané průvodce
+YES, I HAVE THE CLIENT
+= ANO, MÁM KLIENTA
+Yesterday
+= Včera
+You chose that you already have the game, but AzerothSurvivors.exe is no longer present in the selected folder. Choose the correct game folder to continue. Setup will not offer a game download for an existing-client choice.
+= Zvolili jste, že hru už máte, ale AzerothSurvivors.exe ve vybrané složce už není. Pro pokračování vyberte správnou složku hry. U existujícího klienta nastavení nenabízí stažení hry.
+ranks
+= úrovně
+times
+= krát
+If the game crashed, it saved a crash report in its Diagnostics folder. Sending it to the game's developer helps fix the crash.
+= Pokud hra spadla, uložila hlášení o pádu do složky Diagnostics. Jeho odeslání vývojáři hry pomůže pád opravit.
+
+# Added in v3.39 (texts built from pieces)
+  AZS addons not updated: {0}
+= Doplňky AZS neaktualizovány: {0}
+  Addons for the synced settings not checked: {0}
+= Doplňky synchronizovaných nastavení nezkontrolovány: {0}
+1  FOLLOW THE PATH
+= 1  NÁSLEDUJ CESTU
+2  SAVE A FAVORITE
+= 2  ULOŽ OBLÍBENÉ
+4 armor pieces at 1+ stars
+= 4 díly zbroje na 1+ hvězdě
+A new launcher ({0}) is installed first; press PLAY again after it restarts.
+= Nejdřív se nainstaluje nový launcher ({0}); po restartu znovu stiskněte HRÁT.
+Addons updated: {0}. Failed: {1}. Check errors: {2}.
+= Aktualizované doplňky: {0}. Neúspěšné: {1}. Chyby kontroly: {2}.
+All addons {0}
+= Všechny doplňky {0}
+Azeroth Stats records runs and build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the observed build journal. Its own reports, comparisons and configurable in-game HUD remain available in the addon.
+= Azeroth Stats zaznamenává běhy a změny buildu ve hře (/azstats). Launcher ukáže uložené součty, třídy, zprávy z posledních běhů, vzorky boje a zaznamenaný deník buildů. Vlastní zprávy, srovnání a nastavitelné HUD zůstávají v doplňku.
+Azeroth Stats records runs and observed build changes in game (/azstats). The launcher can show saved run totals, classes, recent run reports, combat samples and the build journal. The addon's reports, comparisons and configurable in-game HUD remain available there.
+= Azeroth Stats zaznamenává běhy a pozorované změny buildu ve hře (/azstats). Launcher ukáže uložené součty, třídy, zprávy z posledních běhů, vzorky boje a deník buildů. Zprávy, srovnání a nastavitelné HUD doplňku zůstávají tam.
+Best level {#0}
+= Nejlepší úroveň {#0}
+Best level: {#0}
+= Nejlepší úroveň: {#0}
+Best together: {0}, level {#1}
+= Nejlépe spolu: {0}, úroveň {#1}
+Cloud Save is paused: {0} needs STEAM DECK EXPERIMENTAL (Options > Launcher). This session is not synced.
+= Uložení do cloudu pozastaveno: {0} vyžaduje STEAM DECK EXPERIMENTÁLNĚ (Možnosti > Launcher). Tato relace se nesynchronizuje.
+Cloud Save is set to {0}, which needs STEAM DECK EXPERIMENTAL (Options > Launcher). Turn it on again, or choose a sync folder below.
+= Uložení do cloudu je nastaveno na {0}, které vyžaduje STEAM DECK EXPERIMENTÁLNĚ (Možnosti > Launcher). Znovu ho zapněte, nebo níže zvolte synchronizační složku.
+Confirmed {#0} · probable {#1}
+= Potvrzeno {#0} · pravděpodobně {#1}
+Could not install {0}:\n\n{1}
+= {0} nešlo nainstalovat:\n\n{1}
+Could not save the game setting:
+= Nastavení hry nešlo uložit:
+Could not uninstall {0}:\n\n{1}
+= {0} nešlo odinstalovat:\n\n{1}
+Dropbox could not be reached ({0}).
+= Dropbox není dostupný ({0}).
+Dropbox did not accept the sign-in: {0}
+= Dropbox nepřijal přihlášení: {0}
+Dropbox refused the sign-in: {0}
+= Dropbox odmítl přihlášení: {0}
+Experimental Steam Deck support: the launcher fills the screen in Game Mode, starts the game inside the same Steam entry and steps aside while you play. Options > Launcher turns it off again.
+= Experimentální podpora Steam Decku: launcher v herním režimu vyplní obrazovku, spustí hru ve stejné položce Steamu a během hraní ustoupí. Možnosti > Launcher to vypnou.
+Game setting saved:
+= Nastavení hry uloženo:
+Google Drive refused the sign-in: {0}
+= Google Drive odmítl přihlášení: {0}
+Google Drive: {0}
+= Google Drive: {0}
+Google Drive: {0} The upload is sent at the next sync.
+= Google Drive: {0} Nahrání proběhne při další synchronizaci.
+Google could not be reached ({0}).
+= Google není dostupný ({0}).
+Google did not start the sign-in: {0}
+= Google nespustil přihlášení: {0}
+Google sign-in failed: {0}
+= Přihlášení ke Googlu selhalo: {0}
+Highest observed rank {#0}
+= Nejvyšší pozorovaná úroveň {#0}
+Installing {0} ({1})...
+= Instaluje se {0} ({1})...
+It killed you {#0} times
+= Zabilo vás {#0}krát
+Longest: {0}
+= Nejdelší: {0}
+None of the files in this release hold {0} (a folder with its .toc file), not even its source code. Nothing was installed.
+= Žádný soubor tohoto vydání neobsahuje {0} (složku s jejím souborem .toc), ani zdrojový kód. Nic nebylo nainstalováno.
+Observed in {#0} runs · rank gains {#1}
+= Pozorováno v {#0} bězích · zvýšení úrovně {#1}
+Played Azeroth Survivors in your browser? Bring your progress with you: your heroes, the zones you opened, your gear, talents and codex.\n\nOn the website, open Options > Saves and press Export Save. Then choose that .sav file here. The game opens with your progress, ready to play.
+= Hráli jste Azeroth Survivors v prohlížeči? Vezměte si postup s sebou: hrdiny, otevřené zóny, výbavu, talenty a kodex.\n\nNa webu otevřete Options > Saves a stiskněte Export Save. Pak zde zvolte ten soubor .sav. Hra se otevře s vaším postupem.
+Quick Access {0}
+= Rychlý přístup {0}
+Rank {#0}
+= Úroveň {#0}
+Removed {0} from Quick Access. Use the guide star or the section favorite control to add it again.
+= {0} odebráno z Rychlého přístupu. Znovu ho přidáte hvězdičkou průvodce nebo oblíbeným sekce.
+Runs {#0} · Victories {#1}
+= Běhy {#0} · Výhry {#1}
+Runs: {#0}
+= Běhy: {#0}
+Saved in the launcher's copy, but {0} could not be reached: {1} It is uploaded at the next sync.
+= Uloženo v kopii launcheru, ale {0} není dostupný: {1} Nahraje se při další synchronizaci.
+Survived {0} · Level {1}
+= Přežito {0} · Úroveň {1}
+Survived {0} · Level {1} · Kills {2} · Gold {3}
+= Přežito {0} · Úroveň {1} · Zabití {2} · Zlato {3}
+That is the top level of your cloud drive.\n\nCreate and use a subfolder named Azeroth Survivor Launcher inside it?
+= To je nejvyšší úroveň vašeho cloudu.\n\nVytvořit a použít v ní podsložku Azeroth Survivor Launcher?
+The addon update failed. Its previous files were kept for recovery in {0}. {1}
+= Aktualizace doplňku selhala. Předchozí soubory jsou zachovány v {0}. {1}
+The download from the {0} is damaged or not the right file (its checksum does not match). Please try again.
+= Stažení z {0} je poškozené nebo jde o špatný soubor (kontrolní součet nesedí). Zkuste to znovu.
+The launcher could not replace itself in this folder ({0}).\n\nDownload the new version from GitHub instead:\n{1}
+= Launcher se v této složce nemohl nahradit ({0}).\n\nStáhněte novou verzi z GitHubu:\n{1}
+The sign-in relay (ntfy.sh) could not be reached ({0}). Try again in a moment.
+= Přihlašovací relé (ntfy.sh) není dostupné ({0}). Zkuste to za chvíli.
+The {0} offers a different file than expected ({1} instead of {2}).
+= {0} nabízí jiný soubor, než se čekalo ({1} místo {2}).
+The {0} server answered with error {1}.
+= Server {0} odpověděl chybou {1}.
+These folders were not found:\n\n  {0}\n\nFinish anyway? You can change them later in Options.
+= Tyto složky nebyly nalezeny:\n\n  {0}\n\nPřesto dokončit? Později je změníte v Možnostech.
+This PC already has progress in the game.\n\nReplace it with {0}?\nWhat is there now is kept as a backup in the game's Saves folder.
+= Tento PC už má ve hře postup.\n\nNahradit ho {0}?\nSoučasný stav se uloží jako záloha ve složce Saves hry.
+This launcher was built without {0}.
+= Tento launcher byl sestaven bez {0}.
+Time {0}
+= Čas {0}
+Windows could not protect the sign-in on this device, so it was not kept ({0}).
+= Windows nemohl na tomto zařízení ochránit přihlášení, takže nebylo uloženo ({0}).
+Won: {#0}
+= Výhry: {#0}
+You beat it {#0} times
+= Porazili jste to {#0}krát
+and enter this code:
+= a zadejte tento kód:
+since {0}
+= od {0}
+✓ Imported: {0}
+= ✓ Importováno: {0}
+✓ Save selected: {0} (will import when setup finishes)
+= ✓ Uložená hra vybrána: {0} (importuje se po dokončení nastavení)
+
+# Added in v3.39 (what changed, records, patch highlights)
+Changed in game patch {0}
+= Změněno v patchi hry {0}
+What changed since you last played
+= Co se změnilo od vašeho posledního hraní
+THE GAME
+= HRA
+THE LAUNCHER
+= LAUNCHER
+SLIM SUITE
+= SLIM SUITE
+More patches are on the News page.
+= Další patche najdete na stránce Novinky.
+Patch {0}
+= Patch {0}
+Launcher {0}
+= Launcher {0}
+Updated from {0} to {1}.
+= Aktualizováno z {0} na {1}.
+Personal records
+= Osobní rekordy
+Play a few runs with Azeroth Stats to see your records here.
+= Odehrajte pár běhů s Azeroth Stats a uvidíte tu své rekordy.
+Fastest victory {0}
+= Nejrychlejší výhra {0}
+Highest level {0}
+= Nejvyšší úroveň {0}
+Most kills {0}
+= Nejvíce zabití {0}
+best DPS
+= nejlepší DPS
+Solo and co-op runs
+= Sólo a kooperativní běhy
+Runs (solo / co-op)
+= Běhy (sólo / koop)
+Win rate (solo / co-op)
+= Úspěšnost (sólo / koop)
+Average run (solo / co-op)
+= Průměrný běh (sólo / koop)
+Average level (solo / co-op)
+= Průměrná úroveň (sólo / koop)
+Average DPS (solo / co-op)
+= Průměrné DPS (sólo / koop)
