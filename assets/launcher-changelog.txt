@@ -1,3 +1,8 @@
+# v3.42 (2026-11-14)
+
+- Stats is laid out like the New Player Handbook: the page on the left and a Wiki-style tree of the Stats pages on the right (Overview to Build Journal, with your classes under Classes). Click an entry or use the mouse wheel over the tree; with a controller, the left stick scrolls the page, the right stick moves the blue highlight and A opens it, sliding up or down.
+- Controller in the Wiki and Handbook trees: pushing the right stick right opens the highlighted entry's own branch (a class's Spells, Talents and Gear, a Handbook topic's pages), and left closes it again or moves the highlight up to the entry above it. With nothing highlighted, left and right still fold the whole tree.
+
 # v3.41 (2026-11-14)
 
 - Controller: opening a tree entry with A now slides the page, up when the entry is below where you are and down when it is above, the same animation as Stats.

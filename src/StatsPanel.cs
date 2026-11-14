@@ -140,8 +140,11 @@ namespace AzerothLauncher
                 SetCrumbMenu(1, l);
             }
 
-            var sp = MakeThinScroll(panel, new Rectangle(20, pageTop, PW - 40, PH - 12 - pageTop), Armory.Page, Theme.Bronze,
+            // laid out like the New Player Handbook: the page on the left, a Wiki-style tree of the Stats pages on the right
+            int statsNavWidth = Math.Min(Math.Max(96, (int)(125 * Theme.Zoom)), Math.Max(92, PW - 190));
+            var sp = MakeThinScroll(panel, new Rectangle(4, pageTop, PW - 6 - statsNavWidth, PH - 12 - pageTop), Armory.Page, Theme.Bronze,
                                     Armory.SlotEdge, Theme.GoldDim);
+            BuildStatsSidebar(data ? st : null, pageTop, statsNavWidth);
             statsScroll = sp;                                // the controller's left stick scrolls it (Controller.cs)
             // see-through: the launcher's picture behind the page, the cards dark glass over it (ArmoryUI.cs)
             SeeThroughSection = true;

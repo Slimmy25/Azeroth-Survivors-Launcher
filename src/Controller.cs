@@ -8,7 +8,7 @@
 //   Left stick   moves a glowing blue cursor ball (the Windows pointer is hidden meanwhile); over something clickable the
 //                ball grows a little and glows beneath. In a Wiki class article or a Handbook page it scrolls the passage.
 //   Right stick  up/down moves a blue highlight through the side tree (A goes there, sliding up or down); left/right
-//                closes and opens its branches. In Stats, down and up turn to the next or previous page, sliding the same way.
+//                closes and opens the highlighted entry's branch (a class's sections, a Handbook topic's pages). Stats works the same way, with its pages in the tree.
 // Only while the launcher is the active window: a controller used in the game never reaches it. The ball is the mouse
 // pointer itself moved by the stick, so hovering, tooltips and clicks behave exactly as with a mouse.
 using System;
@@ -279,8 +279,15 @@ namespace AzerothLauncher
         // a Wiki class article or a Handbook page with its side tree: the sticks read it instead of moving the ball
         bool ControllerReading()
         {
-            return current == "Guide" && controllerTree != null && !controllerTree.IsDisposed && controllerTree.Visible &&
-                   guideArticleScroll != null && !guideArticleScroll.IsDisposed && guideArticleScroll.Visible;
+            ScrollPanel page = ReadingPage();
+            return page != null && controllerTree != null && !controllerTree.IsDisposed && controllerTree.Visible;
+        }
+
+        // the page the left stick scrolls: a Wiki or Handbook passage, or a Stats page (both have the side tree)
+        ScrollPanel ReadingPage()
+        {
+            ScrollPanel page = current == "Guide" ? guideArticleScroll : current == "Stats" ? statsScroll : null;
+            return page != null && !page.IsDisposed && page.Visible ? page : null;
         }
 
         void ControllerTick()
@@ -292,35 +299,20 @@ namespace AzerothLauncher
             padButtonsBefore = now;
             double lx = Stick(s.Pad.ThumbLX), ly = Stick(s.Pad.ThumbLY), rx = Stick(s.Pad.ThumbRX), ry = Stick(s.Pad.ThumbRY);
             bool reading = ControllerReading() && Form.ActiveForm == this;
-            bool stats = current == "Stats" && Form.ActiveForm == this && statsScroll != null && !statsScroll.IsDisposed;
-
-            if (stats)
-            {
-                // Stats: the left stick scrolls the page; the right stick down and up turns to the next or previous page
-                if (ly != 0) ScrollWithStick(statsScroll, ly);
-                if (ballShown && ly != 0) HideBall();
-                int turn = ry < -0.6 ? 1 : ry > 0.6 ? -1 : 0;
-                if (turn != sideStickHeld)
-                {
-                    sideStickHeld = turn;
-                    if (turn != 0) TurnStatsPage(turn);
-                }
-            }
 
             if (reading) ShowTreePick();                     // the tree recolours itself as the passage scrolls: keep the highlight
             else if (treePick != null) ClearTreePick();
-            if (stats) { }                                   // handled above
-            else if (reading)
+            if (reading)
             {
                 // left stick: the passage scrolls up and down, faster the further it is pushed
-                if (ly != 0) ScrollWithStick(guideArticleScroll, ly);
+                if (ly != 0) ScrollWithStick(ReadingPage(), ly);
                 if (ballShown && (lx != 0 || ly != 0)) HideBall();
                 // right stick left and right: close and open the tree's branches
                 int side = rx > 0.6 ? 1 : rx < -0.6 ? -1 : 0;
                 if (side != sideStickHeld)
                 {
                     sideStickHeld = side;
-                    if (side != 0 && controllerTreeFold != null) controllerTreeFold(side > 0);
+                    if (side != 0 && !FoldTreePick(side > 0) && controllerTreeFold != null) controllerTreeFold(side > 0);
                 }
             }
             else if (lx != 0 || ly != 0)
@@ -343,7 +335,7 @@ namespace AzerothLauncher
             }
 
             // right stick up and down: one tree step per push, repeating while held
-            int dir = stats ? 0 : ry > 0.5 ? -1 : ry < -0.5 ? 1 : 0;   // Stats uses up and down for its pages
+            int dir = ry > 0.5 ? -1 : ry < -0.5 ? 1 : 0;
             if (dir == 0) { rightStickHeld = 0; rightStickRepeat = 0; }
             else if (dir != rightStickHeld || ++rightStickRepeat > 18)
             {
@@ -538,6 +530,58 @@ namespace AzerothLauncher
         {
             if (treePick != null && !treePick.IsDisposed) { treePick.BackColor = treePickBack; treePick.ForeColor = treePickText; }
             treePick = null;
+        }
+
+        // right stick right / left on the highlighted entry: open or close that entry's own branch (a class's Spells, Talents
+        // and Gear; a Handbook topic's pages), as its arrow would. Left on an entry with nothing open moves up to its parent.
+        // False when nothing is highlighted, so the whole tree folds instead.
+        bool FoldTreePick(bool open)
+        {
+            if (treePick == null || treePick.IsDisposed || !treePick.Visible) return false;
+            Label entry = treePick;
+            Label arrow = null;                                // a separate arrow on the entry's row (Classes, Handbook topics)
+            foreach (Control c in controllerTree.Controls)
+            {
+                var l = c as Label;
+                if (l == null || l is GuideContentsLabel || l.IsDisposed || !l.Visible) continue;
+                if (Math.Abs(l.Top - entry.Top) <= 2 && (l.Text == "\u25b8" || l.Text == "\u25be")) { arrow = l; break; }
+            }
+            if (arrow == null && TreeLabelKey(entry) == "Gear") return true;   // Gear's arrow only shows its Items and Codex; it never folds
+            string marker = arrow != null ? arrow.Text : entry.Text.StartsWith("\u25b8") ? "\u25b8" : entry.Text.StartsWith("\u25be") ? "\u25be" : "";
+            bool isOpen = marker == "\u25be", canOpen = marker == "\u25b8";
+            if (open ? canOpen : isOpen)
+            {
+                string key = TreeLabelKey(entry);
+                ClearTreePick();
+                InvokeClick(arrow ?? entry);
+                // the tree is drawn again: the highlight returns to the same entry once it is
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        if (controllerTree == null || controllerTree.IsDisposed) return;
+                        Label again = TreeEntries().Find(delegate(Label l) { return TreeLabelKey(l) == key; });
+                        if (again != null) PickTreeEntry(again);
+                    });
+                });
+                return true;
+            }
+            if (!open)
+            {
+                // nothing open here: up to the entry it sits under
+                List<Label> entries = TreeEntries();
+                for (int i = entries.IndexOf(entry) - 1; i >= 0; i--)
+                    if (entries[i].Left < entry.Left) { PickTreeEntry(entries[i]); return true; }
+            }
+            return true;                                      // a leaf: nothing to open, and the highlight stays
+        }
+
+        static string TreeLabelKey(Label l) { return (l.Text ?? "").TrimStart('\u25b8', '\u25be', ' '); }
+
+        static void InvokeClick(Control c)
+        {
+            var onClick = typeof(Control).GetMethod("OnClick", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (onClick != null) onClick.Invoke(c, new object[] { EventArgs.Empty });
         }
 
         // A on a highlighted entry: the same as clicking it
