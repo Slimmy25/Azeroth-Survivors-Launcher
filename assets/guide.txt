@@ -603,7 +603,7 @@ From Heroic III the horde has an affix that changes every week; Heroic V has two
 - Explosive: an orb appears every 15 seconds and bursts for 40% of your health unless you destroy it. Area spells pass through it: it takes five direct hits from aimed spells and weapon swings.
 
 # Endless mode
-After you beat a zone's final boss you can keep going in endless mode. A random boss from the zone arrives every five minutes and the horde keeps growing stronger. Each boss that returns pays more marks than the time before. See how long you can last; some achievements ask for it.
+After you beat a zone's final boss you can keep going in endless mode. A random boss from the zone arrives every five minutes and the horde keeps growing stronger: every minute enemies gain 17.6% health and 6.7% damage (since 0.144.0). Each boss that returns pays more marks than the time before. See how long you can last; some achievements ask for it.
 
 @topic Co-op | Playing with friends
 # Joining and hosting

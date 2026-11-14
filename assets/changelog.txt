@@ -2,6 +2,14 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.144.0
+-------
+Endless is gentler: enemies grow stronger more slowly every minute past the final boss, and their hits grow even more slowly.
+
+* Endless: enemy health grows 17.6% a minute instead of 22% (20% slower).
+* Endless: enemy damage grows 6.7% a minute instead of 9.6% (30% slower).
+===
+
 0.143.4
 -------
 Co-op fixes: choosing Endless while a friend is still picking a card no longer freezes the party, and Power Word: Shield now looks after allies who lost theirs. Loading screens show the zone you are entering.

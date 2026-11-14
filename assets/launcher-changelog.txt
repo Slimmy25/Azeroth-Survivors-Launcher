@@ -1,3 +1,7 @@
+# v3.44 (2026-11-14)
+
+- Changelog: the game's patch notes 0.144.0, word for word. Guide: Endless mode now gives how fast enemies grow each minute (17.6% health, 6.7% damage).
+
 # v3.43 (2026-11-14)
 
 - Changelog: the game's patch notes 0.143.4, word for word. Guide: co-op notes for Power Word: Shield, Ice Barrier, Stoneform and choosing Endless.
