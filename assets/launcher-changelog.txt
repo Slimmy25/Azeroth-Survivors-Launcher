@@ -1,3 +1,10 @@
+# v3.41 (2026-11-14)
+
+- Controller: opening a tree entry with A now slides the page, up when the entry is below where you are and down when it is above, the same animation as Stats.
+- Controller in Stats: pages now turn with the right stick down (next) and up (previous), sliding up and down instead of sideways.
+- New Player Handbook: the side tree has room between its lines, more between topics and less between a topic's pages, as in the Wiki.
+- Controller in the Wiki and Handbook trees: the right stick now moves a blue highlight up and down the side tree to show where you are, starting at the page you are on. A opens the highlighted entry; until then the page stays where it is.
+
 # v3.40 (2026-11-14)
 
 - Controller in Stats: the left stick scrolls the page, and the right stick left and right turns to the previous or next Stats page (Overview, Classes, Abilities ... Build Journal). The new page slides in from the right going forward and from the left going back, one page at a time.

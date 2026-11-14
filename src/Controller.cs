@@ -7,10 +7,12 @@
 //   Y          open favorites: the cursor ball jumps to the Quick Access strip
 //   Left stick   moves a glowing blue cursor ball (the Windows pointer is hidden meanwhile); over something clickable the
 //                ball grows a little and glows beneath. In a Wiki class article or a Handbook page it scrolls the passage.
-//   Right stick  up/down steps through the side tree (one entry per push); left/right closes and opens its branches
+//   Right stick  up/down moves a blue highlight through the side tree (A goes there, sliding up or down); left/right
+//                closes and opens its branches. In Stats, down and up turn to the next or previous page, sliding the same way.
 // Only while the launcher is the active window: a controller used in the game never reaches it. The ball is the mouse
 // pointer itself moved by the stick, so hovering, tooltips and clicks behave exactly as with a mouse.
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -201,19 +203,21 @@ namespace AzerothLauncher
         [DllImport("gdi32.dll")] static extern bool DeleteObject(IntPtr obj);
     }
 
-    // the page-turn animation over the Stats page: the old page slides out as the new one slides in (about a fifth of a
-    // second, easing out), then the real page underneath is uncovered
-    sealed class StatsSlide : Control
+    // the page-turn animation (Stats pages, Wiki and Handbook moves): the old view slides out as the new one slides in
+    // (about a fifth of a second, easing out), then the real page underneath is uncovered. Vertical: the next page comes
+    // up from below (direction 1) or down from above (-1).
+    sealed class PageSlide : Control
     {
         readonly Bitmap from, to;
         readonly int direction;
+        readonly bool vertical;
         readonly Timer timer = new Timer { Interval = 15 };
         DateTime started;
         const double Duration = 220;
 
-        public StatsSlide(Bitmap from, Bitmap to, int direction)
+        public PageSlide(Bitmap from, Bitmap to, int direction, bool vertical)
         {
-            this.from = from; this.to = to; this.direction = direction;
+            this.from = from; this.to = to; this.direction = direction; this.vertical = vertical;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             timer.Tick += delegate { if ((DateTime.Now - started).TotalMilliseconds >= Duration) Finish(); else Invalidate(); };
         }
@@ -231,10 +235,10 @@ namespace AzerothLauncher
         {
             double t = Math.Min(1, (DateTime.Now - started).TotalMilliseconds / Duration);
             double eased = 1 - Math.Pow(1 - t, 3);
-            int w = Width, shift = (int)(eased * w);
-            // forward (1): the new page comes in from the right; back (-1): from the left
-            e.Graphics.DrawImageUnscaled(from, -direction * shift, 0);
-            e.Graphics.DrawImageUnscaled(to, direction * (w - shift), 0);
+            int size = vertical ? Height : Width, shift = (int)(eased * size);
+            int fromAt = -direction * shift, toAt = direction * (size - shift);
+            if (vertical) { e.Graphics.DrawImageUnscaled(from, 0, fromAt); e.Graphics.DrawImageUnscaled(to, 0, toAt); }
+            else { e.Graphics.DrawImageUnscaled(from, fromAt, 0); e.Graphics.DrawImageUnscaled(to, toAt, 0); }
         }
 
         protected override void Dispose(bool disposing)
@@ -292,10 +296,10 @@ namespace AzerothLauncher
 
             if (stats)
             {
-                // Stats: the left stick scrolls the page; the right stick left and right turns to the previous or next page
+                // Stats: the left stick scrolls the page; the right stick down and up turns to the next or previous page
                 if (ly != 0) ScrollWithStick(statsScroll, ly);
                 if (ballShown && ly != 0) HideBall();
-                int turn = rx > 0.6 ? 1 : rx < -0.6 ? -1 : 0;
+                int turn = ry < -0.6 ? 1 : ry > 0.6 ? -1 : 0;
                 if (turn != sideStickHeld)
                 {
                     sideStickHeld = turn;
@@ -303,6 +307,8 @@ namespace AzerothLauncher
                 }
             }
 
+            if (reading) ShowTreePick();                     // the tree recolours itself as the passage scrolls: keep the highlight
+            else if (treePick != null) ClearTreePick();
             if (stats) { }                                   // handled above
             else if (reading)
             {
@@ -337,7 +343,7 @@ namespace AzerothLauncher
             }
 
             // right stick up and down: one tree step per push, repeating while held
-            int dir = ry > 0.5 ? -1 : ry < -0.5 ? 1 : 0;
+            int dir = stats ? 0 : ry > 0.5 ? -1 : ry < -0.5 ? 1 : 0;   // Stats uses up and down for its pages
             if (dir == 0) { rightStickHeld = 0; rightStickRepeat = 0; }
             else if (dir != rightStickHeld || ++rightStickRepeat > 18)
             {
@@ -347,7 +353,7 @@ namespace AzerothLauncher
             }
 
             if ((pressed & XInput.Start) != 0) { if (playBtn != null && playBtn.Enabled) Play(); }
-            if ((pressed & XInput.A) != 0) ClickAtCursor();
+            if ((pressed & XInput.A) != 0) { if (!(reading && ConfirmTreePick())) ClickAtCursor(); }
             if ((pressed & XInput.B) != 0) ControllerBack();
             if ((pressed & XInput.X) != 0) { if (current == "Guide" || favTrail != null) ChooseFavoriteLocation(); }
             if ((pressed & XInput.Y) != 0) JumpToFavorites();
@@ -362,22 +368,36 @@ namespace AzerothLauncher
             sp.ScrollTo(Math.Max(0, -sp.AutoScrollPosition.Y + step));
         }
 
-        // Stats: the next (1) or previous (-1) page, sliding in from the right going forward and from the left going back
-        StatsSlide statsSlide;
+        // Stats: the next (1) or previous (-1) page, coming up from below going forward and down from above going back
+        PageSlide pageSlide;
 
         void TurnStatsPage(int direction)
         {
             int next = statsTab + direction;
             if (next < 0 || next >= StatTabs.Length) return;   // the first and last pages stay put
-            if (statsSlide != null && !statsSlide.IsDisposed) statsSlide.Finish();
+            SlidePanel(direction, delegate { SetStatsView(statsClass, next); }, false);
+        }
+
+        // runs change (which rebuilds or moves the page), then slides from the old picture of the page to the new one.
+        // queued: the change itself finishes in a later message (it was posted with BeginInvoke), so the new picture is
+        // taken after it.
+        void SlidePanel(int direction, Action change, bool queued)
+        {
+            if (pageSlide != null && !pageSlide.IsDisposed) pageSlide.Finish();
             Bitmap before = Snapshot(panel);
-            SetStatsView(statsClass, next);
-            Bitmap after = Snapshot(panel);
-            if (before == null || after == null) { if (before != null) before.Dispose(); if (after != null) after.Dispose(); return; }
-            statsSlide = new StatsSlide(before, after, direction) { Bounds = new Rectangle(Point.Empty, panel.ClientSize) };
-            panel.Controls.Add(statsSlide);
-            statsSlide.BringToFront();
-            statsSlide.Start();
+            change();
+            Action play = delegate
+            {
+                if (IsDisposed) { if (before != null) before.Dispose(); return; }
+                Bitmap after = Snapshot(panel);
+                if (before == null || after == null) { if (before != null) before.Dispose(); if (after != null) after.Dispose(); return; }
+                pageSlide = new PageSlide(before, after, direction, true) { Bounds = new Rectangle(Point.Empty, panel.ClientSize) };
+                panel.Controls.Add(pageSlide);
+                pageSlide.BringToFront();
+                pageSlide.Start();
+            };
+            if (queued) BeginInvoke((MethodInvoker)delegate { play(); });
+            else play();
         }
 
         static Bitmap Snapshot(Control c)
@@ -457,10 +477,85 @@ namespace AzerothLauncher
             if (current != null && current != "Home") GoBack();
         }
 
+        // ---- the side tree's controller selection: a blue highlight the right stick moves; A goes there
+        static readonly Color TreePickBack = Color.FromArgb(0x1d, 0x3a, 0x66), TreePickText = Color.FromArgb(0xb8, 0xdc, 0xff);
+        Label treePick;                                       // the entry the highlight stands on
+        Color treePickBack, treePickText;                     // its own colours, put back when the highlight moves on
+
+        List<Label> TreeEntries()
+        {
+            var list = new List<Label>();
+            foreach (Control c in controllerTree.Controls)
+            {
+                var l = c as GuideContentsLabel;              // the entries, not their fold arrows
+                if (l != null && !l.IsDisposed && l.Visible) list.Add(l);
+            }
+            list.Sort(delegate(Label a, Label b) { return a.Top.CompareTo(b.Top); });
+            return list;
+        }
+
         void StepTree(int direction)
         {
             if (controllerTree == null || controllerTree.IsDisposed || !controllerTree.Visible) return;
-            controllerTree.Wheel(direction > 0 ? -120 : 120);   // one wheel notch: one entry, as GuideContentsPanel steps
+            List<Label> entries = TreeEntries();
+            if (entries.Count == 0) return;
+            int at = treePick != null && !treePick.IsDisposed ? entries.IndexOf(treePick) : -1;
+            if (at < 0)
+            {
+                // the highlight starts where the tree says you are (the open entry), else at the top
+                at = entries.FindIndex(delegate(Label l) { return l.ForeColor == Theme.Hex("#fff2b0") && l.BackColor != Color.Transparent; });
+                if (at < 0) at = 0;
+                else at = Math.Max(0, Math.Min(entries.Count - 1, at + direction));
+            }
+            else at = Math.Max(0, Math.Min(entries.Count - 1, at + direction));
+            PickTreeEntry(entries[at]);
+        }
+
+        void PickTreeEntry(Label entry)
+        {
+            ClearTreePick();
+            treePick = entry;
+            treePickBack = entry.BackColor;
+            treePickText = entry.ForeColor;
+            ShowTreePick();
+            var tree = entry.Parent as ScrollPanel;
+            if (tree != null)
+            {
+                int offset = -tree.AutoScrollPosition.Y;
+                if (entry.Top < 0) tree.ScrollTo(offset + entry.Top - 4);
+                else if (entry.Bottom > tree.ClientSize.Height) tree.ScrollTo(offset + entry.Bottom - tree.ClientSize.Height + 4);
+            }
+        }
+
+        void ShowTreePick()
+        {
+            if (treePick == null || treePick.IsDisposed) { treePick = null; return; }
+            if (treePick.BackColor != TreePickBack) treePick.BackColor = TreePickBack;
+            if (treePick.ForeColor != TreePickText) treePick.ForeColor = TreePickText;
+        }
+
+        void ClearTreePick()
+        {
+            if (treePick != null && !treePick.IsDisposed) { treePick.BackColor = treePickBack; treePick.ForeColor = treePickText; }
+            treePick = null;
+        }
+
+        // A on a highlighted entry: the same as clicking it
+        bool ConfirmTreePick()
+        {
+            if (treePick == null || treePick.IsDisposed || !treePick.Visible) return false;
+            Label entry = treePick;
+            // the move slides up when the entry is below where you are, down when it is above
+            List<Label> entries = TreeEntries();
+            int from = entries.FindIndex(delegate(Label l) { return l != entry && l.BackColor == Theme.Hex("#382914"); });
+            int to = entries.IndexOf(entry);
+            int direction = from < 0 || to >= from ? 1 : -1;
+            ClearTreePick();
+            var onClick = typeof(Control).GetMethod("OnClick", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (onClick == null) return true;
+            // a Handbook move posts its page change; a Wiki section jump scrolls at once: the queued picture covers both
+            SlidePanel(direction, delegate { onClick.Invoke(entry, new object[] { EventArgs.Empty }); }, true);
+            return true;
         }
 
         // Y: the cursor ball goes to the Quick Access strip's first favorite

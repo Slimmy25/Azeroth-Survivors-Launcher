@@ -2550,7 +2550,9 @@ namespace AzerothLauncher
                     }
                 }
                 if (isCurrent) currentLink = link;
-                y += labelHeight + 1;
+                // room between lines, as the Wiki tree groups its entries: more between topics, less between a topic's pages
+                bool nextIsChild = i + 1 < entries.Count && (int)entries[i + 1][3] > 0;
+                y += labelHeight + (nextIsChild ? Math.Max(3, (int)(3 * navigationZoom)) : Math.Max(7, (int)(7 * navigationZoom)));
             }
             nav.AutoScrollMinSize = new Size(0, y + 6);
             if (currentLink != null && currentLink.Bottom > nav.ClientSize.Height) nav.ScrollTo(currentLink.Top - 20);
