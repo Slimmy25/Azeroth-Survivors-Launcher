@@ -41,9 +41,9 @@ namespace AzerothLauncher
             var list = new List<KeyValuePair<string, string[]>>();
             try
             {
-                foreach (string post in Util.Changelog)
+                foreach (string post in Data.Changelog)
                 {
-                    var m = Regex.Match(Util.PostTitle(post), @"^v?(\d+(?:\.\d+)+)");
+                    var m = Regex.Match(Data.PostTitle(post), @"^v?(\d+(?:\.\d+)+)");
                     if (!m.Success) continue;
                     string[] lines = post.Replace("\r", "").Split('\n');
                     list.Add(new KeyValuePair<string, string[]>(m.Groups[1].Value, lines));
@@ -122,7 +122,7 @@ namespace AzerothLauncher
         {
             try
             {
-                Cfg.Set("played_game_version", Util.GameVersion);
+                Cfg.Set("played_game_version", Data.GameVersion);
                 Cfg.Set("played_launcher_version", LauncherVersionText);
                 Cfg.Set("played_slimsuite_version", InstalledSlimSuiteVersion());
                 Cfg.Remove("whatsnew_shown");
@@ -136,7 +136,7 @@ namespace AzerothLauncher
         {
             string game0 = Cfg.Str("played_game_version"), launcher0 = Cfg.Str("played_launcher_version");
             if (string.IsNullOrEmpty(game0) && string.IsNullOrEmpty(launcher0)) return;   // never played through the launcher yet
-            string game1 = Util.GameVersion, launcher1 = LauncherVersionText;
+            string game1 = Data.GameVersion, launcher1 = LauncherVersionText;
             string slim0 = Cfg.Str("played_slimsuite_version"), slim1 = InstalledSlimSuiteVersion();
             string key = game1 + "|" + launcher1 + "|" + slim1;
             if (Cfg.Str("whatsnew_shown") == key) return;
@@ -172,9 +172,9 @@ namespace AzerothLauncher
             {
                 sb.Append(Lang.T("THE GAME")).Append("\n");
                 int shown = 0;
-                foreach (string post in Util.Changelog)
+                foreach (string post in Data.Changelog)
                 {
-                    string title = Util.PostTitle(post);
+                    string title = Data.PostTitle(post);
                     if (Util.ParseVersion(title) == null || !Newer(title, gameSince)) continue;
                     if (shown == 6) { sb.Append(Lang.T("More patches are on the News page.")).Append("\n"); break; }
                     sb.Append(Lang.F("Patch {0}", title)).Append("\n");
@@ -195,7 +195,7 @@ namespace AzerothLauncher
                 sb.Append(Lang.T("THE LAUNCHER")).Append("\n");
                 string current = null;
                 int lines = 0;
-                foreach (string raw in Util.LauncherChangelog.Split('\n'))
+                foreach (string raw in Data.LauncherChangelog.Split('\n'))
                 {
                     string line = raw.Trim();
                     var head = Regex.Match(line, @"^#+\s*v?(\d+(?:\.\d+)*)");
