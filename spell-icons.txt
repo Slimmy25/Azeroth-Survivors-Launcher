@@ -1,0 +1,201 @@
+Adrenaline Rush|spell_shadow_shadowworddominate
+Aimed Shot|inv_spear_07
+Arcane Concentration|spell_shadow_manaburn
+Arcane Explosion|spell_nature_wispsplode
+Arcane Missiles|spell_nature_starfall
+Arcane Power|spell_nature_lightning
+Arcane Shot|ability_impalingbolt
+Ardent Defender|spell_holy_ardentdefender
+Auto Shot|ability_whirlwind
+Backstab|ability_backstab
+Battle Shout|ability_warrior_battleshout
+Berserking|racial_troll_berserk
+Bestial Wrath|ability_druid_ferociousbite
+Blade Flurry|ability_warrior_punishingblow
+Bladestorm|ability_warrior_bladestorm
+Blast Wave|spell_holy_excorcism_02
+Blizzard|spell_frost_icestorm
+Blood Frenzy|ability_ghoulfrenzy
+Blood Fury|racial_orc_berserkerstrength
+Bloodrage|ability_racial_bloodrage
+Bloodthirst|spell_nature_bloodlust
+Butcher|spell_deathknight_butcher2
+Call of Flame|spell_fire_immolation
+Call of the Elements|spell_shaman_dropall_01
+Cannibalize|ability_racial_cannibalize
+Cat Form|ability_druid_catform
+Chain Lightning|spell_nature_chainlightning
+Chastise|ability_backstab
+Cheat Death|ability_rogue_cheatdeath
+Cleave|ability_warrior_cleave
+Concussive Shot|spell_frost_stun
+Cone of Cold|spell_frost_glacier
+Conflagrate|spell_fire_fireball
+Consecration|spell_holy_innerfire
+Contagion|ability_creature_disease_03
+Corruption|spell_shadow_abominationexplosion
+Curse of Agony|spell_shadow_curseofsargeras
+Daybreak|spell_holy_aspiration
+Deadly Poison|ability_rogue_dualweild
+Death Coil|spell_shadow_deathcoil
+Deep Wounds|ability_backstab
+Demonic Empowerment|spell_warlock_demonicempowerment
+Demoralizing Shout|ability_warrior_warcry
+Devouring Plague|spell_shadow_blackplague
+Diplomacy|inv_misc_note_02
+Dire Bear Form|ability_racial_bearform
+Divine Aegis|spell_holy_devineaegis
+Divine Favor|spell_holy_heal
+Divine Shield|spell_holy_divineintervention
+Divine Storm|ability_paladin_divinestorm
+Drain Life|spell_shadow_lifedrain02
+Earth Shock|spell_nature_earthshock
+Elemental Fury|spell_fire_volcano
+Elemental Mastery|spell_nature_wispheal
+Endurance|spell_nature_unyeildingstamina
+Engineering Specialization|inv_misc_gear_01
+Entangling Roots|spell_nature_stranglevines
+Entrapment|spell_nature_stranglevines
+Escape Artist|ability_rogue_trip
+Eviscerate|ability_rogue_eviscerate
+Execute|inv_sword_48
+Exorcism|spell_holy_excorcism_02
+Expansive Mind|inv_enchant_essenceeternallarge
+Explosive Trap|spell_fire_selfdestruct
+Faerie Fire|spell_nature_faeriefire
+Fear|spell_shadow_possession
+Feral Spirit|spell_shaman_feralspirit
+Fire Blast|spell_fire_fireball
+Fire Nova|spell_fire_sealoffire
+Fireball|spell_fire_flamebolt
+Flame Shock|spell_fire_flameshock
+Flamestrike|spell_fire_selfdestruct
+Force of Nature|spell_nature_forceofnature
+Fortified|ability_socererking_arcanefortification
+Frenzy|inv_misc_monsterclaw_03
+Frost Nova|spell_frost_frostnova
+Frost Shock|spell_frost_frostshock
+Frost Trap|spell_frost_freezingbreath
+Frostbite|spell_frost_frostarmor
+Frostbolt|spell_frost_frostbolt02
+Fury|spell_holy_blessingofstrength
+Ghostly Strike|spell_shadow_curse
+Gouge|ability_gouge
+Gun Specialization|inv_musket_03
+Hallowed Ground|spell_holy_crusade
+Hammer of Justice|spell_holy_sealofmight
+Hammer of Wrath|ability_thunderclap
+Hammer of the Righteous|ability_paladin_hammeroftherighteous
+Hardiness|inv_helmet_23
+Healing Wave|spell_nature_magicimmunity
+Hellfire|spell_fire_incinerate
+Holy Fire|spell_holy_searinglight
+Holy Light|spell_holy_holybolt
+Holy Nova|spell_holy_holynova
+Holy Shield|classic_spell_holy_blessingofprotection
+Holy Shock|spell_holy_searinglight
+Holy Wrath|spell_holy_excorcism
+Hot Streak|ability_mage_hotstreak
+Hunter's Mark|ability_hunter_snipershot
+Hurricane|spell_nature_cyclone
+Ice Barrier|spell_ice_lament
+Ignite|spell_fire_incinerate
+Immolate|spell_fire_immolation
+Immolation Trap|spell_fire_flameshock
+Insect Swarm|spell_nature_insectswarm
+Judgement|spell_holy_righteousfury
+Kidney Shot|ability_rogue_kidneyshot
+Kill Shot|ability_hunter_assassinate2
+Killing Spree|inv_112_rogue_betweentheeyes
+Light's Grace|spell_holy_lightsgrace
+Lightning Bolt|spell_nature_lightning
+Lightning Shield|spell_nature_lightningshield
+Lightwell|spell_holy_summonlightwell
+Maelstrom Weapon|spell_shaman_maelstromweapon
+Magma Totem|spell_fire_selfdestruct
+Mind Blast|spell_shadow_unholyfrenzy
+Mind Flay|spell_shadow_siphonmana
+Moonfire|spell_nature_starfall
+Mortal Strike|ability_warrior_savageblow
+Mortal Wounds|ability_criticalstrike
+Multi-Shot|ability_upgrademoonglaive
+Mutilate|ability_rogue_shadowstrikes
+Nature Resistance|spell_nature_spiritarmor
+Nightfall|spell_shadow_twilight
+Omen of Clarity|spell_nature_crystalball
+Pact of the Annihilan|inv_misc_magtheridonshead
+Penance|spell_holy_penance
+Perception|spell_nature_sleep
+Piercing Shots|ability_hunter_piercingshots
+Power Word: Shield|spell_holy_powerwordshield
+Preparation|spell_shadow_antishadow
+Presence of Mind|spell_nature_enchantarmor
+Psychic Scream|spell_shadow_psychicscream
+Purifying Flame|ability_mage_firestarter
+Pyroblast|spell_fire_fireball02
+Pyroclasm|spell_fire_volcano
+Quickness|ability_racial_shadowmeld
+Radiance|inv_inscriptions_darkmoondeckshine_0
+Rain of Chaos|spell_fire_felrainoffire
+Rain of Fire|spell_shadow_rainoffire
+Rake|ability_druid_disembowel
+Rampage|ability_warrior_rampage
+Rapid Fire|ability_hunter_runningshot
+Rapture|spell_holy_rapture
+Redemption|spell_holy_resurrection
+Regeneration|spell_nature_regenerate
+Regrowth|spell_nature_resistnature
+Reincarnation|spell_nature_reincarnation
+Rejuvenation|spell_nature_rejuvenation
+Rend|ability_gouge
+Renew|spell_holy_renew
+Rockbiter Weapon|spell_nature_rockbiter
+Rupture|ability_rogue_rupture
+Seal Fate|spell_shadow_chilltouch
+Seal of Command|ability_warrior_innerrage
+Searing Pain|spell_fire_soulburn
+Searing Totem|spell_fire_searingtotem
+Seed of Corruption|spell_shadow_seedofdestruction
+Serpent Sting|ability_hunter_quickshot
+Shadow Bolt|spell_shadow_shadowbolt
+Shadow Cleave|inv_mace_1h_stratholme_d_02
+Shadow Dance|ability_rogue_shadowdance
+Shadow Resistance|spell_shadow_ragingscream
+Shadow Weaving|spell_shadow_blackplague
+Shadow Word: Pain|spell_shadow_shadowwordpain
+Shadowform|spell_shadow_shadowform
+Shadowmeld|ability_ambush
+Shadowy Apparitions|ability_priest_shadowyapparition
+Shield Slam|inv_shield_05
+Shockwave|ability_warrior_shockwave
+Shred|spell_shadow_vampiricaura
+Sinister Strike|spell_shadow_ritualofsacrifice
+Slice and Dice|ability_rogue_slicedice
+Smite|spell_holy_holysmite
+Soul Devourer|trade_engineering
+Soul Link|spell_shadow_gathershadows
+Soulfire|spell_fire_fireball02
+Splitting Ice|spell_frost_ice-shards
+Starfall|spell_arcane_starfire
+Starfire|spell_arcane_starfire
+Stoneform|spell_shadow_unholystrength
+Stormstrike|spell_holy_sealofmight
+Summon Water Elemental|spell_shadow_sealofkings
+Sweeping Strikes|ability_rogue_slicedice
+Swiftmend|inv_relics_idolofrejuvenation
+Swipe|inv_misc_monsterclaw_03
+Tame Beast|ability_hunter_beasttaming
+The Art of War|ability_paladin_artofwar
+The Human Spirit|inv_enchant_shardbrilliantsmall
+Thorns|spell_nature_thorns
+Throwing Specialization|inv_throwingaxe_03
+Thunder Clap|spell_nature_thunderclap
+Toxic Bloom|inv_misc_herb_felweed
+Tranquility|spell_nature_tranquility
+Tree of Life|ability_druid_treeoflife
+Volley|ability_marksmanship
+War Stomp|ability_warstomp
+Whirlwind|ability_whirlwind
+Will of the Forsaken|spell_shadow_raisedead
+Windfury|spell_shaman_unleashweapon_wind
+Wrath|spell_nature_abolishmagic
