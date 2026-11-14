@@ -257,6 +257,14 @@ namespace AzerothLauncher
         bool guideWikiIndex;
         bool guideBuildVideos;
 
+        // a topic the New Player Handbook names (its group's list, not the group's own name)
+        static bool IsHandbookTopic(string title)
+        {
+            for (int i = 1; i < GuideGroups[0].Length; i++)
+                if (string.Equals(GuideGroups[0][i], title, StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
+
         static int GroupOf(string title)
         {
             for (int g = 0; g < GuideGroups.Length; g++)
@@ -1302,7 +1310,8 @@ namespace AzerothLauncher
             guideLastTopic = gTopic;
             GuideTopic topic = topics[gTopic];
             if (gPage >= topic.Pages.Count) gPage = -1;
-            if (gPage < 0 && topic.Pages.Count > 0) { GuideTopicPages(topic); return; }
+            // a Handbook topic with pages opens as its own passage (with the Handbook tree listing its pages), not as cards
+            if (gPage < 0 && topic.Pages.Count > 0 && !IsHandbookTopic(topic.Title)) { GuideTopicPages(topic); return; }
             GuideArticle(topics, topic);
            
         }
@@ -2284,14 +2293,16 @@ namespace AzerothLauncher
             bool classArticle = inPage && string.Equals(topic.Title, "Classes", StringComparison.OrdinalIgnoreCase) &&
                                 Talents.Of(shown.Title).Count > 0;
             classArticleName = classArticle ? shown.Title : null;
+            // New Player Handbook pages read like the Wiki: the passage on the left, the Handbook's tree on the right
+            bool handbookArticle = !classArticle && topics.IndexOf(topic) >= 0 && IsHandbookTopic(topic.Title);
             if (classArticle) shown = ClassPageWithoutTreeSummary(shown);
             GuideHeader(shown.Title, topics);
 
-            int articleTop = GuideTop + (classArticle ? 4 : 22);
+            int articleTop = GuideTop + (classArticle || handbookArticle ? 4 : 22);
             // Keep the contents tree broad enough for its labels, using the spare space
             // on the right while leaving a small gutter before the favorites strip.
             int navWidth = 0;
-            if (classArticle)
+            if (classArticle || handbookArticle)
             {
                 // Keep the compact tree column against the right boundary, leaving the
                 // remaining width to the article. Entries indent normally within it.
@@ -2303,11 +2314,11 @@ namespace AzerothLauncher
             int scrollTop = articleTop;
             // The passage and free-floating tree sit side by side for the full height;
             // only the tree's own column is reserved, so the article never runs beneath it.
-            int scrollWidth = classArticle ? PW - 6 - navWidth : PW - 8;
+            int scrollWidth = classArticle || handbookArticle ? PW - 6 - navWidth : PW - 8;
             var sp = MakeThinScroll(panel, new Rectangle(4, scrollTop, scrollWidth, Math.Max(1, PH - 4 - scrollTop)), GuideCardBg, Theme.Bronze,
                                     Theme.GoldDim, Theme.Gold);
             guideArticleScroll = sp;
-            if (!classArticle)
+            if (!classArticle && !handbookArticle)
             {
                 var topLink = new Label { Text = "↑ " + Lang.T("Back to Top"), AutoSize = true, UseMnemonic = false,
                     Font = Theme.F(8.5f, FontStyle.Underline), ForeColor = Theme.Gold, BackColor = panel.BackColor,
@@ -2326,6 +2337,7 @@ namespace AzerothLauncher
                 ExtendClassGuide(sp, topics, classArticleName);
                 BuildClassContentsSidebar(sp, articleTop, navWidth, topics, classArticleName);
             }
+            else if (handbookArticle) BuildHandbookSidebar(sp, articleTop, navWidth, topics, topic);
             var stack = new Stack<Control>();
             stack.Push(sp);
             while (stack.Count > 0)
@@ -2445,6 +2457,103 @@ namespace AzerothLauncher
             int next = Math.Max(0, Math.Min(sections.Count - 1, index + direction));
             if (next >= 0 && next < sections.Count && next != index)
                 NavigateClassArticleToControl(sections[next].Value);
+        }
+
+        bool handbookTreeOpen = true;                         // the Handbook tree shows the open topic's pages
+
+        // The New Player Handbook's tree, styled like the Wiki's: every Handbook topic in order, the open one highlighted
+        // with its pages beneath. A click, one wheel notch or the controller's right stick goes to the next or previous entry.
+        void BuildHandbookSidebar(ScrollPanel sp, int top, int width, List<GuideTopic> topics, GuideTopic open)
+        {
+            float navigationZoom = Theme.Zoom;
+            Font regular = Theme.F(7f, FontStyle.Regular), bold = Theme.F(7f, FontStyle.Bold);
+            int navTop = top + Math.Max(24, (int)(28 * Theme.Zoom));
+            var nav = new GuideContentsPanel { Bounds = new Rectangle(PW - width, navTop, width, Math.Max(1, PH - navTop - 4)),
+                                               BackColor = panel.BackColor, HideBars = true };
+            controllerTree = nav;
+            panel.Controls.Add(nav);
+            nav.BringToFront();
+
+            // the entries in reading order: (topic index, page index or -1, label, level)
+            var entries = new List<object[]>();
+            int openIndex = topics.IndexOf(open);
+            for (int g = 1; g < GuideGroups[0].Length; g++)
+            {
+                int ti = topics.FindIndex(delegate(GuideTopic t) { return string.Equals(t.Title, GuideGroups[0][g], StringComparison.OrdinalIgnoreCase); });
+                if (ti < 0) continue;
+                entries.Add(new object[] { ti, -1, topics[ti].Title, 0 });
+                if (ti == openIndex && handbookTreeOpen)
+                    for (int pi = 0; pi < topics[ti].Pages.Count; pi++) entries.Add(new object[] { ti, pi, topics[ti].Pages[pi].Title, 1 });
+            }
+            int currentEntry = entries.FindIndex(delegate(object[] e) { return (int)e[0] == gTopic && (int)e[1] == gPage; });
+            if (currentEntry < 0) currentEntry = entries.FindIndex(delegate(object[] e) { return (int)e[0] == gTopic; });
+
+            Action<int> go = delegate(int index)
+            {
+                if (index < 0 || index >= entries.Count) return;
+                int ti = (int)entries[index][0], pi = (int)entries[index][1];
+                if (!IsDisposed && IsHandleCreated) BeginInvoke((MethodInvoker)delegate { if (!IsDisposed) SetGuideView(ti, pi); });
+            };
+            nav.SectionStep = delegate(int direction) { go(Math.Max(0, Math.Min(entries.Count - 1, currentEntry + direction))); };
+            controllerTreeFold = delegate(bool show)
+            {
+                if (nav.IsDisposed || handbookTreeOpen == show) return;
+                handbookTreeOpen = show;
+                if (!IsDisposed && IsHandleCreated) BeginInvoke((MethodInvoker)delegate { if (!IsDisposed) BuildPanel("Guide"); });
+            };
+
+            int y = 8, indent = Math.Max(8, (int)(9 * navigationZoom));
+            Label currentLink = null;
+            for (int i = 0; i < entries.Count; i++)
+            {
+                int index = i, level = (int)entries[i][3];
+                string label = (string)entries[i][2];
+                bool isCurrent = i == currentEntry;
+                bool openTopic = (int)entries[i][0] == openIndex && level == 0;
+                string text = Lang.T(label);
+                int left = level * indent + (level == 0 ? indent : 0);
+                int labelWidth = Math.Max(1, width - left);
+                int labelHeight = Math.Max(15, TextRenderer.MeasureText(text, bold, new Size(labelWidth, 100),
+                                                                        TextFormatFlags.WordBreak | TextFormatFlags.NoPadding).Height + 2);
+                var link = new GuideContentsLabel(bold) { Text = text, AutoSize = false, Height = labelHeight, Width = labelWidth,
+                    Left = left, Top = y, UseMnemonic = false, AutoEllipsis = false, TextAlign = ContentAlignment.TopLeft,
+                    BackColor = isCurrent ? Theme.Hex("#382914") : openTopic ? Theme.Hex("#241e19") : Color.Transparent,
+                    ForeColor = isCurrent ? Theme.Hex("#fff2b0") : openTopic ? Theme.Hex("#e9bd62") : Theme.GoldDim,
+                    Cursor = Cursors.Hand, Font = isCurrent || openTopic ? bold : regular, AccessibleRole = AccessibleRole.Link };
+                Color rest = link.BackColor;
+                link.Click += delegate { go(index); };
+                link.MouseEnter += delegate { link.BackColor = Theme.Hex("#28212b"); };
+                link.MouseLeave += delegate { link.BackColor = rest; };
+                PatchHighlights.Hit changed = PatchHighlights.For(label);
+                if (changed != null && !isCurrent)
+                {
+                    link.ForeColor = PatchHighlightColor;
+                    WowButton.Tips.SetToolTip(link, PatchHighlights.Tip(changed));
+                }
+                nav.Controls.Add(link);
+                if (level == 0)
+                {
+                    // the topic's own arrow, as in the Wiki tree: open topics show their pages
+                    bool hasPages = topics[(int)entries[i][0]].Pages.Count > 0;
+                    if (hasPages)
+                    {
+                        bool shownOpen = openTopic && handbookTreeOpen;
+                        var arrow = new Label { Text = shownOpen ? "\u25be" : "\u25b8", AutoSize = false,
+                            Bounds = new Rectangle(0, y, indent, labelHeight), Font = Theme.F(7.0f),
+                            ForeColor = Theme.Gold, BackColor = Color.Transparent, Cursor = Cursors.Hand, TextAlign = ContentAlignment.TopLeft };
+                        arrow.Click += delegate
+                        {
+                            if (openTopic) { if (controllerTreeFold != null) controllerTreeFold(!handbookTreeOpen); }
+                            else { handbookTreeOpen = true; go(index); }
+                        };
+                        nav.Controls.Add(arrow);
+                    }
+                }
+                if (isCurrent) currentLink = link;
+                y += labelHeight + 1;
+            }
+            nav.AutoScrollMinSize = new Size(0, y + 6);
+            if (currentLink != null && currentLink.Bottom > nav.ClientSize.Height) nav.ScrollTo(currentLink.Top - 20);
         }
 
         void BuildClassContentsSidebar(ScrollPanel sp, int top, int width, List<GuideTopic> topics, string className)
@@ -2689,6 +2798,16 @@ namespace AzerothLauncher
                 nav.Invalidate();
             };
             render();
+            // the controller's right stick, left and right: close and open the tree's branches (Controller.cs)
+            controllerTreeFold = delegate(bool open)
+            {
+                if (nav.IsDisposed) return;
+                if (open) { wikiOpen = true; classesOpen = true; activeClassOpen = true; }
+                else if (activeClassOpen && className != null) activeClassOpen = false;   // close one level at a time
+                else if (classesOpen) { classesOpen = false; activeClassOpen = false; }
+                else { wikiOpen = false; classesOpen = false; activeClassOpen = false; }
+                render();
+            };
             sp.Scrolled += delegate { UpdateClassNavigation(sp); };
         }
 

@@ -63,6 +63,7 @@ namespace AzerothLauncher
         static readonly string[] StatTabs = { "Overview", "Classes", "Abilities", "Records", "Nemesis", "Co-op", "History", "Armory", "Combat", "Build Journal" };
         string statsClass;                                   // null = every class, else a class key
         int statsTab;
+        ScrollPanel statsScroll;                          // the Stats page on screen
 
         // WoW's class colors, by the class's key; others get gold
         public static Color ClassColorOf(string key) { return ClassColor(key); }
@@ -141,6 +142,7 @@ namespace AzerothLauncher
 
             var sp = MakeThinScroll(panel, new Rectangle(20, pageTop, PW - 40, PH - 12 - pageTop), Armory.Page, Theme.Bronze,
                                     Armory.SlotEdge, Theme.GoldDim);
+            statsScroll = sp;                                // the controller's left stick scrolls it (Controller.cs)
             // see-through: the launcher's picture behind the page, the cards dark glass over it (ArmoryUI.cs)
             SeeThroughSection = true;
             panel.Invalidate();

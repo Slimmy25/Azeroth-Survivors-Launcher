@@ -1,3 +1,10 @@
+# v3.40 (2026-11-14)
+
+- Controller in Stats: the left stick scrolls the page, and the right stick left and right turns to the previous or next Stats page (Overview, Classes, Abilities ... Build Journal). The new page slides in from the right going forward and from the left going back, one page at a time.
+- Controller: the Windows pointer is hidden while the blue ball stands in for it (a mouse brings it back). The ball is a little bigger, and over anything you can click it grows slightly and glows beneath.
+- Controller in Wiki class articles and Handbook pages: the left stick scrolls the passage, the right stick moves up and down the side tree, and pushing it left or right closes and opens the tree's branches.
+- New Player Handbook: every Handbook page now reads like the Wiki, with the passage on the left and a Wiki-style tree of the Handbook's topics (and the open topic's pages) on the right. A click, a wheel notch or the controller moves through it.
+
 # v3.39 (2026-11-14)
 
 - Controller support: Start plays, A confirms, B goes back, X saves the current spot to Quick Access, Y jumps to your favorites, the right stick steps through the Wiki's tree, and the left stick moves a glowing blue cursor ball that glows brighter over anything you can click. It works with Xbox controllers and a Steam Deck's controls, only while the launcher is the active window.
