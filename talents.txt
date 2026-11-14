@@ -1,0 +1,503 @@
+Talent trees of Azeroth Survivors, read from the game itself at wow.aethus.pl by tools/game_talents.py.
+Do not edit by hand: run the tool again after a game update.
+key | Name | Icon | row | column | ranks | text   ({v} is the number that grows with each rank)
+===
+@tree Warrior | Arms
+imp_heroic | Trauma | Ability_Warrior_DecisiveStrike | 0 | 0 | 5 | You deal {v}% more damage to enemies suffering your damage-over-time effects, such as Rend and Deep Wounds.
+deflection | Deflection | Ability_Parry | 0 | 1 | 5 | Reduces all damage taken by {v}%.
+imp_rend | Improved Rend | Ability_Gouge | 1 | 0 | 3 | Rend deals {v}% more damage.
+tactical_mastery | Tactical Mastery | Spell_Nature_EnchantArmor | 1 | 2 | 5 | Your cooldowns recover {v}% faster.
+deep_wounds | Deep Wounds | Ability_BackStab | 2 | 1 | 1 | Milestone. Your critical strikes make the target bleed for {v}% of the hit over 6 sec.
+anger_management | Anger Management | Spell_Holy_BlessingOfStamina | 2 | 2 | 3 | Regenerate {v} more health per second.
+impale | Impale | Ability_SearingArrow | 3 | 0 | 3 | Your critical strikes deal {v}% more damage.
+two_hand_spec | Two-Handed Weapon Specialization | INV_Axe_09 | 3 | 2 | 5 | Increases all damage by {v}%.
+sweeping_strikes | Sweeping Strikes | Ability_Rogue_SliceDice | 4 | 1 | 1 | Milestone. Cleave, Mortal Strike and Execute sweep on: each hit also strikes 2 more enemies near its target for {v}% of it.
+imp_execute | Improved Execute | INV_Sword_48 | 4 | 2 | 3 | Execute and Mortal Strike deal {v}% more damage.
+sword_spec | Sword Specialization | INV_Sword_27 | 5 | 0 | 5 | {v}% chance for any spell to strike twice.
+weapon_mastery | Weapon Mastery | Ability_Warrior_Sunder | 5 | 2 | 3 | You deal {v}% more damage to enemies below 30% health.
+mortal_wounds | Mortal Wounds | Ability_Warrior_SavageBlow | 6 | 1 | 1 | Capstone. You start every run with Mortal Strike; a killing blow by Mortal Strike or Execute readies it again at once, at most once a second.
+@tree Warrior | Fury
+cruelty | Cruelty | Ability_Rogue_Eviscerate | 0 | 1 | 5 | Increases your critical strike chance by {v}%.
+booming_voice | Booming Voice | Spell_Nature_Purge | 0 | 2 | 5 | Your shouts reach {v}% farther and last longer.
+unbridled_wrath | Bloodlust | Spell_Shadow_BloodBoil | 1 | 0 | 5 | Battle Shout and your other damage, haste, shield and thorns buffs are {v}% stronger.
+imp_battle_shout | Improved Battle Shout | Ability_Warrior_BattleShout | 1 | 2 | 3 | Battle Shout's cooldown is {v}% shorter.
+rampage | Rampage | Spell_Shadow_UnholyFrenzy | 2 | 1 | 1 | Milestone. Every {v}th kill unleashes a free Whirlwind.
+imp_cleave | Improved Cleave | Ability_Warrior_Cleave | 2 | 2 | 3 | Cleave deals {v}% more damage.
+dual_wield_spec | Dual Wield Specialization | Ability_DualWield | 3 | 0 | 5 | Increases all damage by {v}%.
+imp_whirlwind | Improved Whirlwind | Ability_Whirlwind | 3 | 2 | 3 | Whirlwind reaches {v}% farther.
+flurry | Flurry | Ability_GhoulFrenzy | 4 | 1 | 1 | Milestone. Whirlwind and Bloodthirst strike twice: everything they hit is struck again at once for 40% of the blow.
+death_wish | Death Wish | Spell_Shadow_DeathPact | 4 | 2 | 3 | Bloodthirst and Whirlwind deal {v}% more damage.
+blood_craze | Blood Craze | Spell_Shadow_SummonImp | 5 | 0 | 3 | {v}% of all the damage you deal heals you.
+imp_berserker | Improved Berserker Stance | Ability_Racial_Avatar | 5 | 2 | 5 | Increases your critical strike damage by {v}%.
+bladestorm | Bladestorm | Ability_Whirlwind | 6 | 1 | 1 | Capstone. You start every run with Whirlwind, and you never stop spinning: a free Whirlwind every 3 sec.
+@tree Warrior | Protection
+shield_spec | Shield Specialization | INV_Shield_06 | 0 | 0 | 5 | Reduces all damage taken by {v}%.
+anticipation | Anticipation | Spell_Nature_MirrorImage | 0 | 2 | 5 | Increases your maximum health by {v}%.
+imp_thunder_clap | Improved Thunder Clap | Ability_ThunderClap | 1 | 0 | 3 | Thunder Clap deals an extra {v}% of your maximum health.
+toughness | Toughness | Spell_Holy_Devotion | 1 | 2 | 5 | Regenerate {v}% of your maximum health per second.
+heavy_shield | Heavy Shield | INV_Shield_05 | 2 | 0 | 3 | Shield Slam deals an extra {v}% of your maximum health.
+shockwave | Shockwave | Ability_Warrior_Revenge | 2 | 1 | 1 | Milestone. Each Shield Slam sends a shockwave from its first target: every enemy within 8 yd of it is struck for {v}% of the blow and stunned.
+imp_demo_shout | Improved Demoralizing Shout | Ability_Warrior_WarCry | 2 | 2 | 3 | Enemies hit by Demoralizing Shout take {v}% more damage from you and your allies for 6 sec.
+defiance | Defiance | Ability_Warrior_InnerRage | 3 | 0 | 3 | You deal {v}% more damage for every 10% damage reduction you have.
+imp_shield_slam | Improved Shield Slam | Ability_Warrior_ShieldBash | 3 | 2 | 3 | Shield Slam deals {v}% more damage and recovers faster.
+shield_mastery | Shield Mastery | Ability_Defend | 4 | 0 | 3 | Shield Slam's shield holds {v}% more of your maximum health.
+fortified | Fortified | Ability_Warrior_ShieldWall | 4 | 1 | 1 | Milestone. Every Shield Slam raises a shield of {v}% of your maximum health, stacking up to 30% (42% with Shield Mastery), and while a shield holds, you deal 20% more damage.
+last_stand | Last Stand | Spell_Holy_AshesToAshes | 5 | 0 | 1 | A blow that would kill you leaves you at 40% health instead, then you answer with a free Shield Slam and a shield of 10% of your maximum health. Once every 90 sec.
+unbreakable | Unbreakable | Ability_Warrior_Sunder | 5 | 2 | 3 | Damage reduction past the cap is not wasted: each 1% of it becomes {v}% more damage.
+titan | Titan | Ability_Warrior_DefensiveStance | 6 | 1 | 1 | Capstone. You start every run with Shield Slam, your damage reduction can reach 70% instead of 60%, and every spell you cast deals an extra 1.5% of your maximum health, and Shield Slam also strikes for 2% of its target's maximum health.
+@tree Paladin | Holy
+divine_strength | Divine Strength | Ability_GolemThunderClap | 0 | 1 | 5 | Increases all damage by {v}%.
+divine_intellect | Divine Intellect | Spell_Nature_Sleep | 0 | 2 | 5 | Regenerate {v} more health per second.
+healing_light | Healing Light | Spell_Holy_HolyBolt | 1 | 0 | 3 | Holy Light heals {v}% more.
+imp_seal | Improved Seal of Righteousness | Ability_ThunderBolt | 1 | 2 | 5 | Judgement and Exorcism deal {v}% more damage.
+divine_favor | Divine Favor | Spell_Holy_Heal | 2 | 1 | 1 | Milestone. You start every run with Holy Shock, and each of its bolts leaps to 2 more enemies for {v}% of it.
+unyielding_faith | Unyielding Faith | Spell_Holy_UnyieldingFaith | 2 | 2 | 3 | Reduces all damage taken by {v}%.
+holy_power | Holy Power | Spell_Holy_Power | 3 | 0 | 5 | Increases your critical strike chance by {v}%.
+lasting_judgement | Lasting Judgement | Spell_Holy_HealingAura | 3 | 2 | 3 | Holy Shock's cooldown is {v}% shorter.
+daybreak | Daybreak | Spell_Holy_Excorcism | 4 | 1 | 1 | Milestone. Holy Shock's critical strikes call down a free Holy Wrath around you, at most once every 3 sec.
+sanctified_light | Sanctified Light | Spell_Holy_HealingFocus | 4 | 2 | 5 | Holy spells deal {v}% more damage.
+holy_guidance | Holy Guidance | Spell_Holy_SealOfSalvation | 5 | 0 | 3 | Increases your maximum health by {v}%.
+purifying_power | Purifying Power | Spell_Holy_Purify | 5 | 2 | 3 | Holy Wrath and Consecration reach {v}% farther.
+lights_grace | Light's Grace | Spell_Holy_SearingLight | 6 | 1 | 1 | Capstone. A Holy Wrath bursts from you on its own every 14 sec.
+@tree Paladin | Protection
+imp_devotion | Improved Devotion Aura | Spell_Holy_DevotionAura | 0 | 0 | 5 | Reduces all damage taken by {v}%.
+redoubt | Redoubt | Ability_Defend | 0 | 2 | 5 | Increases your maximum health by {v}%.
+imp_consecration | Improved Consecration | Spell_Holy_InnerFire | 1 | 0 | 3 | Every tick of Consecration deals an extra {v}% of your maximum health.
+spiritual_attunement | Spiritual Attunement | Spell_Holy_BlessedRecovery | 1 | 2 | 3 | {v}% of all the damage you deal heals you.
+weighted_hammer | Weighted Hammer | Spell_Holy_SealOfMight | 2 | 0 | 3 | Hammer of Justice deals an extra {v}% of your maximum health.
+hallowed_ground | Hallowed Ground | Spell_Holy_SealOfProtection | 2 | 1 | 1 | Milestone. Every Hammer of Justice that lands hallows the ground beneath you: a free Consecration, at most once every 4 sec.
+judgement_crusader | Judgement of the Crusader | Spell_Holy_HolySmite | 2 | 2 | 3 | Enemies burning in your Consecration take {v}% more damage from you for 3 sec.
+righteous_fury | Righteous Fury | Spell_Holy_SealOfFury | 3 | 0 | 3 | Every spell you cast deals an extra {v}% of your maximum health.
+imp_hoj | Improved Hammer of Justice | Spell_Holy_SealOfWrath | 3 | 2 | 3 | Hammer of Justice deals {v}% more damage and recovers faster.
+blessed_life | Blessed Life | Spell_Holy_GreaterBlessingofSanctuary | 4 | 0 | 3 | Consecration's shield holds {v}% more of your maximum health.
+ardent_defender | Ardent Defender | Spell_Holy_HolyProtection | 4 | 1 | 1 | Milestone. You start every run with Hammer of Justice. Every Consecration raises a shield of {v}% of your maximum health, stacking up to 30% (39% with Blessed Life), and while a shield holds, you deal 20% more damage.
+divine_intervention | Divine Intervention | Spell_Nature_TimeStop | 5 | 0 | 1 | A blow that would kill you leaves you at 30% health instead, wrapped in a free Divine Shield and a free Consecration. Once every 90 sec.
+sacred_duty | Sacred Duty | Spell_Holy_DivineIntervention | 5 | 2 | 3 | While a shield holds, you deal {v}% more damage.
+hammer_righteous | Hammer of the Righteous | Spell_Holy_BlessingOfProtection | 6 | 1 | 1 | Capstone. Your maximum health is 15% higher, every spell you cast deals an extra 1% of your maximum health, Hammer of Justice also strikes for 1.5% of its target's maximum health, and a shield that breaks bursts in holy light: half of what it absorbed, up to half the most it held, strikes every enemy within 10 yd.
+@tree Paladin | Retribution
+imp_might | Improved Blessing of Might | Spell_Holy_FistOfJustice | 0 | 1 | 5 | Increases all damage by {v}%.
+benediction | Benediction | Spell_Frost_WindWalkOn | 0 | 2 | 5 | Your cooldowns recover {v}% faster.
+imp_judgement | Improved Judgement | Spell_Holy_RighteousFury | 1 | 0 | 3 | Judgement's cooldown is {v}% shorter.
+deflection_pal | Deflection | Ability_Parry | 1 | 2 | 5 | Reduces all damage taken by {v}%.
+seal_of_command | Seal of Command | Ability_Warrior_InnerRage | 2 | 1 | 1 | Milestone. You start every run with Judgement, and every Judgement also strikes 2 more enemies near its target for {v}% of it.
+pursuit | Pursuit of Justice | Spell_Holy_PersuitofJustice | 2 | 2 | 2 | Increases your movement speed by {v}%.
+conviction | Conviction | Spell_Holy_RetributionAura | 3 | 0 | 5 | Increases your critical strike chance by {v}%.
+righteous_hammer | Righteous Hammer | Ability_ThunderClap | 3 | 2 | 3 | Hammer of Wrath has a {v}% chance to strike its target again.
+art_of_war | The Art of War | Spell_Holy_Excorcism_02 | 4 | 1 | 1 | Milestone. Your critical strikes have a {v}% chance to hurl a free Exorcism, at most once a second.
+sanctity_aura | Sanctity Aura | Spell_Holy_MindVision | 4 | 2 | 3 | Holy spells deal {v}% more damage.
+eye_for_an_eye | Eye for an Eye | Spell_Holy_EyeforanEye | 5 | 0 | 3 | {v}% of the damage enemies deal you in melee is dealt back to them.
+vindication | Vindication | Spell_Holy_Vindication | 5 | 2 | 3 | Increases your critical strike damage by {v}%.
+divine_storm | Divine Storm | Spell_Holy_SealOfRighteousness | 6 | 1 | 1 | Capstone. You start every run with Exorcism, and every Exorcism bursts on its target, striking every enemy within 5 yd for {v}% of it.
+@tree Hunter | Beast Mastery
+imp_hawk | Improved Aspect of the Hawk | Spell_Nature_RavenForm | 0 | 1 | 5 | Your cooldowns recover {v}% faster.
+endurance_training | Endurance Training | Spell_Nature_Reincarnation | 0 | 2 | 5 | Increases your maximum health by {v}%.
+imp_monkey | Improved Aspect of the Monkey | Ability_Hunter_AspectOfTheMonkey | 1 | 0 | 5 | Reduces all damage taken by {v}%.
+pathfinding | Pathfinding | Ability_Mount_JungleTiger | 1 | 2 | 2 | Increases your movement speed by {v}%.
+tame_beast | Tame Beast | Ability_Hunter_BeastTaming | 2 | 1 | 1 | Milestone. A wolf fights at your side, biting what you shoot.
+unleashed_fury | Unleashed Fury | Ability_BullRush | 2 | 2 | 5 | Your pets deal {v}% more damage.
+ferocity_hunter | Ferocity | INV_Misc_MonsterClaw_04 | 3 | 0 | 5 | Increases your and your pets' critical strike chance by {v}%.
+spirit_bond | Spirit Bond | Ability_Druid_DemoralizingRoar | 3 | 2 | 2 | Regenerate {v} more health per second.
+frenzy_hunter | Frenzy | INV_Misc_MonsterClaw_03 | 4 | 1 | 1 | Milestone. Your pets' bites have a {v}% chance to fire a free Multi-Shot.
+bestial_discipline | Bestial Discipline | Spell_Nature_AbolishMagic | 4 | 2 | 3 | Your pets deal {v}% more damage.
+intimidation | Intimidation | Ability_Devour | 5 | 0 | 3 | Auto Shot and Multi-Shot deal {v}% more damage.
+ferocious_inspiration | Ferocious Inspiration | Ability_Hunter_BeastCall | 5 | 2 | 3 | Increases all damage by {v}%.
+bestial_wrath | Bestial Wrath | Ability_Druid_FerociousBite | 6 | 1 | 1 | Capstone. A raptor joins your wolf, and your pets' bites tear through 2 more enemies nearby for {v}% of the bite.
+@tree Hunter | Marksmanship
+lethal_shots | Lethal Shots | Ability_SearingArrow | 0 | 1 | 5 | Increases your critical strike chance by {v}%.
+efficiency | Efficiency | Spell_Frost_WizardMark | 0 | 2 | 5 | Your cooldowns recover {v}% faster.
+imp_arcane_shot | Improved Arcane Shot | Ability_ImpalingBolt | 1 | 0 | 5 | Arcane Shot's cooldown is {v}% shorter.
+imp_serpent_sting | Improved Serpent Sting | Ability_Hunter_Quickshot | 1 | 2 | 5 | Serpent Sting deals {v}% more damage.
+piercing_shots | Piercing Shots | Ability_PierceDamage | 2 | 1 | 1 | Milestone. Auto Shot pierces: every arrow also strikes 1 enemy beyond its target for {v}% of it.
+mortal_shots | Mortal Shots | INV_Spear_07 | 2 | 2 | 5 | Increases your critical strike damage by {v}%.
+ranged_spec | Ranged Weapon Specialization | INV_Weapon_Rifle_06 | 3 | 0 | 5 | Increases all damage by {v}%.
+imp_multi_shot | Improved Multi-Shot | Ability_UpgradeMoonGlaive | 3 | 2 | 2 | Multi-Shot fires at {v} more targets.
+rapid_fire | Rapid Fire | Ability_Hunter_RunningShot | 4 | 1 | 1 | Milestone. Every {v}th shot you fire triggers a free Aimed Shot, at most twice a second.
+barrage | Barrage | Ability_Marksmanship | 4 | 2 | 3 | Multi-Shot and Volley deal {v}% more damage.
+hawk_eye | Hawk Eye | Ability_TownWatch | 5 | 0 | 3 | You deal {v}% more damage to elites and bosses.
+scatter_shot | Scatter Shot | Ability_GolemStormBolt | 5 | 2 | 3 | Concussive Shot and Aimed Shot cooldowns are {v}% shorter.
+kill_shot | Kill Shot | INV_Weapon_Rifle_08 | 6 | 1 | 1 | Capstone. You start every run with Aimed Shot; its cooldown is {v}% shorter and a killing blow readies it again, at most every 2 sec.
+@tree Hunter | Survival
+monster_slaying | Monster Slaying | INV_Misc_Head_Dragon_Black | 0 | 1 | 5 | You deal {v}% more damage to elites and bosses.
+deflection_hunter | Deflection | Ability_Parry | 0 | 2 | 5 | Reduces all damage taken by {v}%.
+clever_traps | Clever Traps | Spell_Nature_TimeStop | 1 | 0 | 3 | Your traps cover {v}% more ground.
+survivalist | Survivalist | Spell_Shadow_Twilight | 1 | 2 | 5 | Increases your maximum health by {v}%.
+entrapment | Entrapment | Spell_Nature_StrangleVines | 2 | 1 | 1 | Milestone. Your traps hold what they hit: every hit of a trap has a {v}% chance to root the enemy for 2 sec.
+savage_strikes | Savage Strikes | Ability_Racial_BloodRage | 2 | 2 | 3 | Increases your critical strike chance by {v}%.
+trap_mastery | Trap Mastery | Ability_Ensnare | 3 | 0 | 3 | Your traps' cooldowns are {v}% shorter.
+surefooted | Surefooted | Ability_Kick | 3 | 2 | 3 | Increases your movement speed by {v}%.
+explosive_ammo | Explosive Ammunition | Spell_Fire_SelfDestruct | 4 | 1 | 1 | Milestone. Enemies killed by your Auto Shot or Multi-Shot explode for {v}% of their maximum health on everything within 6 yd.
+killer_instinct | Killer Instinct | Spell_Holy_BlessingOfStamina | 4 | 2 | 3 | Fire spells deal {v}% more damage.
+lightning_reflexes | Lightning Reflexes | Spell_Nature_Invisibilty | 5 | 0 | 5 | Increases all damage by {v}%.
+counterattack | Counterattack | Ability_Warrior_Challange | 5 | 2 | 2 | When an enemy strikes you in melee, {v}% chance to set off a free Immolation Trap.
+wyvern_sting | Wyvern Sting | INV_Spear_02 | 6 | 1 | 1 | Capstone. You start every run with Frost Trap, and an Immolation Trap sets itself at your feet every 5 sec.
+@tree Rogue | Assassination
+imp_eviscerate | Improved Eviscerate | Ability_Rogue_Eviscerate | 0 | 1 | 5 | Eviscerate deals {v}% more damage.
+malice | Malice | Ability_Racial_BloodRage | 0 | 2 | 5 | Increases your critical strike chance by {v}%.
+ruthlessness | Ruthlessness | Ability_Druid_Disembowel | 1 | 0 | 3 | You deal {v}% more damage to enemies below 30% health.
+murder | Murder | Spell_Shadow_DeathScream | 1 | 2 | 5 | You deal {v}% more damage to elites and bosses.
+deadly_poison | Deadly Poison | Ability_Rogue_DualWeild | 2 | 1 | 1 | Milestone. Your strikes poison: every swing and every strike adds Deadly Poison, {v}% of the hit over 6 sec.
+lethality | Lethality | Ability_CriticalStrike | 2 | 2 | 5 | Increases your critical strike damage by {v}%.
+imp_poisons | Improved Poisons | Ability_Poisons | 3 | 0 | 5 | Rupture deals {v}% more damage.
+vile_poisons | Vile Poisons | Ability_Rogue_FeignDeath | 3 | 2 | 5 | Your damage-over-time effects deal {v}% more damage.
+mutilate | Mutilate | INV_Weapon_ShortBlade_05 | 4 | 1 | 1 | Milestone. Sinister Strike and Backstab strike with both blades: everything they hit is struck again at once for 50% of the blow.
+seal_fate | Seal Fate | Spell_Shadow_ChillTouch | 4 | 2 | 3 | {v}% chance for any spell to strike twice.
+vigor | Vigor | Spell_Nature_EarthBindTotem | 5 | 0 | 3 | Regenerate {v} more health per second.
+remorseless | Remorseless Attacks | Ability_FiegnDead | 5 | 2 | 3 | Increases all damage by {v}%.
+toxic_bloom | Toxic Bloom | Spell_Nature_NullifyPoison | 6 | 1 | 1 | Capstone. Enemies that die poisoned or bleeding burst in a toxic cloud for {v}% of their maximum health on everything within 7 yd.
+@tree Rogue | Combat
+precision_rogue | Precision | Ability_Marksmanship | 0 | 1 | 5 | Increases your critical strike chance by {v}%.
+lightning_reflexes_rogue | Lightning Reflexes | Spell_Nature_Invisibilty | 0 | 2 | 5 | Reduces all damage taken by {v}%.
+imp_sinister | Improved Sinister Strike | Spell_Shadow_RitualOfSacrifice | 1 | 0 | 3 | Sinister Strike deals {v}% more damage.
+endurance_rogue | Endurance | Spell_Shadow_ShadowWard | 1 | 2 | 5 | Your cooldowns recover {v}% faster.
+blade_flurry_talent | Blade Flurry | Ability_Warrior_PunishingBlow | 2 | 1 | 1 | Milestone. Sinister Strike and Eviscerate fly on: each hit also strikes 2 more enemies near its target for {v}% of it.
+dual_wield_rogue | Dual Wield Specialization | Ability_DualWield | 2 | 2 | 5 | Increases all damage by {v}%.
+sword_spec_rogue | Sword Specialization | INV_Sword_27 | 3 | 0 | 5 | {v}% chance for any spell to strike twice.
+weapon_expertise | Weapon Expertise | Spell_Holy_BlessingOfStrength | 3 | 2 | 3 | Increases all damage by {v}%.
+adrenaline | Adrenaline Rush | Spell_Shadow_ShadowWordDominate | 4 | 1 | 1 | Milestone. Every {v}th kill floods you with adrenaline: a free Adrenaline Rush, your cooldowns 60% faster for 11 sec.
+aggression | Aggression | Ability_Racial_Avatar | 4 | 2 | 3 | Sinister Strike and Eviscerate deal {v}% more damage.
+imp_slice_dice | Improved Slice and Dice | Ability_Rogue_SliceDice | 5 | 0 | 3 | Slice and Dice and Adrenaline Rush last {v}% longer.
+riposte | Riposte | Ability_Warrior_Challange | 5 | 2 | 2 | When an enemy strikes you in melee, {v}% chance to answer with a free Ghostly Strike.
+killing_spree | Killing Spree | Ability_Rogue_Sprint | 6 | 1 | 1 | Capstone. Sinister Strike strikes {v} more enemy, and you strike on your own: a free Sinister Strike every 3 sec.
+@tree Rogue | Subtlety
+master_deception | Master of Deception | Spell_Shadow_Charm | 0 | 1 | 5 | Increases your movement speed by {v}%.
+opportunity | Opportunity | Ability_Warrior_WarCry | 0 | 2 | 5 | Backstab deals {v}% more damage.
+elusiveness | Elusiveness | Spell_Magic_LesserInvisibilty | 1 | 0 | 3 | Reduces all damage taken by {v}%.
+initiative | Initiative | Spell_Shadow_Fumble | 1 | 2 | 5 | Increases your luck by {v}%.
+cheat_death | Cheat Death | Ability_Rogue_FeignDeath | 2 | 1 | 1 | Milestone. A blow that would kill you leaves you at 25% health instead, and you fade into the shadows: nothing can touch you for 3 sec. Once every 2.5 min.
+imp_ambush | Improved Ambush | Ability_Rogue_Ambush | 2 | 2 | 3 | Increases your critical strike damage by {v}%.
+serrated_blades | Serrated Blades | INV_Sword_17 | 3 | 0 | 3 | Your damage-over-time effects deal {v}% more damage.
+setup | Setup | Spell_Nature_MirrorImage | 3 | 2 | 3 | Kidney Shot and Gouge cooldowns are {v}% shorter.
+preparation | Preparation | Spell_Shadow_AntiShadow | 4 | 1 | 1 | Milestone. A free Gouge stuns the enemies around you every 6 sec.
+dirty_deeds | Dirty Deeds | Spell_Shadow_SummonSuccubus | 4 | 2 | 3 | You deal {v}% more damage to stunned, rooted, slowed or fleeing enemies.
+deadliness | Deadliness | INV_Weapon_Crossbow_07 | 5 | 0 | 5 | Increases all damage by {v}%.
+heightened_senses | Heightened Senses | Ability_Ambush | 5 | 2 | 2 | Increases your maximum health by {v}%.
+shadow_dance | Shadow Dance | Spell_Shadow_LifeDrain | 6 | 1 | 1 | Capstone. You start every run with Backstab instead of Sinister Strike, and Backstab and Eviscerate splash {v}% of their damage onto every enemy within 5 yd of their target.
+@tree Priest | Discipline
+unbreakable_will | Unbreakable Will | Spell_Magic_MageArmor | 0 | 1 | 5 | Reduces all damage taken by {v}%.
+wand_spec | Wand Specialization | INV_Wand_01 | 0 | 2 | 5 | Smite deals {v}% more damage.
+imp_pw_shield | Improved Power Word: Shield | Spell_Holy_PowerWordShield | 1 | 0 | 3 | Power Word: Shield absorbs {v}% more.
+martyrdom | Martyrdom | Spell_Nature_Tranquility | 1 | 2 | 5 | Increases your maximum health by {v}%.
+divine_aegis | Divine Aegis | Spell_Holy_DivineIntervention | 2 | 1 | 1 | Milestone. You start every run with Power Word: Shield, and a shield on you that breaks bursts in holy light: {v}% of what it absorbed strikes every enemy within 10 yd.
+mental_agility | Mental Agility | Ability_Hibernation | 2 | 2 | 5 | Your cooldowns recover {v}% faster.
+meditation | Meditation | Spell_Nature_Sleep | 3 | 0 | 3 | Regenerate {v} more health per second.
+mental_strength | Mental Strength | Spell_Nature_EnchantArmor | 3 | 2 | 5 | Increases all damage by {v}%.
+rapture | Rapture | Spell_Holy_PowerInfusion | 4 | 1 | 1 | Milestone. A broken Power Word: Shield is raised again at once, at most once every 15 sec.
+force_of_will | Force of Will | Spell_Nature_SlowingTotem | 4 | 2 | 5 | Increases your critical strike chance by {v}%.
+silent_resolve | Silent Resolve | Spell_Nature_ManaRegenTotem | 5 | 0 | 3 | Increases your luck by {v}%.
+imp_inner_fire | Improved Inner Fire | Spell_Holy_InnerFire | 5 | 2 | 3 | Power Word: Shield's cooldown is {v}% shorter.
+penance | Penance | Spell_Holy_SearingLight | 6 | 1 | 1 | Capstone. You strike out on your own: a free Penance about every 3 sec, three bolts of holy light at the nearest enemies.
+@tree Priest | Holy
+holy_spec | Holy Specialization | Spell_Holy_SealOfSalvation | 0 | 1 | 5 | Increases your critical strike chance by {v}%.
+imp_renew | Improved Renew | Spell_Holy_Renew | 0 | 2 | 5 | Renew heals {v}% more.
+divine_fury | Divine Fury | Spell_Holy_SealOfWrath | 1 | 0 | 5 | Smite and Holy Fire cooldowns are {v}% shorter.
+holy_reach | Holy Reach | Spell_Holy_Purify | 1 | 2 | 3 | Holy Nova reaches {v}% farther.
+holy_nova_talent | Radiance | Spell_Holy_HolyNova | 2 | 1 | 1 | Milestone. A Holy Nova bursts from you on its own every 24 sec.
+inspiration | Inspiration | Spell_Holy_LayOnHands | 2 | 2 | 3 | Your Holy critical strikes heal you for {v}% of your maximum health, at most once a second.
+searing_light | Searing Light | Spell_Holy_SearingLightPriest | 3 | 0 | 3 | Smite and Holy Fire deal {v}% more damage.
+spiritual_guidance | Spiritual Guidance | Spell_Holy_SpiritualGuidence | 3 | 2 | 5 | Increases all damage by {v}%.
+holy_fire_talent | Purifying Flame | Spell_Holy_SearingLight | 4 | 1 | 1 | Milestone. Smite and Holy Fire critical strikes set their target alight for {v}% of the hit over 6 sec.
+spiritual_healing | Spiritual Healing | Spell_Nature_MoonGlow | 4 | 2 | 3 | Your heals and shields are {v}% stronger.
+blessed_recovery | Blessed Recovery | Spell_Holy_BlessedRecovery | 5 | 0 | 3 | Increases your maximum health by {v}%.
+holy_concentration | Holy Concentration | Spell_Holy_SpellWarding | 5 | 2 | 3 | Holy spells deal {v}% more damage.
+chastise | Chastise | Spell_Holy_SealOfWrath | 6 | 1 | 1 | Capstone. Smite strikes 1 more enemy, and every Smite cast that critically strikes sets off a free Holy Nova.
+@tree Priest | Shadow
+spirit_tap | Spirit Tap | Spell_Shadow_Requiem | 0 | 1 | 5 | Every kill heals you for {v} health.
+blackout | Blackout | Spell_Shadow_GatherShadows | 0 | 2 | 5 | Your Shadow spells have a {v}% chance to stun what they hit for 1.5 sec.
+imp_swp | Improved Shadow Word: Pain | Spell_Shadow_ShadowWordPain | 1 | 0 | 2 | Shadow Word: Pain lasts {v}% longer.
+shadow_focus | Shadow Focus | Spell_Shadow_BurningSpirit | 1 | 2 | 5 | Increases your critical strike chance by {v}%.
+shadow_weaving | Shadow Weaving | Spell_Shadow_BlackPlague | 2 | 1 | 1 | Milestone. Your Shadow spells also strike what they hit for {v}% of its maximum health.
+imp_mind_blast | Improved Mind Blast | Spell_Shadow_UnholyFrenzy | 2 | 2 | 5 | Mind Blast's cooldown is {v}% shorter and its damage is {v}% higher.
+darkness | Darkness | Spell_Shadow_Twilight | 3 | 0 | 5 | Shadow spells deal {v}% more damage.
+imp_psychic_scream | Improved Psychic Scream | Spell_Shadow_PsychicScream | 3 | 2 | 2 | Psychic Scream's cooldown is {v}% shorter.
+shadowy_apparitions | Shadowy Apparitions | Spell_Shadow_Haunting | 4 | 1 | 1 | Milestone. You start every run with Shadow Word: Pain instead of Smite, and its ticks have a {v}% chance to loose a shadowy apparition: a free Mind Blast, at most twice a second.
+shadow_reach | Shadow Reach | Spell_Shadow_ChillTouch | 4 | 2 | 3 | Mind Flay reaches {v}% farther.
+shadow_power | Shadow Power | Spell_Shadow_SealOfKings | 5 | 0 | 3 | Your damage-over-time effects deal {v}% more damage.
+imp_vampiric | Improved Vampiric Embrace | Spell_Shadow_ImprovedVampiricEmbrace | 5 | 2 | 3 | {v}% of all the damage you deal heals you.
+shadowform | Shadowform | Spell_Shadow_Shadowform | 6 | 1 | 1 | Capstone. You take on Shadowform for the whole run, and when an enemy dies with Shadow Word: Pain on it, it bursts for {v}% of its maximum health on everything within 6 yd and the pain jumps to the enemy nearest it.
+@tree Shaman | Elemental
+convection | Convection | Spell_Nature_WispSplode | 0 | 1 | 5 | Your cooldowns recover {v}% faster.
+concussion | Concussion | Spell_Fire_Fireball | 0 | 2 | 5 | Increases all damage by {v}%.
+earths_grasp | Elemental Warding | Spell_Nature_StoneClawTotem | 1 | 0 | 3 | Reduces all damage taken by {v}%.
+call_of_flame | Call of Flame | Spell_Fire_Immolation | 1 | 2 | 3 | Fire Nova, Magma Totem and Flame Shock deal {v}% more damage.
+lightning_overload | Lightning Overload | Spell_Nature_CallStorm | 2 | 1 | 1 | Milestone. Lightning Bolt and Chain Lightning have a {v}% chance to strike again for free.
+reverberation | Reverberation | Spell_Frost_FrostWard | 2 | 2 | 5 | Your shocks' cooldowns are {v}% shorter.
+call_of_thunder | Call of Thunder | Spell_Nature_Lightning | 3 | 0 | 5 | Increases your critical strike chance by {v}%.
+imp_fire_totems | Improved Fire Totems | Spell_Fire_SealOfFire | 3 | 2 | 2 | Searing and Magma Totem cooldowns are {v}% shorter.
+elemental_fury | Elemental Fury | Spell_Fire_Volcano | 4 | 1 | 1 | Milestone. Chain Lightning jumps to 3 more enemies and loses nothing with each jump.
+lightning_mastery | Lightning Mastery | Spell_Lightning_LightningBolt01 | 4 | 2 | 5 | Nature spells deal {v}% more damage.
+storm_reach | Storm Reach | Spell_Nature_StormReach | 5 | 0 | 2 | Chain Lightning jumps {v}% farther.
+elemental_devastation | Elemental Devastation | Spell_Fire_ElementalDevastation | 5 | 2 | 3 | Increases your critical strike damage by {v}%.
+elemental_mastery | Elemental Mastery | Spell_Nature_WispHeal | 6 | 1 | 1 | Capstone. You start every run with Chain Lightning, and a second Chain Lightning casts itself every 3 sec.
+@tree Shaman | Enhancement
+enh_thundering_strikes | Thundering Strikes | Ability_ThunderBolt | 0 | 1 | 5 | Rockbiter and Stormstrike gain +{v}% critical chance.
+enh_earthen_bulwark | Stormguard | Spell_Nature_LightningShield | 0 | 2 | 5 | While Lightning Shield is active, you take {v}% less damage.
+enh_resonant_shocks | Resonant Shocks | Spell_Nature_EarthShock | 1 | 0 | 3 | Your Shocks strike 1 additional nearby enemy for {v}% damage.
+enh_shattering_elements | Shattering Elements | Spell_Frost_FrostShock | 1 | 2 | 3 | Your next different Shock within 6 sec deals +{v}% damage.
+rockbiter_initiation | Rockbiter Initiation | Spell_Nature_RockBiter | 2 | 1 | 1 | Milestone. Start each run with Rockbiter Weapon instead of Lightning Bolt.
+enh_windfury_weapon | Windfury Weapon | Spell_Nature_Cyclone | 2 | 2 | 3 | Rockbiter and Stormstrike have a {v}% chance to strike two additional times.
+enh_flametongue_weapon | Flametongue Weapon | Spell_Fire_FlameTounge | 3 | 0 | 3 | Rockbiter Weapon has a {v}% chance to cast a free Fire Nova, dealing {v2}% increased damage.
+enh_frostbrand_weapon | Frostbrand Weapon | Spell_Frost_FrostBrand | 3 | 2 | 3 | Stormstrike has a {v}% chance to cast a free Frost Shock against up to 3 enemies.
+enh_unleashed_weapons | Elemental Sunder | Ability_Warrior_Sunder | 4 | 1 | 1 | Milestone. Rockbiter Weapon and Stormstrike cause enemies they hit to take 10% increased Fire and Nature damage for 4 sec.
+enh_ancestral_fortitude | Ancestral Fortitude | Spell_Nature_UndyingStrength | 4 | 2 | 3 | Every {v} Stormstrikes casts a free Healing Wave at 50% effectiveness.
+enh_flurry | Flurry | Ability_GhoulFrenzy | 5 | 0 | 3 | Melee critical strikes make Rockbiter and Stormstrike cooldowns recover {v}% faster for 4 sec.
+enh_sweeping_storm | Sweeping Storm | Spell_Holy_SealOfMight | 5 | 2 | 3 | Stormstrike hits {v} additional nearby enemies.
+enh_stormbound_echoes | Stormbound Echoes | Spell_Nature_CallStorm | 6 | 1 | 1 | Capstone. All Enhancement Shaman procs have a {v}% chance to trigger one additional time. 1% of all the damage you deal heals you. You start every run with Stormstrike.
+@tree Shaman | Restoration
+imp_healing_wave | Improved Healing Wave | Spell_Nature_MagicImmunity | 0 | 1 | 5 | Healing Wave's cooldown is {v}% shorter.
+tidal_focus | Tidal Focus | Spell_Frost_ManaRecharge | 0 | 2 | 5 | Regenerate {v} more health per second.
+totemic_focus | Totemic Focus | Spell_Nature_MoonGlow | 1 | 0 | 5 | Your totems' cooldowns are {v}% shorter.
+natures_guidance | Nature's Guidance | Spell_Frost_Stun | 1 | 2 | 3 | Increases your critical strike chance by {v}%.
+twin_totems | Call of the Elements | Spell_Totem_WardOfDraining | 2 | 1 | 1 | Milestone. You start every run with Searing Totem, and every totem you set down sets a second one beside it.
+restorative_totems | Restorative Totems | Spell_Nature_ManaRegenTotem | 2 | 2 | 3 | Your totems deal {v}% more damage.
+tidal_mastery | Tidal Mastery | Spell_Nature_Tranquility | 3 | 0 | 5 | Increases all damage by {v}%.
+healing_way | Healing Way | Spell_Nature_HealingWay | 3 | 2 | 3 | Healing Wave heals {v}% more.
+reincarnation | Reincarnation | Spell_Nature_Reincarnation | 4 | 1 | 1 | Milestone. A blow that would kill you leaves you at 50% health instead, once every 2 min.
+purification | Purification | Spell_Frost_WizardMark | 4 | 2 | 5 | Increases your maximum health by {v}%.
+totemic_mastery | Totemic Mastery | Spell_Nature_NullWard | 5 | 0 | 3 | Magma Totem reaches {v}% farther and Searing Totem fires at more targets.
+ancestral_healing | Ancestral Healing | Spell_Nature_UndyingStrength | 5 | 2 | 3 | Reduces all damage taken by {v}%.
+totemic_call | Totemic Wrath | Spell_Fire_SealOfFire | 6 | 1 | 1 | Capstone. You start every run with Magma Totem, and a second Searing Totem drops on its own every 14 sec.
+@tree Mage | Arcane
+arcane_focus | Arcane Focus | Spell_Holy_Devotion | 0 | 1 | 5 | Arcane spells deal {v}% more damage.
+arcane_subtlety | Arcane Subtlety | Spell_Holy_DispelMagic | 0 | 2 | 5 | Increases your luck by {v}%.
+imp_arcane_explosion | Improved Arcane Explosion | Spell_Nature_WispSplode | 1 | 0 | 3 | Arcane Explosion reaches {v}% farther.
+magic_absorption | Magic Absorption | Spell_Nature_AstralRecalGroup | 1 | 2 | 5 | Increases your maximum health by {v}%.
+arcane_concentration | Arcane Concentration | Spell_Shadow_ManaBurn | 2 | 1 | 1 | Milestone. Clearcasting: every spell you cast has a {v}% chance to set off a free Arcane Explosion.
+arcane_meditation | Arcane Meditation | Spell_Shadow_SiphonMana | 2 | 2 | 3 | Regenerate {v} more health per second.
+arcane_mind | Arcane Mind | Spell_Shadow_Charm | 3 | 0 | 5 | Your cooldowns recover {v}% faster.
+imp_blink | Improved Blink | Spell_Arcane_Blink | 3 | 2 | 3 | Increases your movement speed by {v}%.
+presence_of_mind | Presence of Mind | Spell_Nature_EnchantArmor | 4 | 1 | 1 | Milestone. Arcane Missiles fires {v} more missiles, and each missile leaps on to another enemy for its full damage.
+arcane_instability | Arcane Instability | Spell_Shadow_Teleport | 4 | 2 | 3 | Increases all damage and your critical strike chance by {v}%.
+arcane_fortitude | Arcane Fortitude | Spell_Arcane_ArcaneResilience | 5 | 0 | 3 | Reduces all damage taken by {v}%.
+arcane_reach | Arcane Reach | Spell_Arcane_StarFire | 5 | 2 | 3 | {v}% chance for any spell to strike twice.
+arcane_power | Arcane Power | Spell_Nature_Lightning | 6 | 1 | 1 | Capstone. You start every run with Arcane Missiles instead of Fireball, and your spells strike twice {v}% more often. Your echoes cascade: a spell that strikes twice rolls again to strike once more, up to 3 more times in a row.
+@tree Mage | Fire
+imp_fireball | Improved Fireball | Spell_Fire_FlameBolt | 0 | 1 | 5 | Fireball's cooldown is {v}% shorter.
+impact | Impact | Spell_Fire_MeteorStorm | 0 | 2 | 5 | Your Fire spells have a {v}% chance to stun what they hit for 1 sec.
+flame_throwing | Flame Throwing | Spell_Fire_Flare | 1 | 0 | 2 | Fire spells cover {v}% more ground.
+imp_flamestrike | Improved Flamestrike | Spell_Fire_SoulBurn | 1 | 2 | 5 | Flamestrike and Blast Wave deal {v}% more damage.
+ignite | Ignite | Spell_Fire_Incinerate | 2 | 1 | 1 | Milestone. Your Fire critical strikes ignite the target for {v}% of the hit over 4 sec.
+incinerate | Incinerate | Spell_Fire_FlameShock | 2 | 2 | 3 | Fire Blast deals {v}% more damage.
+master_elements | Master of Elements | Spell_Fire_MasterOfElements | 3 | 0 | 3 | Increases your critical strike damage by {v}%.
+critical_mass | Critical Mass | Spell_Nature_WispHeal | 3 | 2 | 3 | Increases your critical strike chance by {v}%.
+hot_streak | Hot Streak | Spell_Fire_Fireball | 4 | 1 | 1 | Milestone. Every fourth Fire critical strike casts a free Pyroblast, at most twice a second.
+fire_power | Fire Power | Spell_Fire_Immolation | 4 | 2 | 5 | Fire spells deal {v}% more damage.
+burning_soul | Burning Soul | Spell_Fire_Fire | 5 | 0 | 3 | Increases your maximum health by {v}%.
+imp_blast_wave | Improved Blast Wave | Spell_Holy_Excorcism_02 | 5 | 2 | 3 | Blast Wave and Pyroblast cooldowns are {v}% shorter.
+pyroclasm | Pyroclasm | Spell_Fire_Fireball02 | 6 | 1 | 1 | Capstone. You start every run with Pyroblast, and enemies killed by your Fire spells explode for {v}% of their maximum health on everything within 6 yd, at most 3 a second.
+@tree Mage | Frost
+frost_warding | Frost Warding | Spell_Frost_FrostWard | 0 | 1 | 5 | Reduces all damage taken by {v}%.
+imp_frostbolt | Improved Frostbolt | Spell_Frost_FrostBolt02 | 0 | 2 | 5 | Frostbolt's cooldown is {v}% shorter.
+elemental_precision | Elemental Precision | Spell_Ice_MagicDamage | 1 | 0 | 3 | Increases all damage by {v}%.
+ice_shards | Ice Shards | Spell_Frost_IceShard | 1 | 2 | 5 | Increases your critical strike damage by {v}%.
+frostbite | Frostbite | Spell_Frost_FrostArmor | 2 | 1 | 1 | Milestone. Your Frost spells have a {v}% chance to freeze what they hit in place for 1.5 sec.
+piercing_ice | Piercing Ice | Spell_Frost_Frostbolt | 2 | 2 | 3 | Frost spells deal {v}% more damage.
+shatter | Shatter | Spell_Frost_FrostShock | 3 | 0 | 5 | You deal {v}% more damage to frozen, stunned, slowed or fleeing enemies.
+arctic_reach | Arctic Reach | Spell_Shadow_DarkRitual | 3 | 2 | 2 | Frost Nova, Cone of Cold and Blizzard reach {v}% farther.
+splitting_ice | Splitting Ice | Spell_Frost_WizardMark | 4 | 1 | 1 | Milestone. Frostbolt splinters on impact: {v}% of its damage to every enemy within 5 yd of its target.
+frost_channeling | Frost Channeling | Spell_Frost_Stun | 4 | 2 | 3 | Your cooldowns recover {v}% faster.
+permafrost | Permafrost | Spell_Frost_Wisp | 5 | 0 | 3 | Increases your maximum health by {v}%.
+imp_ice_barrier | Improved Ice Barrier | Spell_Ice_Lament | 5 | 2 | 3 | Ice Barrier absorbs {v}% more.
+water_elemental | Summon Water Elemental | Spell_Frost_SummonWaterElemental | 6 | 1 | 1 | Capstone. You start every run with Frostbolt instead of Fireball. A Water Elemental fights at your side, hurling Frostbolts, and a free Frost Nova bursts from you every 8 sec.
+@tree Warlock | Affliction
+suppression | Suppression | Spell_Shadow_UnsummonBuilding | 0 | 1 | 5 | Increases your luck by {v}%.
+imp_corruption | Shadow Embrace | Spell_Shadow_AbominationExplosion | 0 | 2 | 5 | Your damage-over-time effects deal {v}% more damage.
+imp_coa | Improved Curse of Agony | Spell_Shadow_CurseOfSargeras | 1 | 0 | 3 | Curse of Agony deals {v}% more damage.
+imp_drain_life | Improved Drain Life | Spell_Shadow_LifeDrain02 | 1 | 2 | 5 | Drain Life deals {v}% more damage.
+nightfall | Nightfall | Spell_Shadow_Twilight | 2 | 1 | 1 | Milestone. Your Shadow Bolts carry the night: each one that lands corrupts its target for {v}% of the bolt over 12 sec, and every tick of Corruption has a 2% chance to fire a free Shadow Bolt, at most twice a second.
+dark_pact | Soul Reaping | Spell_Shadow_DarkRitual | 2 | 2 | 3 | Death Coil instantly deals {v}% of your Drain Life's remaining damage on its target, without consuming it.
+grim_reach | Grim Reach | Spell_Shadow_CallofBone | 3 | 0 | 1 | Your damage-over-time spells take {v} more target.
+shadow_mastery | Shadow Mastery | Spell_Shadow_ShadeTrueSight | 3 | 2 | 5 | Shadow spells deal {v}% more damage.
+contagion | Contagion | Spell_Shadow_PlagueCloud | 4 | 1 | 1 | Milestone. When an enemy dies with Corruption or Curse of Agony on it, each jumps to the enemy nearest it.
+amplify_curse | Amplify Curse | Spell_Shadow_Contagion | 4 | 2 | 3 | Curse of Agony's cooldown is {v}% shorter.
+siphon_life | Siphon Life | Spell_Shadow_Requiem | 5 | 0 | 1 | Every tick of your damage-over-time effects heals you for 1% of it.
+fel_concentration | Fel Concentration | Spell_Shadow_FingerOfDeath | 5 | 2 | 3 | Your damage-over-time effects last {v}% longer.
+seed_of_corruption | Seed of Corruption | Spell_Shadow_CurseOfMannoroth | 6 | 1 | 1 | Capstone. You start every run with Corruption, and enemies that die afflicted by your damage-over-time effects burst for {v}% of their maximum health on everything within 6 yd.
+@tree Warlock | Demonology
+demonic_familiar | Demonic Familiar | Spell_Shadow_SummonImp | 0 | 1 | 5 | An Imp fights at your side for good, its Firebolts {v}% stronger. Each one also strikes every enemy burning with your Immolate.
+demonic_embrace | Demonic Embrace | Spell_Shadow_Metamorphosis | 0 | 2 | 5 | Increases your maximum health by {v}%.
+fel_stamina | Fel Stamina | Spell_Shadow_AntiShadow | 1 | 0 | 3 | Reduces all damage taken by {v}%.
+unholy_power | Unholy Power | Spell_Shadow_ShadowWordDominate | 1 | 3 | 5 | Your demons deal {v}% more damage.
+soul_devourer | Soul Devourer | Spell_Shadow_SummonFelHunter | 2 | 0 | 3 | Milestone. Permanently summons a Felhunter. Its bites hit 2 enemies, prioritizing bosses and elites, and deal {v}% more damage per 1% missing enemy health.\nConsume Magic: Consumes 10% of your highest-ranked DoT's remaining duration, dealing 150% of the consumed damage.\nRules out Soul Link.
+soul_link | Soul Link | Spell_Shadow_GatherShadows | 2 | 2 | 3 | Milestone. Permanently summons a Voidwalker that hits 2 enemies. Gains 3% damage per 1% Damage Reduction and 2% per 1% bonus max health.\nYour Voidwalkers shield you for {v}% of their damage, up to 10% of your max health.\nRules out Soul Devourer.
+felfire_training | Demonic Echoes | Spell_Shadow_Possession | 2 | 3 | 3 | Your demons' attacks have a {v}% chance to Echo for full damage. This is their only Echo source.
+master_demonologist | Master Demonologist | Spell_Shadow_ShadowPact | 3 | 3 | 3 | Increases all damage and your demons' critical strike chance by {v}%.
+legion_gate | Legion Gate | Spell_Shadow_RitualOfSacrifice | 4 | 1 | 1 | Milestone. Every 4 sec, summon 3 random lesser demons for 12–16 sec (max 12).\nSuccubi stun Corrupted enemies. Their kills trigger a Death Coil at 50% damage.
+demonic_supremacy | Demonic Supremacy | Spell_Shadow_CurseOfAchimonde | 4 | 3 | 1 | Your Infernal and Doomguard become permanent. You can no longer summon lesser demons. Maximum one of each.
+summon_infernal | Summon Infernal | Spell_Shadow_SummonInfernal | 5 | 0 | 3 | Your damaging spells have a 5% chance to summon an Infernal for 15 sec (max 1). Its Meteor stuns enemies on impact, and it burns nearby enemies with Hellfire at {v}% effectiveness.
+summon_doomguard | Summon Doomguard | Spell_Shadow_AntiMagicShell | 5 | 3 | 3 | Your damaging spells have a 5% chance to summon a Doomguard for 15 sec (max 1). Its Shadow Bolts hit 2 enemies and inherit your upgrades.\nDoom Bringer: Consecutive hits on the same boss or elite deal 20% more damage, up to {v}%.
+pact_of_the_annihilan | Pact of the Nathrezim | Spell_Shadow_UnholyStrength | 6 | 0 | 1 | Capstone. Summons a Dread Lord for {v} sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.\nFelseeker inherits your Searing Pain upgrades and deals 25% more damage to its primary target. It hits up to 6 enemies.\nExclusive with Butcher.
+butcher | Butcher | Ability_Warrior_Cleave | 6 | 2 | 1 | Capstone. Summons a Felguard for {v} sec every 30 sec, reduced by CDR (min 13 sec). Up to 2 active.\nCleaves up to 10 enemies within 15 yd. Every third swing deals double damage. Deals 50% more damage below 30% enemy health.\nExclusive with Pact of the Nathrezim.
+@tree Warlock | Destruction
+imp_shadow_bolt | Improved Shadow Bolt | Spell_Shadow_ShadowBolt | 0 | 1 | 5 | Shadow Bolt deals {v}% more damage.
+cataclysm | Cataclysm | Spell_Fire_WindsofWoe | 0 | 2 | 5 | Your cooldowns recover {v}% faster.
+intensity | Intensity | Spell_Fire_LavaSpawn | 1 | 0 | 5 | Soulfire deals {v}% more damage.
+aftermath | Scorched Earth | Spell_Fire_Immolation | 1 | 2 | 5 | Your Hellfire deals {v}% more damage. Each pulse has a {v2}% chance to slow each enemy it burns by 40% for 3 sec.
+shadowburn | Shadow Cleave | Spell_Shadow_ScourgeBuild | 2 | 1 | 1 | Milestone. Shadow Bolt splits: every bolt that lands forks to 2 more enemies for {v}% of it.
+imp_searing_pain | Improved Searing Pain | Spell_Fire_SoulBurn | 2 | 2 | 3 | Searing Pain and Immolate deal {v}% more damage.
+destructive_reach | Destructive Reach | Spell_Shadow_CorpseExplode | 3 | 0 | 3 | Rain of Fire and Hellfire reach {v}% farther.
+devastation | Devastation | Spell_Fire_FlameShock | 3 | 2 | 5 | Increases your critical strike chance by {v}%.
+conflagrate | Conflagrate | Spell_Fire_Fireball | 4 | 1 | 1 | Milestone. Start every run with Immolate. Shadow Bolt and Searing Pain make Immolated enemies explode for {v}% of the hit's damage within 6 yd.
+emberstorm | Emberstorm | Spell_Fire_SelfDestruct | 4 | 2 | 5 | Fire spells deal {v}% more damage.
+ruin | Ruin | Spell_Shadow_ShadowWordPain | 5 | 0 | 3 | Increases your critical strike damage by {v}%.
+bane | Bane | Spell_Shadow_DeathPact | 5 | 2 | 3 | Shadow Bolt and Immolate cooldowns are {v}% shorter.
+rain_of_chaos | Rain of Chaos | Spell_Shadow_RainOfFire | 6 | 1 | 1 | Capstone. A second Rain of Fire falls on its own every 13 sec, and its burning ground slows what it touches.
+@tree Druid | Balance
+imp_wrath | Improved Wrath | Spell_Nature_AbolishMagic | 0 | 1 | 5 | Wrath's cooldown is {v}% shorter.
+natures_grasp | Nature's Grasp | Spell_Nature_NaturesWrath | 0 | 2 | 3 | When an enemy strikes you in melee, {v}% chance to cast a free Entangling Roots.
+imp_moonfire | Improved Moonfire | Spell_Nature_StarFall | 1 | 0 | 5 | Moonfire deals {v}% more damage.
+natural_weapons | Natural Weapons | INV_Staff_01 | 1 | 2 | 5 | Increases all damage by {v}%.
+omen_of_clarity | Omen of Clarity | Spell_Nature_CrystalBall | 2 | 1 | 1 | Milestone. Every spell you cast has an {v}% chance to call down a free Starfire.
+vengeance_druid | Vengeance | Spell_Nature_Purge | 2 | 2 | 5 | Increases your critical strike damage by {v}%.
+imp_starfire | Improved Starfire | Spell_Arcane_StarFire | 3 | 0 | 3 | Starfire's cooldown is {v}% shorter.
+moonglow | Moonglow | Spell_Nature_Sentinal | 3 | 2 | 3 | Your cooldowns recover {v}% faster.
+starfall | Starfall | Spell_Arcane_StarFire | 4 | 1 | 1 | Milestone. Stars fall around you: a free Starfire every 4 sec.
+imp_hurricane | Gale Winds | Spell_Nature_Cyclone | 4 | 2 | 3 | Hurricane reaches {v}% farther.
+moonfury | Moonfury | Spell_Nature_MoonGlow | 5 | 0 | 5 | Arcane and Nature spells deal {v}% more damage.
+natures_reach | Nature's Reach | Spell_Nature_NatureTouchGrow | 5 | 2 | 2 | Increases your critical strike chance by {v}%.
+force_of_nature | Force of Nature | Spell_Nature_ForceOfNature | 6 | 1 | 1 | Capstone. Two treants fight at your side, and you start every run with Moonfire.
+@tree Druid | Feral Combat
+ferocity_druid | Ferocity | Ability_Hunter_Pet_Hyena | 0 | 1 | 5 | Swipe and Shred deal {v}% more damage.
+feral_aggression | Feral Aggression | Ability_Druid_DemoralizingRoar | 0 | 2 | 5 | Regenerate {v}% of your maximum health per second.
+feral_instinct | Feral Instinct | Ability_Ambush | 1 | 0 | 3 | Increases your maximum health by {v}%.
+brutal_impact | Enrage | Ability_Druid_Enrage | 1 | 2 | 5 | When an enemy strikes you in melee, {v}% chance to answer with a free Swipe.
+rake | Rake | Ability_Druid_Disembowel | 2 | 1 | 1 | Milestone. Your hide thickens: 20% more maximum health and 8% less damage taken. You start every run with Swipe and Shred, and everything they hit bleeds for {v}% of the blow over 6 sec.
+sharpened_claws | Sharpened Claws | INV_Misc_MonsterClaw_04 | 2 | 2 | 3 | Increases your critical strike chance by {v}%.
+predatory_strikes | Predatory Strikes | Ability_Hunter_Pet_Cat | 3 | 0 | 3 | Swipe's cooldown is {v}% shorter.
+thick_hide | Thick Hide | INV_Misc_Pelt_Bear_03 | 3 | 2 | 3 | Reduces all damage taken by {v}%.
+blood_frenzy | Blood Frenzy | Ability_GhoulFrenzy | 4 | 1 | 1 | Milestone. Your critical strikes rip the target open: it bleeds for {v}% of the hit over 6 sec.
+savage_fury | Savage Fury | Ability_Druid_Ravage | 4 | 2 | 3 | Shred deals {v}% more damage.
+heart_of_wild | Heart of the Wild | Spell_Holy_BlessingOfAgility | 5 | 0 | 5 | Increases all damage by {v}%.
+primal_fury | Primal Fury | Ability_Racial_Cannibalize | 5 | 2 | 2 | {v}% of all the damage you deal heals you.
+leader_of_pack | Dire Bear Form | Ability_Racial_BearForm | 6 | 0 | 1 | Capstone. You fight in Dire Bear Form: 25% more maximum health and 10% less damage taken. A free Swipe tears around you every 3 sec, and every enemy Swipe hits heals you for 0.3% of your maximum health. You start every run with Shred instead of Wrath. You can't also learn Cat Form.
+cat_form | Cat Form | Ability_Druid_CatForm | 6 | 2 | 1 | Capstone. You fight in Cat Form: 10% more damage, 10% more critical strike chance and 15% faster movement, and Shred's cooldown is 20% shorter. You start every run with Shred instead of Wrath. You can't also learn Dire Bear Form.
+@tree Druid | Restoration
+imp_motw | Improved Mark of the Wild | Spell_Nature_Regeneration | 0 | 1 | 5 | Increases your maximum health by {v}%.
+furor | Furor | Spell_Holy_BlessingOfStamina | 0 | 2 | 5 | Regenerate {v} more health per second.
+imp_healing_touch | Improved Healing Touch | Spell_Nature_HealingTouch | 1 | 0 | 5 | Regrowth and Rejuvenation heal {v}% more.
+natures_focus | Nature's Focus | Spell_Nature_HealingWaveGreater | 1 | 2 | 5 | Your cooldowns recover {v}% faster.
+swiftmend | Swiftmend | INV_Relics_IdolofRejuvenation | 2 | 1 | 1 | Milestone. Falling below 40% health makes a free Regrowth bloom on you, once every 8 sec.
+reflection | Reflection | Spell_Frost_WindWalkOn | 2 | 2 | 3 | Regenerate {v} more health per second.
+tranquil_spirit | Tranquil Spirit | Spell_Holy_ElunesGrace | 3 | 0 | 5 | Increases all damage by {v}%.
+imp_rejuvenation | Improved Rejuvenation | Spell_Nature_Rejuvenation | 3 | 2 | 3 | Rejuvenation's cooldown is {v}% shorter.
+tranquility | Tranquility | Spell_Nature_Tranquility | 4 | 1 | 1 | Milestone. Every heal you cast also strikes every enemy within 12 yd for {v}% of the healing as Nature damage.
+gift_of_nature | Gift of Nature | Spell_Nature_ProtectionformNature | 4 | 2 | 5 | Your heals and shields are {v}% stronger.
+imp_tranquility | Improved Tranquility | Spell_Nature_Tranquility | 5 | 0 | 3 | Reduces all damage taken by {v}%.
+natural_shapeshifter | Natural Shapeshifter | Spell_Nature_WispSplode | 5 | 2 | 3 | Insect Swarm and Moonfire deal {v}% more damage.
+tree_of_life | Tree of Life | Spell_Nature_ResistNature | 6 | 1 | 1 | Capstone. Healing beyond your maximum health becomes a shield, up to 20% of it, and a free Rejuvenation blooms on you every 6 sec.
+@abilities
+cleave | Cleave
+whirlwind | Whirlwind
+thunder_clap | Thunder Clap
+mortal_strike | Mortal Strike
+execute | Execute
+demo_shout | Demoralizing Shout
+battle_shout | Battle Shout
+bloodthirst | Bloodthirst
+rend | Rend
+shield_slam | Shield Slam
+bloodrage | Bloodrage
+consecration | Consecration
+exorcism | Exorcism
+hammer_of_wrath | Hammer of Wrath
+holy_shock | Holy Shock
+holy_wrath | Holy Wrath
+judgement | Judgement
+hammer_of_justice | Hammer of Justice
+holy_light | Holy Light
+divine_shield | Divine Shield
+holy_shield | Holy Shield
+redemption | Redemption
+auto_shot | Auto Shot
+arcane_shot | Arcane Shot
+multi_shot | Multi-Shot
+serpent_sting | Serpent Sting
+volley | Volley
+explosive_trap | Explosive Trap
+kill_command | Kill Command
+concussive_shot | Concussive Shot
+aimed_shot | Aimed Shot
+immolation_trap | Immolation Trap
+frost_trap | Frost Trap
+hunters_mark | Hunter's Mark
+sinister_strike | Sinister Strike
+eviscerate | Eviscerate
+blade_flurry | Blade Flurry
+rupture | Rupture
+kidney_shot | Kidney Shot
+gouge | Gouge
+ghostly_strike | Ghostly Strike
+adrenaline_rush | Adrenaline Rush
+backstab | Backstab
+slice_and_dice | Slice and Dice
+seal_fate | Seal Fate
+smite | Smite
+sw_pain | Shadow Word: Pain
+mind_blast | Mind Blast
+holy_nova | Holy Nova
+pw_shield | Power Word: Shield
+renew | Renew
+holy_fire | Holy Fire
+mind_flay | Mind Flay
+psychic_scream | Psychic Scream
+devouring_plague | Devouring Plague
+lightwell | Lightwell
+lightning_bolt | Lightning Bolt
+chain_lightning | Chain Lightning
+earth_shock | Earth Shock
+flame_shock | Flame Shock
+frost_shock | Frost Shock
+lightning_shield | Lightning Shield
+magma_totem | Magma Totem
+searing_totem | Searing Totem
+fire_nova | Fire Nova
+healing_wave | Healing Wave
+call_of_flame | Call of Flame
+fireball | Fireball
+frostbolt | Frostbolt
+arcane_missiles | Arcane Missiles
+frost_nova | Frost Nova
+arcane_explosion | Arcane Explosion
+blizzard | Blizzard
+flamestrike | Flamestrike
+fire_blast | Fire Blast
+cone_of_cold | Cone of Cold
+blast_wave | Blast Wave
+pyroblast | Pyroblast
+ice_barrier | Ice Barrier
+polymorph | Polymorph
+shadow_bolt | Shadow Bolt
+corruption | Corruption
+immolate | Immolate
+curse_of_agony | Curse of Agony
+rain_of_fire | Rain of Fire
+hellfire | Hellfire
+death_coil | Death Coil
+searing_pain | Searing Pain
+drain_life | Drain Life
+fear | Fear
+soul_fire | Soulfire
+wrath | Wrath
+moonfire | Moonfire
+starfire | Starfire
+hurricane | Hurricane
+insect_swarm | Insect Swarm
+entangling_roots | Entangling Roots
+rejuvenation | Rejuvenation
+regrowth | Regrowth
+thorns | Thorns
+swipe | Swipe
+shred | Shred
+faerie_fire | Faerie Fire
+perception | Perception
+blood_fury | Blood Fury
+stoneform | Stoneform
+shadowmeld | Shadowmeld
+will_of_the_forsaken | Will of the Forsaken
+war_stomp | War Stomp
+escape_artist | Escape Artist
+berserking | Berserking
+penance | Penance
+arcane_power | Arcane Power
+demonic_empowerment | Demonic Empowerment
+stormstrike | Stormstrike
+rockbiter | Rockbiter Weapon
