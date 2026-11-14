@@ -2,6 +2,17 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.143.4
+-------
+Co-op fixes: choosing Endless while a friend is still picking a card no longer freezes the party, and Power Word: Shield now looks after allies who lost theirs. Loading screens show the zone you are entering.
+
+* Co-op: when the host chose Endless while someone was still picking a level-up or chest card, the party sat paused forever. Endless now starts as soon as that card is taken.
+* Co-op: Power Word: Shield is cast again, as soon as it is off cooldown, for any ally within 30 yards who has lost theirs, not only when the Priest's own breaks or runs out.
+* Co-op: Ice Barrier now shields only the Mage who casts it, and Stoneform only the Dwarf who casts it; they no longer also shield allies nearby.
+* The loading screen now shows the zone you are entering instead of the one you played last (in co-op, the host's zone).
+* Smoother play with huge area spells, most of all in the browser: stacked Consecrations and dense floating damage numbers cost far less each frame, so a struggling host no longer slows the run's clock as much for the whole party.
+===
+
 0.143.3
 -------
 A lobby with a very long word in its description no longer breaks the co-op lobby list for everyone. Lobby names and descriptions are tidier: letters, digits and ordinary punctuation only, in any language.

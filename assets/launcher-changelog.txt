@@ -1,3 +1,7 @@
+# v3.43 (2026-11-14)
+
+- Changelog: the game's patch notes 0.143.4, word for word. Guide: co-op notes for Power Word: Shield, Ice Barrier, Stoneform and choosing Endless.
+
 # v3.42 (2026-11-14)
 
 - Stats is laid out like the New Player Handbook: the page on the left and a Wiki-style tree of the Stats pages on the right (Overview to Build Journal, with your classes under Classes). Click an entry or use the mouse wheel over the tree; with a controller, the left stick scrolls the page, the right stick moves the blue highlight and A opens it, sliding up or down.

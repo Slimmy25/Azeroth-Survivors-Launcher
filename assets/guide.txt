@@ -630,7 +630,9 @@ Click any player's row in the co-op party window to inspect their hero. The Armo
 - A guest whose game is not in within a minute of the host entering sits that run out and stays in the party for the next one.
 - Connection trouble: a guest whose host stops answering for two minutes goes back to the lobby list, and a guest the host can no longer keep up with is taken out of the party. A host's short disconnect late in a run no longer drops the guests.
 - A fallen hero is down, not out: stand next to them for 6 seconds to bring them back. Each extra ally reviving the same friend speeds it up by 20% (two allies 1.2x, three 1.4x, four 1.6x). The run ends when every hero is down.
-- Your heals, Battle Shout and Power Word: Shield also help friends within 30 yards.
+- Your heals, Battle Shout and Power Word: Shield also help friends within 30 yards. Power Word: Shield is cast again, as soon as it is off cooldown, for any ally within 30 yards who has lost theirs.
+- Ice Barrier shields only the Mage who casts it, and Stoneform only the Dwarf who casts it.
+- If the host chooses Endless while someone is still picking a level-up or chest card, Endless starts as soon as that card is taken.
 - Every hero rolls on a slain boss's gear for their own class and earns their own marks and clears, and a guardian slain by anyone rewards everyone.
 - A Heroic clear counts the moment the final boss falls, even if someone leaves before every level-up card is picked.
 - Everything you win goes to your own save.
