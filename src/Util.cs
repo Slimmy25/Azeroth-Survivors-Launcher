@@ -721,11 +721,6 @@ namespace AzerothLauncher
             Retry(delegate { if (Directory.Exists(path)) Directory.Delete(path, false); });
         }
 
-        public static bool IsLink(string path)
-        {
-            try { return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0; }
-            catch (Exception) { return false; }
-        }
 
         static void Retry(Action a)
         {
