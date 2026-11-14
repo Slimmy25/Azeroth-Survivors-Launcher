@@ -1,0 +1,246 @@
+Items of Azeroth Survivors, read from the game itself at wow.aethus.pl by tools/game_items.py.
+Do not edit by hand: run the tool again after a game update. Gear bonuses are in gear-stats.txt.
+@jewelry  key | Name | Icon | kind | stat | value | text   (kind: ring, trinket; value: {v} at its first pick)
+@set  class | rarity | set name | of   (of = 1: "Gloves of Faith", 0: "Devout Leggings")
+@noun  armor | slot | noun      @weapon  class | weapon | rarity | name
+@amulet  key | Name | Icon | tier | lines (stat=value, or special)      @stat  number | text
+@chance  rarity | share      @pvp  class | Alliance | Horde | weapons (Alliance / Horde)
+===
+@jewelry
+accuria | Band of Accuria | INV_Jewelry_Ring_15 | ring | 0 | 0.17 | +{v}% damage
+quick_strike | Quick Strike Ring | INV_Jewelry_Ring_07 | ring | 1 | 0.09 | -{v}% cooldowns
+dark_iron | Heavy Dark Iron Ring | INV_Jewelry_Ring_14 | ring | 2 | 0.2 | +{v}% max health
+dragonslayer | Master Dragonslayer's Ring | INV_Jewelry_Ring_41 | ring | 3 | 0.04 | +{v}% critical strike chance
+archimtiros | Archimtiros' Ring of Reckoning | INV_Jewelry_Ring_40 | ring | 5 | 0.035 | +{v}% damage reduction{max}, +{h}% max health
+devoured | Ring of the Devoured | INV_Jewelry_Ring_AhnQiraj_05 | ring | 7 | 1.5 | +{v} health per second
+spell_power | Ring of Spell Power | INV_Jewelry_Ring_38 | ring | 8 | 0.14 | +{v}% area of effect
+seal_damned | Seal of the Damned | INV_Jewelry_Ring_51Naxxramas | ring | 19 | 0.1 | Your damage over time spells tick {v}% faster
+blooddrinker | Blooddrinker's Band | INV_Jewelry_Ring_49Naxxramas | ring | 18 | 0.01 | {v}% of all damage dealt heals you
+earthstrike | Earthstrike | Spell_Nature_AbolishMagic | trinket | 256 | 0.13 | +{v}% damage
+tep | Talisman of Ephemeral Power | INV_Misc_StoneTablet_11 | trinket | 257 | 0.07 | -{v}% cooldowns
+lifegiving | Lifegiving Gem | INV_Misc_Gem_Pearl_05 | trinket | 258 | 0.16 | +{v}% max health
+hoj | Hand of Justice | INV_Jewelry_Talisman_01 | trinket | 265 | 0.06 | {v}% chance for a spell to cast twice
+blackhand | Blackhand's Breadth | INV_Misc_ArmorKit_09 | trinket | 260 | 0.195 | +{v}% critical strike damage
+carrot | Carrot on a Stick | INV_Misc_Food_54 | trinket | 266 | 0.08 | +{v}% movement speed
+remote | Gnomish Universal Remote | INV_Misc_PocketWatch_01 | trinket | 267 | 0.35 | +{v}% pickup range
+insignia | Insignia of the Horde | INV_Jewelry_TrinketPVP_02 | trinket | 268 | 0.12 | +{v}% experience
+eldre_thalas | Royal Seal of Eldre'Thalas | INV_Jewelry_Talisman_10 | trinket | 269 | 0.25 | +{v}% gold
+chosen | Mark of the Chosen | INV_Jewelry_Talisman_08 | trinket | 270 | 0.15 | +{v}% luck
+onyxia_blood | Onyxia Blood Talisman | Spell_Shadow_LifeDrain | trinket | 271 | 2 | Each kill heals {v} health
+war_horn | Horn of the Warchief | INV_Misc_Horn_01 | trinket | 273 | 0.15 | Your buffs are {v}% stronger
+soulstone | Major Soulstone | INV_Misc_Orb_04 | trinket | 272 | 1 | +{v} return to life at half health (2 at most); protects you from damage for 2 seconds after revival
+star_of_mystaria | Star of Mystaria | INV_Enchant_EssenceMagicLarge | trinket | 262 | 0.166667 | +{v}% max health, +{h}% damage reduction{max}
+@amulet
+animated_chain | Animated Chain Necklace | INV_Jewelry_Necklace_01 | 1 | special | special
+darkmoon | Amulet of the Darkmoon | INV_Jewelry_Necklace_14 | 1 | special | special
+enlightenment | Choker of Enlightenment | INV_Jewelry_Necklace_10 | 3 | special
+eye_of_hakkar | The Eye of Hakkar | INV_Jewelry_Necklace_22 | 2 | special | special
+fallen_dragon | Pendant of the Fallen Dragon | INV_Jewelry_Necklace_12 | 3 | special | special | special
+fire_lord | Choker of the Fire Lord | INV_Jewelry_Amulet_05 | 4 | special
+jeklik | Jeklik's Opaline Talisman | INV_Jewelry_Necklace_03 | 2 | special | special
+malice_stone | Malice Stone Pendant | INV_Jewelry_Necklace_29Naxxramas | 3 | special | special
+mark_of_fordring | Mark of Fordring | INV_Jewelry_Talisman_07 | 0 | special
+onyxia_tooth | Onyxia Tooth Pendant | INV_Jewelry_Necklace_09 | 4 | special | special | special
+prestor | Prestor's Talisman of Connivery | INV_Jewelry_Necklace_17 | 1 | special | special
+south_seas_kelp | Pristine Enchanted South Seas Kelp | INV_Jewelry_Necklace_26 | 0 | special | special
+steadfast_might | Medallion of Steadfast Might | INV_Jewelry_Amulet_03 | 2 | special | special | special
+talvash | Talvash's Enhancing Necklace | INV_Jewelry_Necklace_02 | 0 | special
+vek_nilash | Amulet of Vek'nilash | INV_Jewelry_Necklace_AhnQiraj_01 | 3 | special | special
+woven_ivy | Woven Ivy Necklace | INV_Misc_Herb_15 | 1 | special | special | special
+@stat
+0 | Increases all damage you deal by {p}.
+1 | Reduces the cooldown of your spells by {p}.
+2 | Increases your maximum health by {p}.
+3 | Improves your chance to get a critical strike by {p}.
+4 | Increases the damage of your critical strikes by {p}.
+5 | Reduces all damage taken by {p}.
+6 | Restores {v} health per second.
+7 | Increases your movement speed by {p}.
+8 | Increases the area of effect of your spells by {p}.
+9 | Increases the range you pick up loot from by {p}.
+10 | Increases experience gained by {p}.
+11 | Increases gold found by {p}.
+12 | Increases your luck by {p}.
+13 | Gives your spells a {p} chance to cast twice.
+14 | Heals you for {p} of all damage you deal.
+15 | Each enemy you kill restores {v} health.
+16 | Increases your weapon damage by {p}.
+17 | Increases the damage your pets deal by {p}.
+18 | Increases damage dealt to crowd-controlled enemies by {p}.
+19 | Increases damage dealt to elites and bosses by {p}.
+20 | Increases damage dealt to enemies below 30% health by {p}.
+21 | Increases damage dealt to afflicted enemies by {p}.
+22 | Melee attackers take {p} of the damage they deal you.
+23 | Your damage, haste, shield and thorns buffs are {p} stronger.
+24 | Restores {p} of your maximum health per second.
+25 | Increases all damage you deal by {v}% for every 10% damage reduction you have.
+26 | Each 1% of damage reduction past the cap increases your damage by {v}%.
+27 | Raises your damage reduction cap by {p}.
+28 | Increases all damage you deal by {p} while a shield holds.
+29 | Improves your demons' chance to get a critical strike by {p}.
+30 | Increases the damage of your Imps' Firebolts by {p}.
+31 | Gives your demons' attacks a {p} chance to strike again.
+32 | Increases the damage of your Infernal and Doomguard by {p}.
+33 | Returns you to life at half health when you die. Holds {n} lives at most.
+@set
+warrior | Common | Recruit's | 0
+warrior | Uncommon | Valor | 1
+warrior | Rare | Might | 1
+warrior | Epic | Wrath | 1
+warrior | Legendary | Dreadnaught | 0
+paladin | Common | Squire's | 0
+paladin | Uncommon | Lightforge | 0
+paladin | Rare | Lawbringer | 0
+paladin | Epic | Judgement | 0
+paladin | Legendary | Redemption | 0
+hunter | Common | Tracker's | 0
+hunter | Uncommon | Beaststalker's | 0
+hunter | Rare | Giantstalker's | 0
+hunter | Epic | Dragonstalker's | 0
+hunter | Legendary | Cryptstalker | 0
+rogue | Common | Footpad's | 0
+rogue | Uncommon | Shadowcraft | 0
+rogue | Rare | Nightslayer | 0
+rogue | Epic | Bloodfang | 0
+rogue | Legendary | Bonescythe | 0
+priest | Common | Acolyte's | 0
+priest | Uncommon | Devout | 0
+priest | Rare | Prophecy | 1
+priest | Epic | Transcendence | 1
+priest | Legendary | Faith | 1
+shaman | Common | Primal | 0
+shaman | Uncommon | Elements | 1
+shaman | Rare | Earthfury | 0
+shaman | Epic | Ten Storms | 1
+shaman | Legendary | Earthshatter | 0
+mage | Common | Apprentice's | 0
+mage | Uncommon | Magister's | 0
+mage | Rare | Arcanist | 0
+mage | Epic | Netherwind | 0
+mage | Legendary | Frostfire | 0
+warlock | Common | Novice's | 0
+warlock | Uncommon | Dreadmist | 0
+warlock | Rare | Felheart | 0
+warlock | Epic | Nemesis | 0
+warlock | Legendary | Plagueheart | 0
+druid | Common | Thicket | 0
+druid | Uncommon | Wildheart | 0
+druid | Rare | Cenarion | 0
+druid | Epic | Stormrage | 0
+druid | Legendary | Dreamwalker | 0
+@noun
+cloth | Head | Circlet
+cloth | Shoulder | Mantle
+cloth | Chest | Robes
+cloth | Waist | Belt
+cloth | Legs | Leggings
+cloth | Feet | Boots
+cloth | Wrist | Bindings
+cloth | Hands | Gloves
+leather | Head | Cover
+leather | Shoulder | Spaulders
+leather | Chest | Chestpiece
+leather | Waist | Belt
+leather | Legs | Pants
+leather | Feet | Boots
+leather | Wrist | Bracers
+leather | Hands | Gloves
+mail | Head | Helm
+mail | Shoulder | Spaulders
+mail | Chest | Breastplate
+mail | Waist | Belt
+mail | Legs | Legguards
+mail | Feet | Greaves
+mail | Wrist | Bracers
+mail | Hands | Gauntlets
+plate | Head | Helm
+plate | Shoulder | Pauldrons
+plate | Chest | Breastplate
+plate | Waist | Girdle
+plate | Legs | Legplates
+plate | Feet | Sabatons
+plate | Wrist | Bracers
+plate | Hands | Gauntlets
+@weapon
+warrior | 0 | Common | Worn Claymore
+warrior | 0 | Uncommon | Bastard Sword of Valor
+warrior | 0 | Rare | Blackhand Doomsaw
+warrior | 0 | Epic | Ravager's Greatblade
+warrior | 0 | Legendary | Sulfuras, Hand of Ragnaros
+paladin | 0 | Common | Wooden Maul
+paladin | 0 | Uncommon | Hammer of the Squire
+paladin | 0 | Rare | Hammer of the Lightforge
+paladin | 0 | Epic | Lightforged Hammer
+paladin | 0 | Legendary | Ashbringer
+hunter | 0 | Common | Short Bow
+hunter | 0 | Uncommon | Hunting Bow of the Wilds
+hunter | 0 | Rare | Bow of the Dragonflight
+hunter | 0 | Epic | Ahn'Qiraj Rifle
+hunter | 0 | Legendary | Rhok'delar, Longbow of the Ancient Keepers
+rogue | 0 | Common | Worn Dagger
+rogue | 0 | Uncommon | Assassin's Blade
+rogue | 0 | Rare | Shadowcraft Dirk
+rogue | 0 | Epic | Blackwing Shiv
+rogue | 0 | Legendary | Thunderfury, Blessed Blade of the Windseeker
+rogue | 1 | Common | Rusty Shiv
+rogue | 1 | Uncommon | Thief's Blade
+rogue | 1 | Rare | Nightslayer Kris
+rogue | 1 | Epic | Fang of the Faceless
+rogue | 1 | Legendary | Kingsfall
+priest | 0 | Common | Acolyte's Staff
+priest | 0 | Uncommon | Staff of the Devout
+priest | 0 | Rare | Staff of Prophecy
+priest | 0 | Epic | Benediction
+priest | 0 | Legendary | Anathema
+shaman | 0 | Common | Spiked Club
+shaman | 0 | Uncommon | Mace of the Elements
+shaman | 0 | Rare | Earthfury Hammer
+shaman | 0 | Epic | Blackwing Mace
+shaman | 0 | Legendary | Doomhammer
+shaman | 1 | Common | Round Buckler
+shaman | 1 | Uncommon | Crested Shield
+shaman | 1 | Rare | Totem Shield
+shaman | 1 | Epic | Aegis of the Ten Storms
+shaman | 1 | Legendary | Shield of the Earthshatter
+mage | 0 | Common | Apprentice's Staff
+mage | 0 | Uncommon | Magister's Staff
+mage | 0 | Rare | Arcanist's Staff
+mage | 0 | Epic | Staff of Dominance
+mage | 0 | Legendary | Atiesh, Greatstaff of the Guardian
+warlock | 0 | Common | Novice's Staff
+warlock | 0 | Uncommon | Dreadmist Staff
+warlock | 0 | Rare | Felheart Staff
+warlock | 0 | Epic | Staff of the Shadow Flame
+warlock | 0 | Legendary | Atiesh, Greatstaff of the Guardian
+druid | 0 | Common | Gnarled Staff
+druid | 0 | Uncommon | Wildheart Staff
+druid | 0 | Rare | Cenarion Staff
+druid | 0 | Epic | Staff of the Moon
+druid | 0 | Legendary | Atiesh, Greatstaff of the Guardian
+@chance
+Common | 0.6
+Uncommon | 0.5
+Rare | 0.35
+Epic | 0.25
+Legendary | 0.2
+PvP | 1.14461e+24
+@pvp
+warrior | Field Marshal's | Warlord's | Grand Marshal's Claymore / High Warlord's Greatsword
+paladin | Field Marshal's | Field Marshal's | Grand Marshal's Demolisher / Grand Marshal's Demolisher
+hunter | Field Marshal's | Warlord's | Grand Marshal's Bullseye / High Warlord's Recurve
+rogue | Field Marshal's | Warlord's | Grand Marshal's Dirk / High Warlord's Razor | Grand Marshal's Mageblade / High Warlord's Spellblade
+priest | Field Marshal's | Warlord's | Grand Marshal's Stave / High Warlord's War Staff
+shaman | Warlord's | Warlord's | High Warlord's Battle Mace / High Warlord's Battle Mace | High Warlord's Shield Wall / High Warlord's Shield Wall
+mage | Field Marshal's | Warlord's | Grand Marshal's Stave / High Warlord's War Staff
+warlock | Field Marshal's | Warlord's | Grand Marshal's Stave / High Warlord's War Staff
+druid | Field Marshal's | Warlord's | Grand Marshal's Stave / High Warlord's War Staff
+@armor
+warrior | plate
+paladin | plate
+hunter | mail
+rogue | leather
+priest | cloth
+shaman | mail
+mage | cloth
+warlock | cloth
+druid | leather

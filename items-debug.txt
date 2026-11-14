@@ -1,0 +1,94 @@
+jewelry records: 23
+  1b72fc accuria | Band of Accuria | INV_Jewelry_Ring_15 | +{v}% damage | 0.17 | 0
+  1b7324 quick_strike | Quick Strike Ring | INV_Jewelry_Ring_07 | -{v}% cooldowns | 0.09 | 1
+  1b734c dark_iron | Heavy Dark Iron Ring | INV_Jewelry_Ring_14 | +{v}% max health | 0.2 | 2
+  1b7374 dragonslayer | Master Dragonslayer's Ring | INV_Jewelry_Ring_41 | +{v}% critical strike chance | 0.04 | 3
+  1b739c archimtiros | Archimtiros' Ring of Reckoning | INV_Jewelry_Ring_40 | +{v}% damage reduction{max}, +{h}% max health | 0.035 | 5
+  1b73c4 devoured | Ring of the Devoured | INV_Jewelry_Ring_AhnQiraj_05 | +{v} health per second | 1.5 | 7
+  1b73ec spell_power | Ring of Spell Power | INV_Jewelry_Ring_38 | +{v}% area of effect | 0.14 | 8
+  1b7414 seal_damned | Seal of the Damned | INV_Jewelry_Ring_51Naxxramas | Your damage over time spells tick {v}% faster | 0.1 | 13
+  1b743c blooddrinker | Blooddrinker's Band | INV_Jewelry_Ring_49Naxxramas | {v}% of all damage dealt heals you | 0.01 | 12
+  1b7464 earthstrike | Earthstrike | Spell_Nature_AbolishMagic | +{v}% damage | 0.13 | 100
+  1b748c tep | Talisman of Ephemeral Power | INV_Misc_StoneTablet_11 | -{v}% cooldowns | 0.07 | 101
+  1b74b4 lifegiving | Lifegiving Gem | INV_Misc_Gem_Pearl_05 | +{v}% max health | 0.16 | 102
+  1b74dc hoj | Hand of Justice | INV_Jewelry_Talisman_01 | {v}% chance for a spell to cast twice | 0.06 | 109
+  1b7504 blackhand | Blackhand's Breadth | INV_Misc_ArmorKit_09 | +{v}% critical strike damage | 0.195 | 104
+  1b752c carrot | Carrot on a Stick | INV_Misc_Food_54 | +{v}% movement speed | 0.08 | 10a
+  1b7554 remote | Gnomish Universal Remote | INV_Misc_PocketWatch_01 | +{v}% pickup range | 0.35 | 10b
+  1b757c insignia | Insignia of the Horde | INV_Jewelry_TrinketPVP_02 | +{v}% experience | 0.12 | 10c
+  1b75a4 eldre_thalas | Royal Seal of Eldre'Thalas | INV_Jewelry_Talisman_10 | +{v}% gold | 0.25 | 10d
+  1b75cc chosen | Mark of the Chosen | INV_Jewelry_Talisman_08 | +{v}% luck | 0.15 | 10e
+  1b75f4 onyxia_blood | Onyxia Blood Talisman | Spell_Shadow_LifeDrain | Each kill heals {v} health | 2 | 10f
+  1b761c war_horn | Horn of the Warchief | INV_Misc_Horn_01 | Your buffs are {v}% stronger | 0.15 | 111
+  1b7644 soulstone | Major Soulstone | INV_Misc_Orb_04 | +{v} return to life at half health (2 at most) | 1 | 110
+  1b766c star_of_mystaria | Star of Mystaria | INV_Enchant_EssenceMagicLarge | +{v}% max health, +{h}% damage reduction{max} | 0.166667 | 106
+amulet rows: 16
+  1b7f68 mark_of_fordring | Mark of Fordring | INV_Jewelry_Talisman_07 | 1799912 1 0
+  1b7f90 talvash | Talvash's Enhancing Necklace | INV_Jewelry_Necklace_02 | 1800012 1 0
+  1b7fb8 south_seas_kelp | Pristine Enchanted South Seas Kelp | INV_Jewelry_Necklace_26 | 1800124 2 0
+  1b7fe0 prestor | Prestor's Talisman of Connivery | INV_Jewelry_Necklace_17 | 1800268 2 1
+  1b8008 animated_chain | Animated Chain Necklace | INV_Jewelry_Necklace_01 | 1800408 2 1
+  1b8030 woven_ivy | Woven Ivy Necklace | INV_Misc_Herb_15 | 1800532 3 1
+  1b8058 darkmoon | Amulet of the Darkmoon | INV_Jewelry_Necklace_14 | 1800708 2 1
+  1b8080 jeklik | Jeklik's Opaline Talisman | INV_Jewelry_Necklace_03 | 1800844 2 2
+  1b80a8 eye_of_hakkar | The Eye of Hakkar | INV_Jewelry_Necklace_22 | 1800980 2 2
+  1b80d0 steadfast_might | Medallion of Steadfast Might | INV_Jewelry_Amulet_03 | 1801124 3 2
+  1b80f8 enlightenment | Choker of Enlightenment | INV_Jewelry_Necklace_10 | 1801304 1 3
+  1b8120 vek_nilash | Amulet of Vek'nilash | INV_Jewelry_Necklace_AhnQiraj_01 | 1801408 2 3
+  1b8148 fallen_dragon | Pendant of the Fallen Dragon | INV_Jewelry_Necklace_12 | 1801552 3 3
+  1b8170 malice_stone | Malice Stone Pendant | INV_Jewelry_Necklace_29Naxxramas | 1801736 2 3
+  1b8198 onyxia_tooth | Onyxia Tooth Pendant | INV_Jewelry_Necklace_09 | 1801872 3 4
+  1b81c0 fire_lord | Choker of the Fire Lord | INV_Jewelry_Amulet_05 | 1802048 1 4
+  special mark_of_fordring: 3c 3e19999a 0 0 0 0 0 0 0
+  special talvash: 3c 3dcccccd 1 0 0 0 0 0 0
+  special south_seas_kelp: 3c 3e99999a c 0 0 0 0 0 0
+  special south_seas_kelp: 0 3c 3e800000 b 0 0 0 0 0
+  special prestor: 3c 3e23d70a 0 0 0 0 0 0 0
+  special prestor: 0 3c 3d23d70a 3 0 0 0 0 0
+  special animated_chain: 3c 3e800000 2 0 0 0 0 0 0
+  special animated_chain: 0 3c 3da3d70a 5 0 0 0 0 0
+  special woven_ivy: 3c 40c00000 6 0 0 0 0 0 0
+  special woven_ivy: 0 3c 3df5c28f 2 0 0 0 0 0
+  special woven_ivy: 0 0 3c 3df5c28f 7 0 0 0 0
+  special darkmoon: 3c 3df5c28f 1 0 0 0 0 0 0
+  special darkmoon: 0 3c 3da3d70a 7 0 0 0 0 0
+  special jeklik: 3c 3cf5c28f e 0 0 0 0 0 0
+  special jeklik: 0 3c 3f800000 f 0 0 0 0 0
+  special eye_of_hakkar: 3c 3d449ba6 3 0 0 0 0 0 0
+  special eye_of_hakkar: 0 9 316e 3f4ccccd 40800000 2 0 0 0
+  special steadfast_might: 3c 3dcccccd 5 0 0 0 0 0 0
+  special steadfast_might: 0 3c 3e19999a 2 0 0 0 0 0
+  special steadfast_might: 0 0 3c 3f800000 16 0 0 0 0
+  special enlightenment: 6 1 3e99999a 0 0 0 0 0 0
+  special vek_nilash: 3d 0 0 0 3f800000 2 0 0 0
+  special vek_nilash: 0 3c 3d4ccccd 0 0 0 0 0 0
+  special fallen_dragon: 13 42700000 3f000000 0 0 0 0 0 0
+  special fallen_dragon: 0 3c 3e4ccccd 2 0 0 0 0 0
+  special fallen_dragon: 0 0 3c 40a00000 6 0 0 0 0
+  special malice_stone: 3c 3e4ccccd d 0 0 0 0 0 0
+  special malice_stone: 0 3c 3da3d70a 1 0 0 0 0 0
+  special onyxia_tooth: 3c 3d23d70a 3 0 0 0 0 0 0
+  special onyxia_tooth: 0 3c 3e47ae14 4 0 0 0 0 0
+  special onyxia_tooth: 0 0 4 3e99999a 40a00000 0 0 6 2
+  special fire_lord: b 3e19999a 40c00000 2b69 4 0 0 0 0
+stat texts: 34
+sets warrior at 5e7d64: [0, 1, 1, 1, 0]
+sets paladin at 5e7e4c: [0, 0, 0, 0, 0]
+sets hunter at 5e7f34: [0, 0, 0, 0, 0]
+sets rogue at 5e801c: [0, 0, 0, 0, 0]
+sets priest at 5e8104: [0, 0, 1, 1, 1]
+sets shaman at 5e81ec: [0, 1, 0, 1, 0]
+sets mage at 5e82d4: [0, 0, 0, 0, 0]
+sets warlock at 5e83bc: [0, 0, 0, 0, 0]
+sets druid at 5e84a4: [0, 0, 0, 0, 0]
+pvp row 5e8930 class 1: Field Marshal's / Warlord's [("Grand Marshal's Claymore", "High Warlord's Greatsword")]
+pvp row 5e898c class 2: Field Marshal's / Field Marshal's [("Grand Marshal's Demolisher", "Grand Marshal's Demolisher")]
+pvp row 5e89e8 class 3: Field Marshal's / Warlord's [("Grand Marshal's Bullseye", "High Warlord's Recurve")]
+pvp row 5e8a44 class 4: Field Marshal's / Warlord's [("Grand Marshal's Dirk", "High Warlord's Razor"), ("Grand Marshal's Mageblade", "High Warlord's Spellblade")]
+pvp row 5e8aa0 class 5: Field Marshal's / Warlord's [("Grand Marshal's Stave", "High Warlord's War Staff")]
+pvp row 5e8afc class 7: Field Marshal's / Warlord's [("High Warlord's Battle Mace", "High Warlord's Battle Mace"), ("High Warlord's Shield Wall", "High Warlord's Shield Wall")]
+pvp row 5e8b58 class 8: Field Marshal's / Warlord's [("Grand Marshal's Stave", "High Warlord's War Staff")]
+pvp row 5e8bb4 class 9: Field Marshal's / Warlord's [("Grand Marshal's Stave", "High Warlord's War Staff")]
+pvp row 5e8c10 class 11: Field Marshal's / Warlord's [("Grand Marshal's Stave", "High Warlord's War Staff")]
+chances at 1a42b4: [0.6000000238418579, 0.5, 0.3499999940395355, 0.25, 0.20000000298023224, 1.1446080758675032e+24]
+chances at 5e4b10: [0.6000000238418579, 0.5, 0.4000000059604645, 0.30000001192092896, 0.20000000298023224, 0.25]
