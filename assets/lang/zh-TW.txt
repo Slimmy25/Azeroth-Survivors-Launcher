@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = 平均等級（單人 / 合作）
 Average DPS (solo / co-op)
 = 平均 DPS（單人 / 合作）
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= 在 Steam Deck 或 Linux 上，此影片會在啟動器外開啟。點擊 開啟影片，或在 選項 > 啟動器 中選擇網頁開啟方式。
+OPEN VIDEO ›
+= 開啟影片 ›
+WEB PAGES: STEAM BROWSER
+= 網頁：STEAM 瀏覽器
+WEB PAGES: LINUX BROWSER
+= 網頁：LINUX 瀏覽器
+WEB PAGES: SHOW ADDRESS
+= 網頁：顯示網址
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= 影片和連結在 Steam 內建瀏覽器中開啟，遊戲模式下顯示在啟動器上方。點擊切換。
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= 影片和連結在 Linux 桌面的瀏覽器中開啟（桌面模式）。點擊切換。
+Videos and links show their address, to open on your phone or PC. Press to change.
+= 影片和連結顯示網址，供你在手機或電腦上開啟。點擊切換。
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= 嘗試在啟動器內播放指南影片（Wine 的網頁檢視通常無法播放）
+This folder is on your Steam Deck at:\n\n{0}
+= 此資料夾在你的 Steam Deck 上的位置：\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= 在 Steam Deck 或 Linux 上，YouTube 影片暫時無法在啟動器內播放。在 Windows 上會在啟動器內播放。
+about the size of a game patch
+= 大約一個遊戲更新檔的大小
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= 在 Steam Deck 上播放影片需要啟動器的影片播放器。只需下載一次（{0}），並隨啟動器保存；不會安裝其他任何東西。\n\n現在下載嗎？
+Video player
+= 影片播放器
+Downloading the video player...
+= 正在下載影片播放器...
+Downloading the video player... {0}%
+= 正在下載影片播放器... {0}%
+The video player could not be downloaded.
+= 無法下載影片播放器。
+The video player could not be downloaded. Check the internet connection and try the video again.
+= 無法下載影片播放器。請檢查網路連線後重新開啟影片。
+The video player is ready.
+= 影片播放器已就緒。
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= 影片播放器無法在此系統上啟動。在 Windows 上影片會在啟動器內播放。

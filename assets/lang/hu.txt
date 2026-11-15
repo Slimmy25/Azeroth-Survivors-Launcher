@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = Átlagos szint (egyéni / koop)
 Average DPS (solo / co-op)
 = Átlagos DPS (egyéni / koop)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Steam Decken vagy Linuxon ez a videó az indítón kívül nyílik meg. Nyomd meg a VIDEÓ MEGNYITÁSA gombot, vagy válaszd ki, hol nyíljanak a weboldalak: Beállítások > Indító.
+OPEN VIDEO ›
+= VIDEÓ MEGNYITÁSA ›
+WEB PAGES: STEAM BROWSER
+= WEBOLDALAK: STEAM BÖNGÉSZŐ
+WEB PAGES: LINUX BROWSER
+= WEBOLDALAK: LINUX BÖNGÉSZŐ
+WEB PAGES: SHOW ADDRESS
+= WEBOLDALAK: CÍM MUTATÁSA
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= A videók és linkek a Steam böngészőjében nyílnak, játékmódban az indító fölött. Nyomd meg a váltáshoz.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= A videók és linkek a Linux asztal böngészőjében nyílnak (asztali mód). Nyomd meg a váltáshoz.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= A videók és linkek a címüket mutatják, hogy telefonon vagy gépen nyisd meg. Nyomd meg a váltáshoz.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Útmutató-videók kipróbálása az indítóban (a Wine webnézete gyakran nem tudja lejátszani őket)
+This folder is on your Steam Deck at:\n\n{0}
+= Ez a mappa itt van a Steam Deckeden:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= A YouTube-videók Steam Decken vagy Linuxon még nem játszhatók le az indítóban. Windowson az indítóban játszódnak le.
+about the size of a game patch
+= nagyjából egy játékfrissítésnyi
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= A Steam Decken a videókhoz a launcher videólejátszója kell. Egyszer kell letölteni ({0}), és a launchernél marad; más nem települ.\n\nLetöltöd most?
+Video player
+= Videólejátszó
+Downloading the video player...
+= Videólejátszó letöltése...
+Downloading the video player... {0}%
+= Videólejátszó letöltése... {0}%
+The video player could not be downloaded.
+= A videólejátszót nem sikerült letölteni.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= A videólejátszót nem sikerült letölteni. Ellenőrizd az internetkapcsolatot, és próbáld újra a videót.
+The video player is ready.
+= A videólejátszó kész.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= A videólejátszó nem tud elindulni ezen a rendszeren. Windowson a videók a launcherben játszódnak le.

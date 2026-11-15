@@ -2642,3 +2642,45 @@ Average level (solo / co-op)
 = Průměrná úroveň (sólo / koop)
 Average DPS (solo / co-op)
 = Průměrné DPS (sólo / koop)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Na Steam Decku nebo v Linuxu se toto video otevře mimo launcher. Stiskněte OTEVŘÍT VIDEO, nebo zvolte, kde se otevírají stránky, v Možnosti > Launcher.
+OPEN VIDEO ›
+= OTEVŘÍT VIDEO ›
+WEB PAGES: STEAM BROWSER
+= STRÁNKY: PROHLÍŽEČ STEAMU
+WEB PAGES: LINUX BROWSER
+= STRÁNKY: PROHLÍŽEČ LINUXU
+WEB PAGES: SHOW ADDRESS
+= STRÁNKY: UKÁZAT ADRESU
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Videa a odkazy se otevřou v prohlížeči Steamu, v herním režimu nad launcherem. Stiskněte pro změnu.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Videa a odkazy se otevřou v prohlížeči linuxové plochy (režim plochy). Stiskněte pro změnu.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Videa a odkazy ukážou adresu k otevření v telefonu nebo PC. Stiskněte pro změnu.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Zkoušet videa průvodce v launcheru (webové zobrazení Wine je často neumí přehrát)
+This folder is on your Steam Deck at:\n\n{0}
+= Tato složka je na vašem Steam Decku zde:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Videa z YouTube zatím nejde na Steam Decku ani v Linuxu přehrát v launcheru. Ve Windows se přehrávají v launcheru.
+about the size of a game patch
+= zhruba jako herní patch
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Videa na Steam Decku potřebují videopřehrávač launcheru. Stahuje se jednou ({0}) a zůstává u launcheru; nic dalšího se neinstaluje.\n\nStáhnout teď?
+Video player
+= Videopřehrávač
+Downloading the video player...
+= Stahování videopřehrávače...
+Downloading the video player... {0}%
+= Stahování videopřehrávače... {0} %
+The video player could not be downloaded.
+= Videopřehrávač se nepodařilo stáhnout.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Videopřehrávač se nepodařilo stáhnout. Zkontroluj připojení k internetu a zkus video znovu.
+The video player is ready.
+= Videopřehrávač je připraven.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Videopřehrávač se na tomto systému nemůže spustit. Ve Windows se videa přehrávají v launcheru.

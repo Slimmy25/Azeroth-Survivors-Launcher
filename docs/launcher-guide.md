@@ -91,8 +91,8 @@ The launcher separates the **Guide** and **Theorycrafting** destinations:
 Search covers player-facing pages, not Archive. Spell, talent, gear and Codex links keep their surrounding text and lead
 to the matching passage or class-guide location. The class contents tree stays beside the passage; scrolling it jumps
  between sections and the passage follows. Spell and talent hovers show their details; item hovers also show a Wowhead
- Classic 3D model preview when an item match is available, including in the builder. Short how-to videos play inside the
- launcher. The same New Player Handbook is in game with **AZS Handbook** (`/handbook`).
+ Classic 3D model preview when an item match is available, including in the builder. The Guide's videos are players'
+ YouTube build guides. The same New Player Handbook is in game with **AZS Handbook** (`/handbook`).
 ### Tools to theorycraft
 - **Talent Tree Builder**: all three trees of every class, as in the game. Click to add a point and right-click to
   take one back. Each row opens with 5 points per row above it in its own tree, up to 51 points. The build is
@@ -164,7 +164,6 @@ Program Files), or when the exe is inside Google Drive, OneDrive, Dropbox or iCl
 
 - **The game's download hosts** (in `src/Launcher.cs`): the game client.
 - **GitHub**: launcher updates and the addons offered in Download More.
-- **jsDelivr** (a CDN for GitHub files): the guide's how-to videos, streamed while they play.
 - **YouTube**: community and build videos and their titles; Community videos play in a Microsoft Edge window managed by the launcher.
 - **Wowhead's image host** (`wow.zamimg.com`): spell, class, race, zone and creature pictures, plus item-model previews in guide and Gear Planner hovers. Images load
   when needed and are cached in the launcher's `temp` folder.
@@ -182,7 +181,6 @@ be installed. The exe appears in `dist`. Every push is also built on GitHub (**A
 | Patch notes | `assets/changelog.txt` (posts separated by a line with only `===`) |
 | Download More list | `assets/addons.txt`, and where each copy comes from: `addons/sources.txt` |
 | The Guide | `assets/guide.txt` (format at the top); its groups: `GuideGroups` in `src/Guide.cs` |
-| Guide videos | `guide-videos/<topic>/` (published by Actions > Publish guide videos) |
 | Community videos | `Headlines` in `src/Community.cs`, then the Build Guides videos |
 | Talent trees | `assets/talents.txt` |
 | Translations | `assets/lang/<code>.txt` (see `assets/lang/README.md`) |

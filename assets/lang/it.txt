@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Livello medio (solo / co-op)
 Average DPS (solo / co-op)
 = DPS medi (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Su Steam Deck o Linux questo video si apre fuori dal launcher. Premi APRI VIDEO o scegli dove aprire le pagine web in Opzioni > Launcher.
+OPEN VIDEO ›
+= APRI VIDEO ›
+WEB PAGES: STEAM BROWSER
+= PAGINE WEB: BROWSER DI STEAM
+WEB PAGES: LINUX BROWSER
+= PAGINE WEB: BROWSER DI LINUX
+WEB PAGES: SHOW ADDRESS
+= PAGINE WEB: MOSTRA INDIRIZZO
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Video e link si aprono nel browser di Steam, sopra il launcher in Modalità gioco. Premi per cambiare.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Video e link si aprono nel browser del desktop Linux (Modalità desktop). Premi per cambiare.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Video e link mostrano l'indirizzo, da aprire su telefono o PC. Premi per cambiare.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Prova i video della guida nel launcher (la vista web di Wine spesso non riesce a riprodurli)
+This folder is on your Steam Deck at:\n\n{0}
+= Questa cartella si trova sul tuo Steam Deck in:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= I video di YouTube non possono ancora essere riprodotti nel launcher su Steam Deck o Linux. Su Windows si riproducono nel launcher.
+about the size of a game patch
+= più o meno quanto una patch del gioco
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= I video su Steam Deck richiedono il lettore video del launcher. È un download unico ({0}) e resta con il launcher; non viene installato altro.\n\nScaricarlo ora?
+Video player
+= Lettore video
+Downloading the video player...
+= Download del lettore video...
+Downloading the video player... {0}%
+= Download del lettore video... {0}%
+The video player could not be downloaded.
+= Impossibile scaricare il lettore video.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Impossibile scaricare il lettore video. Controlla la connessione a internet e riprova il video.
+The video player is ready.
+= Il lettore video è pronto.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Il lettore video non può avviarsi su questo sistema. Su Windows i video si riproducono nel launcher.

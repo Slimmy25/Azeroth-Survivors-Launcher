@@ -2642,3 +2642,45 @@ Average level (solo / co-op)
 = Μέσο επίπεδο (μόνος / co-op)
 Average DPS (solo / co-op)
 = Μέσο DPS (μόνος / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Σε Steam Deck ή Linux αυτό το βίντεο ανοίγει έξω από τον launcher. Πατήστε ΑΝΟΙΓΜΑ ΒΙΝΤΕΟ ή επιλέξτε πού ανοίγουν οι σελίδες στις Επιλογές > Launcher.
+OPEN VIDEO ›
+= ΑΝΟΙΓΜΑ ΒΙΝΤΕΟ ›
+WEB PAGES: STEAM BROWSER
+= ΣΕΛΙΔΕΣ: BROWSER ΤΟΥ STEAM
+WEB PAGES: LINUX BROWSER
+= ΣΕΛΙΔΕΣ: BROWSER ΤΟΥ LINUX
+WEB PAGES: SHOW ADDRESS
+= ΣΕΛΙΔΕΣ: ΕΜΦΑΝΙΣΗ ΔΙΕΥΘΥΝΣΗΣ
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Βίντεο και σύνδεσμοι ανοίγουν στον browser του Steam, πάνω από τον launcher στη λειτουργία παιχνιδιού. Πατήστε για αλλαγή.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Βίντεο και σύνδεσμοι ανοίγουν στον browser της επιφάνειας εργασίας Linux. Πατήστε για αλλαγή.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Βίντεο και σύνδεσμοι δείχνουν τη διεύθυνσή τους για άνοιγμα σε κινητό ή υπολογιστή. Πατήστε για αλλαγή.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Δοκιμή βίντεο οδηγού μέσα στον launcher (η προβολή ιστού του Wine συχνά δεν μπορεί να τα παίξει)
+This folder is on your Steam Deck at:\n\n{0}
+= Αυτός ο φάκελος βρίσκεται στο Steam Deck σας εδώ:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Τα βίντεο YouTube δεν παίζουν ακόμη μέσα στον launcher σε Steam Deck ή Linux. Στα Windows παίζουν μέσα στον launcher.
+about the size of a game patch
+= περίπου όσο ένα patch του παιχνιδιού
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Τα βίντεο στο Steam Deck χρειάζονται το πρόγραμμα αναπαραγωγής του launcher. Κατεβαίνει μία φορά ({0}) και μένει στο launcher· τίποτε άλλο δεν εγκαθίσταται.\n\nΛήψη τώρα;
+Video player
+= Πρόγραμμα αναπαραγωγής βίντεο
+Downloading the video player...
+= Λήψη του προγράμματος αναπαραγωγής...
+Downloading the video player... {0}%
+= Λήψη του προγράμματος αναπαραγωγής... {0}%
+The video player could not be downloaded.
+= Δεν ήταν δυνατή η λήψη του προγράμματος αναπαραγωγής.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Δεν ήταν δυνατή η λήψη του προγράμματος αναπαραγωγής. Έλεγξε τη σύνδεση στο διαδίκτυο και δοκίμασε ξανά το βίντεο.
+The video player is ready.
+= Το πρόγραμμα αναπαραγωγής είναι έτοιμο.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Το πρόγραμμα αναπαραγωγής δεν μπορεί να ξεκινήσει σε αυτό το σύστημα. Στα Windows τα βίντεο παίζουν μέσα στο launcher.

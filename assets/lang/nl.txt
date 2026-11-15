@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Gemiddeld niveau (solo / co-op)
 Average DPS (solo / co-op)
 = Gemiddelde DPS (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Op een Steam Deck of Linux opent deze video buiten de launcher. Druk op VIDEO OPENEN of kies waar webpagina's openen in Opties > Launcher.
+OPEN VIDEO ›
+= VIDEO OPENEN ›
+WEB PAGES: STEAM BROWSER
+= WEBPAGINA'S: STEAM-BROWSER
+WEB PAGES: LINUX BROWSER
+= WEBPAGINA'S: LINUX-BROWSER
+WEB PAGES: SHOW ADDRESS
+= WEBPAGINA'S: ADRES TONEN
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Video's en links openen in de browser van Steam, over de launcher in Gamemodus. Druk om te wijzigen.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Video's en links openen in de browser van het Linux-bureaublad (Bureaubladmodus). Druk om te wijzigen.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Video's en links tonen hun adres om op je telefoon of pc te openen. Druk om te wijzigen.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Gidsvideo's in de launcher proberen (de webweergave van Wine kan ze vaak niet afspelen)
+This folder is on your Steam Deck at:\n\n{0}
+= Deze map staat op je Steam Deck op:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube-video's kunnen op een Steam Deck of Linux nog niet in de launcher spelen. Op Windows spelen ze in de launcher.
+about the size of a game patch
+= ongeveer zo groot als een gamepatch
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Video's op een Steam Deck hebben de videospeler van de launcher nodig. Het is een eenmalige download ({0}) en blijft bij de launcher; verder wordt er niets geïnstalleerd.\n\nNu downloaden?
+Video player
+= Videospeler
+Downloading the video player...
+= Videospeler downloaden...
+Downloading the video player... {0}%
+= Videospeler downloaden... {0}%
+The video player could not be downloaded.
+= De videospeler kon niet worden gedownload.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= De videospeler kon niet worden gedownload. Controleer de internetverbinding en probeer de video opnieuw.
+The video player is ready.
+= De videospeler is klaar.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= De videospeler kan op dit systeem niet starten. Op Windows spelen video's in de launcher.

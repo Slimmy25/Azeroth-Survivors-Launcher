@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Level rata-rata (solo / co-op)
 Average DPS (solo / co-op)
 = DPS rata-rata (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Di Steam Deck atau Linux video ini terbuka di luar launcher. Tekan BUKA VIDEO, atau pilih tempat halaman web dibuka di Opsi > Launcher.
+OPEN VIDEO ›
+= BUKA VIDEO ›
+WEB PAGES: STEAM BROWSER
+= HALAMAN WEB: BROWSER STEAM
+WEB PAGES: LINUX BROWSER
+= HALAMAN WEB: BROWSER LINUX
+WEB PAGES: SHOW ADDRESS
+= HALAMAN WEB: TAMPILKAN ALAMAT
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Video dan tautan terbuka di browser Steam, di atas launcher dalam Mode Game. Tekan untuk mengganti.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Video dan tautan terbuka di browser desktop Linux (Mode Desktop). Tekan untuk mengganti.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Video dan tautan menampilkan alamatnya untuk dibuka di ponsel atau PC. Tekan untuk mengganti.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Coba video panduan di dalam launcher (tampilan web Wine sering tidak bisa memutarnya)
+This folder is on your Steam Deck at:\n\n{0}
+= Folder ini ada di Steam Deck-mu di:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Video YouTube belum bisa diputar di dalam launcher di Steam Deck atau Linux. Di Windows video diputar di dalam launcher.
+about the size of a game patch
+= kira-kira sebesar patch game
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Video di Steam Deck memerlukan pemutar video launcher. Ini unduhan sekali saja ({0}) dan tetap bersama launcher; tidak ada yang lain dipasang.\n\nUnduh sekarang?
+Video player
+= Pemutar video
+Downloading the video player...
+= Mengunduh pemutar video...
+Downloading the video player... {0}%
+= Mengunduh pemutar video... {0}%
+The video player could not be downloaded.
+= Pemutar video tidak dapat diunduh.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Pemutar video tidak dapat diunduh. Periksa koneksi internet lalu coba videonya lagi.
+The video player is ready.
+= Pemutar video siap.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Pemutar video tidak dapat berjalan di sistem ini. Di Windows video diputar di dalam launcher.

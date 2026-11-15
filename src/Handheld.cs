@@ -21,6 +21,24 @@ namespace AzerothLauncher
         static extern IntPtr GetProcAddress(IntPtr module, string name);
 
         public static bool ForceGameMode;                     // --game-mode
+
+        // a Windows path as Linux sees it: Wine's Z: drive is the Linux root, and C: is the prefix's drive_c (Proton keeps
+        // it under Steam's compatdata, which WINEPREFIX names). Null when it can't be told.
+        public static string LinuxPath(string path)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(path) || path.Length < 3 || path[1] != ':') return null;
+                string rest = path.Substring(2).Replace('\\', '/');
+                char drive = char.ToUpperInvariant(path[0]);
+                if (drive == 'Z') return rest.Length > 0 ? rest : "/";
+                string prefix = Env("WINEPREFIX");
+                if (drive == 'C' && prefix.Length > 0) return prefix.TrimEnd('/') + "/drive_c" + rest;
+            }
+            catch (Exception) { }
+            return null;
+        }
+
         public static bool Experimental;                      // STEAM DECK EXPERIMENTAL is on
         public static string Device = "";                     // setup's answer: "handheld", "pc", or "" (not asked yet)
 

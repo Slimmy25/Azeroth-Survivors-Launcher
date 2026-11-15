@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = เลเวลเฉลี่ย (เดี่ยว / โคออป)
 Average DPS (solo / co-op)
 = DPS เฉลี่ย (เดี่ยว / โคออป)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= บน Steam Deck หรือ Linux วิดีโอนี้จะเปิดนอกลันเชอร์ กด เปิดวิดีโอ หรือเลือกที่เปิดหน้าเว็บใน ตัวเลือก > ลันเชอร์
+OPEN VIDEO ›
+= เปิดวิดีโอ ›
+WEB PAGES: STEAM BROWSER
+= หน้าเว็บ: เบราว์เซอร์ STEAM
+WEB PAGES: LINUX BROWSER
+= หน้าเว็บ: เบราว์เซอร์ LINUX
+WEB PAGES: SHOW ADDRESS
+= หน้าเว็บ: แสดงที่อยู่
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= วิดีโอและลิงก์เปิดในเบราว์เซอร์ของ Steam ทับลันเชอร์ในโหมดเกม กดเพื่อเปลี่ยน
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= วิดีโอและลิงก์เปิดในเบราว์เซอร์ของเดสก์ท็อป Linux (โหมดเดสก์ท็อป) กดเพื่อเปลี่ยน
+Videos and links show their address, to open on your phone or PC. Press to change.
+= วิดีโอและลิงก์แสดงที่อยู่เพื่อเปิดบนโทรศัพท์หรือพีซี กดเพื่อเปลี่ยน
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= ลองเล่นวิดีโอคู่มือในลันเชอร์ (มุมมองเว็บของ Wine มักเล่นไม่ได้)
+This folder is on your Steam Deck at:\n\n{0}
+= โฟลเดอร์นี้อยู่บน Steam Deck ของคุณที่:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= วิดีโอ YouTube ยังเล่นในลันเชอร์บน Steam Deck หรือ Linux ไม่ได้ บน Windows จะเล่นในลันเชอร์
+about the size of a game patch
+= ประมาณขนาดแพตช์เกม
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= วิดีโอบน Steam Deck ต้องใช้เครื่องเล่นวิดีโอของ launcher ดาวน์โหลดครั้งเดียว ({0}) และอยู่กับ launcher ไม่มีการติดตั้งอย่างอื่น\n\nดาวน์โหลดตอนนี้ไหม?
+Video player
+= เครื่องเล่นวิดีโอ
+Downloading the video player...
+= กำลังดาวน์โหลดเครื่องเล่นวิดีโอ...
+Downloading the video player... {0}%
+= กำลังดาวน์โหลดเครื่องเล่นวิดีโอ... {0}%
+The video player could not be downloaded.
+= ไม่สามารถดาวน์โหลดเครื่องเล่นวิดีโอได้
+The video player could not be downloaded. Check the internet connection and try the video again.
+= ไม่สามารถดาวน์โหลดเครื่องเล่นวิดีโอได้ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองเปิดวิดีโออีกครั้ง
+The video player is ready.
+= เครื่องเล่นวิดีโอพร้อมแล้ว
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= เครื่องเล่นวิดีโอเริ่มทำงานบนระบบนี้ไม่ได้ บน Windows วิดีโอจะเล่นใน launcher

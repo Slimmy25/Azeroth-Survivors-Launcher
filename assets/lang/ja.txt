@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = 平均レベル (ソロ / マルチ)
 Average DPS (solo / co-op)
 = 平均DPS (ソロ / マルチ)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Steam Deck や Linux では、この動画はランチャーの外で開きます。動画を開く を押すか、オプション > ランチャーでウェブページを開く場所を選んでください。
+OPEN VIDEO ›
+= 動画を開く ›
+WEB PAGES: STEAM BROWSER
+= ウェブページ: STEAM ブラウザ
+WEB PAGES: LINUX BROWSER
+= ウェブページ: LINUX ブラウザ
+WEB PAGES: SHOW ADDRESS
+= ウェブページ: アドレスを表示
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= 動画やリンクは Steam のブラウザで開きます (ゲームモードではランチャーの上に表示)。押すと切り替わります。
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= 動画やリンクは Linux デスクトップのブラウザで開きます (デスクトップモード)。押すと切り替わります。
+Videos and links show their address, to open on your phone or PC. Press to change.
+= 動画やリンクはスマホやPCで開くためのアドレスを表示します。押すと切り替わります。
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= ガイド動画をランチャー内で試す (Wine のウェブ表示では再生できないことが多いです)
+This folder is on your Steam Deck at:\n\n{0}
+= このフォルダーは Steam Deck の次の場所にあります:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube 動画は Steam Deck や Linux ではまだランチャー内で再生できません。Windows ではランチャー内で再生されます。
+about the size of a game patch
+= ゲームのパッチ程度
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Steam Deck で動画を見るにはランチャーの動画プレイヤーが必要です。ダウンロードは一度だけ（{0}）で、ランチャー内に保存されます。他には何もインストールされません。\n\n今すぐダウンロードしますか？
+Video player
+= 動画プレイヤー
+Downloading the video player...
+= 動画プレイヤーをダウンロード中...
+Downloading the video player... {0}%
+= 動画プレイヤーをダウンロード中... {0}%
+The video player could not be downloaded.
+= 動画プレイヤーをダウンロードできませんでした。
+The video player could not be downloaded. Check the internet connection and try the video again.
+= 動画プレイヤーをダウンロードできませんでした。インターネット接続を確認して、もう一度動画を開いてください。
+The video player is ready.
+= 動画プレイヤーの準備ができました。
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= このシステムでは動画プレイヤーを起動できません。Windows では動画はランチャー内で再生されます。

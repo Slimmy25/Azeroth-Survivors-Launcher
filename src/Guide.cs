@@ -4,7 +4,7 @@
 //
 // Videos: put a line "@video Title | address" anywhere in a topic or page of guide.txt; the video card shows up
 // at that spot. The address can be a YouTube link (its picture is fetched from YouTube), any other web address,
-// or a video file. A file name alone is looked for in the "Guide Videos" folder next to the launcher's data.
+// (the Guide carries YouTube videos only; the code still reads a file address if one is ever given).
 // Clicking the card opens the video in the browser or the PC's video player.
 //
 // The source text is English; visible titles, descriptions, body text and inline link names are translated where available.

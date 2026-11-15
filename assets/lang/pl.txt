@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = Średni poziom (solo / co-op)
 Average DPS (solo / co-op)
 = Średni DPS (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Na Steam Decku lub w Linuksie ten film otwiera się poza launcherem. Naciśnij OTWÓRZ FILM albo wybierz, gdzie otwierać strony, w Opcje > Launcher.
+OPEN VIDEO ›
+= OTWÓRZ FILM ›
+WEB PAGES: STEAM BROWSER
+= STRONY: PRZEGLĄDARKA STEAM
+WEB PAGES: LINUX BROWSER
+= STRONY: PRZEGLĄDARKA LINUKSA
+WEB PAGES: SHOW ADDRESS
+= STRONY: POKAŻ ADRES
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Filmy i linki otwierają się w przeglądarce Steam, nad launcherem w trybie gry. Naciśnij, aby zmienić.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Filmy i linki otwierają się w przeglądarce pulpitu Linuksa (tryb pulpitu). Naciśnij, aby zmienić.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Filmy i linki pokazują adres do otwarcia na telefonie lub PC. Naciśnij, aby zmienić.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Próbuj filmy poradnika w launcherze (widok WWW Wine często nie umie ich odtworzyć)
+This folder is on your Steam Deck at:\n\n{0}
+= Ten folder jest na twoim Steam Decku tutaj:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Filmy z YouTube nie mogą jeszcze grać w launcherze na Steam Decku ani w Linuksie. W Windows grają w launcherze.
+about the size of a game patch
+= mniej więcej tyle co łatka do gry
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Filmy na Steam Deck wymagają odtwarzacza wideo launchera. To jednorazowe pobranie ({0}), które zostaje z launcherem; nic więcej nie jest instalowane.\n\nPobrać teraz?
+Video player
+= Odtwarzacz wideo
+Downloading the video player...
+= Pobieranie odtwarzacza wideo...
+Downloading the video player... {0}%
+= Pobieranie odtwarzacza wideo... {0}%
+The video player could not be downloaded.
+= Nie udało się pobrać odtwarzacza wideo.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Nie udało się pobrać odtwarzacza wideo. Sprawdź połączenie z internetem i spróbuj ponownie.
+The video player is ready.
+= Odtwarzacz wideo jest gotowy.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Odtwarzacz wideo nie może się uruchomić w tym systemie. W Windows filmy odtwarzają się w launcherze.

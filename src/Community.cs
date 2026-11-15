@@ -701,7 +701,18 @@ namespace AzerothLauncher
         // a click on a YouTube video (here or in the Guide): it plays in the Community section
         bool PlayYouTube(GuideVideo v)
         {
-            if (EdgePath() == null) { Util.OpenInShell(WatchUrl(v)); return true; }
+            // Wine / Proton (Steam Deck, Linux): the launcher's own video player (CefPlayer.cs), downloaded once on the
+            // first video after the player says so; never another browser or website
+            if (Handheld.Wine)
+            {
+                if (!CefPlayer.Supported)
+                {
+                    Warn("Video", Lang.T("YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows."));
+                    return true;
+                }
+                if (!CefPlayer.Ready && !AskVideoPlayerDownload()) return true;
+            }
+            else if (EdgePath() == null) { Util.OpenInShell(WatchUrl(v)); return true; }
             communityPlaying = v;
             if (current == "Community" && side.Visible) BuildPanel("Community");
             else { current = null; ShowSection("Community"); }
@@ -711,6 +722,7 @@ namespace AzerothLauncher
         void StartEdge(GuideVideo v)
         {
             StopEdge();
+            if (Handheld.Wine) { StartCefVideo(v); return; }
             string edge = EdgePath();
             if (edge == null) return;
             string profile = Path.Combine(Util.DataDir, "video-player");
@@ -909,6 +921,12 @@ namespace AzerothLauncher
 
         void FitEdge()
         {
+            if (cefWnd != IntPtr.Zero)
+            {
+                if (edgeHost != null && !edgeHost.IsDisposed && IsWindow(cefWnd))
+                    MoveWindow(cefWnd, 0, 0, edgeHost.ClientSize.Width, edgeHost.ClientSize.Height, true);
+                return;
+            }
             if (videoFull || edgeWnd == IntPtr.Zero || edgeHost == null || edgeHost.IsDisposed || !IsWindow(edgeWnd)) return;
             // Edge draws its own title bar inside the window: it is pushed up out of sight
             int bar;
@@ -916,10 +934,84 @@ namespace AzerothLauncher
             MoveWindow(edgeWnd, 0, -bar, edgeHost.ClientSize.Width, edgeHost.ClientSize.Height + bar, true);
         }
 
+
+        // ---- Steam Deck / Linux: the launcher's own video player (CefPlayer.cs) instead of Edge
+        bool cefPlaying;
+        IntPtr cefWnd;
+
+        // the first video on a Steam Deck: the one-time download of the video player, said plainly, then done here with
+        // its progress shown; true once the player is ready
+        bool AskVideoPlayerDownload()
+        {
+            long size = CefPlayer.PackageSize();
+            string sizeText = size > 0 ? Util.FmtSize(size) : Lang.T("about the size of a game patch");
+            if (Msg.Show(this, Lang.F("Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?", sizeText),
+                         Lang.T("Video player"), MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return false;
+            var cancel = new ManualResetEvent(false);
+            string failure = null;
+            var done = new ManualResetEvent(false);
+            SetStatus(Lang.T("Downloading the video player..."));
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                try
+                {
+                    CefPlayer.Download(delegate(long got, long total)
+                    {
+                        if (total > 0) Ui(delegate { SetStatus(Lang.F("Downloading the video player... {0}%", (int)(got * 100 / total))); });
+                    }, cancel);
+                }
+                catch (UserError e) { failure = e.Message; }
+                catch (Exception e) { failure = e.Message; }
+                done.Set();
+            });
+            while (!done.WaitOne(50)) Application.DoEvents();
+            if (failure != null)
+            {
+                SetStatus(Lang.T("The video player could not be downloaded."));
+                Warn("Video player", Lang.T("The video player could not be downloaded. Check the internet connection and try the video again.") + "\n\n" + failure);
+                return false;
+            }
+            SetStatus(Lang.T("The video player is ready."));
+            return true;
+        }
+
+        void StartCefVideo(GuideVideo v)
+        {
+            if (edgeHost == null || edgeHost.IsDisposed) return;
+            Panel host = edgeHost;
+            cefPlaying = true;
+            bool opened = CefPlayer.Open(host.Handle, new Rectangle(0, 0, host.ClientSize.Width, host.ClientSize.Height), WatchUrl(v),
+                delegate(IntPtr hwnd)
+                {
+                    // on Chromium's thread: the browser window exists inside the section
+                    Ui(delegate
+                    {
+                        if (!cefPlaying || host.IsDisposed || host != edgeHost) { CefPlayer.CloseBrowser(); return; }
+                        cefWnd = hwnd;
+                        foreach (Control c in host.Controls) c.Visible = false;
+                        FitEdge();
+                        PlaceVideoClose();
+                    });
+                });
+            if (!opened)
+            {
+                cefPlaying = false;
+                foreach (Control c in host.Controls)
+                    if (c is Label) c.Text = Lang.T("The video player could not start on this system. Videos play inside the launcher on Windows.");
+            }
+        }
+
         // closes the playing video's Edge (leaving the video, another section, the launcher closing)
         void StopEdge()
         {
             if (videoClose != null && !videoClose.IsDisposed) videoClose.Hide();
+            if (cefPlaying)
+            {
+                cefPlaying = false;
+                cefWnd = IntPtr.Zero;
+                CefPlayer.CloseBrowser();
+            }
             Process p = edgeVideo;
             edgeVideo = null;
             edgeWnd = IntPtr.Zero;
@@ -963,7 +1055,7 @@ namespace AzerothLauncher
         {
             if (videoClose == null || videoClose.IsDisposed) return;
             Form top = edgeHost != null && !edgeHost.IsDisposed ? edgeHost.TopLevelControl as Form : null;
-            bool on = !videoFull && top != null && edgeVideo != null && edgeHost.Visible && top.Visible && top.WindowState != FormWindowState.Minimized;
+            bool on = !videoFull && top != null && (edgeVideo != null || cefPlaying) && edgeHost.Visible && top.Visible && top.WindowState != FormWindowState.Minimized;
             if (!on) { videoClose.Hide(); return; }
             videoClose.SetDisplayScale(Theme.DisplayScale);
             int inset = Theme.Px(10);

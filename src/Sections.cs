@@ -3708,6 +3708,15 @@ namespace AzerothLauncher
         void OpenLocation(string dir)
         {
             if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir)) { SetStatus("That folder does not exist."); return; }
+            if (Handheld.Wine)
+            {
+                // Steam Deck / Linux: Game Mode shows no file manager, so the folder's Linux path is shown; elsewhere the
+                // Linux desktop's own file manager opens it (winebrowser hands the folder to it), not Wine's Explorer
+                string linux = Handheld.LinuxPath(dir);
+                if (Handheld.GameMode) { Warn("Folder", Lang.F("This folder is on your Steam Deck at:\n\n{0}", linux ?? dir)); return; }
+                try { System.Diagnostics.Process.Start("winebrowser.exe", "\"" + dir + "\""); return; }
+                catch (Exception) { }
+            }
             try { System.Diagnostics.Process.Start("explorer.exe", "\"" + dir + "\""); }
             catch (Exception) { SetStatus("That folder does not exist."); }
         }

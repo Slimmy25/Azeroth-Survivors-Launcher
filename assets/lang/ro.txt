@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = Nivel mediu (solo / co-op)
 Average DPS (solo / co-op)
 = DPS mediu (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Pe un Steam Deck sau în Linux acest videoclip se deschide în afara launcherului. Apasă DESCHIDE VIDEO sau alege unde se deschid paginile web în Opțiuni > Launcher.
+OPEN VIDEO ›
+= DESCHIDE VIDEO ›
+WEB PAGES: STEAM BROWSER
+= PAGINI WEB: BROWSERUL STEAM
+WEB PAGES: LINUX BROWSER
+= PAGINI WEB: BROWSERUL LINUX
+WEB PAGES: SHOW ADDRESS
+= PAGINI WEB: ARATĂ ADRESA
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Videoclipurile și linkurile se deschid în browserul Steam, peste launcher în modul Joc. Apasă pentru a schimba.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Videoclipurile și linkurile se deschid în browserul desktopului Linux (modul Desktop). Apasă pentru a schimba.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Videoclipurile și linkurile își arată adresa, de deschis pe telefon sau PC. Apasă pentru a schimba.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Încearcă videoclipurile ghidului în launcher (vizualizarea web a Wine adesea nu le poate reda)
+This folder is on your Steam Deck at:\n\n{0}
+= Acest folder se află pe Steam Deck-ul tău la:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Videoclipurile YouTube nu pot fi încă redate în launcher pe Steam Deck sau Linux. Pe Windows se redau în launcher.
+about the size of a game patch
+= cam cât un patch al jocului
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Videoclipurile pe Steam Deck au nevoie de playerul video al launcherului. Se descarcă o singură dată ({0}) și rămâne cu launcherul; nu se instalează nimic altceva.\n\nÎl descarci acum?
+Video player
+= Player video
+Downloading the video player...
+= Se descarcă playerul video...
+Downloading the video player... {0}%
+= Se descarcă playerul video... {0}%
+The video player could not be downloaded.
+= Playerul video nu a putut fi descărcat.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Playerul video nu a putut fi descărcat. Verifică conexiunea la internet și încearcă din nou videoclipul.
+The video player is ready.
+= Playerul video este gata.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Playerul video nu poate porni pe acest sistem. Pe Windows videoclipurile rulează în launcher.

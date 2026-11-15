@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Genomsnittlig nivå (solo / co-op)
 Average DPS (solo / co-op)
 = Genomsnittlig DPS (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= På en Steam Deck eller i Linux öppnas videon utanför startprogrammet. Tryck ÖPPNA VIDEO, eller välj var webbsidor öppnas under Alternativ > Startprogram.
+OPEN VIDEO ›
+= ÖPPNA VIDEO ›
+WEB PAGES: STEAM BROWSER
+= WEBBSIDOR: STEAMS WEBBLÄSARE
+WEB PAGES: LINUX BROWSER
+= WEBBSIDOR: LINUX-WEBBLÄSARE
+WEB PAGES: SHOW ADDRESS
+= WEBBSIDOR: VISA ADRESS
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Videor och länkar öppnas i Steams webbläsare, över startprogrammet i spelläge. Tryck för att ändra.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Videor och länkar öppnas i Linux-skrivbordets webbläsare (skrivbordsläge). Tryck för att ändra.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Videor och länkar visar sin adress att öppna på mobilen eller datorn. Tryck för att ändra.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Försök visa guidevideor i startprogrammet (Wines webbvy kan ofta inte spela dem)
+This folder is on your Steam Deck at:\n\n{0}
+= Mappen finns på din Steam Deck här:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube-videor kan ännu inte spelas i startprogrammet på en Steam Deck eller i Linux. I Windows spelas de i startprogrammet.
+about the size of a game patch
+= ungefär som en spelpatch
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Videor på en Steam Deck behöver launcherns videospelare. Den laddas ner en gång ({0}) och stannar hos launchern; inget annat installeras.\n\nLadda ner nu?
+Video player
+= Videospelare
+Downloading the video player...
+= Laddar ner videospelaren...
+Downloading the video player... {0}%
+= Laddar ner videospelaren... {0} %
+The video player could not be downloaded.
+= Videospelaren kunde inte laddas ner.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Videospelaren kunde inte laddas ner. Kontrollera internetanslutningen och försök med videon igen.
+The video player is ready.
+= Videospelaren är klar.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Videospelaren kan inte starta på det här systemet. På Windows spelas videor i launchern.

@@ -1,3 +1,9 @@
+# v3.45 (2026-11-15)
+
+- The Guide no longer has its own short how-to videos (camera distance, the DPS meter, changing race, luck); its text covers those topics. The Guide's videos are now only players' YouTube build guides.
+- Steam Deck and Linux: YouTube videos now play inside the launcher with its own video player. The first video asks for a one-time download of the player (from the launcher's own GitHub release); after that videos just play. Nothing opens another browser or website. Windows is unchanged and keeps using Edge.
+- Steam Deck and Linux: OPEN FOLDER uses the Linux desktop's file manager instead of Wine's Explorer, and in Game Mode shows the folder's Linux path instead.
+
 # v3.44 (2026-11-14)
 
 - Changelog: the game's patch notes 0.144.0, word for word. Guide: Endless mode now gives how fast enemies grow each minute (17.6% health, 6.7% damage).

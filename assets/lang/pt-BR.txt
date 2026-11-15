@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Nível médio (solo / co-op)
 Average DPS (solo / co-op)
 = DPS médio (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= No Steam Deck ou no Linux este vídeo abre fora do launcher. Pressione ABRIR VÍDEO ou escolha onde as páginas abrem em Opções > Launcher.
+OPEN VIDEO ›
+= ABRIR VÍDEO ›
+WEB PAGES: STEAM BROWSER
+= PÁGINAS WEB: NAVEGADOR DA STEAM
+WEB PAGES: LINUX BROWSER
+= PÁGINAS WEB: NAVEGADOR DO LINUX
+WEB PAGES: SHOW ADDRESS
+= PÁGINAS WEB: MOSTRAR ENDEREÇO
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Vídeos e links abrem no navegador da Steam, sobre o launcher no Modo de Jogo. Pressione para mudar.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Vídeos e links abrem no navegador da área de trabalho Linux (Modo Desktop). Pressione para mudar.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Vídeos e links mostram o endereço para abrir no celular ou PC. Pressione para mudar.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Tentar os vídeos do guia dentro do launcher (a visualização web do Wine muitas vezes não consegue reproduzi-los)
+This folder is on your Steam Deck at:\n\n{0}
+= Esta pasta está no seu Steam Deck em:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Vídeos do YouTube ainda não podem ser reproduzidos dentro do launcher no Steam Deck ou Linux. No Windows eles tocam dentro do launcher.
+about the size of a game patch
+= mais ou menos o tamanho de um patch do jogo
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Vídeos no Steam Deck precisam do player de vídeo do launcher. É um download único ({0}) e fica com o launcher; nada mais é instalado.\n\nBaixar agora?
+Video player
+= Player de vídeo
+Downloading the video player...
+= Baixando o player de vídeo...
+Downloading the video player... {0}%
+= Baixando o player de vídeo... {0}%
+The video player could not be downloaded.
+= Não foi possível baixar o player de vídeo.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Não foi possível baixar o player de vídeo. Verifique a conexão com a internet e tente o vídeo de novo.
+The video player is ready.
+= O player de vídeo está pronto.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= O player de vídeo não consegue iniciar neste sistema. No Windows os vídeos tocam dentro do launcher.

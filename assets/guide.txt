@@ -10,9 +10,8 @@ Format:
   - text                                  a bullet point
   any other line                          a paragraph (an empty line starts a new one)
   "a line in quotes"                      a tip box
-  @video Title | address                 a video card at that spot: a YouTube link (shows its picture),
-                                          any web address, or a video file (a name alone is looked for in the
-                                          "Guide Videos" folder next to the launcher's data)
+  @video Title | address                 a video card at that spot: a YouTube link (shows its picture). The Guide
+                                          carries YouTube videos only; it has no video files of its own.
                                           e.g.  @video Your first run | https://www.youtube.com/watch?v=XXXXXXXXXXX
   @video Title | address | Uploader | uploader's address
                                           the same, with credit to the person who made the video
@@ -134,8 +133,6 @@ Hero and lobby names, lobby chat and in-run chat support Chinese, Japanese, Kore
 
 # Camera distance
 You can set how far the camera sits from your hero, both from the main menu and in the middle of a run.
-@video How do I change my camera distance from the main menu? | https://cdn.jsdelivr.net/gh/Slimmy25/Azeroth-Survivors-Launcher@guide-videos/controls/how-do-i-change-my-camera-distance-from-the-main-menu.mp4
-@video How do I change my camera distance in game? | https://cdn.jsdelivr.net/gh/Slimmy25/Azeroth-Survivors-Launcher@guide-videos/controls/how-do-i-change-my-camera-distance-in-game.mp4
 
 # Gamepad
 Gamepads are supported. On menus, the D-pad or left stick moves between buttons, A presses and B goes back. Y opens stored level-ups. The gamepad Back button opens the character pane again.
@@ -152,7 +149,6 @@ A clock beneath the minimap shows your device's local time: 12-hour time in Engl
 
 # The damage meter
 The meter window has three views: Damage Done (every spell, pet, talent and item, with its share of the run), Healing Done (the health each source gave you, overhealing left out) and Boss Damage (the last boss fight only). Lines in blue are a talent's or amulet's own damage. Its Reset button only clears the window: the run's numbers are kept.
-@video How do I open the DPS meter? | https://cdn.jsdelivr.net/gh/Slimmy25/Azeroth-Survivors-Launcher@guide-videos/controls/how-do-i-open-the-dps-meter.mp4
 
 @topic Your First Run | A step-by-step start for new heroes
 # Before you start
@@ -414,7 +410,6 @@ Choose your race, gender and looks in Armory > Character. Each race has a racial
 
 # Any race, any class
 On the armory's Rewards tab, the Races section opens a race to every class for 100 achievement points, with its racial ability and passives. A Tauren Paladin, a Gnome Druid, an Undead Shaman: it's up to you. A race you buy is yours for good (a perk reset keeps it). A druid of a Horde race takes the Tauren's cat and bear forms, an Alliance one the Night Elf's.
-@video Can I change my race? | https://cdn.jsdelivr.net/gh/Slimmy25/Azeroth-Survivors-Launcher@guide-videos/races/can-i-change-my-race.mp4
 
 # Alliance
 - Human: Perception (every 30 sec, more damage for a short time), The Human Spirit (+20% experience), Diplomacy (+20% gold).
@@ -482,7 +477,6 @@ The run's clock stops while the cards are on screen and while the game is paused
 
 # Luck
 Luck gives you better odds of rarer upgrades when you level up. You can see your luck in the Run Stats next to the character window during a run.
-@video What does luck do? | https://cdn.jsdelivr.net/gh/Slimmy25/Azeroth-Survivors-Launcher@guide-videos/level-ups-and-cards/what-does-luck-do.mp4
 
 # A moment of safety
 After you pick a card or an item you are immune to damage for one second.

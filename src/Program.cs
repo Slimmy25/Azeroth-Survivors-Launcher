@@ -13,9 +13,9 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("Azeroth Survivors")]
 [assembly: AssemblyProduct("Azeroth Survivors Launcher")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 Azeroth Survivors")]
-[assembly: AssemblyVersion("3.44.0.0")]
-[assembly: AssemblyFileVersion("3.44.0.0")]
-[assembly: AssemblyInformationalVersion("3.44")]
+[assembly: AssemblyVersion("3.45.0.0")]
+[assembly: AssemblyFileVersion("3.45.0.0")]
+[assembly: AssemblyInformationalVersion("3.45")]
 [assembly: ComVisible(false)]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName = ".NET Framework 4.8")]
 
@@ -46,8 +46,7 @@ namespace AzerothLauncher
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         static extern int SetCurrentProcessExplicitAppUserModelID(string appId);
 
-        [STAThread]
-        static void LogCrash(string what, Exception e)
+        internal static void LogCrash(string what, Exception e)
         {
             try
             {
@@ -58,8 +57,12 @@ namespace AzerothLauncher
             catch (Exception) { }
         }
 
+        [STAThread]
         static void Main(string[] args)
         {
+            // Chromium's helper processes (the Steam Deck video player, CefPlayer.cs) are this exe started again: they
+            // run and leave before anything of the launcher starts (no window, no single-instance check)
+            if (CefPlayer.IsSubprocess(args)) { Environment.Exit(CefPlayer.RunSubprocess()); return; }
             EmbeddedLibraries.Register();
             NativeDisplay.Enable();
             Handheld.ForceGameMode = Array.IndexOf(args, "--game-mode") >= 0;   // try Steam Game Mode's behaviour on a PC

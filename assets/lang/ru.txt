@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = Средний уровень (соло / кооп)
 Average DPS (solo / co-op)
 = Средний DPS (соло / кооп)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= На Steam Deck или в Linux это видео открывается вне лаунчера. Нажмите ОТКРЫТЬ ВИДЕО или выберите, где открывать страницы, в Настройки > Лаунчер.
+OPEN VIDEO ›
+= ОТКРЫТЬ ВИДЕО ›
+WEB PAGES: STEAM BROWSER
+= СТРАНИЦЫ: БРАУЗЕР STEAM
+WEB PAGES: LINUX BROWSER
+= СТРАНИЦЫ: БРАУЗЕР LINUX
+WEB PAGES: SHOW ADDRESS
+= СТРАНИЦЫ: ПОКАЗАТЬ АДРЕС
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Видео и ссылки открываются в браузере Steam, поверх лаунчера в игровом режиме. Нажмите, чтобы сменить.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Видео и ссылки открываются в браузере рабочего стола Linux (режим рабочего стола). Нажмите, чтобы сменить.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Видео и ссылки показывают адрес, чтобы открыть на телефоне или ПК. Нажмите, чтобы сменить.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Пробовать видео руководства в лаунчере (веб-просмотр Wine часто не может их воспроизвести)
+This folder is on your Steam Deck at:\n\n{0}
+= Эта папка на вашем Steam Deck находится здесь:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Видео YouTube пока не воспроизводятся в лаунчере на Steam Deck или в Linux. В Windows они воспроизводятся в лаунчере.
+about the size of a game patch
+= примерно как патч игры
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Для видео на Steam Deck нужен видеоплеер лаунчера. Он скачивается один раз ({0}) и остаётся в лаунчере; больше ничего не устанавливается.\n\nСкачать сейчас?
+Video player
+= Видеоплеер
+Downloading the video player...
+= Скачивание видеоплеера...
+Downloading the video player... {0}%
+= Скачивание видеоплеера... {0}%
+The video player could not be downloaded.
+= Не удалось скачать видеоплеер.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Не удалось скачать видеоплеер. Проверьте подключение к интернету и попробуйте открыть видео снова.
+The video player is ready.
+= Видеоплеер готов.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Видеоплеер не может запуститься в этой системе. В Windows видео воспроизводятся в лаунчере.

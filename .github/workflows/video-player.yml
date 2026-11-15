@@ -1,0 +1,60 @@
+# Builds the Steam Deck / Linux video player package (CEF 150, Windows 64-bit, minimal build) and publishes it to the
+# prerelease "video-player-cef150". The launcher downloads it once, only under Wine / Proton (src/CefPlayer.cs).
+# Run it by hand (Actions > Video player package > Run workflow). It is a prerelease so it never becomes the
+# launcher's "latest" release that self-update reads.
+name: Video player package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      TAG: video-player-cef150
+      CEF_MAJOR: "150"
+    steps:
+      - name: Find the newest CEF 150 build
+        id: find
+        run: |
+          set -euo pipefail
+          curl -fsSL https://cef-builds.spotifycdn.com/index.json -o index.json
+          name=$(jq -r --arg m "$CEF_MAJOR" '
+            .windows64.versions[]
+            | select(.channel == "stable" and (.cef_version | startswith($m + ".")))
+            | .files[] | select(.type == "minimal") | .name' index.json | head -n1)
+          test -n "$name"
+          sha=$(jq -r --arg n "$name" '.windows64.versions[].files[] | select(.name == $n) | .sha1' index.json | head -n1)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Download and repack
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://cef-builds.spotifycdn.com/${{ steps.find.outputs.name }}" -o cef.tar.bz2
+          echo "${{ steps.find.outputs.sha }}  cef.tar.bz2" | sha1sum -c -
+          mkdir cef && tar -xjf cef.tar.bz2 -C cef --strip-components=1
+          mkdir out
+          cp -r cef/Release/* out/
+          cp -r cef/Resources/* out/
+          cp cef/LICENSE.txt out/LICENSE.txt
+          rm -f out/*.lib out/cef_sandbox* out/*.pdb
+          echo "${{ steps.find.outputs.name }}" > out/cef-build.txt
+          (cd out && zip -qr9 ../video-player-win64.zip .)
+          ls -l video-player-win64.zip
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          notes="The Steam Deck / Linux video player for the launcher (Chromium Embedded Framework, ${{ steps.find.outputs.name }}). The launcher downloads this once by itself; nobody needs to download it by hand. CEF is BSD-licensed (LICENSE.txt inside)."
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" video-player-win64.zip --clobber -R "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" video-player-win64.zip --prerelease --latest=false \
+              --title "Video player (Steam Deck / Linux)" --notes "$notes" -R "$GITHUB_REPOSITORY"
+          fi

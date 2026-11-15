@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Gjennomsnittlig nivå (solo / co-op)
 Average DPS (solo / co-op)
 = Gjennomsnittlig DPS (solo / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= På en Steam Deck eller i Linux åpnes videoen utenfor launcheren. Trykk ÅPNE VIDEO, eller velg hvor nettsider åpnes under Alternativer > Launcher.
+OPEN VIDEO ›
+= ÅPNE VIDEO ›
+WEB PAGES: STEAM BROWSER
+= NETTSIDER: STEAMS NETTLESER
+WEB PAGES: LINUX BROWSER
+= NETTSIDER: LINUX-NETTLESER
+WEB PAGES: SHOW ADDRESS
+= NETTSIDER: VIS ADRESSE
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Videoer og lenker åpnes i Steams nettleser, over launcheren i spillmodus. Trykk for å endre.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Videoer og lenker åpnes i Linux-skrivebordets nettleser (skrivebordsmodus). Trykk for å endre.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Videoer og lenker viser adressen for å åpne på mobil eller PC. Trykk for å endre.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Prøv guidevideoer i launcheren (Wines nettvisning klarer ofte ikke å spille dem)
+This folder is on your Steam Deck at:\n\n{0}
+= Mappen ligger på Steam Decken din her:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube-videoer kan ennå ikke spilles i launcheren på en Steam Deck eller i Linux. I Windows spilles de i launcheren.
+about the size of a game patch
+= omtrent som en spillpatch
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Videoer på en Steam Deck trenger launcherens videospiller. Den lastes ned én gang ({0}) og blir hos launcheren; ingenting annet installeres.\n\nLaste ned nå?
+Video player
+= Videospiller
+Downloading the video player...
+= Laster ned videospilleren...
+Downloading the video player... {0}%
+= Laster ned videospilleren... {0} %
+The video player could not be downloaded.
+= Videospilleren kunne ikke lastes ned.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Videospilleren kunne ikke lastes ned. Sjekk internettforbindelsen og prøv videoen igjen.
+The video player is ready.
+= Videospilleren er klar.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Videospilleren kan ikke starte på dette systemet. På Windows spilles videoer i launcheren.

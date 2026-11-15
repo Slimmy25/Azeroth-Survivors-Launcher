@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = Cấp trung bình (đơn / co-op)
 Average DPS (solo / co-op)
 = DPS trung bình (đơn / co-op)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Trên Steam Deck hoặc Linux, video này mở bên ngoài launcher. Nhấn MỞ VIDEO, hoặc chọn nơi mở trang web trong Tùy chọn > Launcher.
+OPEN VIDEO ›
+= MỞ VIDEO ›
+WEB PAGES: STEAM BROWSER
+= TRANG WEB: TRÌNH DUYỆT STEAM
+WEB PAGES: LINUX BROWSER
+= TRANG WEB: TRÌNH DUYỆT LINUX
+WEB PAGES: SHOW ADDRESS
+= TRANG WEB: HIỆN ĐỊA CHỈ
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Video và liên kết mở trong trình duyệt của Steam, phía trên launcher ở Chế độ Game. Nhấn để đổi.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Video và liên kết mở trong trình duyệt của desktop Linux (Chế độ Desktop). Nhấn để đổi.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Video và liên kết hiện địa chỉ để mở trên điện thoại hoặc PC. Nhấn để đổi.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Thử phát video hướng dẫn trong launcher (chế độ xem web của Wine thường không phát được)
+This folder is on your Steam Deck at:\n\n{0}
+= Thư mục này nằm trên Steam Deck của bạn tại:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Video YouTube chưa thể phát trong launcher trên Steam Deck hoặc Linux. Trên Windows video phát ngay trong launcher.
+about the size of a game patch
+= cỡ một bản vá game
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Video trên Steam Deck cần trình phát video của launcher. Chỉ tải một lần ({0}) và nằm trong launcher; không cài thêm gì khác.\n\nTải ngay?
+Video player
+= Trình phát video
+Downloading the video player...
+= Đang tải trình phát video...
+Downloading the video player... {0}%
+= Đang tải trình phát video... {0}%
+The video player could not be downloaded.
+= Không thể tải trình phát video.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Không thể tải trình phát video. Hãy kiểm tra kết nối internet rồi thử lại video.
+The video player is ready.
+= Trình phát video đã sẵn sàng.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Trình phát video không thể chạy trên hệ thống này. Trên Windows, video phát ngay trong launcher.

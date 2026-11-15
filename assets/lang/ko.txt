@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = 평균 레벨 (솔로 / 협동)
 Average DPS (solo / co-op)
 = 평균 DPS (솔로 / 협동)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Steam Deck이나 Linux에서는 이 영상이 런처 밖에서 열립니다. 영상 열기를 누르거나 옵션 > 런처에서 웹 페이지를 열 곳을 고르세요.
+OPEN VIDEO ›
+= 영상 열기 ›
+WEB PAGES: STEAM BROWSER
+= 웹 페이지: STEAM 브라우저
+WEB PAGES: LINUX BROWSER
+= 웹 페이지: LINUX 브라우저
+WEB PAGES: SHOW ADDRESS
+= 웹 페이지: 주소 표시
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= 영상과 링크가 Steam 브라우저에서 열립니다(게임 모드에서는 런처 위). 눌러서 바꿉니다.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= 영상과 링크가 Linux 데스크톱 브라우저에서 열립니다(데스크톱 모드). 눌러서 바꿉니다.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= 영상과 링크가 휴대폰이나 PC에서 열 수 있게 주소를 보여줍니다. 눌러서 바꿉니다.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= 가이드 영상을 런처 안에서 시도(Wine 웹 보기로는 재생되지 않는 경우가 많음)
+This folder is on your Steam Deck at:\n\n{0}
+= 이 폴더는 Steam Deck의 다음 위치에 있습니다:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube 영상은 Steam Deck이나 Linux에서는 아직 런처 안에서 재생할 수 없습니다. Windows에서는 런처 안에서 재생됩니다.
+about the size of a game patch
+= 게임 패치 정도 크기
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Steam Deck에서 동영상을 보려면 런처의 동영상 플레이어가 필요합니다. 한 번만 다운로드하며({0}) 런처에 함께 보관됩니다. 다른 것은 설치되지 않습니다.\n\n지금 다운로드할까요?
+Video player
+= 동영상 플레이어
+Downloading the video player...
+= 동영상 플레이어 다운로드 중...
+Downloading the video player... {0}%
+= 동영상 플레이어 다운로드 중... {0}%
+The video player could not be downloaded.
+= 동영상 플레이어를 다운로드하지 못했습니다.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= 동영상 플레이어를 다운로드하지 못했습니다. 인터넷 연결을 확인하고 동영상을 다시 열어 보세요.
+The video player is ready.
+= 동영상 플레이어가 준비되었습니다.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= 이 시스템에서는 동영상 플레이어를 시작할 수 없습니다. Windows에서는 런처 안에서 동영상이 재생됩니다.

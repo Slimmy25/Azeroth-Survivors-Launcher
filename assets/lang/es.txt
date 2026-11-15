@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Nivel medio (solo / coop)
 Average DPS (solo / co-op)
 = DPS medio (solo / coop)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= En un Steam Deck o en Linux este vídeo se abre fuera del launcher. Pulsa ABRIR VÍDEO o elige dónde se abren las páginas web en Opciones > Launcher.
+OPEN VIDEO ›
+= ABRIR VÍDEO ›
+WEB PAGES: STEAM BROWSER
+= PÁGINAS WEB: NAVEGADOR DE STEAM
+WEB PAGES: LINUX BROWSER
+= PÁGINAS WEB: NAVEGADOR DE LINUX
+WEB PAGES: SHOW ADDRESS
+= PÁGINAS WEB: MOSTRAR DIRECCIÓN
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Vídeos y enlaces se abren en el navegador de Steam, sobre el launcher en el modo Juego. Pulsa para cambiar.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Vídeos y enlaces se abren en el navegador del escritorio Linux (modo Escritorio). Pulsa para cambiar.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Vídeos y enlaces muestran su dirección para abrirla en tu móvil o PC. Pulsa para cambiar.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Probar los vídeos de la guía dentro del launcher (la vista web de Wine a menudo no puede reproducirlos)
+This folder is on your Steam Deck at:\n\n{0}
+= Esta carpeta está en tu Steam Deck en:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= Los vídeos de YouTube aún no se pueden reproducir dentro del launcher en Steam Deck o Linux. En Windows se reproducen dentro del launcher.
+about the size of a game patch
+= más o menos lo que un parche del juego
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Los vídeos en Steam Deck necesitan el reproductor de vídeo del launcher. Es una descarga única ({0}) y se queda con el launcher; no se instala nada más.\n\n¿Descargarlo ahora?
+Video player
+= Reproductor de vídeo
+Downloading the video player...
+= Descargando el reproductor de vídeo...
+Downloading the video player... {0}%
+= Descargando el reproductor de vídeo... {0}%
+The video player could not be downloaded.
+= No se pudo descargar el reproductor de vídeo.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= No se pudo descargar el reproductor de vídeo. Comprueba la conexión a internet y vuelve a abrir el vídeo.
+The video player is ready.
+= El reproductor de vídeo está listo.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= El reproductor de vídeo no puede iniciarse en este sistema. En Windows los vídeos se reproducen dentro del launcher.

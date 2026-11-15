@@ -2638,3 +2638,45 @@ Average level (solo / co-op)
 = औसत लेवल (अकेले / को-ऑप)
 Average DPS (solo / co-op)
 = औसत DPS (अकेले / को-ऑप)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Steam Deck या Linux पर यह वीडियो लॉन्चर के बाहर खुलता है। वीडियो खोलें दबाएँ, या विकल्प > लॉन्चर में चुनें कि वेब पेज कहाँ खुलें।
+OPEN VIDEO ›
+= वीडियो खोलें ›
+WEB PAGES: STEAM BROWSER
+= वेब पेज: STEAM ब्राउज़र
+WEB PAGES: LINUX BROWSER
+= वेब पेज: LINUX ब्राउज़र
+WEB PAGES: SHOW ADDRESS
+= वेब पेज: पता दिखाएँ
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= वीडियो और लिंक Steam के ब्राउज़र में खुलते हैं, गेम मोड में लॉन्चर के ऊपर। बदलने के लिए दबाएँ।
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= वीडियो और लिंक Linux डेस्कटॉप के ब्राउज़र में खुलते हैं (डेस्कटॉप मोड)। बदलने के लिए दबाएँ।
+Videos and links show their address, to open on your phone or PC. Press to change.
+= वीडियो और लिंक अपना पता दिखाते हैं, फ़ोन या पीसी पर खोलने के लिए। बदलने के लिए दबाएँ।
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= गाइड वीडियो लॉन्चर के अंदर आज़माएँ (Wine का वेब व्यू अक्सर इन्हें नहीं चला पाता)
+This folder is on your Steam Deck at:\n\n{0}
+= यह फ़ोल्डर आपके Steam Deck पर यहाँ है:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube वीडियो अभी Steam Deck या Linux पर लॉन्चर के अंदर नहीं चल सकते। Windows पर वे लॉन्चर के अंदर चलते हैं।
+about the size of a game patch
+= लगभग एक गेम पैच जितना
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Steam Deck पर वीडियो के लिए लॉन्चर का वीडियो प्लेयर चाहिए। यह एक बार का डाउनलोड है ({0}) और लॉन्चर के साथ रहता है; और कुछ इंस्टॉल नहीं होता।\n\nअभी डाउनलोड करें?
+Video player
+= वीडियो प्लेयर
+Downloading the video player...
+= वीडियो प्लेयर डाउनलोड हो रहा है...
+Downloading the video player... {0}%
+= वीडियो प्लेयर डाउनलोड हो रहा है... {0}%
+The video player could not be downloaded.
+= वीडियो प्लेयर डाउनलोड नहीं हो सका।
+The video player could not be downloaded. Check the internet connection and try the video again.
+= वीडियो प्लेयर डाउनलोड नहीं हो सका। इंटरनेट कनेक्शन जाँचें और वीडियो फिर से चलाएँ।
+The video player is ready.
+= वीडियो प्लेयर तैयार है।
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= वीडियो प्लेयर इस सिस्टम पर शुरू नहीं हो सकता। Windows पर वीडियो लॉन्चर के अंदर चलते हैं।

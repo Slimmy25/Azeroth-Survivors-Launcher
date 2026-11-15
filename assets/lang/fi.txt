@@ -2637,3 +2637,45 @@ Average level (solo / co-op)
 = Keskimääräinen taso (yksin / yhdessä)
 Average DPS (solo / co-op)
 = Keskimääräinen DPS (yksin / yhdessä)
+
+# Added in v3.39 (Steam Deck web pages)
+On a Steam Deck or Linux this video opens outside the launcher. Press OPEN VIDEO, or choose where web pages open in Options > Launcher.
+= Steam Deckillä tai Linuxissa tämä video avautuu käynnistimen ulkopuolelle. Paina AVAA VIDEO tai valitse, missä verkkosivut avautuvat, kohdassa Asetukset > Käynnistin.
+OPEN VIDEO ›
+= AVAA VIDEO ›
+WEB PAGES: STEAM BROWSER
+= VERKKOSIVUT: STEAMIN SELAIN
+WEB PAGES: LINUX BROWSER
+= VERKKOSIVUT: LINUXIN SELAIN
+WEB PAGES: SHOW ADDRESS
+= VERKKOSIVUT: NÄYTÄ OSOITE
+Videos and links open in Steam's own browser, over the launcher in Game Mode. Press to change.
+= Videot ja linkit avautuvat Steamin selaimeen, pelitilassa käynnistimen päälle. Paina vaihtaaksesi.
+Videos and links open in the Linux desktop's browser (Desktop Mode). Press to change.
+= Videot ja linkit avautuvat Linux-työpöydän selaimeen (työpöytätila). Paina vaihtaaksesi.
+Videos and links show their address, to open on your phone or PC. Press to change.
+= Videot ja linkit näyttävät osoitteensa avattavaksi puhelimella tai PC:llä. Paina vaihtaaksesi.
+Try Guide videos inside the launcher (Wine's web view often cannot play them)
+= Kokeile oppaan videoita käynnistimessä (Winen verkkonäkymä ei usein pysty toistamaan niitä)
+This folder is on your Steam Deck at:\n\n{0}
+= Tämä kansio on Steam Deckilläsi täällä:\n\n{0}
+YouTube videos can't play inside the launcher on a Steam Deck or Linux yet. They play inside the launcher on Windows.
+= YouTube-videoita ei vielä voi toistaa käynnistimessä Steam Deckillä tai Linuxissa. Windowsissa ne toistuvat käynnistimessä.
+about the size of a game patch
+= suunnilleen pelipäivityksen kokoinen
+Videos on a Steam Deck need the launcher's video player. It is a one-time download ({0}) and stays with the launcher; nothing else is installed.\n\nDownload it now?
+= Steam Deckin videot tarvitsevat launcherin videosoittimen. Se ladataan kerran ({0}) ja pysyy launcherissa; mitään muuta ei asenneta.\n\nLadataanko nyt?
+Video player
+= Videosoitin
+Downloading the video player...
+= Ladataan videosoitinta...
+Downloading the video player... {0}%
+= Ladataan videosoitinta... {0} %
+The video player could not be downloaded.
+= Videosoitinta ei voitu ladata.
+The video player could not be downloaded. Check the internet connection and try the video again.
+= Videosoitinta ei voitu ladata. Tarkista internetyhteys ja yritä videota uudelleen.
+The video player is ready.
+= Videosoitin on valmis.
+The video player could not start on this system. Videos play inside the launcher on Windows.
+= Videosoitin ei voi käynnistyä tässä järjestelmässä. Windowsissa videot toistuvat launcherissa.
