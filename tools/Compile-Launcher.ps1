@@ -66,6 +66,7 @@ foreach ($file in Get-ChildItem 'vendor\SharpCompress\*.dll' -File) {
 $groups = @(
     @('assets\lang', '*.txt', 'AS.lang.'),
     @('assets\retro', '*.png', 'AS.retro.'),
+    @('assets\steam', '*.png', 'AS.steam.'),
     @('assets\fonts', '*.ttf', 'AS.font.'),
     @('assets\favorites', 'class-*.jpg', 'AS.favorites.'),
     @('assets\addon-gallery', '*', 'AS.addon-gallery.')

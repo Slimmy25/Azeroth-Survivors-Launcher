@@ -149,6 +149,7 @@ namespace AzerothLauncher
             RefreshPlayLabel();
 
             FormClosing += OnClosingWindow;
+            SteamLibrary.RunInBackground();                     // Steam Deck / Linux: the shortcut's name and artwork in Steam
             FormClosed += delegate { StopEdge(); CefPlayer.Shutdown(); };   // a Community video never outlives the launcher
             VideoCard.Live3D = OpenLive3D;                       // Wowhead's live 3D viewer in an Edge window (Community.cs)
             VideoCard.YouTube = PlayYouTube;                     // YouTube videos play inside Community (Community.cs)
