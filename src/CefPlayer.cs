@@ -165,7 +165,7 @@ namespace AzerothLauncher
                 s.Int(0);                                     // use_views_default_popup (14600)
                 IntPtr settings = s.Build();
                 initialized = cef_initialize(MainArgs(), settings, App, IntPtr.Zero) == 1;
-                if (!initialized) failed = true;
+                if (!initialized) { failed = true; Say("Chromium did not start (cef_initialize failed)"); }
                 return initialized;
             }
             catch (Exception ex) { failed = true; Program.LogCrash("video player", ex); return false; }
@@ -209,7 +209,9 @@ namespace AzerothLauncher
             b.SizeOfBrowserSettings();
             IntPtr browserSettings = b.Build();
             IntPtr cefUrl = CefString(url);
-            return cef_browser_host_create_browser(windowInfo, Client, cefUrl, browserSettings, IntPtr.Zero, IntPtr.Zero) == 1;
+            bool ok = cef_browser_host_create_browser(windowInfo, Client, cefUrl, browserSettings, IntPtr.Zero, IntPtr.Zero) == 1;
+            Say(ok ? "opening " + url : "the browser could not be created");
+            return ok;
         }
 
         public static void CloseBrowser()
@@ -232,7 +234,9 @@ namespace AzerothLauncher
         // then its methods in the order of the C++ class
         const int BaseSize = 40;
         const int AppOnBeforeCommandLineProcessing = 0, AppMethods = 5;
-        const int ClientGetLifeSpanHandler = 13, ClientMethods = 19;
+        const int ClientGetLifeSpanHandler = 13, ClientGetLoadHandler = 14, ClientGetRequestHandler = 17, ClientMethods = 19;
+        const int LoadOnLoadEnd = 2, LoadOnLoadError = 3, LoadMethods = 4;
+        const int RequestOnRenderProcessTerminated = 9, RequestMethods = 11;
         const int LifeOnBeforePopup = 0, LifeOnAfterCreated = 3, LifeDoClose = 4, LifeOnBeforeClose = 5, LifeMethods = 6;
         const int BrowserGetHost = 1, BrowserGetMainFrame = 14;
         const int HostCloseBrowser = 1, HostGetWindowHandle = 5;
@@ -247,10 +251,30 @@ namespace AzerothLauncher
         [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate void BrowserFn(IntPtr self, IntPtr browser);
         [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate int BrowserIntFn(IntPtr self, IntPtr browser);
         [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate void CloseBrowserFn(IntPtr self, int force);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate void LoadEndFn(IntPtr self, IntPtr browser, IntPtr frame, int status);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate void LoadErrorFn(IntPtr self, IntPtr browser, IntPtr frame, int code, IntPtr text, IntPtr url);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate void TerminatedFn(IntPtr self, IntPtr browser, int status, int code, IntPtr text);
+
+        // what the player is doing, for the launcher's status bar and log (called on Chromium's thread)
+        public static Action<string> Report;
+        static void Say(string what)
+        {
+            try { Program.LogCrash("video player", new Exception(what)); } catch (Exception) { }
+            Action<string> r = Report;
+            if (r != null) try { r(what); } catch (Exception) { }
+        }
+
+        static string ReadCefString(IntPtr s)
+        {
+            if (s == IntPtr.Zero) return "";
+            IntPtr chars = Marshal.ReadIntPtr(s, 0);
+            long n = Marshal.ReadIntPtr(s, IntPtr.Size).ToInt64();
+            return chars == IntPtr.Zero || n <= 0 ? "" : Marshal.PtrToStringUni(chars, (int)Math.Min(n, 400));
+        }
 
         // the structs the launcher provides (kept for the life of the process, so their ref counts never matter)
         static readonly List<Delegate> keep = new List<Delegate>();
-        static IntPtr app, client, lifeSpan;
+        static IntPtr app, client, lifeSpan, loadHandler, requestHandler;
 
         static IntPtr App { get { if (app == IntPtr.Zero) BuildHandlers(); return app; } }
         static IntPtr Client { get { if (client == IntPtr.Zero) BuildHandlers(); return client; } }
@@ -264,8 +288,24 @@ namespace AzerothLauncher
             SetMethod(lifeSpan, LifeOnAfterCreated, new BrowserFn(OnAfterCreated));
             SetMethod(lifeSpan, LifeDoClose, new BrowserIntFn(delegate(IntPtr self, IntPtr b) { return 0; }));
             SetMethod(lifeSpan, LifeOnBeforeClose, new BrowserFn(delegate(IntPtr self, IntPtr b) { }));
+            loadHandler = Implement(LoadMethods);
+            SetMethod(loadHandler, LoadOnLoadEnd, new LoadEndFn(delegate(IntPtr self, IntPtr b, IntPtr f, int status)
+            {
+                Say("page loaded (HTTP " + status + ")");
+            }));
+            SetMethod(loadHandler, LoadOnLoadError, new LoadErrorFn(delegate(IntPtr self, IntPtr b, IntPtr f, int code, IntPtr text, IntPtr url)
+            {
+                if (code != -3) Say("page error " + code + " " + ReadCefString(text));   // -3: aborted (a redirect), not a failure
+            }));
+            requestHandler = Implement(RequestMethods);
+            SetMethod(requestHandler, RequestOnRenderProcessTerminated, new TerminatedFn(delegate(IntPtr self, IntPtr b, int status, int code, IntPtr text)
+            {
+                Say("page process stopped (status " + status + ", code " + code + ") " + ReadCefString(text));
+            }));
             client = Implement(ClientMethods);
             SetMethod(client, ClientGetLifeSpanHandler, new GetPtr(delegate(IntPtr self) { return lifeSpan; }));
+            SetMethod(client, ClientGetLoadHandler, new GetPtr(delegate(IntPtr self) { return loadHandler; }));
+            SetMethod(client, ClientGetRequestHandler, new GetPtr(delegate(IntPtr self) { return requestHandler; }));
         }
 
         // a struct of n methods (all empty: CEF treats a missing method as "use the default"), with no-op ref counting
@@ -304,7 +344,7 @@ namespace AzerothLauncher
             {
                 var append = Call<AppendSwitchFn>(commandLine, CommandLineAppendSwitch);
                 var appendValue = Call<AppendSwitchValueFn>(commandLine, CommandLineAppendSwitchWithValue);
-                foreach (string sw in new[] { "no-sandbox", "disable-gpu", "disable-gpu-compositing", "disable-gpu-sandbox",
+                foreach (string sw in new[] { "no-sandbox", "disable-gpu", "disable-gpu-compositing", "disable-gpu-sandbox", "in-process-gpu", "disable-direct-composition",
                                               "disable-features=CalculateNativeWinOcclusion", "no-first-run" })
                 {
                     int eq = sw.IndexOf('=');
@@ -319,6 +359,7 @@ namespace AzerothLauncher
         static void OnAfterCreated(IntPtr self, IntPtr b)
         {
             browser = b;
+            Say("browser window created");
             Action<IntPtr> tell = created;
             if (tell == null) return;
             try
@@ -392,9 +433,9 @@ namespace AzerothLauncher
                 for (int i = 0; i < 6; i++) Str(null);        // font families
                 for (int i = 0; i < 4; i++) Int(0);           // font sizes
                 Str(null);                                    // default_encoding
-                for (int i = 0; i < 12; i++) Int(0);          // remote_fonts ... webgl (cef_state_t)
-                UInt(0);                                      // background_color
-                Int(0); Int(0);                               // chrome_status_bubble, chrome_zoom_bubble
+                for (int i = 0; i < 13; i++) Int(0);          // remote_fonts ... webgl (cef_state_t)
+                UInt(0xFF000000);                             // background_color: black
+                Int(0); Int(0); Int(0);                       // chrome_status_bubble, chrome_zoom_bubble, ax_viewport_collapse
             }
 
             public IntPtr Build()

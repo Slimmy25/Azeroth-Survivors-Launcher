@@ -981,6 +981,7 @@ namespace AzerothLauncher
             if (edgeHost == null || edgeHost.IsDisposed) return;
             Panel host = edgeHost;
             cefPlaying = true;
+            CefPlayer.Report = delegate(string what) { Ui(delegate { SetStatus(Lang.T("Video player") + ": " + what); }); };
             bool opened = CefPlayer.Open(host.Handle, new Rectangle(0, 0, host.ClientSize.Width, host.ClientSize.Height), WatchUrl(v),
                 delegate(IntPtr hwnd)
                 {
@@ -989,7 +990,7 @@ namespace AzerothLauncher
                     {
                         if (!cefPlaying || host.IsDisposed || host != edgeHost) { CefPlayer.CloseBrowser(); return; }
                         cefWnd = hwnd;
-                        foreach (Control c in host.Controls) c.Visible = false;
+                        if (hwnd != IntPtr.Zero) ShowWindow(hwnd, 5);    // SW_SHOW
                         FitEdge();
                         PlaceVideoClose();
                     });

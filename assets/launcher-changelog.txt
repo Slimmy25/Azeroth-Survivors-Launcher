@@ -1,3 +1,7 @@
+# v3.46 (2026-11-15)
+
+- Steam Deck and Linux: fixes for the video player showing only the close X with no video. It now draws without Windows-only display features that Proton lacks, and the status bar says what the player is doing (opening, page loaded, or the error), so a problem can be pinned down.
+
 # v3.45 (2026-11-15)
 
 - The Guide no longer has its own short how-to videos (camera distance, the DPS meter, changing race, luck); its text covers those topics. The Guide's videos are now only players' YouTube build guides.
