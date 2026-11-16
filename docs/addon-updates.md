@@ -37,7 +37,6 @@ The prior updater fetched release metadata once per launcher session, silently d
 | Keijin UI By Keijin | Creator releases/latest |
 | AetherHUD By Rehabrocket | Launcher mirror: addons release |
 | ASTinyPlates By Valorless | Creator releases/latest |
-| BlackwellUI (BUI) By Blackwell | Launcher mirror: addons release |
 | Azeroth FieldKit By Maidenhead | Creator releases/latest |
 | Azeroth Stats By Maidenhead | Creator releases/latest |
 | LocalClock By Jamie | Launcher mirror: addons release |

@@ -1,3 +1,7 @@
+# v3.49 (2026-11-16)
+
+- Download More: three new addons: Azeroth Survivors Telegraphs (Gameplay), AZS - Guild Wars 2 GUI and Arcane UI (UI). Every entry's name, category and description now follow the addon list, with full descriptions (Vulchan's Combat Text had only one word). BlackwellUI's leftover screenshot is gone; it is no longer supported.
+
 # v3.48 (2026-11-16)
 
 - Game patch 0.145.0 added to the Changelog, and the Guide's Gold and experience section now explains that drops landing close together join into one, the 30-wisp and 30-pile limits, and that experience stops dropping at level 120.

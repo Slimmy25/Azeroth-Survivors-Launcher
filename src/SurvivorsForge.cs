@@ -572,7 +572,6 @@ namespace AzerothLauncher
             string prefix = "AS.addon-gallery.";
             if (string.Equals(id, "moveui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "moveui.png" : null;
             if (string.Equals(id, "localclock-addon", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "localclock-addon.png" : null;
-            if (string.Equals(id, "blackwellui", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "blackwellui.png" : null;
             if (string.Equals(id, "azsmoveanything", StringComparison.OrdinalIgnoreCase))
                 return index == 0 ? prefix + "kodfod-moveanything-1.png" : index == 1 ? prefix + "kodfod-moveanything-2.png" : null;
             if (string.Equals(id, "aetherhud", StringComparison.OrdinalIgnoreCase)) return index == 0 ? prefix + "aetherhud.webp" : null;
