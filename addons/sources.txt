@@ -21,7 +21,6 @@ SurvivorsDragonUi-by-Mxgwyn.zip | hosted
 # Survivor UI and Classic are one launcher bundle; select the addon ZIP, never an installer, from each latest release.
 Survivor-UI-by-morderous.zip    | github-bundle-latest:morderous/survivor-ui:SurvivorUI-v+morderous/survivorui-classic:SurvivorUIClassic-
 Keijin-UI-by-Keijin.zip         | hosted
-BlackwellUI-by-Blackwell.zip    | github-latest:Blackwellcode/BlackwellUI
 AetherHUD-by-Rehabrocket.zip    | github-latest:NORehabRocket/AetherHUD:AetherHUD
 LuckyOdds-by-Cadoky.zip         | github-latest:cadoky/LuckyOdds:LuckyOdds
 AZSSpellMeter-by-Kexo.zip       | github-latest:kex0/AZSSpellMeter

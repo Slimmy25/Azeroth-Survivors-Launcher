@@ -531,7 +531,7 @@ namespace AzerothLauncher
         {
             setupOpen=false;
             string fixture=Path.Combine(Path.GetFullPath(output),"addon-fixture"); Directory.CreateDirectory(fixture);
-            foreach(string folder in new[]{"ASTinyPlates","BlackwellUI","KeijinUI","SurvivorUI","SurvivorsDragonUi","UnknownAddon"})
+            foreach(string folder in new[]{"ASTinyPlates","KeijinUI","SurvivorUI","SurvivorsDragonUi","UnknownAddon"})
             {
                 string path=Path.Combine(fixture,folder); Directory.CreateDirectory(path);
                 File.WriteAllText(Path.Combine(path,folder+".toc"),"## Interface: 11200\n## Title: "+folder+"\n");
@@ -552,13 +552,13 @@ namespace AzerothLauncher
                     string file=Uri.UnescapeDataString(entry.Url.Substring(entry.Url.LastIndexOf('/')+1));
                     mirrorDates[file]=DateTime.UtcNow; mirrorIdentities[file]="fixture-mirror";
                 }
-                if(entry.Folders.Contains("BlackwellUI")) addonUpdateProblems[entry.Name]="Example: GitHub request limit reached. Try again later.";
+                if(entry.Folders.Contains("KeijinUI")) addonUpdateProblems[entry.Name]="Example: GitHub request limit reached. Try again later.";
             }
             var tiny=CatalogAddonForFolder("ASTinyPlates"); var keijin=CatalogAddonForFolder("KeijinUI"); var dragon=CatalogAddonForFolder("SurvivorsDragonUi");
             check(AddonHasUpdate(tiny),"changed creator digest is detected");
             check(!AddonHasUpdate(keijin),"unchanged creator digest is current");
             check(!AddonHasUpdate(dragon),"pinned addon is excluded from automatic updates");
-            check(!AddonHasUpdate(CatalogAddonForFolder("BlackwellUI")),"failed checks are not claimed as confirmed updates");
+            check(!AddonHasUpdate(CatalogAddonForFolder("KeijinUI")),"failed checks are not claimed as confirmed updates");
             RefreshAddonUpdateBadge(); check(addonUpdateCount>0,"confirmed updates activate badge");
             current="Addons";addonMode="installed";BuildPanel("Addons");capture("addons-installed");
             check(CatalogAddonForFolder("UnknownAddon")==null,"unmanaged addon has no invented release source");

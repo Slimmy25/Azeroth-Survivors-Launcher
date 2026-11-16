@@ -134,7 +134,6 @@ marked as built-ins are maintained in this repository and installed from the lau
 | Azeroth FieldKit | Maidenhead | <https://github.com/Maidenquinn/azeroth-fieldkit> |
 | Azeroth Stats | Maidenhead | <https://github.com/Maidenquinn/AzerothStats> |
 | Big Cursor | JamieeLee | <https://github.com/JamieeLee/BigCursor> |
-| BlackwellUI (BUI) | Blackwell | <https://github.com/Blackwellcode/BlackwellUI> |
 | Cursor Reticle | Muffla | <https://github.com/Muffla/CursorReticle> |
 | AZSSpellMeter | Kexo | <https://github.com/kex0/AZSSpellMeter> |
 | AZS Max Hit | ghoulcompiler | <https://github.com/ghoulcompiler/AZSMaxHit> |
