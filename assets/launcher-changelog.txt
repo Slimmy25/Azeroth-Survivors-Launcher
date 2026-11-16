@@ -1,3 +1,7 @@
+# v3.48 (2026-11-16)
+
+- Game patch 0.145.0 added to the Changelog, and the Guide's Gold and experience section now explains that drops landing close together join into one, the 30-wisp and 30-pile limits, and that experience stops dropping at level 120.
+
 # v3.47 (2026-11-15)
 
 - Steam Deck and Linux: when the launcher is added to Steam as a non-Steam game, it now makes itself look like a real game in the Steam library by itself: it names the shortcut "Azeroth Survivors", gives it an icon, a cover, a banner, a background and the logo, and adds two screenshots. The changes show after Steam restarts (rebooting the Deck does it). Artwork you set yourself is left alone. The artwork is placeholder for now.

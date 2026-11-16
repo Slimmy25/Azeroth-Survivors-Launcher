@@ -2,6 +2,18 @@ Patch notes shown in the launcher's Changelog. The launcher sorts them by versio
 Every post starts with its title on the first line. Posts are separated by a line with only === on it.
 ===
 
+0.145.0
+-------
+Smoother play with big hordes and a field full of experience wisps: walking enemies cost far less to draw each frame, wisps dropped close together join into one, and once every hero is level 120 no more wisps drop at all.
+
+* Large hordes: keeping every walking enemy on the ground took about a tenth of each frame in the browser; it now takes almost nothing, for noticeably higher frame rates with a hundred or more enemies on the field.
+* Experience wisps dropped within 4 yards of one already lying there join it (a pack felled at once leaves one wisp instead of a dozen); a wisp that grows big enough takes the bigger look. No experience is lost.
+* At most 30 wisps lie on the ground at once (was 45); more join the nearest one.
+* Gold dropped within 4 yards of a pile already lying there joins it, and at most 30 piles lie on the ground at once (more join the nearest one). No gold is lost, and gold that falls within your reach is still yours at once.
+* The player frame shows the name you gave your hero: a hero renamed on the hero picker (a first run's made-up name, the dice, a typed name) showed its old name there, often "Hero", for that run.
+* At level 120 (in co-op, once every hero still in the run is), enemies drop no more experience wisps and the ones lying on the field disappear, since they could give nothing.
+===
+
 0.144.0
 -------
 Endless is gentler: enemies grow stronger more slowly every minute past the final boss, and their hits grow even more slowly.

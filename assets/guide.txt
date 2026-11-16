@@ -483,7 +483,7 @@ After you pick a card or an item you are immune to damage for one second.
 
 @topic Pickups, Caches & Guardians | Gold, experience, jewelry and the monsters worth hunting
 # Gold and experience
-Slain enemies drop gold coins and experience. Walk close and they fly to you; more pickup range pulls them from further away. Gold buys caches and rerolls.
+Slain enemies drop gold coins and experience. Walk close and they fly to you; more pickup range pulls them from further away. Gold buys caches and rerolls. Drops that land within 4 yards of one already on the ground join it, and at most 30 experience wisps and 30 gold piles lie on the field at once (more join the nearest one), so nothing is lost. Once your hero is level 120 (in co-op, once every hero still in the run is), enemies stop dropping experience and the wisps left on the field disappear (since 0.145.0).
 
 # Magnets
 A floating blue rune in a pillar of blue light. Walk over it and every coin and every bit of experience on the whole field flies to you. A run has two or three. Bosses drop them, and they never disappear, so you can save one for when the field is covered in gold.
