@@ -564,7 +564,7 @@ Every class page in the Classes topic shows its three full trees, and which tale
 
 @topic Achievements & Rewards | Account-wide goals and what they unlock
 # Achievements
-Achievements are earned by every hero of every class, for your whole account. They come in groups: Zones, Classes, Collection, Feats, Lifetime and Heroic. Win zones, collect gear, survive long into a run, or chase special feats like big kill counts and winning without gear.
+Achievements are earned by every hero of every class, for your whole account. They come in groups: Zones, Classes, Collection, Feats, Lifetime, Co-op and Heroic. Win zones, collect gear, survive long into a run, or chase special feats like big kill counts and winning without gear.
 
 # Rewards
 Achievements give points to spend on the Rewards tab. Rewards are account-wide too.
@@ -574,6 +574,165 @@ Achievements give points to spend on the Rewards tab. Rewards are account-wide t
 - Races: 100 points opens a race to every class, for good (see Races).
 - Co-op achievements: earned by everyone in the party. A boss's killing blow counts for every player still in the run, whoever lands it.
 You can take back points spent on perks and spend them again; the panel shows how many resets you have left.
+
+@page Zones achievements | Zones: 26 achievements
+Each zone has an achievement for beating its boss with any class, then a Champion achievement for beating it with all nine classes.
+# Zones
+- Elwynn Forest · 10 points: Defeat Edwin VanCleef in Elwynn Forest with any class. Unlocks: Banish.
+- Duskwood · 10 points: Defeat Morbent Fel in Duskwood with any class. Unlocks: Skip. Companion: Snowshoe Rabbit.
+- Warsong Gulch · 10 points: Defeat Lord Kazzak in Warsong Gulch with any class. Unlocks: Veteran's Lessons. Rewards: Warsong Battle Tabard, Silverwing Battle Tabard. Companion: Crimson Macaw.
+- Un'Goro Crater · 10 points: Defeat King Mosh in Un'Goro Crater with any class.
+- Arathi Basin · 10 points: Defeat Lord Aliden Perenolde in Arathi Basin with any class. Rewards: Arathor Battle Tabard, Defilers Battle Tabard. Companion: Great Horned Owl.
+- Feralas · 15 points: Defeat King Gordok in Feralas with any class. Companion: Tree Frog.
+- Gurubashi Arena · 15 points: Defeat Hakkar the Soulflayer in Gurubashi Arena with any class. Companion: Black Kingsnake.
+- Scarlet Monastery · 15 points: Defeat High Inquisitor Whitemane in Scarlet Monastery with any class.
+- Alterac Valley · 15 points: Defeat Azuregos in Alterac Valley with any class. Rewards: Stormpike Battle Tabard, Frostwolf Battle Tabard. Companion: Sprite Darter.
+- Blackrock Mountain · 20 points: Defeat Nefarian in Blackrock Mountain with any class. Companion: Black Whelpling.
+- Scholomance · 20 points: Defeat Darkmaster Gandling in Scholomance with any class.
+- Gates of Ahn'Qiraj · 25 points: Defeat C'Thun in Gates of Ahn'Qiraj with any class. Companion: Zergling.
+- Naxxramas · 30 points: Defeat Kel'Thuzad in Naxxramas with any class.
+- Champion of Elwynn Forest · 25 points: Defeat Edwin VanCleef in Elwynn Forest with all nine classes.
+- Champion of Duskwood · 25 points: Defeat Morbent Fel in Duskwood with all nine classes.
+- Champion of Warsong Gulch · 25 points: Defeat Lord Kazzak in Warsong Gulch with all nine classes.
+- Champion of Un'Goro Crater · 25 points: Defeat King Mosh in Un'Goro Crater with all nine classes.
+- Champion of Arathi Basin · 25 points: Defeat Lord Aliden Perenolde in Arathi Basin with all nine classes.
+- Champion of Feralas · 25 points: Defeat King Gordok in Feralas with all nine classes.
+- Champion of Gurubashi Arena · 25 points: Defeat Hakkar the Soulflayer in Gurubashi Arena with all nine classes.
+- Champion of Scarlet Monastery · 25 points: Defeat High Inquisitor Whitemane in Scarlet Monastery with all nine classes.
+- Champion of Alterac Valley · 25 points: Defeat Azuregos in Alterac Valley with all nine classes.
+- Champion of Blackrock Mountain · 25 points: Defeat Nefarian in Blackrock Mountain with all nine classes.
+- Champion of Scholomance · 25 points: Defeat Darkmaster Gandling in Scholomance with all nine classes.
+- Champion of Gates of Ahn'Qiraj · 25 points: Defeat C'Thun in Gates of Ahn'Qiraj with all nine classes.
+- Champion of Naxxramas · 25 points: Defeat Kel'Thuzad in Naxxramas with all nine classes.
+
+@page Classes achievements | Classes: 20 achievements
+Win a run with each class, or defeat C'Thun with it, and earn all talent points in one class or in every class.
+# Classes
+- Warrior Victorious · 10 points: Win a run with a Warrior.
+- Paladin Victorious · 10 points: Win a run with a Paladin.
+- Hunter Victorious · 10 points: Win a run with a Hunter.
+- Rogue Victorious · 10 points: Win a run with a Rogue.
+- Priest Victorious · 10 points: Win a run with a Priest.
+- Mage Victorious · 10 points: Win a run with a Mage.
+- Shaman Victorious · 10 points: Win a run with a Shaman.
+- Warlock Victorious · 10 points: Win a run with a Warlock.
+- Druid Victorious · 10 points: Win a run with a Druid.
+- Warrior of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Warrior.
+- Paladin of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Paladin.
+- Hunter of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Hunter.
+- Rogue of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Rogue.
+- Priest of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Priest.
+- Mage of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Mage.
+- Shaman of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Shaman.
+- Warlock of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Warlock.
+- Druid of the Scarab Wall · 25 points: Defeat C'Thun at Gates of Ahn'Qiraj with a Druid.
+- Fully Talented · 25 points: Earn all 51 talent points with one class.
+- Master of All · 50 points: Earn all 51 talent points with every class. Progress shown: 3 of 9 classes.
+
+@page Collection achievements | Collection: 15 achievements
+Gear, sets and codex progress. Upgrades and set bonuses are counted per piece.
+# Collection
+- Collector · 10 points: Collect 25 pieces of gear, of any class. Unlocks: Keen Eye.
+- Hoarder · 10 points: Collect 100 pieces of gear, of any class.
+- Curator · 25 points: Collect 250 pieces of gear, of any class. Progress shown: 149 of 250.
+- The Whole Armory · 50 points: Collect every piece of gear of every class. Progress shown: 149 of 581.
+- Legendary · 25 points: Collect every legendary piece of one class.
+- Jeweler's Eye · 10 points: See half of the codex's rings, trinkets and amulets.
+- Every Bauble · 25 points: See every ring, trinket and amulet in the codex. Progress shown: 74 of 141.
+- Polished · 10 points: Upgrade a piece of gear to 1 star.
+- Honed · 10 points: Upgrade a piece of gear to 3 stars.
+- Matched · 10 points: Open a set bonus: four armor pieces of one set at 1 star or more.
+- Suited Up · 10 points: Open an 8-piece set bonus: one set's eight armor pieces at 3 stars or more.
+- Shared Wisdom · 25 points: Have one set's eight armor pieces at 1 star or more on every class. Progress shown: 2 of 9.
+- Wardrobe · 25 points: Open the 8-piece bonus of all six sets with one class. Progress shown: 2 of 6.
+- Armory of Legends · 50 points: Open the legendary set's 8-piece bonus with every class. Progress shown: 0 of 9.
+- You Are Not Prepared! · 50 points: Collect all eight Scholomance Tier 0.5 armour pieces and the full fixed Gandling weapon reward for each of the nine classes. Progress shown: 1 of 83.
+
+@page Feats achievements | Feats: 28 achievements
+Special runs: big kill counts, endless survival, winning without gear, and pets or spells landing a killing blow.
+# Feats
+- Humble Beginnings · 25 points: Beat Naxxramas wearing a common set's 8-piece bonus.
+- Never Ending · 25 points: Slay 6 bosses in endless in one run.
+- Danger Money · 50 points: Earn 50 marks from one boss.
+- Carnage · 25 points: Slay 6,000 enemies in one run.
+- Overtime (Survive 25:00) · 10 points: Survive to 25:00 in endless mode.
+- Overtime (Slay 3 Bosses) · 10 points: Slay 3 bosses in endless in one run.
+- Deathless Hour · 50 points: Survive to 40:00 in endless mode. Companion: Panda Cub.
+- Unending · 25 points: Survive to 30:00 in endless mode.
+- Thrifty · 25 points: Win a run without buying a cache.
+- no u · 25 points: Slay Sapphiron with a Frostbolt as the killing blow. Reward: Glacial Cloak. Companion: Sapphiron.
+- Suck It, Hakkar! · 25 points: Defeat Hakkar with Drain Life. Reward: Zul'Gurub Mask. Companion: Swift Zulian Tiger.
+- Eye Caramba! · 50 points: Defeat C'Thun without taking any damage from him. Reward: Gnomish Mind Control Cap. Companion: Mini Eye of C'Thun.
+- Stitches Get Stitches · 10 points: Defeat Stitches with a Bleed effect. Companion: Mini Stitches.
+- Not Today, Satan · 25 points: Defeat Lord Kazzak with Holy damage. Companion: Mini Doomguard.
+- Clever Girl · 25 points: Have a summoned pet deliver the killing blow to King Mosh. Companion: Baby Devilsaur.
+- Bonk the Bonker · 10 points: Defeat Kovork with a melee attack. Companion: Mini Ogre.
+- Slaughterhouse · 10 points: Slay 2,500 enemies in one run. Unlocks: Opening Hand.
+- Lair Breaker · 25 points: Slay four guardians before 8:00 in one run.
+- Bare Knuckles · 25 points: Win a run wearing no gear.
+- Against the Odds · 50 points: Win a run on Heroic III or harder.
+- Hazard Pay · 25 points: Earn 100 marks.
+- Spin to Win · 25 points: Defeat Herod with Whirlwind. Rewards: Scarlet Crusade Tabard, Dashing Scarlet Cloak.
+- Bad Dragon! · 25 points: Have a summoned pet deliver the killing blow to Nefarian. Reward: Onyxia Scale Cloak. Companion: Mini Chromatic Drakonid.
+- You're Fired · 10 points: Defeat Edwin VanCleef with a Fire spell. Reward: Defias Bandana.
+- Stop Hitting Yourself · 25 points: Defeat King Gordok with reflected damage from Shaman's Lightning Shield, Druid's Thorns, or Paladin's Holy Shield. Companion: Tiny Gordok.
+- Blue Screen of Death · 25 points: Defeat Azuregos with an Arcane spell. Reward: Gnomish Goggles. Companion: Azure Whelpling.
+- Stormstrike Graduation · 25 points: As an Enhancement Shaman, defeat Darkmaster Gandling with Stormstrike as the killing blow.
+- Straight A's · 25 points: Defeat Darkmaster Gandling without any player taking damage from Headmaster's Office or The Last Examination.
+
+@page Lifetime achievements | Lifetime: 15 achievements
+Totals across all your runs, for your whole account.
+# Lifetime
+- Marked · 10 points: Earn 100 marks.
+- Quartermaster · 50 points: Earn 10,000 marks. Progress shown: 1,058 of 10,000.
+- Scourge of Azeroth · 25 points: Slay 100,000 enemies. Companion: Undercity Cockroach.
+- Pocket Change · 10 points: Collect 5,000 gold. Unlocks: Companion.
+- Lair Raider · 10 points: Slay 100 guardians.
+- Boss Hunter · 10 points: Slay 100 bosses.
+- Regular · 10 points: Play 10 runs. Unlocks: Second Thoughts.
+- Conqueror · 25 points: Win 50 runs.
+- Well Paid · 25 points: Earn 1,000 marks.
+- Exterminator · 10 points: Slay 10,000 enemies.
+- A Million Dead · 50 points: Slay 1,000,000 enemies. Progress shown: 437,968 of 1,000,000.
+- Treasure Hunter · 25 points: Collect 50,000 gold. Unlocks: Second Companion.
+- Warden's Bane · 25 points: Slay 500 guardians.
+- Cache Cracker · 10 points: Buy 100 caches.
+- Veteran · 10 points: Play 100 runs. Companion: Westfall Chicken.
+
+@page Co-op achievements | Co-op: 17 achievements
+Achievements earned with other players. Everyone in the party earns them.
+# Co-op
+- Better Together · 10 points: Complete your first zone with at least one other player. Reward: Admiral's Hat.
+- Five of a Kind · 25 points: Complete any zone in co-op with all 5 players using the same class. Reward: Bloodsail Admiral's Hat.
+- Rest in Photosynthesis · 50 points: Defeat Kel'Thuzad on Heroic III in co-op with 5 Druids, all talented into Tranquility. Tranquility must deliver the killing blow. Companion: Ancient Protector.
+- The Insane · 50 points: Survive for 40 minutes or longer in Naxxramas on Heroic V with at least two other players, with no deaths.
+- Matching Outfits · 25 points: Win in a party of three or more, every hero wearing the same set's 8-piece bonus.
+- Raid Night · 25 points: Beat Heroic III or harder in a party of five.
+- Against All Odds · 50 points: Complete any zone on Heroic III or harder with at least one other player. Reward: Contest Winner's Tabard.
+- The Brotherhood Falls · 25 points: Defeat Edwin VanCleef in co-op with 5 players, all using different classes. Reward: Cape of the Brotherhood.
+- Things That Go Bump in the Night · 25 points: Complete Duskwood with at least one other player, without any player dying. Reward: Embrace of the Lycan.
+- For the Team · 10 points: Complete Warsong Gulch and Arathi Basin, each with at least one other player. Unlocks: United Front.
+- Jurassic Pack · 25 points: Complete Un'Goro Crater in co-op with 5 Hunters. Unlocks: White Devilsaur.
+- Hakkar Smoothie · 50 points: Defeat Hakkar with 5 Warriors, all talented into Bladestorm. Whirlwind must deliver the killing blow. Companion: Mini Herod.
+- Holy Frame Drops · 50 points: Defeat High Inquisitor Whitemane in co-op with 5 Paladins, all with Consecration as their highest-ranked spell. Consecration must deliver the killing blow. Reward: Whitemane's Chapeau.
+- Dragonslayers · 25 points: Defeat Azuregos and Nefarian, each with at least one other player. Reward: Cloak of the Brood Lord.
+- Totem'ly Balanced · 50 points: Defeat Nefarian in co-op with 5 Shamans, all having Magma Totem as their highest-ranked spell. Magma Totem must deliver the killing blow. Companion: Mini Nefarian.
+- The Old Gods Have No Friends · 50 points: Defeat C'Thun on Heroic III or harder in a party of five. Reward: Cloak of the Devoured.
+- Together, To the End · 50 points: Complete all 12 zones, each with at least one other player, across any number of runs. Companion: Mr. Bigglesworth.
+
+@page Heroic achievements | Heroic: 10 achievements
+Heroic difficulty achievements. Higher Heroic levels open better gear stars.
+# Heroic
+- Heroic Debut · 10 points: Beat Heroic I in any zone.
+- Heroic Resolve · 25 points: Beat Heroic III in any zone.
+- Heroic Across Azeroth · 50 points: Beat Heroic III in every zone, with any classes. Progress shown: 2 of 13. Still to beat: Duskwood, Un'Goro Crater, Arathi Basin, Feralas, Gurubashi Arena, Scarlet Monastery, Alterac Valley, Blackrock Mountain, Scholomance, Gates of Ahn'Qiraj, Naxxramas.
+- Champion of Naxxramas (Heroic V) · 50 points: Beat Heroic V in Naxxramas. Opens the Crusader weapon glow and Hyper Mode.
+- Beyond the Vault · 10 points: Upgrade a piece of gear to 4 stars.
+- Five Stars · 25 points: Upgrade a piece of gear to 5 stars.
+- Empowered · 25 points: Empower an 8-piece set bonus: one set's eight armor pieces at 5 stars.
+- Radiant Armory · 50 points: Open a set bonus with every class. Opens the Fiery Weapon glow. Progress shown: 0 of 9.
+- Yes, I am prepared! · 50 points: Complete Scholomance on Heroic V solo with all nine classes, using each class's Tier 0.5 set bonuses and matching specialization talents. Opens the Lifestealing weapon glow. Progress shown: 0 of 9.
+- Unpolished · 25 points: Beat Heroic II or harder with no piece of gear above 0 stars.
 
 @topic Heroic & Endless | Heroic I to V for better rewards, and what comes after a win
 # Heroic I to V

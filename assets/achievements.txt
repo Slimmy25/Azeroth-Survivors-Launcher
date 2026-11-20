@@ -1,0 +1,150 @@
+Achievements of Azeroth Survivors, read from the in-game Achievements tab (Armory) in the videos achievements.mp4 and part_3_1.mp4.
+Account-wide. 131 achievements in seven groups. Points are the number shown on each achievement.
+Where the game gives two achievements the same name, the label in parentheses says which one it is. The parentheses are not part of the in-game name.
+
+group | name | points | requirement | rewards and unlocks
+
+# ZONES (26)
+Zones | Elwynn Forest | 10 | Defeat Edwin VanCleef in Elwynn Forest with any class. | Unlocks: Banish
+Zones | Duskwood | 10 | Defeat Morbent Fel in Duskwood with any class. | Unlocks: Skip. Companion: Snowshoe Rabbit
+Zones | Warsong Gulch | 10 | Defeat Lord Kazzak in Warsong Gulch with any class. | Unlocks: Veteran's Lessons. Rewards: Warsong Battle Tabard, Silverwing Battle Tabard. Companion: Crimson Macaw
+Zones | Un'Goro Crater | 10 | Defeat King Mosh in Un'Goro Crater with any class. |
+Zones | Arathi Basin | 10 | Defeat Lord Aliden Perenolde in Arathi Basin with any class. | Rewards: Arathor Battle Tabard, Defilers Battle Tabard. Companion: Great Horned Owl
+Zones | Feralas | 15 | Defeat King Gordok in Feralas with any class. | Companion: Tree Frog
+Zones | Gurubashi Arena | 15 | Defeat Hakkar the Soulflayer in Gurubashi Arena with any class. | Companion: Black Kingsnake
+Zones | Scarlet Monastery | 15 | Defeat High Inquisitor Whitemane in Scarlet Monastery with any class. |
+Zones | Alterac Valley | 15 | Defeat Azuregos in Alterac Valley with any class. | Rewards: Stormpike Battle Tabard, Frostwolf Battle Tabard. Companion: Sprite Darter
+Zones | Blackrock Mountain | 20 | Defeat Nefarian in Blackrock Mountain with any class. | Companion: Black Whelpling
+Zones | Scholomance | 20 | Defeat Darkmaster Gandling in Scholomance with any class. |
+Zones | Gates of Ahn'Qiraj | 25 | Defeat C'Thun in Gates of Ahn'Qiraj with any class. | Companion: Zergling
+Zones | Naxxramas | 30 | Defeat Kel'Thuzad in Naxxramas with any class. |
+Zones | Champion of Elwynn Forest | 25 | Defeat Edwin VanCleef in Elwynn Forest with all nine classes. |
+Zones | Champion of Duskwood | 25 | Defeat Morbent Fel in Duskwood with all nine classes. |
+Zones | Champion of Warsong Gulch | 25 | Defeat Lord Kazzak in Warsong Gulch with all nine classes. |
+Zones | Champion of Un'Goro Crater | 25 | Defeat King Mosh in Un'Goro Crater with all nine classes. |
+Zones | Champion of Arathi Basin | 25 | Defeat Lord Aliden Perenolde in Arathi Basin with all nine classes. |
+Zones | Champion of Feralas | 25 | Defeat King Gordok in Feralas with all nine classes. |
+Zones | Champion of Gurubashi Arena | 25 | Defeat Hakkar the Soulflayer in Gurubashi Arena with all nine classes. |
+Zones | Champion of Scarlet Monastery | 25 | Defeat High Inquisitor Whitemane in Scarlet Monastery with all nine classes. |
+Zones | Champion of Alterac Valley | 25 | Defeat Azuregos in Alterac Valley with all nine classes. |
+Zones | Champion of Blackrock Mountain | 25 | Defeat Nefarian in Blackrock Mountain with all nine classes. |
+Zones | Champion of Scholomance | 25 | Defeat Darkmaster Gandling in Scholomance with all nine classes. |
+Zones | Champion of Gates of Ahn'Qiraj | 25 | Defeat C'Thun in Gates of Ahn'Qiraj with all nine classes. |
+Zones | Champion of Naxxramas | 25 | Defeat Kel'Thuzad in Naxxramas with all nine classes. | 
+
+# CLASSES (20)
+Classes | Warrior Victorious | 10 | Win a run with a Warrior. |
+Classes | Paladin Victorious | 10 | Win a run with a Paladin. |
+Classes | Hunter Victorious | 10 | Win a run with a Hunter. |
+Classes | Rogue Victorious | 10 | Win a run with a Rogue. |
+Classes | Priest Victorious | 10 | Win a run with a Priest. |
+Classes | Mage Victorious | 10 | Win a run with a Mage. |
+Classes | Shaman Victorious | 10 | Win a run with a Shaman. |
+Classes | Warlock Victorious | 10 | Win a run with a Warlock. |
+Classes | Druid Victorious | 10 | Win a run with a Druid. |
+Classes | Warrior of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Warrior. |
+Classes | Paladin of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Paladin. |
+Classes | Hunter of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Hunter. |
+Classes | Rogue of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Rogue. |
+Classes | Priest of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Priest. |
+Classes | Mage of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Mage. |
+Classes | Shaman of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Shaman. |
+Classes | Warlock of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Warlock. |
+Classes | Druid of the Scarab Wall | 25 | Defeat C'Thun at Gates of Ahn'Qiraj with a Druid. |
+Classes | Fully Talented | 25 | Earn all 51 talent points with one class. |
+Classes | Master of All | 50 | Earn all 51 talent points with every class. | Progress shown: 3 of 9 classes.
+
+# COLLECTION (15)
+Collection | Collector | 10 | Collect 25 pieces of gear, of any class. | Unlocks: Keen Eye
+Collection | Hoarder | 10 | Collect 100 pieces of gear, of any class. |
+Collection | Curator | 25 | Collect 250 pieces of gear, of any class. | Progress shown: 149 of 250.
+Collection | The Whole Armory | 50 | Collect every piece of gear of every class. | Progress shown: 149 of 581.
+Collection | Legendary | 25 | Collect every legendary piece of one class. |
+Collection | Jeweler's Eye | 10 | See half of the codex's rings, trinkets and amulets. |
+Collection | Every Bauble | 25 | See every ring, trinket and amulet in the codex. | Progress shown: 74 of 141.
+Collection | Polished | 10 | Upgrade a piece of gear to 1 star. |
+Collection | Honed | 10 | Upgrade a piece of gear to 3 stars. |
+Collection | Matched | 10 | Open a set bonus: four armor pieces of one set at 1 star or more. |
+Collection | Suited Up | 10 | Open an 8-piece set bonus: one set's eight armor pieces at 3 stars or more. |
+Collection | Shared Wisdom | 25 | Have one set's eight armor pieces at 1 star or more on every class. | Progress shown: 2 of 9.
+Collection | Wardrobe | 25 | Open the 8-piece bonus of all six sets with one class. | Progress shown: 2 of 6.
+Collection | Armory of Legends | 50 | Open the legendary set's 8-piece bonus with every class. | Progress shown: 0 of 9.
+Collection | You Are Not Prepared! | 50 | Collect all eight Scholomance Tier 0.5 armour pieces and the full fixed Gandling weapon reward for each of the nine classes. | Progress shown: 1 of 83.
+
+# FEATS (28)
+Feats | Humble Beginnings | 25 | Beat Naxxramas wearing a common set's 8-piece bonus. |
+Feats | Never Ending | 25 | Slay 6 bosses in endless in one run. |
+Feats | Danger Money | 50 | Earn 50 marks from one boss. |
+Feats | Carnage | 25 | Slay 6,000 enemies in one run. |
+Feats | Overtime (Survive 25:00) | 10 | Survive to 25:00 in endless mode. | 
+Feats | Overtime (Slay 3 Bosses) | 10 | Slay 3 bosses in endless in one run. | 
+Feats | Deathless Hour | 50 | Survive to 40:00 in endless mode. | Companion: Panda Cub
+Feats | Unending | 25 | Survive to 30:00 in endless mode. |
+Feats | Thrifty | 25 | Win a run without buying a cache. |
+Feats | no u | 25 | Slay Sapphiron with a Frostbolt as the killing blow. | Reward: Glacial Cloak. Companion: Sapphiron
+Feats | Suck It, Hakkar! | 25 | Defeat Hakkar with Drain Life. | Reward: Zul'Gurub Mask. Companion: Swift Zulian Tiger
+Feats | Eye Caramba! | 50 | Defeat C'Thun without taking any damage from him. | Reward: Gnomish Mind Control Cap. Companion: Mini Eye of C'Thun
+Feats | Stitches Get Stitches | 10 | Defeat Stitches with a Bleed effect. | Companion: Mini Stitches
+Feats | Not Today, Satan | 25 | Defeat Lord Kazzak with Holy damage. | Companion: Mini Doomguard
+Feats | Clever Girl | 25 | Have a summoned pet deliver the killing blow to King Mosh. | Companion: Baby Devilsaur
+Feats | Bonk the Bonker | 10 | Defeat Kovork with a melee attack. | Companion: Mini Ogre
+Feats | Slaughterhouse | 10 | Slay 2,500 enemies in one run. | Unlocks: Opening Hand
+Feats | Lair Breaker | 25 | Slay four guardians before 8:00 in one run. |
+Feats | Bare Knuckles | 25 | Win a run wearing no gear. |
+Feats | Against the Odds | 50 | Win a run on Heroic III or harder. |
+Feats | Hazard Pay | 25 | Earn 100 marks. |
+Feats | Spin to Win | 25 | Defeat Herod with Whirlwind. | Rewards: Scarlet Crusade Tabard, Dashing Scarlet Cloak
+Feats | Bad Dragon! | 25 | Have a summoned pet deliver the killing blow to Nefarian. | Reward: Onyxia Scale Cloak. Companion: Mini Chromatic Drakonid
+Feats | You're Fired | 10 | Defeat Edwin VanCleef with a Fire spell. | Reward: Defias Bandana
+Feats | Stop Hitting Yourself | 25 | Defeat King Gordok with reflected damage from Shaman's Lightning Shield, Druid's Thorns, or Paladin's Holy Shield. | Companion: Tiny Gordok
+Feats | Blue Screen of Death | 25 | Defeat Azuregos with an Arcane spell. | Reward: Gnomish Goggles. Companion: Azure Whelpling
+Feats | Stormstrike Graduation | 25 | As an Enhancement Shaman, defeat Darkmaster Gandling with Stormstrike as the killing blow. |
+Feats | Straight A's | 25 | Defeat Darkmaster Gandling without any player taking damage from Headmaster's Office or The Last Examination. |
+
+# LIFETIME (15)
+Lifetime | Marked | 10 | Earn 100 marks. |
+Lifetime | Quartermaster | 50 | Earn 10,000 marks. | Progress shown: 1,058 of 10,000.
+Lifetime | Scourge of Azeroth | 25 | Slay 100,000 enemies. | Companion: Undercity Cockroach
+Lifetime | Pocket Change | 10 | Collect 5,000 gold. | Unlocks: Companion
+Lifetime | Lair Raider | 10 | Slay 100 guardians. |
+Lifetime | Boss Hunter | 10 | Slay 100 bosses. |
+Lifetime | Regular | 10 | Play 10 runs. | Unlocks: Second Thoughts
+Lifetime | Conqueror | 25 | Win 50 runs. |
+Lifetime | Well Paid | 25 | Earn 1,000 marks. |
+Lifetime | Exterminator | 10 | Slay 10,000 enemies. |
+Lifetime | A Million Dead | 50 | Slay 1,000,000 enemies. | Progress shown: 437,968 of 1,000,000.
+Lifetime | Treasure Hunter | 25 | Collect 50,000 gold. | Unlocks: Second Companion
+Lifetime | Warden's Bane | 25 | Slay 500 guardians. |
+Lifetime | Cache Cracker | 10 | Buy 100 caches. |
+Lifetime | Veteran | 10 | Play 100 runs. | Companion: Westfall Chicken
+
+# CO-OP (17)
+Co-op | Better Together | 10 | Complete your first zone with at least one other player. | Reward: Admiral's Hat
+Co-op | Five of a Kind | 25 | Complete any zone in co-op with all 5 players using the same class. | Reward: Bloodsail Admiral's Hat
+Co-op | Rest in Photosynthesis | 50 | Defeat Kel'Thuzad on Heroic III in co-op with 5 Druids, all talented into Tranquility. Tranquility must deliver the killing blow. | Companion: Ancient Protector
+Co-op | The Insane | 50 | Survive for 40 minutes or longer in Naxxramas on Heroic V with at least two other players, with no deaths. |
+Co-op | Matching Outfits | 25 | Win in a party of three or more, every hero wearing the same set's 8-piece bonus. |
+Co-op | Raid Night | 25 | Beat Heroic III or harder in a party of five. |
+Co-op | Against All Odds | 50 | Complete any zone on Heroic III or harder with at least one other player. | Reward: Contest Winner's Tabard
+Co-op | The Brotherhood Falls | 25 | Defeat Edwin VanCleef in co-op with 5 players, all using different classes. | Reward: Cape of the Brotherhood
+Co-op | Things That Go Bump in the Night | 25 | Complete Duskwood with at least one other player, without any player dying. | Reward: Embrace of the Lycan
+Co-op | For the Team | 10 | Complete Warsong Gulch and Arathi Basin, each with at least one other player. | Unlocks: United Front
+Co-op | Jurassic Pack | 25 | Complete Un'Goro Crater in co-op with 5 Hunters. | Unlocks: White Devilsaur
+Co-op | Hakkar Smoothie | 50 | Defeat Hakkar with 5 Warriors, all talented into Bladestorm. Whirlwind must deliver the killing blow. | Companion: Mini Herod
+Co-op | Holy Frame Drops | 50 | Defeat High Inquisitor Whitemane in co-op with 5 Paladins, all with Consecration as their highest-ranked spell. Consecration must deliver the killing blow. | Reward: Whitemane's Chapeau
+Co-op | Dragonslayers | 25 | Defeat Azuregos and Nefarian, each with at least one other player. | Reward: Cloak of the Brood Lord
+Co-op | Totem'ly Balanced | 50 | Defeat Nefarian in co-op with 5 Shamans, all having Magma Totem as their highest-ranked spell. Magma Totem must deliver the killing blow. | Companion: Mini Nefarian
+Co-op | The Old Gods Have No Friends | 50 | Defeat C'Thun on Heroic III or harder in a party of five. | Reward: Cloak of the Devoured
+Co-op | Together, To the End | 50 | Complete all 12 zones, each with at least one other player, across any number of runs. | Companion: Mr. Bigglesworth
+
+# HEROIC (10)
+Heroic | Heroic Debut | 10 | Beat Heroic I in any zone. |
+Heroic | Heroic Resolve | 25 | Beat Heroic III in any zone. |
+Heroic | Heroic Across Azeroth | 50 | Beat Heroic III in every zone, with any classes. | Progress shown: 2 of 13. Still to beat: Duskwood, Un'Goro Crater, Arathi Basin, Feralas, Gurubashi Arena, Scarlet Monastery, Alterac Valley, Blackrock Mountain, Scholomance, Gates of Ahn'Qiraj, Naxxramas.
+Heroic | Champion of Naxxramas (Heroic V) | 50 | Beat Heroic V in Naxxramas. | Opens the Crusader weapon glow and Hyper Mode.
+Heroic | Beyond the Vault | 10 | Upgrade a piece of gear to 4 stars. |
+Heroic | Five Stars | 25 | Upgrade a piece of gear to 5 stars. |
+Heroic | Empowered | 25 | Empower an 8-piece set bonus: one set's eight armor pieces at 5 stars. |
+Heroic | Radiant Armory | 50 | Open a set bonus with every class. | Opens the Fiery Weapon glow. Progress shown: 0 of 9.
+Heroic | Yes, I am prepared! | 50 | Complete Scholomance on Heroic V solo with all nine classes, using each class's Tier 0.5 set bonuses and matching specialization talents. | Opens the Lifestealing weapon glow. Progress shown: 0 of 9.
+Heroic | Unpolished | 25 | Beat Heroic II or harder with no piece of gear above 0 stars. |

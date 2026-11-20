@@ -1,3 +1,7 @@
+# v3.50 (2026-11-20)
+
+- Guide: a full achievements section under Achievements & Rewards, with a page for each of the seven groups: Zones, Classes, Collection, Feats, Lifetime, Co-op and Heroic. Every achievement's requirement, points, rewards and unlocks are listed (131 in all). Entries that share a name are labelled apart.
+
 # v3.49 (2026-11-16)
 
 - Download More: three new addons: Azeroth Survivors Telegraphs (Gameplay), AZS - Guild Wars 2 GUI and Arcane UI (UI). Every entry's name, category and description now follow the addon list, with full descriptions (Vulchan's Combat Text had only one word). BlackwellUI's leftover screenshot is gone; it is no longer supported.
